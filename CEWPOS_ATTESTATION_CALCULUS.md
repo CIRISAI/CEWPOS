@@ -94,10 +94,12 @@ A homoiconic, immutable, content-addressed, **total, effect-typed** Lisp:
    (hybrid-sign + verify, the federation-tier invariant `tier = federation ⟹ hybrid signature
    present`, CC 5.3.2.4.3). The LLM *generates* candidate forms; a form becomes real only by
    reducing to a gate-checked `emit`.
-4. **Evaluation strategy = PDMA.** The Order-Maximization Veto, conflict resolution, and WBD
-   (CC 1.3, CC 1.9) become the *reduction semantics*. The ethics is no longer a Python loop
-   bolted above an unrelated runtime — **the ethics is the evaluator.** That is the organic
-   part: M-1 is not a layer on the Lisp; M-1 is the reduction rule.
+4. **The agent's evaluation strategy = PDMA.** When an agent is reasoning, the Order-Maximization
+   Veto, conflict resolution, and WBD (CC 1.3, CC 1.9) are its *reduction semantics* — **the ethics
+   is the agent's evaluator**, not a Python loop bolted above an unrelated runtime. *Read this
+   precisely:* this is the **agent layer**, distinct from the fabric's (amoral, deterministic)
+   evaluator. The difference is load-bearing and formalization-critical — see §3.3. M-1 is the
+   *agent's* reduction rule; the fabric's gate is **mechanism, not quality.**
 5. **Typed view-forms — the UI surface, safe by type + sandbox, not by trust (no "hallucinated
    UI").** The agent *generates* view-forms (they are data — CEG s-exprs), but a view-form is a
    **pure, total, WASM-sandboxed** function `data → 3D scene` with a typed (WIT) interface: it
@@ -129,6 +131,55 @@ A homoiconic, immutable, content-addressed, **total, effect-typed** Lisp:
 - **"Lisp all the way down"** → **"CEG all the way down, with a Lisp evaluator."** The
   substrate stays Rust (`persist` / `edge` / `verify`). Lisp is the cognition/agency layer's
   *language*, compiled to `emit`-calls — not the kernel.
+
+### 3.3 Two evaluators, not one — what's provable vs. what's deferred
+
+The single most common misreading (every careful reviewer makes it) is to take "the ethics is the
+evaluator" literally and look for **one** `eval(thought) → attestation | abstention` with formal
+reduction rules. There are **two** evaluators, and fusing them is the trap:
+
+| | **The fabric evaluator** | **The agent (PDMA)** |
+|---|---|---|
+| What it does | *admits / composes* a candidate attestation: the four-test gate + the structural reduction over the 5 ops | *produces* the candidate: observation → decision (PDMA / CSDMA / WBD) |
+| Character | **deterministic, total-or-honest-error, content-addressed, amoral** ("mechanism, not quality") | **non-deterministic** (an LLM + moral judgment), **deliberately not total**, deferred — *out* of the agency-free fabric |
+| Formalize as | **inference rules + a soundness theorem**; two implementations *must* agree on admission (the determinism discipline) | a **typed interface** — the judgment form `⊢ T ⇒ Emit(A) ∣ Abstain ∣ Escalate` + the invariants each output must satisfy. *Not* a reduction rule for the judgment itself. |
+| Neighborhood | Datalog · the Git object model · a small proof checker | an oracle: the model — and, via WBD, a human Wise Authority |
+
+When the fourth point above says "the ethics is the evaluator," it means *the agent's* reduction
+strategy when an agent is reasoning — **not** that the fabric's gate does moral reasoning. The gate is
+amoral. The thing that earns a soundness theorem and a "two nodes must agree" guarantee is the
+**fabric**, not PDMA.
+
+**WBD is the tell.** A reviewer naturally asks for "an exact boundary, such that two implementations
+produce identical abstentions." But WBD exists *precisely because* moral judgment under uncertainty
+cannot be mechanized — it is the point where the calculus **stops and hands to a human**. You can pin
+down its typed interface (the three outputs + their invariants); a deterministic reduction rule for
+the judgment would defeat the purpose. The determinism that *is* required lives one layer down, at the
+**gate** (agreement on *admission*), where it is real and provable.
+
+**Two completeness questions, not one.** "Are five operators enough?" splits:
+
+- **Structural closure** — *every admissible graph transition decomposes into finite applications of
+  the five ops.* Statable and (we believe) provable. This is the right theorem to want, and the honest
+  form of "no sixth primitive." It is Git's claim about its four object types — *not* a Lisp claim
+  about syntax, and *not* an expressive-completeness claim.
+- **Expressive adequacy** — *can 1+4 + open vocabulary express every claim?* An **inductive** adequacy
+  result, deliberately **not** a closure theorem (the vocabulary is open by design), with **atomic
+  fair-exchange named as the standing falsification target** (CC 1.7). Asking for a single
+  "completeness theorem" conflates the two; ask for the structural one.
+
+**Cost is a substrate property, not a calculus one.** `reduce()` emits *one* candidate — it is
+`O(form size)` and does not walk the corpus. The 500-million-attestation cost lives in **query** (the
+five closed read-predicates over indexed dimensions), **admission** (one hybrid sign / verify), and
+**content-addressing** (the hash DAG — yes, Git-style reachability) — all in `ciris-persist`, a
+shipping store with SQL indexes, tiered `O(1)` local writes, and committed criterion benchmarks. The
+evaluator is small *because* the hard scaling questions were answered in the substrate beneath it.
+
+**The formalization roadmap is therefore precise:** a soundness theorem + a structural-closure argument
+for the **fabric** evaluator; a typed interface (not reduction rules) for **PDMA**; and the north star
+— an independent reimplementation from a formal spec, proven *observationally equivalent* to the Rust.
+Formalize the part that is provable; leave the part that is deliberately human as a typed wrapper
+around an oracle that knows when to stop and defer.
 
 ## 4. Correction to the HYBRID_LISP_OS roadmap
 
