@@ -62,12 +62,20 @@ governance is a **structural invariant**, not a bolt-on.
 - **Every** state transition passes the admission gate (rules hash-pinned · mechanism-not-quality ·
   re-checkable · never sole evidence).
 - Conflicts **defer to accountable adjudicators** (Wise Authorities); bad actors are **slashable**;
-  a single accountable signer can **halt** (reverse-quorum).
+  a single accountable signer can **halt** (reverse-quorum) — because *the one thing that must never be
+  automated is who gets to halt it.*
 
 So the questions that sink other federated systems — *who resolves conflicting vocabularies? who
 handles semantic drift? who governs evolution?* — are not an afterthought here. They are the **core
 primitive**. If you're going to build a shared substrate for many parties (and many AI agents), the
 moderation layer is the hard part, and it's the part CEWPOS builds first.
+
+And the policy itself isn't ad-hoc. The governance layer is **cross-walked to recognized external
+ethics frameworks** — the EU HLEG Trustworthy-AI guidelines, IEEE *Ethically Aligned Design*, the
+ASEAN AI-governance guide, and *Magnifica Humanitas* — across 27 measurable dimensions, **mechanically
+enforced before deployment**, with cross-source conflicts documented and reconciled
+([ciris.ai/compliance](https://ciris.ai/compliance)). So "who governs the policy?" has a concrete
+answer: recognized frameworks, adversarially mapped — not invented in a vacuum.
 
 ## The claims are checked, not aspirational
 

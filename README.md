@@ -51,7 +51,9 @@ attestation fabric ← AI emits attestations (admitted or rejected at a gate)
 
 The goal is to make **every meaningful state transition externally auditable** — *verify the
 constraint*, don't *trust the model*. A signature you cannot forge, a membership you cannot fake, an
-audit you cannot escape.
+audit you cannot escape. In one line: **make truthfulness architecturally cheaper than deception** —
+maintaining a consistent lie across many independent, signed, externally-verifiable constraints costs
+more than telling the truth.
 
 ## Architecture
 
@@ -185,7 +187,7 @@ proves the fabric; it does not claim to have solved the human layer it deliberat
 
 ## Ecosystem & references
 
-- **CIRIS** — [ciris.ai](https://ciris.ai) · **continuous verification** — [ciris.ai/verification](https://ciris.ai/verification/) · **comparison / "the other road"** — [ciris.ai/compare](https://ciris.ai/compare)
+- **CIRIS** — [ciris.ai](https://ciris.ai) · the **vision** ([/vision](https://ciris.ai/vision) — "honor the reaching instead of intercepting it") · **continuous verification** ([/verification](https://ciris.ai/verification/), 16k+ tests) · **proof** ([/proof](https://ciris.ai/proof)) · **compliance** ([/compliance](https://ciris.ai/compliance) — the policy layer cross-walked to EU HLEG / IEEE EAD / ASEAN / Magnifica Humanitas) · **comparison / "the other road"** ([/compare](https://ciris.ai/compare))
 - **[CIRISConformance](https://github.com/CIRISAI/CIRISConformance)** — the federation-cohabitation + cross-artifact conformance harness; the proof the separately-shipped components enforce the constitution as one system.
 - **[CIRISServer](https://cirisai.github.io/CIRISServer)** — the base fabric node + clients; the CEWPOS spec FSDs (`CEWPOS.md`, `HYBRID_LISP_OS.md`, `CEWPOS_RENDERED_OBJECTS.md`) live in its `FSD/`.
 - Substrate crates: [CIRISPersist](https://github.com/CIRISAI/CIRISPersist) · [CIRISVerify](https://github.com/CIRISAI/CIRISVerify) · [CIRISEdge](https://github.com/CIRISAI/CIRISEdge) · [CIRISNodeCore](https://github.com/CIRISAI/CIRISNodeCore) · [CIRISRegistry](https://github.com/CIRISAI/CIRISRegistry).
