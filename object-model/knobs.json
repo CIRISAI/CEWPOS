@@ -1,0 +1,1332 @@
+[
+  {
+    "id": "knob.persist.cacheconfig",
+    "name": "`CacheConfig.{max_entries,max_bytes,ttl,invalidation_bucket}` + `DeploymentTier` + `CIRIS_PERSIST_CACHE_*` env",
+    "kind": "knob",
+    "controls": "LRU cap (entries/bytes), 30s TTL fail-honest staleness, 1h write-invalidation bucket; Mobile/Edge/Server budgets",
+    "tier": "node",
+    "capability": "caching/eviction",
+    "layer": "fabric",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.persist.admissioncache",
+    "name": "`AdmissionCache` (§7.5)",
+    "kind": "knob",
+    "controls": "Caches admission decisions for read-scope gate",
+    "where": "§7.5",
+    "tier": "node",
+    "capability": "admission",
+    "layer": "boundary",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.persist.retentionpolicy",
+    "name": "`RetentionPolicy.{min_keep_secs,pressure_trigger/target_bytes,interval_secs,time_column}` + `ArchiveWindow` + per-module archive defaults",
+    "kind": "knob",
+    "controls": "Sacred-floor (never delete younger), high/low-water sweeper, cadence, SQL time col, per-module cutoffs",
+    "tier": "node",
+    "capability": "retention",
+    "layer": "fabric",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.persist.ciris_persist_graph_max_attributes_bytes",
+    "name": "`CIRIS_PERSIST_GRAPH_MAX_ATTRIBUTES_BYTES` / `_TELEMETRY_MAX_LABELS_BYTES`",
+    "kind": "knob",
+    "controls": "Per-node attr cap (1 MiB) / metric label cap",
+    "tier": "node",
+    "capability": "storage-limits",
+    "layer": "fabric",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.persist.default_queue_depth",
+    "name": "`DEFAULT_QUEUE_DEPTH` (1024) + `QueueError` Full→429/Closed→503/Journal→500",
+    "kind": "knob",
+    "controls": "Bounded ingest queue, never-silent-drop backpressure policy",
+    "tier": "node",
+    "capability": "queue/backpressure",
+    "layer": "fabric",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.persist.diskpressureconfig",
+    "name": "`DiskPressureConfig.{warn,crit,stop,host_at_risk}_free_bytes / poll_interval / *_action / is_family}` + `PressureTier`/`TrustTier`",
+    "kind": "knob",
+    "controls": "Free-byte thresholds → PressureAction (LogOnly..ForceEvictProxy/All); Local>Family>Federation eviction priority",
+    "tier": "multiple",
+    "capability": "disk-pressure-degradation",
+    "layer": "fabric",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.persist.fountaintier",
+    "name": "`FountainTier` (Full/T2..T5) + `FountainManifestV1.{min_viable_symbols,n_source,k_repair,symbol_size}` + `FountainSymbolV1.retention_priority`",
+    "kind": "knob",
+    "controls": "RaptorQ FEC keep-count under pressure (graceful media degrade → EnvelopeOnly); per-symbol evict key",
+    "tier": "node",
+    "capability": "media/fountain",
+    "layer": "fabric",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.persist.replicationconfig",
+    "name": "`ReplicationConfig.{trust_threshold,trust_recursion_depth,tier_recursion_depths}`",
+    "kind": "knob",
+    "controls": "Trust-score blob-write gate; BFS depth over `delegates_to` (per-identity_type override)",
+    "tier": "federation",
+    "capability": "trust-policy",
+    "layer": "boundary",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.persist.replicationconfig_2",
+    "name": "`ReplicationConfig.{storage_budget_bytes,steady_state_utilization(0.92),eviction_decay_half_life_days(30),sweep_interval(60s)}`",
+    "kind": "knob",
+    "controls": "Federation-blob budget + decay/watermark eviction sweeper",
+    "tier": "node",
+    "capability": "retention",
+    "layer": "fabric",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.persist.encryptedkvstore",
+    "name": "`EncryptedKVStore` passphrase + `K_blind/K_value(ns)` + 24B nonce",
+    "kind": "knob",
+    "controls": "App-layer XChaCha20 KV, refuse-to-open fail-fast, HKDF namespace isolation",
+    "tier": "owner-self",
+    "capability": "encrypted-at-rest",
+    "layer": "fabric",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.persist.wrap_algorithm_v2",
+    "name": "`WRAP_ALGORITHM_V2` (x25519+ML-KEM-768) MANDATORY + Three at-rest tiers + `get_blob_for_viewer` mode + per-write fresh DEK on member-remove",
+    "kind": "knob",
+    "controls": "Hybrid-PQC DEK wrap; self/family per-write vs community shared epoch-DEK; in-enclave unwrap; forward secrecy",
+    "tier": "multiple",
+    "capability": "encrypted-at-rest",
+    "layer": "fabric",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.persist.masterkeyref",
+    "name": "`MasterKeyRef` (Software/Hardware-TPM) + `AccessOp` (Reencrypt/Rotate) + `Sensitivity` + `FilterConfig`",
+    "kind": "knob",
+    "controls": "Secrets master-key backing, re-encrypt/rotate, Low/Med/High classification, versioned config-row",
+    "tier": "node",
+    "capability": "secrets-store / config-store",
+    "layer": "fabric",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.persist.cohort_vocab_self_family",
+    "name": "Cohort vocab `{self,family,community,affiliations,species,biosphere,federation}` + `CallerScope` + `cohort_scope_sql_predicate` + `ScopeRefusalReason`",
+    "kind": "knob",
+    "controls": "Closed cohort tier model; AV-44 forge-resistant caller enum; WHERE-fragment gate; typed refusals",
+    "tier": "multiple",
+    "capability": "scope/tier-model",
+    "layer": "boundary",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.persist.mergeintent",
+    "name": "`MergeIntent::{LwwSkewBounded,MonotonicQuorum}` + `LWW ±5min skew` + `withdrawal_forward_only` + content-addressed merge (SHA-256) + structural-composer precedence (recants>withdraws>supersedes)",
+    "kind": "knob",
+    "controls": "Per-row merge policy: skew-bounded LWW, anti-rollback quorum, forward-only withdrawals, SHA identity, read-side winner",
+    "tier": "federation",
+    "capability": "merge-policy",
+    "layer": "fabric",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.persist.dimensionadmissionpolicy",
+    "name": "`DimensionAdmissionPolicy.{morally_charged_stems,require_version_segment,reserved_prefix_rules}` + `AttestationLadderTransitionPolicy` + `capacity:* self-emission reject` + `accord:* requires accord_holder`",
+    "kind": "knob",
+    "controls": "Block deception/harm stems; require `:vN`; prefix→emitter identity_type; CEG 0.1→0.2 window; anti-self-assert",
+    "tier": "multiple",
+    "capability": "attestation-admission",
+    "layer": "boundary",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.persist.blackholerecord",
+    "name": "`BlackholeRecord` + `ModerationEvent/SlashingAttestation` + `ReconsiderationRequest/Attestation`",
+    "kind": "knob",
+    "controls": "Per-Reticulum-identity deny-list; accusation→adjudication→appeal chain",
+    "tier": "multiple",
+    "capability": "moderation",
+    "layer": "boundary",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.persist.multimediaconfig",
+    "name": "`MultimediaConfig.{immediate_legal_bases,counter_notice_window_days(14),age_gate_legal_bases}` + `LegalBasis` enum + `scheduled_takedown_actions` + `TakedownNoticePayload.perceptual_hash`",
+    "kind": "knob",
+    "controls": "Immediate-evict bases, DSA art.16 window, age-gate-compose bases, 10-value taxonomy, PDQ/PhotoDNA discriminator",
+    "tier": "federation",
+    "capability": "moderation/child-safety/media",
+    "layer": "boundary",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.persist.ageband",
+    "name": "`AgeBand` + `age_assurance:*`/`age_self_declared:*` ratchet + Presumption-of-sovereignty + Restrictive content floor *(feat-306 PR branch)*",
+    "kind": "knob",
+    "controls": "Witness>self one-way ratchet; Unknown=non-minor on steward axis, =minor on content axis (#309)",
+    "where": "feat-306 PR branch",
+    "tier": "multiple",
+    "capability": "child-safety/age",
+    "layer": "boundary",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.persist.consensus_protocol",
+    "name": "`consensus_protocol` (founder_only/unanimous/majority/quorum:m/n/weighted/custom) + `_entrenched` + `VoteEnvelope/VoteWeight` + `PromotionAttestation` + `WitnessSet` + `quorum:{m}/{n}` tag",
+    "kind": "knob",
+    "controls": "Family/community governance rule (m≤n,n>0); weight=credits×expertise×tier; canonical FALSE→TRUE flip; M-of-N witness ratify",
+    "tier": "multiple",
+    "capability": "voting/ratification/quorum",
+    "layer": "boundary",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.persist.activehalt",
+    "name": "Accord live-quorum + `ActiveHalt` + `L_FLOOR` steward-backstop + anti-replay nonce/`window_until` + `recovery_supersede` absent",
+    "kind": "knob",
+    "controls": "Constitutional kill-switch: M-of-N live quorum HALTs a family; resume binds sha256(halt); entrenched recovery",
+    "tier": "constitutional",
+    "capability": "reverse-quorum/kill-switch",
+    "layer": "boundary",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.persist.trustgrant",
+    "name": "`TrustGrant` scope-by-purpose + `TrustType` (Direct/Partnered) + `resolve_trust` BFS + revocation/self-deleg depth cap",
+    "kind": "knob",
+    "controls": "Purpose-scoped signed grants; transitive `delegates_to` walk (NOT eigenvector); depth-bounded",
+    "tier": "federation",
+    "capability": "trust-policy",
+    "layer": "boundary",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.persist.blobbody",
+    "name": "`BlobBody` (Inline/External/ChunkDag) + `put_blob` max-inline + `list_holders`+freshness",
+    "kind": "knob",
+    "controls": "Blob body kind, inline ceiling, holder directory (`holds_bytes` provenance)",
+    "tier": "federation",
+    "capability": "media/blobs/holder-directory",
+    "layer": "fabric",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.persist.keygrantscope",
+    "name": "`KeyGrantScope` (SingleContent/GroupMember/SubscriptionTier/StreamEpoch) + `KeyValidityWindow` + stream chunk size (1 MiB) + per-stream STH (K=64/T=2s) + `put_blob_chunk/seal_stream` + per-stream tx-log + witness cosign + `delivery_receipt:{stream_id}` + `get_range`",
+    "kind": "knob",
+    "controls": "DEK grant granularity, validity window, live append/seal into ChunkDag, per-stream transparency log, proof-of-delivery, format-blind range read",
+    "tier": "federation",
+    "capability": "media/social-feed/streaming",
+    "layer": "fabric",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.persist.next_sequence",
+    "name": "`next_sequence/peek_sequence` + `original_content_hash` dedup + verify-before-dedup ordering",
+    "kind": "knob",
+    "controls": "Per-(identity,stream) monotonic counter; idempotent replay; anti-probe-oracle ordering",
+    "tier": "node",
+    "capability": "sequence / dedup/idempotency",
+    "layer": "fabric",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.persist.hardwareattestationpolicy",
+    "name": "`HardwareAttestationPolicy.{accepted_hardware_types,max_nonce_age(24h)}` + `IdentityOccurrence.{device_class,valid_until,hardware_attestation,encryption_pubkeys}` + `PERSIST_STEWARD_PUBKEY_B64`",
+    "kind": "knob",
+    "controls": "Secure-element admission floor for accord-holders; multi-device occurrence binding; wrap-target registration; bootstrap steward pubkey",
+    "tier": "multiple",
+    "capability": "hardware-attestation/identity",
+    "layer": "boundary",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.persist.service_token_revocation",
+    "name": "`service_token_revocation` + `maintenance_locks` + `CIRIS_DATA_DIR`",
+    "kind": "knob",
+    "controls": "Token revocation list; advisory locks w/ stale-timeout; data root",
+    "tier": "node",
+    "capability": "auth/operational-locks/storage",
+    "layer": "boundary",
+    "repo": "persist"
+  },
+  {
+    "id": "knob.verify.trust_model",
+    "name": "`trust_model` (HttpsAuthoritative/EqualWeight) + `dns_transport` + `cert_pin` + `project` + `dns_us/eu_host`/`https_endpoint(s)`/`probe_targets` + `timeout/cache_ttl/cache_dir` + `offline_grace` + `key_alias`",
+    "kind": "knob",
+    "controls": "Multi-source validation weighting, DNS transport, cert pinning, namespace scope, geo registry endpoints, 72h/168/336/504h offline grace, shared hardware key alias",
+    "tier": "multiple",
+    "capability": "Multi-Source Validation / Identity / Licensing",
+    "layer": "fabric",
+    "repo": "verify"
+  },
+  {
+    "id": "knob.verify.validationstatus",
+    "name": "`ValidationStatus` (ALL_AGREE/PARTIAL/DISAGREE/NO_SOURCES) + `PARTIAL_AGREEMENT` cap",
+    "kind": "knob",
+    "controls": "Consensus verdict → fail-secure degrade; 2-of-3 caps A3(supervisor)/A4(deny)",
+    "tier": "federation",
+    "capability": "Multi-Source Validation",
+    "layer": "boundary",
+    "repo": "verify"
+  },
+  {
+    "id": "knob.verify.quorumpolicy",
+    "name": "`QuorumPolicy` (2·M>N strict majority) + `ThresholdMember.role` (Founder/Member) + `verify_founder_quorum/verify_quorum_policy/RosterMismatch` + `DeadlockPolicy/ZeroThreshold/ThresholdExceedsMembers`",
+    "kind": "knob",
+    "controls": "Single federation-wide quorum rule (no 1/2,2/4 split-brain, no M==1 carve-out); founder-subset anti-Sybil; fail-closed",
+    "tier": "multiple",
+    "capability": "Quorum",
+    "layer": "fabric",
+    "repo": "verify"
+  },
+  {
+    "id": "knob.verify.hybridpolicy",
+    "name": "`HybridPolicy` (RequireHybrid/AllowClassicalPending) + `consensus_protocol_entrenched`",
+    "kind": "knob",
+    "controls": "PQC mandatory at federation; entrenched-family quorum:2/3 un-liftable",
+    "tier": "multiple",
+    "capability": "Hybrid Policy / Voting",
+    "layer": "fabric",
+    "repo": "verify"
+  },
+  {
+    "id": "knob.verify.invocationkind",
+    "name": "`InvocationKind` (Constitutional/Notify/Drill/LifecycleActive) + `InvocationDedup` + `resumes_halt_id` + `humanity_accord_genesis` (no-TOFU baked root)",
+    "kind": "knob",
+    "controls": "Closed kill-switch vocab, anti-replay window, anti-stockpile resume binding, cold-start roster pinned in binary",
+    "tier": "constitutional",
+    "capability": "Moderation (kill-switch) / REVERSE Quorum",
+    "layer": "boundary",
+    "repo": "verify"
+  },
+  {
+    "id": "knob.verify.usb_wrapped_mldsa65",
+    "name": "accord custody (YubiKey PIV 9c→f9→Yubico root) + `usb_wrapped_mldsa65` portable + `CUSTODY_TIER` floor",
+    "kind": "knob",
+    "controls": "FIPS-hardware proof; PQC seed AES-GCM-wrapped on USB (YubiKey+PIN+touch)",
+    "tier": "constitutional",
+    "capability": "Hardware roots / key-grant",
+    "layer": "fabric",
+    "repo": "verify"
+  },
+  {
+    "id": "knob.verify.accordaction",
+    "name": "`AccordAction` (Fire/RosterChange/Resume) + `Vote` (Yes/No/Abstain) + `fire floor=1` + roster-change/resume = strict-majority-of-L + `L_FLOOR=3` + `N_min=2` + `verify_recovery_supersede` + `decisions_equivocate` + §4.5.13 bias gradient",
+    "kind": "knob",
+    "controls": "Asymmetric reverse-quorum: 1 yes FIRES, un-fire/roster lean HARD; steward backstop when ‖L‖<3; bounded roll-back; split-brain hard-fail",
+    "where": "§4.5.13",
+    "tier": "constitutional",
+    "capability": "REVERSE Quorum",
+    "layer": "fabric",
+    "repo": "verify"
+  },
+  {
+    "id": "knob.verify.licensestatus",
+    "name": "`LicenseStatus`/`LicenseType`/`AutonomyTier`(A0..A4) + `capabilities`/`capabilities_denied` + `DeploymentConstraints` + `mandatory_disclosure` + `license JWT hybrid gate` + `locale_merkle`",
+    "kind": "knob",
+    "controls": "Hardware-rooted license gate (fail-secure to community); per-license grant/deny + autonomy ceiling + deploy constraints + baked disclosure",
+    "tier": "multiple",
+    "capability": "Licensing / Revocation",
+    "layer": "boundary",
+    "repo": "verify"
+  },
+  {
+    "id": "knob.verify.wisebus",
+    "name": "`WiseBus prohibition levels` (REQUIRES_SEPARATE_MODULE / NEVER_ALLOWED / TIER_RESTRICTED) + `SOFTWARE_ONLY` cap",
+    "kind": "knob",
+    "controls": "Restrictive floor: child_exploitation/weapons never allowed; software-only capped to community",
+    "tier": "multiple",
+    "capability": "Moderation / Child safety floor",
+    "layer": "boundary",
+    "repo": "verify"
+  },
+  {
+    "id": "knob.verify.hardwaretype",
+    "name": "`HardwareType`/`hardware_class` + `ClassicalAlgorithm/PQCAlgorithm/SignatureMode` + `HardwareLimitation.caps_attestation` + `IntegrityStatus` + `boundary_degraded` + keyring/crypto features + sealed signers + TPM plugin (ABI v3) + Play Integrity/App Attest/TPM quote",
+    "kind": "knob",
+    "controls": "HW-token taxonomy + trust multipliers; crypto agility; emulator/CVE/rooted→software-only cap; opaque tamper category; backend feature gating; sealed-at-rest (no re-mint); advisory attestation",
+    "tier": "node",
+    "capability": "Hardware roots / Crypto agility / Anti-tamper",
+    "layer": "fabric",
+    "repo": "verify"
+  },
+  {
+    "id": "knob.verify.presencepolicy",
+    "name": "`PresencePolicy/verify_presence` (WebAuthn) + `self_enc`/`scope_privacy`/`secp256k1` derivations + `rng_health` (SP 800-90B) + `key_grant wrap_algorithm v1/v2`",
+    "kind": "knob",
+    "controls": "Passkey unlock (not owner-binding); deterministic content/wallet/anon-tier keys; latched RNG fail-secure; v2 ML-KEM mandatory for streaming",
+    "tier": "multiple",
+    "capability": "Identity / Privacy / Crypto agility / Media",
+    "layer": "fabric",
+    "repo": "verify"
+  },
+  {
+    "id": "knob.verify.fedkind",
+    "name": "`FedKind` (User/Agent/Node/Family/Community) + `fedcode v1/v2` + `FederationKeyset` M-of-N rotation + `WitnessRelation` + `OversightMode` (HITL/HOTL/HOOTL) + `transport_binding`/`compute_destination_hash`",
+    "kind": "knob",
+    "controls": "Identity taxonomy; shareable hardware-rooted code; threshold-signed keyset rotation; attester relation; human-control gradient; RNS dest-hash recompute",
+    "tier": "federation",
+    "capability": "Identity / Quorum / Oversight",
+    "layer": "fabric",
+    "repo": "verify"
+  },
+  {
+    "id": "knob.verify.orgrole",
+    "name": "`OrgRole` + `INFRA_SCOPES vs AGENCY_SCOPES` split + delegation deputization/attenuation (depth-cap 5) + `verify_partner_record_quorum` + `provenance chain` (depth 64, RequireHybrid)",
+    "kind": "knob",
+    "controls": "Op role lattice; infra-can't-self-appoint-agency; UCAN child⊆parent; founder-quorum partner admit; bounded hybrid provenance",
+    "tier": "multiple",
+    "capability": "Operational admit / Identity",
+    "layer": "fabric",
+    "repo": "verify"
+  },
+  {
+    "id": "knob.verify.revocationchecker",
+    "name": "`RevocationChecker` (unknown=revoked) + monotonic revocation revision + `sign_occurrence_revocation` + Merkle transparency log (RFC 6962) + `jcs` (RFC 8785) + `doc_integrity` two-person + build/function/file integrity tripwire",
+    "kind": "knob",
+    "controls": "Fail-secure revocation, anti-rollback revision, lost-device revoke, append-only STH+witness, blessed signing-bytes encoder, governance two-person rule, supply-chain L1/L5",
+    "tier": "multiple",
+    "capability": "Revocation / Transparency / Supply-chain integrity",
+    "layer": "fabric",
+    "repo": "verify"
+  },
+  {
+    "id": "knob.verify.eventratelimit",
+    "name": "`EventRateLimit`(10) + `ActorBudget`(30/7d) + `HarassmentClusterSignal`(2.0) + `RC24 walk-up principal` + reconsideration §4.10 bound (≤9)",
+    "kind": "knob",
+    "controls": "Anti-DoS reconsideration pipeline; walk-up to owner-bound root (absence=reject); fresh-quorum recusal",
+    "where": "RC24; §4.10",
+    "tier": "community",
+    "capability": "Moderation / Voting",
+    "layer": "fabric",
+    "repo": "verify"
+  },
+  {
+    "id": "knob.verify.sealedavchunk",
+    "name": "`SealedAvChunk` double-seal + Fountain `retention_decision`/`holding_claim` + `ALM bounded_capacity_score` + `AggregationMetaV1/EjectionVerdict` + `§19.0 verify_bound_hybrid`",
+    "kind": "knob",
+    "controls": "§19 holonomic media substrate: double-AEAD live A/V, revoked→evict (N5), self-asserted-uplink cap (N8), forever-memory descent, PQC-mandatory preimage gate",
+    "where": "§19.0; §19",
+    "tier": "multiple",
+    "capability": "Media / Social feed / Hybrid Policy",
+    "layer": "fabric",
+    "repo": "verify"
+  },
+  {
+    "id": "knob.verify.recursive_trust_bootstrap",
+    "name": "`recursive_trust_bootstrap` (≤5-hop, cycle-reject, weight-cap) + `WholenessWitness` Merkle + reputation propagation+slashing (PageRank-style) + multi-attester onboarding (≥3) + Attestation ladder L1–L5 + `AgentMode` posture",
+    "kind": "knob",
+    "controls": "Transitive trust DISCOVERY (trust≠membership N1); divergence witness; rogue-attestation slash; registered-tier 3-attester gate; L1-fail→all-UNVERIFIED; client/L0-proxy/L1-server posture",
+    "tier": "multiple",
+    "capability": "EigenTrust / Attestation ladder / Identity",
+    "layer": "fabric",
+    "repo": "verify"
+  },
+  {
+    "id": "knob.verify.watchdog",
+    "name": "`watchdog`/self-at-login ceremony",
+    "kind": "knob",
+    "controls": "Runtime watchdog + bilateral presence→delegation→partnership→transport→directory bundle",
+    "tier": "owner-self",
+    "capability": "Identity",
+    "layer": "fabric",
+    "repo": "verify"
+  },
+  {
+    "id": "knob.edge.hybrid_policy",
+    "name": "`hybrid_policy` + `replay_window_seconds`(300) + `max_replay_entries`(100k) + `max_body_bytes` + `max_content_body_bytes`(16 MiB)",
+    "kind": "knob",
+    "controls": "Verify-gate: PQC acceptance, replay window/cache, envelope+content body caps (AV-13)",
+    "tier": "node",
+    "capability": "verify-gate / content-fetch",
+    "layer": "boundary",
+    "repo": "edge"
+  },
+  {
+    "id": "knob.edge.trust_threshold",
+    "name": "`trust_threshold` + `trust_short_circuit_enabled` + `trust_recursion_depth` + `set_trust_threshold/install_trust_resolver`",
+    "kind": "knob",
+    "controls": "THE inbound trust gate: drop below floor + moderation signal; delegates_to hops; pluggable resolver",
+    "tier": "multiple",
+    "capability": "moderation/trust-gate / EigenTrust",
+    "layer": "boundary",
+    "repo": "edge"
+  },
+  {
+    "id": "knob.edge.cohort_scope_enforcement",
+    "name": "`cohort_scope_enforcement` (Strict/WarnOnly/Off) + `probe_pattern_observer_*` + `ProbePatternConfig.{window,entropy,zscore,KS-pvalue,centroids}` + `blackhole_prune_interval`",
+    "kind": "knob",
+    "controls": "Wire scope invariant; counter-RII probe detector (entropy/z-score/KS/per-cohort centroids); deny-list prune",
+    "tier": "multiple",
+    "capability": "moderation/scope-gate/detector/blackhole",
+    "layer": "boundary",
+    "repo": "edge"
+  },
+  {
+    "id": "knob.edge.agent_mode",
+    "name": "`agent_mode` (Client/Proxy/Server) + `listener_bound` + `outbound_queue_max` + `disk_budget_bytes` + `dispatcher`/`DispatcherConfig.{worker_id,batch_size,claim_duration,poll,backoff}`",
+    "kind": "knob",
+    "controls": "Posture drives listener/queue/disk/trust-depth; durable outbound queue tunables",
+    "tier": "node",
+    "capability": "delivery/durable / transport / media/storage",
+    "layer": "fabric",
+    "repo": "edge"
+  },
+  {
+    "id": "knob.edge.event_channel_capacity",
+    "name": "`event_channel_capacity`(1024) + `reachability_window`(300s) + `display_name_path` + `subscribe_*`(announces/link/interface/path/feed)",
+    "kind": "knob",
+    "controls": "EventBus cap, per-peer reachability tracker, operator display name, observability streams",
+    "tier": "multiple",
+    "capability": "observability / peer-reachability / social-feed",
+    "layer": "fabric",
+    "repo": "edge"
+  },
+  {
+    "id": "knob.edge.holds_bytes_ttl_seconds",
+    "name": "`holds_bytes_ttl_seconds`(86400) + `holder_downweight_window`(3600)/`miss_threshold`(3) + `l1_cdn_edge_enabled`+`_external_uri_base` + `fetch_content`/`fetch_blob_swarm`",
+    "kind": "knob",
+    "controls": "Holder attestation TTL, ContentMiss downweight, L1-as-CDN prefetch+re-emit, content-addressed fetch",
+    "tier": "node",
+    "capability": "content-fetch / media/CDN/blob-swarm",
+    "layer": "fabric",
+    "repo": "edge"
+  },
+  {
+    "id": "knob.edge.delegation_authority_gate_enabled",
+    "name": "`delegation_authority_gate_enabled` + `delegation_graph_max_depth`(4, clamp 16)",
+    "kind": "knob",
+    "controls": "Federation delegates_to authority gate; BFS depth",
+    "tier": "federation",
+    "capability": "quorum/trust-gate",
+    "layer": "boundary",
+    "repo": "edge"
+  },
+  {
+    "id": "knob.edge.reticulumtransportconfig",
+    "name": "`ReticulumTransportConfig.{listen_addr,bootstrap_peers,identity_path,announce_interval,local_key_id/epoch,interfaces,enable_transport}` + `AutoInterfaceConfig`/`Tcp*`/`Udp`/`Local`/`I2p`",
+    "kind": "knob",
+    "controls": "Reticulum mesh: listen/dial/identity/announce/multi-interface set/NAT-relay; LAN auto-discovery; transport diversity",
+    "tier": "node",
+    "capability": "transport/reticulum / transport-diversity / NAT-relay",
+    "layer": "fabric",
+    "repo": "edge"
+  },
+  {
+    "id": "knob.edge.rnodeinterfaceconfig",
+    "name": "`RNodeInterfaceConfig.{device_path,freq_mhz,bw_khz,sf,cr,txpower_dbm,baud_rate,airtime_limit_*}` + RNode `flow_control/buffer_size`",
+    "kind": "knob",
+    "controls": "LoRa PHY: device, freq (868EU/915US), BW, SF 7-12, CR 4/5-4/8, TX power, baud, duty-cycle caps, KISS flow control",
+    "tier": "node",
+    "capability": "radio/LoRa",
+    "layer": "fabric",
+    "repo": "edge"
+  },
+  {
+    "id": "knob.edge.httptransportconfig",
+    "name": "`HttpTransportConfig` + `HttpServerConfig.{tls_cert/key,mtls_required,mtls_ca_pool,dev_self_signed,bearer_auth}` + `HttpClientConfig`",
+    "kind": "knob",
+    "controls": "HTTP/HTTPS transport bind; mTLS (CN=key_id pubkey-pin) + CA pool; Ed25519-JWT bearer; client trust anchor",
+    "tier": "node",
+    "capability": "transport/http(s)(-auth)",
+    "layer": "fabric",
+    "repo": "edge"
+  },
+  {
+    "id": "knob.edge.storeandforwardconfig",
+    "name": "`StoreAndForwardConfig.{max_queued_per_destination(256),max_total_bytes(64MiB),ttl_seconds(7d)}` + `drain(limit)`",
+    "kind": "knob",
+    "controls": "S&F per-dest queue, total budget, entry TTL; pull-mode batch for offline mobile",
+    "tier": "node",
+    "capability": "delivery/store-and-forward/pull",
+    "layer": "fabric",
+    "repo": "edge"
+  },
+  {
+    "id": "knob.edge.avdispatcherconfig",
+    "name": "`AvDispatcherConfig.{local_role,epoch_dek,initial_subscribers,inbound_links}` + `ReceiverLayerPolicy.{spatial,temporal,quality}` + `codec_id` + Epoch rekey cadence (~60s/Nth) + `Av1EncoderConfig` + `OpusEncoderConfig` + `FountainConfig`",
+    "kind": "knob",
+    "controls": "AV role→crypto tier, epoch DEK + fanout roster, per-subscriber SVC layer cap, codec discriminator, rekey, AV1/Opus/RaptorQ params",
+    "tier": "multiple",
+    "capability": "streaming/AV/video/voice/FEC",
+    "layer": "fabric",
+    "repo": "edge"
+  },
+  {
+    "id": "knob.edge.alm_min_reachability_rat",
+    "name": "ALM `{MIN_REACHABILITY_RATIO,MAX_BACKUPS}`/heal `{dedup_ring,silence_heal_ms,heartbeat,reparent_backoff}`/capacity `{stale,window,has_room_for}` + `MLS CIPHERSUITE` commit_add/remove + `RelaySubscriber transit_key`",
+    "kind": "knob",
+    "controls": "App-layer-multicast join/self-heal/capacity admission; group-key MLS rekey on roster change; SFU per-hop transit key (relay never sees plaintext)",
+    "tier": "multiple",
+    "capability": "streaming/AV-fanout/heal/relay/rekey",
+    "layer": "fabric",
+    "repo": "edge"
+  },
+  {
+    "id": "knob.edge.swarmconfig",
+    "name": "`SwarmConfig.{max_in_flight_per_peer(4),ewma_alpha(0.3),endgame_threshold(2),dishonest_strike_limit(1),per_request_timeout(30s)}` + `SwarmRuntimeConfig.{publish/observe_cadence,target_holders,min_viable,eviction_grace_pct(15%),observed_claim_ttl,policy}`",
+    "kind": "knob",
+    "controls": "BitTorrent-style blob swarm + FountainHoldingClaim holding-swarm; wire-deterministic eviction margin",
+    "tier": "multiple",
+    "capability": "media/blob-swarm/holding-swarm",
+    "layer": "fabric",
+    "repo": "edge"
+  },
+  {
+    "id": "knob.edge.scopeconfig",
+    "name": "`ScopeConfig.{lambda,target_real_per_window,window,scope_key}` + `SchedulerConfig.scopes`",
+    "kind": "knob",
+    "controls": "Per-scope Poisson cover-traffic rate, budget meter, AEAD scope key (mixnet)",
+    "tier": "community",
+    "capability": "mixnet/cover-traffic",
+    "layer": "fabric",
+    "repo": "edge"
+  },
+  {
+    "id": "knob.edge.replicationruntimeconfig",
+    "name": "`ReplicationRuntimeConfig`/`SchedulerConfig.{cadence(30s),round_timeout(10s)}` + `BridgeConfig.{cache_capacity(4096),page_limit}` + `OperationalProviders.{key_directory,root_stewards,steward_roster}` + `CohortProvider` + `EnvelopeKind`(10) + `start_replication`",
+    "kind": "knob",
+    "controls": "Anti-entropy replication; v2 operational-admission (fail-closed when None); peer-set callback; 10 wire kinds; hot peer add/remove",
+    "tier": "federation",
+    "capability": "delivery/federation / quorum",
+    "layer": "fabric",
+    "repo": "edge"
+  },
+  {
+    "id": "knob.edge.archivemode",
+    "name": "`ArchiveMode` (RotateForward/Retain) + `DecayTier` (Full..EnvelopeOnly/HardDelete) + `ConsentState` (Active/Revoked/Unknown) + `HoldingClaimVerification`",
+    "kind": "knob",
+    "controls": "Forward-secrecy past-key deletion; consent-decay eviction ladder (HardDelete=GDPR Art.17); Unknown=fail-secure evict; possession-weighted rarity credit",
+    "tier": "multiple",
+    "capability": "forward-secrecy / consent/RTBF / media",
+    "layer": "fabric",
+    "repo": "edge"
+  },
+  {
+    "id": "knob.edge.cohortscope",
+    "name": "`CohortScope` (Public/SelfOnly/Family/Community) + `ScopePrivacyAnnouncePolicy/AnnounceSuppressionRegistry`",
+    "kind": "knob",
+    "controls": "Envelope scope discriminator → announce suppression + scope-key sealing",
+    "tier": "multiple",
+    "capability": "scope-privacy",
+    "layer": "boundary",
+    "repo": "edge"
+  },
+  {
+    "id": "knob.edge.edgepeertrust",
+    "name": "`EdgePeerTrust` (Untrusted/Trusted/Restricted/Blocked) + `EdgePeerPolicy.{subscription_filter,max_queue_depth,ack_timeout,priority_class}` + `peer_add/remove/set_alias/notes` + `routing_blackhole_*` + `routing_path_*` + `prime_peer` + `peer_sas`/`peer_sas_digits` + `peer_reachability`",
+    "kind": "knob",
+    "controls": "Operator peer directory CRUD, per-peer trust/policy, deny-list CRUD, path priming/drop, out-of-band priming, SAS words(5)/digits(6) manual verify",
+    "tier": "multiple",
+    "capability": "moderation/trust / delivery / peer-mgmt / reachability/SAS",
+    "layer": "boundary",
+    "repo": "edge"
+  },
+  {
+    "id": "knob.edge.init_edge_runtime",
+    "name": "`init_edge_runtime kwargs` (master config surface) + `Delivery::Mandatory.bypass_subscription` + `ACCORD_THRESHOLD_M_OF_N(2,3)`+`AccordSignature` + `AuthorityClass` + `RefusalReason`",
+    "kind": "knob",
+    "controls": "One operator-config entry point; constitutional Mandatory reach; M-of-N accord-holder sig gate; typed door-refusals",
+    "tier": "multiple",
+    "capability": "config-surface / delivery/mandatory / voting/quorum",
+    "layer": "fabric",
+    "repo": "edge"
+  },
+  {
+    "id": "knob.edge.fastpathlegalbasis",
+    "name": "`FastPathLegalBasis` (TVEC/GIFCT-CIP/NCMEC) + `ContributionSubjectKind` + `ExternalRefWithAcl.{uri,sha256,acl_signature,acl_expiry}` + `LocationProof res≤7`",
+    "kind": "knob",
+    "controls": "Takedown fast-path bypasses rate-limit; takedown vs key-grant dispatch; publisher-signed external ACL (edge doesn't fetch); H3 over-share floor",
+    "tier": "multiple",
+    "capability": "child-safety / media/blobs / privacy-floor",
+    "layer": "boundary",
+    "repo": "edge"
+  },
+  {
+    "id": "knob.edge.trustgraph",
+    "name": "`TrustGraph.{roots,grants,max_chain_depth}`+`MAX_WITNESS_CHAIN_LEN`(5) + `TrustGrant.weight`(0..255)+`deterministic_topology`(MAX_DEPTH 4) + `WholenessWitness/AntiRollbackState/EquivocationProof` + `AggregationMetaV1+member_commitment`",
+    "kind": "knob",
+    "controls": "Recursive trust bootstrap (budget halving root/2), integer wire-deterministic scoring, signed Merkle reconcile/anti-rollback/equivocation, quorum aggregation",
+    "tier": "federation",
+    "capability": "EigenTrust / voting/ratification / quorum",
+    "layer": "boundary",
+    "repo": "edge"
+  },
+  {
+    "id": "knob.edge.ciris_edge_panic_log",
+    "name": "`CIRIS_EDGE_PANIC_LOG`/`RUN_ASYNC_STALL_WARN_MS` + Cargo features (transport-reticulum-*, https)",
+    "kind": "knob",
+    "controls": "Panic log path, async-stall warn; build-time transport/interface selection",
+    "tier": "node",
+    "capability": "observability / transport-diversity",
+    "layer": "fabric",
+    "repo": "edge"
+  },
+  {
+    "id": "knob.nodecore.minimum_quorum",
+    "name": "`minimum_quorum` (→BelowQuorum) + `Verdict` (approve/reject/abstain) + `VoteWeight`=credits×expertise×tier + `approval_ratio` (abstain excl.) + cohort `meets_coverage_threshold` + `expected_occurrence_count` + `PromotionAttestation threshold-crossing`",
+    "kind": "knob",
+    "controls": "Fail-secure vote gate; weighted buckets; promotion signal; anti-cherry-pick cohort coverage; caller flips is_canonical",
+    "tier": "multiple",
+    "capability": "voting/ratification",
+    "layer": "fabric",
+    "repo": "nodecore"
+  },
+  {
+    "id": "knob.nodecore.min_responders",
+    "name": "`min_responders`(5)/`max_responders`(9) + `DiversityPolicy` (Jurisdictional/Org/None) + `ResponseFormat` (Binary/Categorical/Freeform) + deferral deadline + domain classifier closure",
+    "kind": "knob",
+    "controls": "Deferral routing: bounded responder set, greedy diversity sweep, verdict shape, late-exclusion, domain map",
+    "tier": "community",
+    "capability": "deferral routing",
+    "layer": "fabric",
+    "repo": "nodecore"
+  },
+  {
+    "id": "knob.nodecore.max_delegation_depth",
+    "name": "trust recursion depth (0/1/2/3) + `MAX_DELEGATION_DEPTH`(16) + `effective_trust_set_multiplier` (1×/4×/20×/100×) + withdraws/recants exclusion + `TrustPurpose` + grant scope/`expires_at` + wildcard `*` + `TrustEdge` (Direct/Transitive/Untrusted) + `registry_vouch` + `trust_type` + `weighted_aggregate` + local trust threshold",
+    "kind": "knob",
+    "controls": "EigenTrust-like: depth-capped delegates_to walk, hop-expansion curve, purpose-scoped/time-bounded grants, transitive registry vouch, federation collective scoring (no oracle), intake cutoff",
+    "tier": "multiple",
+    "capability": "EigenTrust-like trust",
+    "layer": "fabric",
+    "repo": "nodecore"
+  },
+  {
+    "id": "knob.nodecore.disk_budget_server",
+    "name": "`disk_budget_server`/`capacity_available` + L0 256GB/L1 1TB + eviction=popularity×freshness + decay curve + holds_bytes 24h TTL + utilization watermark(0.92) + 2-day retention floor + `evict_actor` + fleet presets (PhoneFirst/Realistic/Homelab) + cohort_scope locality dividend (self/family ⇒ no holds_bytes)",
+    "kind": "knob",
+    "controls": "Intake/eviction scaling model: capacity gate, popularity×freshness drop, anti-thrash floor, per-actor bulk evict, device-class presets, structural locality privacy",
+    "tier": "multiple",
+    "capability": "intake/eviction / privacy/locality",
+    "layer": "fabric",
+    "repo": "nodecore"
+  },
+  {
+    "id": "knob.nodecore.allegation",
+    "name": "`Allegation`/`TargetKind`/`accuser_stake` + four-layer moderation + `report_content/report_actor` + `ItemActions` + cohort-scoped reporting routes + `build_moderator_delegation/revocation_payload` + RATCHET advisory flags",
+    "kind": "knob",
+    "controls": "Moderation: protocol-violation categories, escalation ladder, first-class filing, per-item affordances, scope-matched routes, opt-in moderation delegation, external Sybil flags",
+    "tier": "multiple",
+    "capability": "moderation",
+    "layer": "fabric",
+    "repo": "nodecore"
+  },
+  {
+    "id": "knob.nodecore.slashingoutcome",
+    "name": "`SlashingOutcome` (ProvenRogue/NotProven) + `quorum_ids`+`quorum_signatures` + `credits_reduced/expertise_reduced` (≥0) + `AccuserStakeDisposition` + miscalibration-NOT-slashable",
+    "kind": "knob",
+    "controls": "Quorum adjudication: M WA sigs, floored penalty, accuser stake fate, good-faith decoupling (P11 not P9)",
+    "tier": "federation",
+    "capability": "quorum / moderation",
+    "layer": "fabric",
+    "repo": "nodecore"
+  },
+  {
+    "id": "knob.nodecore.grounds",
+    "name": "Reconsideration `Grounds`/`requester_stake`/recursion bound (3→harassment)/time bound (180d)/fresh-quorum recusal/`ReconsiderationAttestation` (REVERSED/PARTIAL/UPHELD)",
+    "kind": "knob",
+    "controls": "Universal appeal: reverse slashing/verdict/takedown; relitigation trip-wire; restore credits on reversal",
+    "tier": "federation",
+    "capability": "reconsideration (reverse adjudication)",
+    "layer": "fabric",
+    "repo": "nodecore"
+  },
+  {
+    "id": "knob.nodecore.witness_diversity",
+    "name": "Witness-diversity N(3) + diversity bar (jurisdiction/org/stack/cell) + expertise jump-threshold + locality-scaled-quorum (N∝cohort_scope)",
+    "kind": "knob",
+    "controls": "High-stakes witness floor; single-fault-domain prevention; quorum size matches decision scale",
+    "tier": "multiple",
+    "capability": "quorum",
+    "layer": "fabric",
+    "repo": "nodecore"
+  },
+  {
+    "id": "knob.nodecore.announcementpriority",
+    "name": "`AnnouncementPriority` + `AuthorityClass` (BootstrapSeed/RootWa/WaQuorum/HumanityAccord) + `AccordScope` (AgentOwner/WaCell/DeploymentPartner/FederationWide) + `AccordCommandType` (SHUTDOWN_NOW/FREEZE/SAFE_MODE/NOTIFY_USERS/DRILL) + HumanityAccord 2-of-3 + `humanity_accord_key_set/threshold` (non-modifiable) + `bootstrap_key_set/threshold` + `EmergencyShutdown severity` + bootstrap window (90d) + `WaQuorum N` + `expires_at` + `NotifyUsersPayload` + DRILL monthly + drill thresholds (95%/99%) + `on_federation_announcement` (SIGKILL on suppress) + `Delivery Mandatory{bypass_subscription}` + `delivery_attestation`",
+    "kind": "knob",
+    "controls": "REVERSE quorum/halt: humans-only hardware-rooted hierarchy that halts the federation but the federation can't halt; mandatory perception; per-peer reach audit",
+    "tier": "multiple",
+    "capability": "reverse quorum / halt",
+    "layer": "boundary",
+    "repo": "nodecore"
+  },
+  {
+    "id": "knob.nodecore.age_assurance",
+    "name": "age_assurance tiers (self/provider/govt) + 'I am not a child' gate + adult-publisher floor + CSAM perceptual-hash DBs (PhotoDNA/PDQ/Arachnid) + children's-keys-lack-adult-attestation + PG-13 restrictive floor + legal mappings (COPPA/OSA/SREN/AVMSD/KOSA/GDPR-Art8)",
+    "kind": "knob",
+    "controls": "Child safety: structural trust-graph block, restrictive community default, federation-handoff CSAM match, ratified legal→CEG mappings",
+    "tier": "multiple",
+    "capability": "child safety",
+    "layer": "boundary",
+    "repo": "nodecore"
+  },
+  {
+    "id": "knob.nodecore.blobbody",
+    "name": "`BlobBody Inline(16MiB)/External` + `MAX_BODY_BYTES` + media sub_kinds (image/audio/video/film/model_3d + chat/blog/event/...) + `content_rating` multi-scheme (MPAA/BBFC/PEGI/ESRB/IFCO/CSM/cw) + `content_class` family + `cw_class` + `is_ai_generated` (mandatory ≥community) + alt_text/transcript/captions + `external_fetch_fraction` + geographic admission + `key_grant`/`wrap_algorithm`/group DEK rotation (MLS) + takedown_notice/`legal_basis`/owner-vs-third-party/clearinghouses/hold windows",
+    "kind": "knob",
+    "controls": "Media+takedown: inline/CDN carriage, rating/class/CW taxonomies, AI-disclosure refusal, accessibility, jurisdiction gate, DEK delivery, withdraws-against-holds_bytes per-basis discipline",
+    "tier": "multiple",
+    "capability": "media (blobs) / takedown",
+    "layer": "fabric",
+    "repo": "nodecore"
+  },
+  {
+    "id": "knob.nodecore.live_stream",
+    "name": "`live_stream` (latency_class/chunks/age_gate/takedown) + `compose_local/community/global_feed` + cohort_scope feed bucketing + quality threshold + freshness decay knob + content_rating/class consumer filter + CW+publisher subscriptions + user-algorithm presets (PG-13/adult/news/academic/horror-CW/art-cinema) + `compose_*` read-surfaces",
+    "kind": "knob",
+    "controls": "Social feed/streaming: user-controlled algorithm = tuple(depth,cohort,quality,freshness,rating,subscriptions); exportable signed preset",
+    "tier": "multiple",
+    "capability": "social feed / video / live streaming",
+    "layer": "fabric",
+    "repo": "nodecore"
+  },
+  {
+    "id": "knob.nodecore.judge_prompt_sha256",
+    "name": "judge model (claude-opus-4-7) + api_url/key_file + max_tokens(200) + no-temperature + `judge_prompt_sha256` + override flags + 4 calibration Contribution kinds + reversal-rate(>25%) drift + multi-judge ensemble(N≥3) + safety-floor/contextual/improvement blocks + secondary fallback",
+    "kind": "knob",
+    "controls": "Foundation-model judge contract: reproducible interpreter_judgment verdicts, vote-calibrated, drift-monitored",
+    "tier": "multiple",
+    "capability": "foundation-model judge",
+    "layer": "boundary",
+    "repo": "nodecore"
+  },
+  {
+    "id": "knob.nodecore.script_detection",
+    "name": "criterion kinds (term_present/absent/regex/script_detection/interpreter_judgment) + `script_detection min_ratio` + severity/verdict + operationalization gate + rules-crowdsourced/verdicts-machined + rubric status (canonical/candidate) + safety-battery freshness(7d) + `WIPE_DATA_ON_START` + federation-chain ingest (canonical-only) + Sigstore bundle",
+    "kind": "knob",
+    "controls": "Machine-applicable safety criteria: deterministic+semantic evaluators, unmachineable rejected, canonical-only chain ingest, two-layer provenance",
+    "tier": "multiple",
+    "capability": "machine safety criteria",
+    "layer": "fabric",
+    "repo": "nodecore"
+  },
+  {
+    "id": "knob.nodecore.seed_holder_voting_alignment",
+    "name": "WA promotion thresholds+decay + Active-tier N + seed Expertise (1-5, decaying) + seed decay rate + onboarding n_min (≥3) + $1 bond + `seed_holder_voting_alignment` + truth-grounding multiplier + `ExpertiseAttestation` + `gratitude_signal`",
+    "kind": "knob",
+    "controls": "Expertise consensus/anti-Sybil: continuously-tuned policy, demotion applies to ROOT, seed fades as cell matures, capture monitor",
+    "tier": "multiple",
+    "capability": "expertise consensus / anti-Sybil",
+    "layer": "fabric",
+    "repo": "nodecore"
+  },
+  {
+    "id": "knob.nodecore.servicekind",
+    "name": "`ServiceKind`/`ServiceEndpoint`/`service_usage_summary`/`service_deprecation` + `subscription_request` + notification/notification_response/unsolicited_guidance/assistance_request/commitment/cancellation/improvement + Goal/Approach/Method/Progress-Measure DAG + `substrate_rung` + `validity_window`+Goodhart + sub-federation branching + `DelegationPolicy/Scope/Rule`+predicate vocab+revocation + `/v1/federation/*`+`/v1/accord/*` + federation-tab + trust-grants UI + accord-page HW-key gate + two-phase admission UI + community/location/consent/family/identity-occurrence/bilateral builders + AnonymousContribution/node_blinded_key/AEAD/onion-3-hop/LRU-only-eviction + `install_cohabitation`/`node_mode_serving` + `DURABLE_CONSENSUS`/`PERSIST_READ_LIMIT`",
+    "kind": "knob",
+    "controls": "Service marketplace, messaging envelopes, decision hierarchy (P12-15), agent-delegation mandates, portal/client surface, identity/consent/partnership ceremonies, v2 anonymous tier, substrate integration",
+    "tier": "multiple",
+    "capability": "and-more (service/messaging/decision/delegation/identity/anonymous)",
+    "layer": "fabric",
+    "repo": "nodecore"
+  },
+  {
+    "id": "knob.registry.environment",
+    "name": "`ENVIRONMENT` + `GRPC/HTTP_PORT` + `DB_*` (host/ssl/pool/password-guard) + `ED25519/MLDSA_KEY_PATH` + `JWT_SECRET/ISSUER` + `MTLS_ENABLED`+`TLS_*` + `KEY_STORAGE_MODE` (memory/VAULT/CLOUDKMS/AWSKMS/AZUREKV/HSM/YUBIHSM/CLOUDHSM)",
+    "kind": "knob",
+    "controls": "Deploy posture (prod prod-validation), listeners, Postgres, steward hybrid keys, admin-JWT, mTLS, signing-key store",
+    "tier": "node",
+    "capability": "deployment-config / federation-identity / auth / key-management",
+    "layer": "fabric",
+    "repo": "registry"
+  },
+  {
+    "id": "knob.registry.federation_dual_write_enabled",
+    "name": "`FEDERATION_DUAL_WRITE_ENABLED` + `_PERSIST_ENDPOINT/REQUIRED/DSN` + `_CACHE_TTL_SECONDS`(300) + `_MAX_STALE_CACHE_AGE`(3600)",
+    "kind": "knob",
+    "controls": "Dual-write to persist substrate + read-through cache; fail-closed/open; stale ceiling bounds revoked-key replay",
+    "tier": "federation",
+    "capability": "federation-identity / revocations",
+    "layer": "fabric",
+    "repo": "registry"
+  },
+  {
+    "id": "knob.registry.orgtype",
+    "name": "Rate-limit tier (Bypass/Public/Verify) + Rate limiting by `OrgType`",
+    "kind": "knob",
+    "controls": "Per-IP throttling; INTERNAL none/PARTNER std/LICENSEE own/COMMUNITY stricter",
+    "tier": "multiple",
+    "capability": "rate-limiting",
+    "layer": "fabric",
+    "repo": "registry"
+  },
+  {
+    "id": "knob.registry.systemrole",
+    "name": "`SystemRole` (SYSTEM_ADMIN/AUDITOR/WISE_AUTHORITY) + `@ciris.ai` constraint + WA cap (9, 3yr terms) + `OrgRole`+permission matrix + `OrgType` + `parent_org_id` constraints + multi-org membership + Community→Partner upgrade + hierarchy role config (term-bound DAG, depth-cap)",
+    "kind": "knob",
+    "controls": "Role hierarchy + org records; LICENSEE⊂PARTNER; one-user-many-OrgRole; SYSTEM_ADMIN mints PartnerRecord",
+    "tier": "multiple",
+    "capability": "role-hierarchy / partner-org-records",
+    "layer": "fabric",
+    "repo": "registry"
+  },
+  {
+    "id": "knob.registry.licensetype",
+    "name": "`LicenseType` (COMMUNITY..FULL) + `PartnerStatus` + effective-capability (agent∩granted−denied) + effective-autonomy=min(agent,partner) + `AutonomyTier` (A0-A4) + capability namespace (domain:/modality:/autonomy:) + License expiration bands (7/30/90d) + `partner_record` M-of-N steward quorum",
+    "kind": "knob",
+    "controls": "Licenses/tiers: capability grant formula, autonomy downgrade, 3-part namespace, founder-quorum federation grant",
+    "tier": "federation",
+    "capability": "licenses-tiers / quorum",
+    "layer": "fabric",
+    "repo": "registry"
+  },
+  {
+    "id": "knob.registry.revocationtype",
+    "name": "`RevocationType/Reason/Severity` + `MassRevoke` selection + dry-run + withdraws primitive",
+    "kind": "knob",
+    "controls": "Revocations: forward-only, multi-criteria mass-revoke with preview+incident-id confirm",
+    "tier": "federation",
+    "capability": "revocations",
+    "layer": "fabric",
+    "repo": "registry"
+  },
+  {
+    "id": "knob.registry.emergencyshutdown",
+    "name": "`EmergencyShutdown IncidentSeverity` (LOW..CONSTITUTIONAL) + duration (1h..manual) + allowed_operations whitelist + emergency_status fields + CONSTITUTIONAL 2-of-3 accord + accord:invoke kinds + accord:lifecycle:active resumption + consumer-UI distinction + `HUMANITY_ACCORD triple` (Moore/Kudzin/Bradley) + accord quorum:2/3 entrenched + accord authority scope-isolation",
+    "kind": "knob",
+    "controls": "Emergency halt → constitutional kill-switch (2-of-3 accord bypasses all federation authority, non-configurable, scope-isolated keys)",
+    "tier": "multiple",
+    "capability": "emergency-halt / reverse-quorum / steward-attestations",
+    "layer": "fabric",
+    "repo": "registry"
+  },
+  {
+    "id": "knob.registry.founder_quorum",
+    "name": "`founder-quorum` (ciris-canonical 2-of-3 over lens+registry-us+eu) + default-trust re-rootable + live-quorum proof-of-life+vote + bias gradient (fire≤roster≤standing) + steward floor key-independent (H6) + restore-to-known-good (H7) + owner-binding gate (RC7)",
+    "kind": "knob",
+    "controls": "Quorum/reverse-quorum trust root: re-rootable canonical trust, fire-floor-of-1 live set, key-independent backstop, restore-only carve-out, owner-bound admission",
+    "where": "RC7",
+    "tier": "multiple",
+    "capability": "quorum / reverse-quorum / eigentrust-policy",
+    "layer": "fabric",
+    "repo": "registry"
+  },
+  {
+    "id": "knob.registry.identity_type",
+    "name": "`identity_type as a set` + `hardware_class` taxonomy + `trusted_primitive_keys` + `signature_mode HYBRID_REQUIRED` + `KeyStatus/CustodyModel/RotationMode/EscrowType/SigningKeyStatus` + rotation grace (24-168h) + key recovery + steward-key rotation policy + app-attest/play-integrity + offline verification package",
+    "kind": "knob",
+    "controls": "Federation identity + key management: role cohabitation set, hybrid mandatory, custody/escrow/rotation lifecycle, device attestation, offline verify",
+    "tier": "multiple",
+    "capability": "federation-identity / key-management / steward-attestations",
+    "layer": "fabric",
+    "repo": "registry"
+  },
+  {
+    "id": "knob.registry.policy",
+    "name": "`Policy A-I` library (direct/one-hop/weighted-graph EigenTrust/lexical-priority/locality-quorum/agent_files/trust-fresh/tiered-scope/attestation-ladder) + `cohort_scope` + Frickerian discipline + sub-quorum fallback + infrastructure DEK opt-out",
+    "kind": "knob",
+    "controls": "EigenTrust-policy library: Policy C = explicit global-from-local; consumer MUST impl Policy A; locality-scaled quorum with explicit fallback; Commons-tier plaintext",
+    "tier": "multiple",
+    "capability": "eigentrust-policy / quorum / social-feed",
+    "layer": "boundary",
+    "repo": "registry"
+  },
+  {
+    "id": "knob.registry.age_self_declared",
+    "name": "Child-safety Q1–Q7 (developmental bands, restrictive-floor one-way tuning, under-18 baseline, non-derogable floor, jurisdiction ratchet, assurance rungs, help/report channel, non-overridable best-interest, standing-vs-per-act, co-stewardship M-of-N) + age_assurance ladder + witness-reservation + mDL preference + `age_self_declared{band}` + `content_class:adult` gate + misdeclaration adjudication (never slashing) + minor-stewardship delegates_to + capacity_assurance ladder + ward's-champion",
+    "kind": "knob",
+    "controls": "Ratified child-safety as non-derogable restrictive FLOOR riding existing primitives; unassured=child; one-way protective ratchet; zero-leak mDL ranked above ID-scan",
+    "tier": "multiple",
+    "capability": "child-safety / reverse-quorum / adult-incapacity-stewardship",
+    "layer": "fabric",
+    "repo": "registry"
+  },
+  {
+    "id": "knob.registry.delegated_scope",
+    "name": "moderate/takedown/review `delegated_scope` + sub_delegation/deputization + delegation depth cap(5) + enforced-admission gate (RC24/25/27) + named-moderator existence invariant + merit auto-promotion + `moderation_track_record` + open labeling + reverse-quorum 48h window + protective default-remove + infohazard consent interstitial + outcome ladder + optional moderator quorum + no-moderator recovery + single-point warning + takedown_notice LegalBasis (10) + fast-path coordination + perceptual-hash matcher operator policy + feed registration + `watchlist:{id}` per-group + CSAM-disable non-silent + separation-of-powers + audit emissions",
+    "kind": "knob",
+    "controls": "Moderation as delegable duty; reverse-quorum (presence-is-authority, default-remove); per-group opt-in watchlist (never global, fabric/operator/authority split)",
+    "where": "RC24/25/27",
+    "tier": "multiple",
+    "capability": "moderation / reverse-quorum / watchlist-detection",
+    "layer": "fabric",
+    "repo": "registry"
+  },
+  {
+    "id": "knob.registry.consensus_protocol",
+    "name": "§11.2 amendment process + 1-of-6 sign-off VETO + meta-amendment entrenchment + open-vocabulary collision rule + `consensus_protocol` vocabulary + `_entrenched` flag + quorum:M/N semantics (m absolute) + witness-set verifiability invariant",
+    "kind": "knob",
+    "controls": "Voting/ratification: P5→N=3 witness→WA quorum→reconsideration→1-of-6 veto; entrenchment needs MAJOR+2-of-3; first-registered-wins",
+    "where": "§11.2",
+    "tier": "multiple",
+    "capability": "voting-ratification / quorum",
+    "layer": "fabric",
+    "repo": "registry"
+  },
+  {
+    "id": "knob.registry.holds_bytes",
+    "name": "external_content sub_kinds + `holds_bytes:sha256` emission + key_grant wrap_algorithm (v1/v2 mandatory) + scope/rotation_chain + content_rating/class/cw_class + `delivery_mode:{pull/push}` + `listed:public` + `history_on_join` + streaming epoch-DEK cascade + consent:stream bundles + topical_relation + event_listing lifecycle",
+    "kind": "knob",
+    "controls": "Media + social-feed + live-streaming: observer-share(N=1) and multicast(N>1) as one primitive; per-(stream,epoch) PQC key cascade; delivery_receipt",
+    "tier": "multiple",
+    "capability": "media / social-feed / live-streaming / consent-privacy",
+    "layer": "fabric",
+    "repo": "registry"
+  },
+  {
+    "id": "knob.registry.consent",
+    "name": "lifecycle ceremonies (identity/family/community) + location_proof (H3 ≤7) + self-occurrence single-vouch + forward-secrecy on departure + multi-family family_id + `consent:*` family (8 prefixes) + `subject_key_ids` + consent:scope + deletion_sla watcher + vertical compliance mapping + structural-invisibility (self/family)",
+    "kind": "knob",
+    "controls": "Lifecycle/consent/privacy: ceremony witness-sets re-verified at boundary; subject-side consent authority; deletion-SLA→hard_case; rough-only geo wire-enforced",
+    "tier": "multiple",
+    "capability": "lifecycle-ceremonies / consent-privacy / geographic-privacy",
+    "layer": "fabric",
+    "repo": "registry"
+  },
+  {
+    "id": "knob.registry.agenttype",
+    "name": "Audit log + export (JSON/CSV/JSONL/SPLUNK) + Compliance reports (SOC2/HIPAA/GDPR/ISO27001/PCI) + Webhooks + transparency log (RFC6962) + build attestation SLSA + `AgentType/AgentStatus` + `Retryable hint`",
+    "kind": "knob",
+    "controls": "Audit/compliance + supply-chain provenance + consumer retry guidance",
+    "tier": "multiple",
+    "capability": "audit-compliance / federation-identity / deployment-config",
+    "layer": "boundary",
+    "repo": "registry"
+  },
+  {
+    "id": "knob.server.transport",
+    "name": "`transport.{node,store_and_forward}` + `scorer.{cadence_secs(3600),window(500),sample_gate(20),target_n_eff(8.0)}` + `replication.reconcile_secs(30)` + `mode` + `net.{listen_addr,bootstrap_peers}` + `node.alias` + `auth.{admin_key_ids,oauth_callback_base_url}`",
+    "kind": "knob",
+    "controls": "Boot-structural transport posture + HOT scorer/replication cadences (reconciled live)",
+    "tier": "node",
+    "capability": "transport / EigenTrust-analog reputation / peers / sessions",
+    "layer": "fabric",
+    "repo": "server"
+  },
+  {
+    "id": "knob.server.net",
+    "name": "`net.radio.{enabled,serial_port,frequency_hz(915M),bandwidth_hz(125k),spreading_factor(7),coding_rate(5),tx_power_dbm(17)}` + `RadioParams` + `RNODE_HW_MTU(508)`/`RNODE_BAUD(115200)`",
+    "kind": "knob",
+    "controls": "LoRa/RNode PHY pushed via KISS (desktop-only, cfg-gated off mobile)",
+    "tier": "node",
+    "capability": "transport+radio",
+    "layer": "fabric",
+    "repo": "server"
+  },
+  {
+    "id": "knob.server.home",
+    "name": "`--home`/`DEFAULT_CIRIS_HOME` (the ONE input, zero-env) + `--key-id`/keystore_alias + `lens_store_min_gib(5)` + `Slices{lens,registry,node}` + `Capabilities{disk_free,lens_store}` + `db_path/dsn` + `seed_path/ret_identity_path/keyring_dir` + `claim_pin_file` + `read_api_addr`",
+    "kind": "knob",
+    "controls": "Convention-derived data root; structural disk gates; service slices light up at minimums; key/identity/DB paths",
+    "tier": "node",
+    "capability": "storage / identity / services/adapters",
+    "layer": "fabric",
+    "repo": "server"
+  },
+  {
+    "id": "knob.server.configscope",
+    "name": "`ConfigScope` (Local=node vs Identity=owner-self) + `ConfigValue` union + `ConfigEntry{key,value,version,updated_by,scope,previous_version}` + config write owner-gate + config reconciler cadence (30s+Notify)",
+    "kind": "knob",
+    "controls": "THE CEWPOS tier axis: config = append-only self-attestation; owner-bound+SYSTEM_ADMIN write; live ResolvedConfig republish",
+    "tier": "multiple",
+    "capability": "config-as-CEG",
+    "layer": "fabric",
+    "repo": "server"
+  },
+  {
+    "id": "knob.server.halt_latch_file",
+    "name": "`HALT_LATCH_FILE` + `HALT_EXIT_CODE(42)` + `AccordHalt{home,peers,exit_on_halt}` + `ACCORD_THRESHOLD`/2-of-3 + `kill_switch_quorum_m` + `InvocationKind` + `InvocationDedup` + `MAX_PENDING/MAX_SEEN` + `REPLICATION_TIMEOUT/CONNECT_TIMEOUT` + reactivation proof gate (2-of-3 incl ≥1 genesis) + `CUSTODY_TIER_PORTABLE_2FA` + `YUBICO_ATTESTATION_ROOT_1` + accord_holder side-door refusal",
+    "kind": "knob",
+    "controls": "Disk-latched full halt (boot-refuses while latch exists); replicate-before-halt; fail-out exit(42); FIPS-YubiKey custody floor for accord admission",
+    "tier": "constitutional",
+    "capability": "Accord kill-switch / REVERSE quorum",
+    "layer": "fabric",
+    "repo": "server"
+  },
+  {
+    "id": "knob.server.canonical_consensus_protocol",
+    "name": "`CANONICAL_CONSENSUS_PROTOCOL quorum:2/3` + `consensus_protocol_entrenched` + `Role::Founder` member + founder-quorum genesis assemble/entrench",
+    "kind": "knob",
+    "controls": "Entrenched founder-quorum trust root replaces single steward key; non-founder/wrong-role sigs don't count",
+    "tier": "multiple",
+    "capability": "quorum / voting/ratification",
+    "layer": "fabric",
+    "repo": "server"
+  },
+  {
+    "id": "knob.server.consent_dimension",
+    "name": "`CONSENT_DIMENSION` (consent:replication:v1) + `attestation_prefixes` (default [capacity:]) + `PEER_IDENTITY_TYPES` allowlist + peering admission gate (owner-bound+SYSTEM_ADMIN, requires peer SignedKeyRecord)",
+    "kind": "knob",
+    "controls": "Directed replication-consent grants; admissible peer identity types; fail-secure peering",
+    "tier": "multiple",
+    "capability": "peers+consent",
+    "layer": "fabric",
+    "repo": "server"
+  },
+  {
+    "id": "knob.server.pbkdf2_iterations",
+    "name": "`PBKDF2_ITERATIONS`(100k) + session `expires_in`(86400) + `DelegatedGrant{client_id,scope,expires_at}` + `DELEGATION_REACHABILITY_DEPTH(4)` + `GRANT_TTL/POLL/DELEGATED_TTL` + `DEFAULT_SCOPE` (owner:act-on-behalf) + Role set + scope::INFRA vs AGENCY split + `UserRole` hierarchy + Permission set(22) + consent dimension + erasure route",
+    "kind": "knob",
+    "controls": "Sessions/delegations: bearer TTL, owner→client delegated grant (durable delegates_to, re-checked per use), infra-no-agency separation, right-to-erasure",
+    "tier": "multiple",
+    "capability": "sessions/auth/delegations / separation-of-powers / peers+consent",
+    "layer": "fabric",
+    "repo": "server"
+  },
+  {
+    "id": "knob.server.duty",
+    "name": "`Duty enum` (Moderate/Takedown/Review) + §11.10 admit-iff gate + `MODERATION_DIMENSION_PREFIX`/track_record + named-moderator `existence_verdict` (Operate/AutoPromote/Quiesce) + auto_promotion ranking + `HARD_CASE_COMMUNITY_*`",
+    "kind": "knob",
+    "controls": "Moderation as delegable duty; admit IFF owner-bound duty-holder or live scoped chain; deterministic merit promotion; auditable quiesce",
+    "where": "§11.10",
+    "tier": "community",
+    "capability": "moderation / child safety / reputation",
+    "layer": "fabric",
+    "repo": "server"
+  },
+  {
+    "id": "knob.server.ageband",
+    "name": "`AgeBand` (Minor/Adult @18) + `AssuranceLevel` (SelfDeclared<Provider<Government) + `ContentClass`+`gate_content_for` + age dimensions (witness-reserved vs self) + `MISDECLARATION_ALLEGATION` (never slashing) + `WatchlistEnable`/`Class`(Csam/Other)/`Mode`(AlertOnly/Enforce) + authority gate (per-group never global) + `on_publish`/`SeamOutcome` (DeferredNoMatcher)",
+    "kind": "knob",
+    "controls": "Child safety: binary age band + assurance ladder; unknown→Minor block; CSAM→auto-takedown; opt-in per-group watchlist; matcher operator-provisioned",
+    "tier": "multiple",
+    "capability": "child safety / age verification / restrictive floor",
+    "layer": "fabric",
+    "repo": "server"
+  },
+  {
+    "id": "knob.server.window_hours",
+    "name": "reverse-quorum `WINDOW_HOURS(48)` + `ProposableAction` (keep/remove/neutral) + resolution rule + protective default-remove + minor-stewardship binding + age-graduation bands C/T/A + scope-widening co-sign gates + protective cohort default for minors + co-stewardship M-of-N (OPEN)",
+    "kind": "knob",
+    "controls": "CC4.5.13 community reverse-quorum: anyone opens 48h window, named moderator blocks by 1 sig else live-majority removes; minor content born at smallest cohort",
+    "where": "CC4.5.13",
+    "tier": "multiple",
+    "capability": "REVERSE quorum / child safety / ratification",
+    "layer": "boundary",
+    "repo": "server"
+  },
+  {
+    "id": "knob.server.py_adapter",
+    "name": "`py_adapter/adapter/proxy` + LLM provider/model/baseUrl/apiKey (BYOK vs Proxy, 16 providers) + LLM Bus settings (circuit breakers/strategy/priority) + `liveBackgroundEnabled/forceClassicViz` + `CellVizConfig` (~25 clamped) + colorTheme/brightness/location + rerunSetupWizard/factoryReset/logout + client config/policy screens",
+    "kind": "knob",
+    "controls": "Brain-side adapter wiring + client-tier LLM/viz/theme/lifecycle UX + ConfigScreen/Consent/Delegations/Transport/Accord/Moderation/ChildSafety/Identity/Peers screens",
+    "tier": "multiple",
+    "capability": "services/adapters / LLM/agent settings / viz settings / config-policy UX",
+    "layer": "agent",
+    "repo": "server"
+  },
+  {
+    "id": "knob.agent.database",
+    "name": "`database.{main_db,secrets_db,audit_db,url}` + `agent_occurrence_id` + `agent_mode` (CLIENT/PROXY/SERVER, SERVER≥256GiB) + `adapters.{auto_discovery,discovery_paths,disabled}` + `log_level/debug_mode/template_directory/default_template`",
+    "kind": "knob",
+    "controls": "Persistence paths, multi-occurrence runtime, global mode, adapter auto-load, identity template",
+    "tier": "multiple",
+    "capability": "memory/graph config / runtime/pipeline / adapters",
+    "layer": "fabric",
+    "repo": "agent"
+  },
+  {
+    "id": "knob.agent.services",
+    "name": "`services.llm_*` + LLM provider priority/distribution/circuit-breaker + CIRIS Services toggle + provider CRUD (cloud/local/server, Ollama/llama.cpp/vLLM/LM Studio) + multi-region endpoints (proxy/billing/agents/lens)",
+    "kind": "knob",
+    "controls": "LLM/provider settings: routing, strategy, CB thresholds, BYOK vs hosted proxy, on-device + LAN discovery",
+    "tier": "multiple",
+    "capability": "LLM/provider settings",
+    "layer": "fabric",
+    "repo": "agent"
+  },
+  {
+    "id": "knob.agent.security",
+    "name": "`security.{audit_retention_days,enable_signed_audit,secrets_encryption_key_env,secrets_key_path,storage_mode,max_thought_depth}` + `JWT_SECRET_KEY`/`EMERGENCY_SHUTDOWN_PUBLIC_KEY`",
+    "kind": "knob",
+    "controls": "Signed audit, master-key backing (software/hardware-CIRISVerify), thought-depth auto-defer, kill-switch pubkey",
+    "tier": "multiple",
+    "capability": "runtime/pipeline / secrets / reverse quorum",
+    "layer": "fabric",
+    "repo": "agent"
+  },
+  {
+    "id": "knob.agent.limits",
+    "name": "`limits.{max_active_tasks,thoughts,batch_size,round_delay,dma_retry,dma_timeout,conscience_retry}` + `workflow.{max_rounds,round_timeout,enable_auto_defer}` + `ResourceLimit` (mem/cpu/tokens/disk/thoughts) + `ResourceAction` (LOG/WARN/THROTTLE/DEFER/REJECT/SHUTDOWN) + `ResourceCost` (token cents/water/carbon/energy)",
+    "kind": "knob",
+    "controls": "Concurrency + DMA/conscience gate plumbing; per-resource warn/crit + action+cooldown; economic+environmental accounting",
+    "tier": "multiple",
+    "capability": "runtime/pipeline / Wise-Authority deferral",
+    "layer": "fabric",
+    "repo": "agent"
+  },
+  {
+    "id": "knob.agent.graph",
+    "name": "`graph.tsdb_*` + `telemetry.{enabled,export_interval,retention,hot_cold}`",
+    "kind": "knob",
+    "controls": "TSDB consolidation/retention; telemetry tiering",
+    "tier": "node",
+    "capability": "memory/graph config / runtime/pipeline",
+    "layer": "fabric",
+    "repo": "agent"
+  },
+  {
+    "id": "knob.agent.adapterconfig",
+    "name": "Discord/API/CLI adapter config (channels/mentions/threads/rate-limit/allowlists/intents/cors/auth/swagger/timeouts/colors/tools) + `AdapterConfig.{enabled,persist,settings}`+`auto_start`",
+    "kind": "knob",
+    "controls": "SOCIAL surfaces + adapter UX + per-adapter hot load/unload",
+    "tier": "multiple",
+    "capability": "channels (SOCIAL) / adapters / moderation",
+    "layer": "fabric",
+    "repo": "agent"
+  },
+  {
+    "id": "knob.agent.filterpriority",
+    "name": "`FilterPriority`/`TriggerType`/`FilterTrigger` + `AdaptiveFilterConfig.{attention_triggers,review_triggers,llm_filters,channel_configs,auto_adjust,thresholds}` + `UserTrustProfile` (trust/violation/evasion/rapid_switch) + `ConversationHealth`",
+    "kind": "knob",
+    "controls": "Adaptive moderation rule engine (semantic=LLM); OUTPUT filters guard malicious LLM; per-user anti-gaming trust; channel health",
+    "tier": "community",
+    "capability": "moderation / EigenTrust trust-policy",
+    "layer": "boundary",
+    "repo": "agent"
+  },
+  {
+    "id": "knob.agent.consentstream",
+    "name": "`ConsentStream` (temporary/partnered/anonymous) + `ConsentCategory` + decay (14d/90d, safety_patterns_retained) + revocation ≤24h federation promotion + Partnership request/approval + DSAR workflow + `TicketsConfig`",
+    "kind": "knob",
+    "controls": "Consent handlers: data regime, auto-forget, subject revocation→withdraws→24h promote, GDPR DSAR always-on",
+    "tier": "multiple",
+    "capability": "consent handlers / voting/ratification",
+    "layer": "fabric",
+    "repo": "agent"
+  },
+  {
+    "id": "knob.agent.warole",
+    "name": "`WARole`/`WACertificate` scopes + `DeferralRequest/Response` + `GuidanceRequest urgency`+modality + `WisdomAdvice disclaimer/requires_professional` + `send_deferral` broadcast + domain_hint + `UserRole`/`Permission`(~25) + OAuth permission-request workflow",
+    "kind": "knob",
+    "controls": "Wise-Authority deferral queue/UI: WA roles+scopes, sign deferral/guidance, liability gating, RBAC, OAuth grant review",
+    "tier": "multiple",
+    "capability": "Wise-Authority deferral / voting/ratification / moderation",
+    "layer": "boundary",
+    "repo": "agent"
+  },
+  {
+    "id": "knob.agent.prohibitionseverity",
+    "name": "`ProhibitionSeverity` (REQUIRES_SEPARATE_MODULE/NEVER_ALLOWED/TIER_RESTRICTED) + `PROHIBITED_CAPABILITIES`(20) + `CONTENT_MODERATION_CAPABILITIES` (age_verification) + `COMMUNITY_MODERATION_CAPABILITIES` (Tier4-5: grooming/coordinated-campaign/protective-routing) + `get_prohibition_severity`+Stewardship Tier 1-5 + Accord lockdown kill-switch (1 sig→ALL prohibited→shutdown)",
+    "kind": "knob",
+    "controls": "Code-level 'NO KINGS' prohibition floor; tier-gated community-safety; single signed veto halts every capability",
+    "tier": "multiple",
+    "capability": "child safety / moderation / reverse quorum",
+    "layer": "boundary",
+    "repo": "agent"
+  },
+  {
+    "id": "knob.agent.wakeup",
+    "name": "cognitive `wakeup/shutdown/play/solitude/dream` + `state_preservation` + Runtime single-step (StepPoint×10, StepDuration) + `TaskSelectionCriteria` + `ServiceProviderUpdate`+`CircuitBreakerStatus` + RUNTIME_CONTROL/MANAGE_CONFIG + Config CRUD API + `ConfigNode` version chain + external-data connectors (SQL/REST/HL7)",
+    "kind": "knob",
+    "controls": "Cognitive-state availability + consensual shutdown + single-step debugger + task pull + service registry tuning + live graph-config CRUD",
+    "tier": "multiple",
+    "capability": "runtime/pipeline / consent handlers / memory/graph config / adapters",
+    "layer": "fabric",
+    "repo": "agent"
+  },
+  {
+    "id": "knob.agent.verify_partner_record_quorum",
+    "name": "Secrets detection patterns + agent-defined rules + auto_decapsulate + `verify_partner_record_quorum` (M steward sigs) + Veilid distributed-consensus WA (0.66) + WA voting weight (credit-proportional) + anti-sybil policy votes + Commons Credits/`AgentCreditSummary` (k_eff, decay) + Coherence Stake/N_eff + `DualSignature`+`GratitudeSignal` + local-tier sig deferral + `CreditCheckResult`/`CreditContext` + gas-sponsorship + Wallet trust-tier 1-5 + Wallet OFAC/jurisdiction gate",
+    "kind": "knob",
+    "controls": "Secrets auto-redact; forward+distributed quorum; non-transferable reputation=governance weight (global-from-local); per-interaction credit gate; wallet compliance",
+    "tier": "multiple",
+    "capability": "secrets / quorum / EigenTrust trust-policy / child safety",
+    "layer": "fabric",
+    "repo": "agent"
+  },
+  {
+    "id": "knob.agent.stewardship",
+    "name": "Media/vision ingest (base/api vision, document_parser) + media adapters (image-gen/whisper/TTS/video_frames/summarize/camsnap) + social-feed adapters (reddit/bird/slack) + Wisdom-extension toggles (geo/weather/sensor, HA) + `Stewardship Tier`+Creator Intent/Ledger + `AgentTemplate.{permitted_actions,auto_load_adapters,domain}` + `CIRISNodeConfig` + transparency log/audit-as-substrate + multilateral participation metadata",
+    "kind": "knob",
+    "controls": "Multimodal ingest+gen; SOCIAL feed monitoring/posting (file-based video); wisdom providers; Book VI stewardship gating; per-template action allowlist; audit≡CEG canonical-hash",
+    "tier": "multiple",
+    "capability": "media / social feed / adapters / child safety / voting-ratification",
+    "layer": "fabric",
+    "repo": "agent"
+  },
+  {
+    "id": "knob.lens.lambda_c",
+    "name": "`lambda_C`/`mu_C` (C decay) + `decay_rate d`/`signal_weight w`/`positive_moment_weight`/`ethical_faculty_weight` (S) + `drift_ignore_below`/`drift_full_penalty_at`/`trend_window/threshold` (R) + per-factor collapse floor(0.1) + unsafe entropy(0.5)",
+    "kind": "knob",
+    "controls": "CIRIS Capacity Score factors C·I·R·I·S; multiplicative collapse floor; tunable calibration constants",
+    "tier": "federation",
+    "capability": "capacity-scoring",
+    "layer": "fabric",
+    "repo": "lens"
+  },
+  {
+    "id": "knob.lens.min_traces",
+    "name": "`min_traces`(30) + window_days (baseline/coherence/default 7d) + `BENCHMARK_FILTER`/mock exclusion + non_exempt/exempt_actions + capacity bands (<0.3..≥0.85→autonomy) + confidence tiers + warm-up provisional + scoring query params (window/alerts threshold) + rate-limit 60/min + cache TTL 300s",
+    "kind": "knob",
+    "controls": "Statistical-validity gates, scoring corpus filter, capacity→autonomy band gate, public API limits",
+    "tier": "multiple",
+    "capability": "capacity-scoring",
+    "layer": "fabric",
+    "repo": "lens"
+  },
+  {
+    "id": "knob.lens.z_score_warning",
+    "name": "`Z_SCORE_WARNING/CRITICAL`(2σ/3σ) + `DAILY_DRIFT_WARNING/CRITICAL`(15/25%) + `MIN_TRACES_PER_AGENT/DOMAIN/DAY`(10/3/5) + `OVERRIDE_RATE_MULTIPLIER`(2x/3x) + intra-agent variance gate + `_DIVERGENCE_METRIC_KINDS`(5) + stratification key (deployment_domain) + hash-chain any-gap=critical + detector cadences (24h/1h) + alert lifecycle/read endpoints",
+    "kind": "knob",
+    "controls": "Coherence-ratchet detectors (validated-not-adjudicated): divergence/drift/override/hash-chain; human ack/resolve",
+    "tier": "multiple",
+    "capability": "coherence-ratchet",
+    "layer": "fabric",
+    "repo": "lens"
+  },
+  {
+    "id": "knob.lens.agent_role",
+    "name": "cohort cell taxonomy + deployment_region/type + `agent_role` (incl 'moderation') + agent_template + declared-vs-inferred mismatch + two-sided conformity + centroid sliding window + min-sample→indeterminate + cold-start deadline + cross-peer attestation + fail-secure 'general' fallback + hot-path SLO + published-signal discretization + `lens_core_version` stamping + deployment-tier security levels + detection-as-records invariant",
+    "kind": "knob",
+    "controls": "Cohort routing + manifold-conformity: per-trace centroid distance, mismatch=detection event, never-fabricate-numeric, version-bounded aggregation",
+    "tier": "multiple",
+    "capability": "cohort-routing / manifold-conformity / cohort-attestation",
+    "layer": "fabric",
+    "repo": "lens"
+  },
+  {
+    "id": "knob.lens.n_eff_pr",
+    "name": "17-dim constraint vector + `N_eff_PR`/`N_eff_H` + federation N_eff capacity ceiling (Kish) + `--filter-qa` organic-only + N_eff window knobs + cohort-relative entropy normalization",
+    "kind": "knob",
+    "controls": "Federation N_eff: capacity bounded by collective diversity (global-from-local reputation cap); anti-Goodhart organic filter",
+    "tier": "multiple",
+    "capability": "federation-N_eff",
+    "layer": "fabric",
+    "repo": "lens"
+  },
+  {
+    "id": "knob.lens.cirislens_scrubber_version",
+    "name": "`CIRISLENS_SCRUBBER_VERSION` (v1/v2) + full-body threshold(64KB) + `trace_level` (generic/detailed/full) + `SCRUB_FIELDS` allowlist (NOT configurable) + 11-cat NER + XLM-R(29 langs) + ONNX-missing→refuse-start/level-missing→422 + cryptographic scrub-envelope + privacy hash/remove fields + geo-coarsening (0.5° grid)",
+    "kind": "knob",
+    "controls": "PII scrubbing: multilingual NER+regex over allowlisted fields, fail-secure boot, original never persisted, geo coarsened",
+    "tier": "multiple",
+    "capability": "pii-scrubbing",
+    "layer": "fabric",
+    "repo": "lens"
+  },
+  {
+    "id": "knob.lens.accesslevel",
+    "name": "`AccessLevel` (FULL/PARTNER/PUBLIC) + `public_sample` + `partner_access` list (PeerAcl analog) + pendulum viewer access gate + `DSAR /dsar/delete` + public-keys/federation-keys/attestations/revocations lists + `signature_verified` gate",
+    "kind": "knob",
+    "controls": "Trace-visibility ACL + federation directory + right-to-erasure + signature-verified-only detector intake",
+    "tier": "multiple",
+    "capability": "trace-acl / privacy-compliance / signature-verify / federation-directory",
+    "layer": "boundary",
+    "repo": "lens"
+  },
+  {
+    "id": "knob.lens.routingdecision",
+    "name": "`RoutingDecision` (Production/Mock/Connectivity/Malformed) + mock-detection/generic-bypass + telemetry (COLLECTION_INTERVAL/OTLP/retention/downsampling/rate-zones/scaling-tiers) + OAuth/Grafana SSO + AGENT_<NAME>_TOKEN/_URL + pendulum render knobs (default agent/no-fallback/instability weights/canonical-gate-order/list-limit) + aggregate scoring params + corpus_shape + WBD/PDMA/creator/sunset ledger records",
+    "kind": "knob",
+    "controls": "Ingestion routing, telemetry/OTLP scaling, admin SSO, per-agent tokens, deterministic render-only viz, observation-science record surfaces",
+    "tier": "multiple",
+    "capability": "ingestion-routing / telemetry / auth / trace-viz / observation-science",
+    "layer": "fabric",
+    "repo": "lens"
+  }
+]

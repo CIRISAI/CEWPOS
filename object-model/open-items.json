@@ -1,0 +1,32 @@
+[
+  {
+    "item": "delivery_receipt 'delivered'/'owes N' verdict (5.3.3.6): receipt is fabric-validated but the verdict is explicitly deferred to consumer policy — the one agent-adjacent seam in Part 5."
+  },
+  {
+    "item": "verdict composition (2.5): policy-driven composition is fabric, but a PDMA moral verdict over the SAME inputs is agent — the split is by who composes, not by the data."
+  },
+  {
+    "item": "bilateral ratification (2.3.2.4 vs 3.3.5): substrate admits each consent half (fabric) but ratification is enforced by an agent action handler (CIRISAgent CEM) — same object, two layers."
+  },
+  {
+    "item": "moderation keep/remove decision (4.5.5): the delegation structure and admission gate are fabric, but the harmful/keep/appeal judgment is agent/boundary."
+  },
+  {
+    "item": "WA quorum adjudication (4.5.1): the mechanized amendment pipeline (witness diversity, quorum tally, 1-of-6 sign-off) is fabric, but the substantive judgment is agent."
+  },
+  {
+    "item": "T-3 expressive-gap test (8.2.4): boundary judgment on whether an un-mapped moral claim survives the four-test gate and what extension would close it."
+  },
+  {
+    "item": "Order-Maximisation Veto (1.3): defined inside PDMA (agent) yet behaves as a hard structural stop-sign — borderline fabric gate vs agent reasoning."
+  },
+  {
+    "item": "accord-principle prefixes / six principles: wire-attestable M-1 dimensions are fabric OBJECTS, yet semantically they are agent values — listed once in §1.4 and once in §3."
+  },
+  {
+    "item": "WBD-store acronym overload: 'Wisdom Bank Database' (lifecycle ruling store, fabric) vs 'Wisdom-Based Deferral' (agent op) — naming collision worth a human disambiguation pass."
+  },
+  {
+    "item": "CRE acronym overload: 'Catastrophic-Risk Evaluation' (8.8.3 gate) vs 'Continuous Refinement Environment' (7.3.5 loop) — distinct objects sharing an acronym."
+  }
+]

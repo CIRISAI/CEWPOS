@@ -1,0 +1,65 @@
+package demo:view-form@0.1.0;
+
+/// The `view-form` world: a fully sandboxed guest that IMPORTS NOTHING and
+/// exports only typed, total functions. There is no kernel/substrate/network/
+/// clock available to a component built against this world, because the world
+/// declares zero imports. The only way data leaves the component is by RETURNING
+/// a typed `scene`.
+///
+/// The types mirror the locked-in Scene IR (see view-forms-spike/src/scene.rs).
+world view-form {
+  /// 3D vector, right-handed Y-up (Bevy convention).
+  record vec3 {
+    x: f32,
+    y: f32,
+    z: f32,
+  }
+
+  /// Linear sRGB color, each channel in 0.0..=1.0.
+  record rgba {
+    r: f32,
+    g: f32,
+    b: f32,
+    a: f32,
+  }
+
+  /// Closed mesh vocabulary: every backend handles every variant exhaustively.
+  enum mesh-kind {
+    sphere,
+    cube,
+    plane,
+    cylinder,
+  }
+
+  /// One renderable thing: positioned, scaled, colored primitive with an
+  /// optional label and a provenance `source` string.
+  record scene-node {
+    pos: vec3,
+    scale: f32,
+    mesh: mesh-kind,
+    color: rgba,
+    label: option<string>,
+    source: string,
+  }
+
+  /// Renderer-neutral camera; up is +Y.
+  record camera {
+    eye: vec3,
+    look-at: vec3,
+  }
+
+  /// The whole scene: the entire renderer contract.
+  record scene {
+    nodes: list<scene-node>,
+    camera: camera,
+    background: rgba,
+  }
+
+  /// Trivial smoke-test export to de-risk the round-trip.
+  export hello: func(name: string) -> string;
+
+  /// The real export: parse a CEG `scores` envelope (JSON) and return a typed
+  /// Scene. Pure, total, deterministic; cannot perform IO because the world
+  /// grants no imports.
+  export render: func(attestation-json: string) -> scene;
+}

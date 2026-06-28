@@ -1,0 +1,54 @@
+[package]
+name = "view-forms-spike"
+version = "0.1.0"
+edition = "2021"
+description = "Typed view-form spike: a real CEG `scores` attestation -> pure total view_form() -> a renderer-neutral typed Scene IR -> Bevy 0.19 entities -> an actual headless-rendered PNG."
+
+[features]
+# default pulls the render bin's deps (Bevy + image). The pure pipeline
+# (scene IR + view_form) is feature-free: build/test it with
+# --no-default-features to keep it GPU-free and wasm-portable.
+default = ["render"]
+render = ["dep:bevy", "dep:image"]
+
+[lib]
+name = "view_forms_spike"
+path = "src/lib.rs"
+
+# The headless renderer. required-features keeps it OUT of a
+# `cargo test --no-default-features` run (pure tests, no Bevy, no GPU).
+[[bin]]
+name = "render"
+path = "src/bin/render.rs"
+required-features = ["render"]
+
+[dependencies]
+# The REAL Attestation Calculus: we read a genuine `scores` Form via
+# forms::read_form. default-features = false keeps it to the pure calculus
+# (no real-persist / real-edge git trees).
+attestation-calculus-spike = { path = "../attestation-calculus-spike", default-features = false }
+serde_json = "1"
+
+# Render-only (native headless). Default Bevy features give the macOS Metal
+# wgpu backend + bevy_render + bevy_pbr + GpuReadbackPlugin. image = PNG encode.
+bevy = { version = "0.19", optional = true }
+image = { version = "0.25", optional = true }
+
+# wasm stretch: ciris-crypto drags in TWO getrandom versions that refuse to
+# compile on wasm32-unknown-unknown without a browser backend feature:
+#   * getrandom 0.2 (via rand_core 0.6, the `random` path)  -> feature "js"
+#   * getrandom 0.4 (via rand_core 0.10, the ml-dsa PQC path) -> feature "wasm_js"
+#     PLUS  RUSTFLAGS='--cfg getrandom_backend="wasm_js"' (see .cargo/config.toml)
+# Feature unification is additive, so enabling these here turns them on for the
+# whole wasm graph and lets view_form (-> the real Form) cross-compile to the
+# browser target. (view_form itself never draws randomness; this only satisfies
+# the compile of the unused signing code paths in ciris-crypto.)
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+getrandom = { version = "0.2", features = ["js"] }
+getrandom_04 = { package = "getrandom", version = "0.4", features = ["wasm_js"] }
+
+[profile.dev]
+opt-level = 1
+
+[profile.dev.package."*"]
+opt-level = 3

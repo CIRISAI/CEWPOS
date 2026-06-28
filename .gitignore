@@ -1,0 +1,16 @@
+# External reference downloads — NOT part of CEWPOS (juner_os clone +
+# Tumbleweed System 100.0 disk image/tarballs/usim source). Large + foreign-licensed.
+/referenced-projects/
+
+# Rust build artifacts (rebuildable)
+**/target/
+
+# WASM build outputs (rebuildable via each spike's build.sh)
+**/*.wasm
+
+# scratch build script provenance is kept; temp/db/os files are not
+*.db
+*.db-wal
+*.db-shm
+*.state
+**/.DS_Store

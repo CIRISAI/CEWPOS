@@ -1,0 +1,12 @@
+[package]
+name = "view-form-host"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# `component-model` is a DEFAULT feature of wasmtime 46, so the component API
+# (Component / Linker / bindgen!) is available out of the box.
+wasmtime = "46"
+anyhow = "1"
+
+[workspace]

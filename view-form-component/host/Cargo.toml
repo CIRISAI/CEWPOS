@@ -1,0 +1,26 @@
+[package]
+name = "view-form-host"
+version = "0.1.0"
+edition = "2021"
+
+# Both a library (so the integration test can reuse the bindgen!-generated types
+# and the empty-linker instantiation path) and a binary (the demo).
+[lib]
+name = "view_form_host"
+path = "src/lib.rs"
+
+[[bin]]
+name = "view-form-host"
+path = "src/main.rs"
+
+[dependencies]
+# `component-model` is a DEFAULT feature of wasmtime 46, so the component API
+# (Component / Linker / bindgen!) is available out of the box.
+wasmtime = "46"
+anyhow = "1"
+# Only used host-side to serialize the returned typed Scene to out/scene.json
+# (the stretch goal). The sandbox boundary is unaffected: this runs in the host,
+# never in the guest.
+serde_json = "1"
+
+[workspace]

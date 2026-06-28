@@ -1,0 +1,65 @@
+[package]
+name = "attestation-calculus-spike"
+version = "0.1.0"
+edition = "2021"
+description = "Minimal-and-adequate Attestation Calculus: CEG-as-Lisp evaluator (homoiconic, immutable, content-addressed, total, effect-typed) over the real CIRIS substrate"
+
+[features]
+# default: the pure calculus — sexpr/forms/pdma + the in-memory effect path
+# (ciris-crypto for the real hybrid sign/verify). Pulls NEITHER ciris-persist
+# nor ciris-edge nor their git-dep trees.
+default = []
+# real-persist: wire the REAL ciris-persist Engine. `emit`/`promote` delegate to
+# the conformant one-call build-sign-admit (LocalSigner::from_config ->
+# register_self_federation_key -> emit_attestation_self), plus a two-Engine
+# shared-substrate federation demo. ciris-persist is git-pinned to v11.2.0 so it
+# is the SAME crate instance ciris-edge links (path-vs-git source mismatch would
+# fork SignedAttestation/Engine into two incompatible types).
+real-persist = ["dep:ciris-persist", "dep:tokio"]
+# real-edge: implies real-persist and additionally stands up two real ciris-edge
+# nodes over the production transport-http medium, shipping a promoted
+# SignedAttestation A->B (send_durable(AttestationGossip(..))) verified on B via
+# subscribe_verified_feed. ciris-keyring (software) builds edge's LocalSigner;
+# tokio/full lights up time+sync+net for the axum listener; serde_json/raw_value
+# is needed to read the verified envelope body (a RawValue).
+real-edge = [
+    "real-persist",
+    "dep:ciris-edge",
+    "dep:ciris-keyring",
+    "dep:chrono",
+    "tokio/full",
+    "serde_json/raw_value",
+]
+
+[dependencies]
+ciris-crypto = { path = "/Users/macmini/CIRISVerify/src/ciris-crypto", default-features = false, features = ["ed25519", "pqc-ml-dsa", "random"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# Integration fix: ciris-crypto's `random`/`rng_health` modules use
+# `rand_core::OsRng`, which only exists when rand_core's `getrandom` feature is
+# on. In the CIRISVerify workspace that feature is unified on by sibling crates;
+# built standalone here it is not, so we enable it directly (feature unification
+# is additive across the build graph). Not referenced in our own code.
+rand_core = { version = "0.6", features = ["getrandom"] }
+serde_jcs = "0.2"
+sha2 = "0.10"
+hex = "0.4"
+base64 = "0.22"
+# real-edge only: used by the edge KeyRecord timestamps in src/transport.rs.
+chrono = { version = "0.4", features = ["serde"], optional = true }
+# The real ciris-persist Engine (real-persist + real-edge). GIT-pinned to
+# v11.2.0 — NOT a path dep — so it is byte-identical to the ciris-persist that
+# ciris-edge links; a path/git source split would produce two distinct
+# `SignedAttestation` types that cannot be handed across the edge wire.
+ciris-persist = { git = "https://github.com/CIRISAI/CIRISPersist", tag = "v11.2.0", version = "11", features = ["sqlite"], optional = true }
+tokio = { version = "1", features = ["rt-multi-thread", "macros"], optional = true }
+# real-edge only: the production federation transport. Path dep; its own
+# ciris-persist / ciris-keyring / ciris-crypto git pins (v11.2.0 / v8.3.0) unify
+# with ours. transport-http is the localhost-loopback medium (Reticulum is the
+# production medium but needs no extra wiring for the 2-node demo).
+ciris-edge = { path = "/Users/macmini/CIRISEdge", features = ["transport-http"], optional = true }
+# real-edge only: ciris_keyring::load_local_seed builds edge's classical
+# LocalSigner from a 32-byte seed file. Same git source + tag as ciris-edge's
+# (and ciris-persist's) ciris-keyring so cargo unifies to ONE instance; the
+# `software` feature is what surfaces load_local_seed.
+ciris-keyring = { git = "https://github.com/CIRISAI/CIRISVerify", tag = "v8.3.0", version = "8", features = ["software", "pqc-ml-dsa"], optional = true }

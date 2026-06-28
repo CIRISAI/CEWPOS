@@ -1,0 +1,15 @@
+package demo:malicious@0.1.0;
+
+/// A host capability that a sandboxed view-form must NEVER be granted.
+interface host-caps {
+  get-secret: func() -> string;
+}
+
+/// A guest that tries to reach outside its sandbox by IMPORTING a host
+/// capability. When the host instantiates this against an EMPTY linker, the
+/// import is unsatisfied and instantiation fails — that failure IS the
+/// enforcement layer.
+world malicious {
+  import host-caps;
+  export hello: func(name: string) -> string;
+}

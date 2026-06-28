@@ -1,0 +1,27 @@
+[package]
+name = "view-form-guest"
+version = "0.1.0"
+edition = "2021"
+
+# A component guest is a cdylib: it exports the canonical-ABI functions that
+# `wasm-tools component new` lifts into a WebAssembly Component.
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+# Generates the export bindings (the `Guest` trait + the Scene IR types) from
+# the WIT world, and embeds the component-type custom section that
+# `wasm-tools component new` reads.
+wit-bindgen = "0.58"
+# Pure JSON parsing — no IO, no host calls; compiles to wasm32-unknown-unknown
+# with zero WASI/host imports.
+serde_json = "1"
+
+[profile.release]
+panic = "abort"
+opt-level = "s"
+lto = true
+strip = true
+
+# Stand-alone package (do not get absorbed into any parent workspace).
+[workspace]

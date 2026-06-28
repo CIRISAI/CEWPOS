@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ciris.ai/cewpos/object-model/schema.json",
+  "title": "CEWPOS Object Model",
+  "description": "The agency-free CEWPOS fabric as a unified, queryable schema: every OBJECT (type), TRANSFORMATION (typed op), KNOB (config control), CAPABILITY (cross-cutting feature), and CIVILIZATIONAL FUNCTION (what the internet/civilization require), drawn from the CIRIS Constitution + the repo surface + the civilizational map. The AGENT layer (PDMA/CSDMA/WBD) is recorded but flagged deferred. Each element is a CEG attestation (tiered, hierarchical) and a renderable view-form.",
+  "type": "object",
+  "required": ["meta", "objects", "transformations", "knobs", "capabilities", "civilizationalFunctions", "agentDeferred"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["version", "sources"],
+      "properties": {
+        "version": { "type": "string", "description": "object-model version" },
+        "constitution": { "type": "string", "description": "CIRIS Constitution version the algebra is drawn from, e.g. CC 0.6" },
+        "sources": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "the legs this model consolidates (constitution-algebra, repo-knob-inventory, civilizational-surface)"
+        },
+        "counts": { "type": "object", "additionalProperties": { "type": "integer" } },
+        "generatedAt": { "type": "string", "description": "ISO timestamp, stamped after generation" }
+      }
+    },
+    "objects": { "type": "array", "items": { "$ref": "#/$defs/object" } },
+    "transformations": { "type": "array", "items": { "$ref": "#/$defs/transformation" } },
+    "knobs": { "type": "array", "items": { "$ref": "#/$defs/knob" } },
+    "capabilities": { "type": "array", "items": { "$ref": "#/$defs/capability" } },
+    "civilizationalFunctions": { "type": "array", "items": { "$ref": "#/$defs/civilizationalFunction" } },
+    "agentDeferred": {
+      "type": "array",
+      "description": "the deferred AGENT layer (PDMA observation->decision + the moral-reasoning loop) — explicitly NOT part of the agency-free fabric",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "note": { "type": "string" },
+          "ccRef": { "type": "string" }
+        }
+      }
+    },
+    "openItems": {
+      "type": "array",
+      "description": "fabric/agent boundary seams flagged for a human call (ambiguous classification, acronym collisions, etc.)",
+      "items": {
+        "type": "object",
+        "required": ["item"],
+        "properties": {
+          "item": { "type": "string" },
+          "note": { "type": "string" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "layer": {
+      "type": "string",
+      "enum": ["fabric", "agent", "boundary"],
+      "description": "fabric = agency-free substrate mechanism; agent = the deferred moral-reasoning loop; boundary = an external human/WA/constitutional seam (still agency-free)"
+    },
+    "tier": {
+      "type": "string",
+      "enum": ["node", "owner-self", "community", "federation", "constitutional", "meta", "multiple"],
+      "description": "ownership/scope tier; every fabric element is a CEG attestation at one of these tiers"
+    },
+    "expressibility": {
+      "type": "string",
+      "enum": ["in-grammar", "bridge", "gap-needs-design"],
+      "description": "in-grammar = pure 1+4 + open namespace (dimensions/subject_kinds/composition); bridge = needs an external rail (settlement/legal force/physical actuation); gap-needs-design = no clean CEG expression yet"
+    },
+    "object": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "layer"],
+      "properties": {
+        "id": { "type": "string", "description": "stable slug, e.g. obj.envelope" },
+        "name": { "type": "string" },
+        "kind": { "const": "object" },
+        "cc_id": { "type": "string", "description": "Constitution decimal id, e.g. 2.1" },
+        "semantic_id": { "type": "string", "description": "Constitution semantic id, e.g. envelope" },
+        "category": { "type": "string", "description": "grouping, e.g. Identity & Keys; Envelope & Primitives; Namespace & Dimensions; Subject-kinds; Consent; Transport & Streaming; Governance; Coherence/Observation; Lifecycle & Stewardship; Conformance" },
+        "layer": { "$ref": "#/$defs/layer" },
+        "tier": { "$ref": "#/$defs/tier" },
+        "description": { "type": "string" },
+        "part": { "type": "string", "description": "Constitution Part (I–VIII) or source" }
+      }
+    },
+    "transformation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "layer"],
+      "properties": {
+        "id": { "type": "string", "description": "stable slug, e.g. xf.promote" },
+        "name": { "type": "string" },
+        "kind": { "const": "transformation" },
+        "cc_id": { "type": "string" },
+        "category": { "type": "string", "description": "e.g. Structural ops; Admission & Promotion; Composition (A–M); Merge; Transport & Crypto; Governance; Lifecycle" },
+        "input": { "type": "string", "description": "input type(s)" },
+        "output": { "type": "string", "description": "output type(s)" },
+        "layer": { "$ref": "#/$defs/layer" },
+        "part": { "type": "string" },
+        "description": { "type": "string" }
+      }
+    },
+    "knob": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "controls", "layer", "repo"],
+      "properties": {
+        "id": { "type": "string", "description": "stable slug, e.g. knob.edge.trust_threshold" },
+        "name": { "type": "string" },
+        "kind": { "const": "knob" },
+        "controls": { "type": "string", "description": "what this knob controls" },
+        "where": { "type": "string", "description": "file:line or FSD reference" },
+        "tier": { "$ref": "#/$defs/tier" },
+        "capability": { "type": "string", "description": "named capability this knob belongs to, if any" },
+        "layer": { "$ref": "#/$defs/layer" },
+        "repo": {
+          "type": "string",
+          "enum": ["persist", "verify", "edge", "nodecore", "registry", "server", "agent", "lens", "constitution"]
+        }
+      }
+    },
+    "capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "covered"],
+      "properties": {
+        "id": { "type": "string", "description": "stable slug, e.g. cap.reverse-quorum" },
+        "name": { "type": "string" },
+        "kind": { "const": "capability" },
+        "repos": { "type": "string", "description": "owning repo(s)" },
+        "objects": { "type": "string", "description": "the CEG objects that implement it" },
+        "transformations": { "type": "string", "description": "the transformations that implement it" },
+        "knobs": { "type": "string", "description": "the knobs that tune it" },
+        "viewForm": { "type": "string", "description": "the CEWPOS-native 3D view-form idea" },
+        "covered": { "type": "boolean", "description": "fully realized today vs gap" }
+      }
+    },
+    "civilizationalFunction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "expressibility"],
+      "properties": {
+        "id": { "type": "string", "description": "stable slug, e.g. civ.payments" },
+        "name": { "type": "string" },
+        "kind": { "const": "civilizationalFunction" },
+        "cluster": { "type": "string", "description": "super-domain, e.g. Commerce & Money; Governance & Law" },
+        "cegObjects": { "type": "string" },
+        "cegTransformations": { "type": "string" },
+        "expressibility": { "$ref": "#/$defs/expressibility" },
+        "cirisComponent": { "type": "string", "description": "existing CIRIS component that realizes it, or GAP" }
+      }
+    }
+  }
+}

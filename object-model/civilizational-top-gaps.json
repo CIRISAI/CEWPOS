@@ -1,0 +1,50 @@
+[
+  {
+    "id": "gap.atomic-fair-exchange-bilateral-simultaneity",
+    "name": "Atomic fair-exchange / bilateral simultaneity (pay⟺release, DvP, atomic swap, escrow) — the one named CC 1.7 falsification target; bridges to a settlement rail"
+  },
+  {
+    "id": "gap.imperative-physical-world-actuation",
+    "name": "Imperative physical-world actuation (unlock door, shut valve, shed load) — authorization is in-grammar but CEG cannot BE the effect; needs a designed effect-rail mirroring settlement_ref"
+  },
+  {
+    "id": "gap.high-volume-continuous-sensor-telemetry-streamin",
+    "name": "High-volume continuous sensor/telemetry streaming subject_kind — point readings fit but IoT/telematics/env/smart-meter high-rate ingestion has no first-class shape (and fine-GPS collides with rough-only ≤res7)"
+  },
+  {
+    "id": "gap.realtime-convergent-merge-primitive",
+    "name": "Realtime convergent-merge primitive (CRDT/OT/LWW) for collaborative editing/multiplayer — transport is in-grammar, convergence is deliberately app-layer"
+  },
+  {
+    "id": "gap.secret-coercion-resistant-receipt-free-anonymous",
+    "name": "Secret / coercion-resistant receipt-free anonymous voting — attestations are signed/attributable by design; needs future ZK composition"
+  },
+  {
+    "id": "gap.proof-of-unique-personhood-biometric-uniqueness",
+    "name": "Proof of unique personhood / biometric uniqueness — bounded by bond+witness_diversity+RATCHET but unsolvable in-grammar because biometric_inference and surveillance_mass are prohibited apophatic categories"
+  },
+  {
+    "id": "gap.hardware-rooted-attestation-chain",
+    "name": "Hardware-rooted attestation chain — hardware_class is self-asserted; needs normative TPM-quote/Apple/FIDO verification (R5)"
+  },
+  {
+    "id": "gap.native-property-title-deed-and-movable-asset-sub",
+    "name": "Native property/title/deed and movable-asset subject_kind + registry component — record SHAPE is pure in-grammar vocabulary but unbuilt (the cleanest greenfield extension)"
+  },
+  {
+    "id": "gap.conditional-event-triggered-execution",
+    "name": "Conditional / event-triggered execution (will-on-death, dead-man's-switch, posthumous key release) — delegates_to is immediate/unconditional; needs a liveness-oracle + conditional-trigger design"
+  },
+  {
+    "id": "gap.real-time-safety-critical-control-loops",
+    "name": "Real-time safety-critical control loops (SCADA, autonomous-vehicle control, closed-loop infusion) — append-only/monotonic semantics fundamentally mismatch sub-second control; out of scope by constitutional design"
+  },
+  {
+    "id": "gap.authoritative-balance-proof-of-reserves-settleme",
+    "name": "Authoritative balance / proof-of-reserves / settlement finality / clearing-netting / order-book matching — all need a totally-ordered ledger the fabric deliberately refuses; bridge to chain/exchange rails"
+  },
+  {
+    "id": "gap.ranked-relevance-semantic-search-and-recommendat",
+    "name": "Ranked relevance / semantic search and recommendation compute — directory + citation graph + eigentrust composition is in-grammar, but the ranking/personalization model is the deferred (excluded) agent"
+  }
+]

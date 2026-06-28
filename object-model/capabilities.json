@@ -1,0 +1,90 @@
+[
+  {
+    "id": "cap.moderation",
+    "name": "moderation",
+    "kind": "capability",
+    "repos": "all 8 (Persist blackhole/takedown; NodeCore four-layer+slashing; Registry/Server delegable-duty+watchlist; Verify kill-switch+reconsider-DoS; Edge trust-gate+probe-detector; Agent adaptive-filter+prohibitions; Lens = moderation cohort-label only)",
+    "objects": "BlackholeRecord; ModerationEvent/Allegation/TargetKind/accuser_stake; SlashingAttestation(quorum_ids/sigs, ProvenRogue/NotProven); ReconsiderationRequest/Attestation; Duty{Moderate,Takedown,Review}+§11.10 admit-iff gate; moderation_track_record+existence_verdict+merit auto-promotion; watchlist:{id}/WatchlistClass/Mode; TakedownNoticePayload/LegalBasis/MultimediaConfig; EventRateLimit/ActorBudget/HarassmentClusterSignal/RC24 walk-up; ItemActions; AdaptiveFilterConfig/FilterTrigger/UserTrustProfile; PROHIBITED_CAPABILITIES; ProbePatternObserver/EdgePeerTrust(Blocked)",
+    "transformations": "report→file moderation_event→witness aggregation→SlashingAttestation(penalty floored≥0)→trust drop→admission tighten+evict_actor→withdraws:holds_bytes; principal walked-up delegates_to to owner-bound root (absence=reject); per-event/actor/cluster anti-DoS; immediate-evict vs counter-notice scheduling; perceptual-hash→auto-takedown/route-to-moderator; reversible via reconsideration",
+    "knobs": "legal_basis taxonomy(10)/counter_notice window(14d)/age_gate bases; min/max responders+DiversityPolicy; EventRateLimit(10)/ActorBudget(30/7d)/HarassmentCluster(2.0)/recursion(≤9); WINDOW_HOURS(48); watchlist class/mode/per-group authority gate; probe entropy/z-score/KS/centroids; AdaptiveFilter thresholds; trust_threshold/blackhole_prune_interval",
+    "viewForm": "moderation membrane: content glows by outcome-ladder state (visible/consent-gated/removed); 48h reverse-quorum window = contracting shell; walk-up principal = delegates_to thread anchored at hardware root",
+    "covered": true
+  },
+  {
+    "id": "cap.quorum-m-of-n-to-allow",
+    "name": "quorum (M-of-N to ALLOW)",
+    "kind": "capability",
+    "repos": "Verify (2·M>N rule + founder-quorum); Persist (consensus_protocol quorum:m/n, WitnessSet, PromotionAttestation); NodeCore (minimum_quorum, WaQuorum, locality-scaled); Registry (founder-quorum, partner_record, Policy E); Server (CANONICAL quorum:2/3, founder genesis); Edge (accord 2-of-3, OperationalProviders.steward_roster); Agent (verify_partner_record_quorum, Veilid 0.66); Lens (cross-peer centroid consensus)",
+    "objects": "QuorumPolicy(2·M>N)/ThresholdMember(Founder/Member)/ThresholdSignature/FederationKeyset; consensus_protocol(+entrenched)/quorum:{m}/{n}/WitnessSet/DiversityProof/PromotionAttestation; Aggregate::BelowQuorum; partner_record M-of-N; OperationalProviders.steward_roster; verify_founder_quorum",
+    "transformations": "re-derive JCS/canonical bytes→verify each sig→distinct-key dedup (both hybrid halves counted)→count ≥M strict-majority→admit else fail-closed (DeadlockPolicy/RosterMismatch/InsufficientAccordSignatures); is_canonical FALSE→TRUE in one tx; quorum_size=f(locality), min_pool=2×quorum with scale-down/escalate/defer",
+    "knobs": "2·M>N rule (no M==1 carve-out); founder roster N==real-count gate; witness-diversity N(3 tunable); locality quorum (local2/regional3/national4/federation6); WaQuorum N; bootstrap_threshold (1→2/3→3/5); consensus_protocol vocab (m absolute, n documentary)",
+    "viewForm": "N-of-M signature rosette: founder seats in a ring, each lights as its hybrid sig verifies; gate-door dilates only when lit arc crosses strict majority; entrenched protocols show a welded lock",
+    "covered": true
+  },
+  {
+    "id": "cap.reverse-quorum-m-of-n-to-block-veto-halt",
+    "name": "REVERSE quorum (M-of-N to BLOCK/veto/halt)",
+    "kind": "capability",
+    "repos": "Verify (fire-floor-of-1 bias gradient); Persist (accord live-quorum, ActiveHalt, L_FLOOR); Server (HALT_LATCH_FILE disk-latched 2-of-3 + CC4.5.13 48h); NodeCore (AccordCarrier/AccordCommandType FederationWide); Registry (CONSTITUTIONAL halt, bias gradient, 48h protective-default); Edge (monotonic-fail-secure revoked>active, withdrawal-forward-only, Mandatory bypass); Agent (Accord lockdown 1-sig→shutdown); Lens (absent as governance; only observed conscience-veto flags)",
+    "objects": "AccordProposal/Participation(Vote yes/no/abstain)/Decision; FireVerdict/RosterChangeVerdict/ResumeVerdict/RecoveryVerdict; ActiveHalt/HALT_LATCH_FILE/InvocationKind::Constitutional; L_FLOOR steward-backstop; AccordCommandType(SHUTDOWN_NOW/FREEZE/SAFE_MODE/NOTIFY/DRILL); humanity_accord_key_set; CC4.5.13 WINDOW_HOURS(48)+ProposableAction(keep/remove); monotonic_quorum/withdrawal_forward_only",
+    "transformations": "a SINGLE yes in live set L FIRES (floor=1, missed-fire terminal); un-fire/roster-change lean HARD (strict-majority-of-L + steward 2-of-3 when |L|<3); halt = replicate-to-peers-FIRST→latch→exit(42)→boot-refusal; recovery_supersede restores known-good only; decisions_equivocate→hard-fail; community propose→48h→unilateral-block-by-1 OR M-of-N live-majority-removes (protective default-remove); on_federation_announcement SIGKILL on suppress",
+    "knobs": "fire floor=1; L_FLOOR=3; N_min=2; ACCORD_THRESHOLD(2,3) entrenched quorum:2/3; HALT_EXIT_CODE(42); REPLICATION/CONNECT_TIMEOUT; WINDOW_HOURS(48); DRILL monthly + 95%/99% thresholds; bias gradient fire≤roster-change≤standing",
+    "viewForm": "kill-switch pendulum heavy on FIRE (one hand tips it), stiff on UN-FIRE (needs majority arc to swing back); disk halt-latch = fused red cell + exit-42 tombstone; steward backstop appears only when live-set shell shrinks below 3",
+    "covered": true
+  },
+  {
+    "id": "cap.child-safety-restrictive-floor",
+    "name": "child safety / restrictive floor",
+    "kind": "capability",
+    "repos": "Registry (Q1-Q7 rulings, age-assurance ladder, mDL); Server (binary AgeBand + watchlist + minor-stewardship); NodeCore (structural trust-graph block, PG-13 floor, CSAM DBs, legal mappings); Persist (AgeBand ratchet, CSAM bases — feat-306 branch); Agent (prohibitions: age_verification, grooming/coordinated-campaign Tier4-5); Verify (downstream WiseBus NEVER_ALLOWED floor only); Edge (FastPathLegalBasis TVEC/GIFCT/NCMEC + LocationProof≤7); Lens (ABSENT — only fail-secure scoring floor)",
+    "objects": "AgeBand(Minor/Adult)/AssuranceLevel(Self<Provider<Government)/ContentClass+gate_content_for; age_assurance:* (witness-reserved)/age_self_declared:{band}; minor-stewardship delegates_to; WatchlistEnable/Class(Csam)/Mode; content_class:adult gate; capacity_assurance; LegalBasis::{NcmecCsam,PerceptualHashCsam,AvmsdAgeInappropriate}; MultimediaConfig.age_gate_legal_bases; CC 3.4.13 Q1-Q7; PG-13 floor; ward's-champion",
+    "transformations": "unassured=child fail-secure; one-way ratchet (self declares minor, witness-reserved to exit; tuning only RAISES protection); structural — children's keys lack age_assurance:adult so admission itself blocks adult content; CSAM perceptual-hash→immediate-evict+NCMEC; age-gate-compose (withdraws+gate, NOT evict); misdeclaration→adjudication NEVER slashing; mDL age_over_18 selective disclosure ranked above ID-scan",
+    "knobs": "developmental bands (under-13/13-15/16-17/adult or C/T/A); assurance rungs (BE=self, EXIT=≥provider:adult, STEWARD=provider:adult+relationship→government); immediate vs age-gate legal bases; counter-notice windows; LocationProof resolution≤7; co-stewardship M-of-N; PG-13/PARTIAL caps",
+    "viewForm": "protective floor plate under every content cell that can only ratchet UP; minor cells render inside a tighter inner membrane (self/family) with adult-content doors welded shut unless a witness-rung key is presented; CSAM drops through a one-way hard-delete trapdoor",
+    "covered": true
+  },
+  {
+    "id": "cap.voting-ratification",
+    "name": "voting / ratification",
+    "kind": "capability",
+    "repos": "NodeCore (weighted_aggregate→PromotionAttestation, judge/rubric calibration); Registry (§11.2 amendment, 1-of-6 veto, entrenchment); Persist (VoteEnvelope/consensus_protocol/canonical flip); Verify (entrenched consensus_protocol, partner_record, doc_integrity); Server (founder genesis entrench, reactivation proof); Edge (AccordCarrier 2-of-3, WholenessWitness/AntiRollback); Agent (credit-weighted WA consensus, partnership approval, OAuth review); Lens (alert ack/resolve + cross-peer attestation analog)",
+    "objects": "VoteEnvelope/Verdict(approve/reject/abstain)/VoteWeight(credits×expertise×tier)/approval_ratio; PromotionAttestation(is_canonical flip); consensus_protocol(+_entrenched); WitnessSet; §11.2 PROPOSAL→N=3→WA quorum→reconsideration→1-of-6 sign-off; doc_integrity; CreditGenerationPolicy/PartnershipOutcomeType",
+    "transformations": "P4 signed Vote→P7 weighted aggregate→per-verdict weight sums→approval_ratio→caller threshold→canonical promotion in one tx; any single 1-of-6 signer VETOes by refusing; entrenched surfaces need MAJOR bump + dedicated 2-of-3 accord; supersedes authorized by prior roster's quorum",
+    "knobs": "minimum_quorum (BelowQuorum fail-secure); VoteWeight multipliers; active-tier N; witness-diversity N(3); reversal-rate(>25%)→judge_drift; truth-grounding multiplier per subject; seed-decay; $1 bond; open-vocab collision (Levenshtein≤2, 90d reclaim)",
+    "viewForm": "ratification ledger spiral: Vote attestations stack by effective weight, promotion threshold = luminous waterline, is_canonical flip lights the stack; entrenched rows wear a constitutional padlock only a separate 2-of-3 accord ring can open",
+    "covered": true
+  },
+  {
+    "id": "cap.media-blobs-attachments",
+    "name": "media (blobs, attachments)",
+    "kind": "capability",
+    "repos": "Persist (BlobBody/Fountain/holder-directory/KeyGrant/at-rest cascade); NodeCore (Inline16MiB/External, ratings/classes, key_grant, takedown); Registry (external_content sub_kinds, holds_bytes emission, wrap_algorithm v2); Edge (ExternalRefWithAcl, blob-swarm, CDN-edge, FountainConfig); Verify (§19 holonomic fountain/av/aggregation); Server (holds_bytes provenance; blob ingest DEFERRED to NodeCore seam); Agent (vision/document ingest + media-gen adapters); Lens (JSONB context blobs + public_sample/partner_access exposure ACL)",
+    "objects": "BlobBody(Inline/External/ChunkDag); BlobStorage.list_holders/holds_bytes:sha256; FountainManifestV1/SymbolV1/FountainConfig; KeyGrant/KeyGrantScope/KeyValidityWindow; WRAP_ALGORITHM_V2; MultimediaConfig; content_rating:{scheme}/content_class/cw_class; ExternalRefWithAcl; SwarmConfig",
+    "transformations": "put_blob/get_range; content-addressed SHA identity + holds_bytes provenance; FountainTier keep-count under PressureTier (graceful degrade→EnvelopeOnly); per-write/epoch DEK wrap v2 (X25519+ML-KEM-768 mandatory); external bytes ride publisher CDN (edge doesn't fetch, ACL+hash+expiry gate); swarm pick-fastest+endgame+dishonest-strike",
+    "knobs": "max-inline bytes (16 MiB); FountainTier/n_source/k_repair/symbol_size/min_viable_symbols; retention_priority; holds_bytes TTL(24h)/downweight; swarm in-flight/strike/timeout; disk_budget L0/L1; immediate vs counter-notice takedown windows; is_ai_generated mandatory ≥community; alt_text/transcript/captions",
+    "viewForm": "content-addressed constellation: each blob a SHA-keyed node, holder set = orbiting holds_bytes satellites that dim past TTL, FEC symbols = shrinking ring under disk pressure (Full→T5→EnvelopeOnly), DEK wrap = per-recipient sealed lock",
+    "covered": true
+  },
+  {
+    "id": "cap.social-feed-video-live-streaming",
+    "name": "social feed + video / live streaming",
+    "kind": "capability",
+    "repos": "Persist (stream chunks/STH/epoch-DEK/delivery_receipt/seal_stream); NodeCore (compose_*_feed, live_stream sub_kind, user-algorithm presets); Registry (delivery_mode pull/push, listed:public, history_on_join, epoch-DEK cascade, topical_relation); Edge (subscribe_feed, realtime_av double-AEAD chunks, AV1/Opus, ALM tree, SFU relay, MLS rekey, ReceiverLayerPolicy); Verify (§19 SealedAvChunk/ALM/aggregation); Server (DEFERRED to NodeCore seam; client FederationEventStream + AV bench only); Agent (channel SOCIAL surfaces + reddit/bird; video file-based); Lens (@streaming_step trace events + single-agent live viewer; no audience broadcast)",
+    "objects": "put_blob_chunk/seal_stream/federation_stream_chunks+sth; KeyGrantScope::{SubscriptionTier,StreamEpoch}/delivery_receipt:{stream_id}; compose_local/community/global_feed/FeedItem/ItemActions; AvDispatcher/SealedAvChunk/ReceiverLayerPolicy/Av1EncoderConfig/OpusEncoderConfig/AlmJoinPlanner/MlsSession; delivery_mode:{pull|push}/topical_relation:{kind}/live_stream",
+    "transformations": "K=64/T=2s STH publish; epoch DEK rotate (~60s/Nth chunk); subscribe-while-live via attestation; signed delivery ack vs published root; community = 'a stream its members subscribe to'; inner E2E EpochDek + outer per-link transit seal; SVC layer admits() drops above-policy chunks; ALM reparent on 1500ms parent silence; user-controlled algorithm = tuple(depth,cohort,quality,freshness,rating,subscriptions)",
+    "knobs": "stream chunk size (1 MiB); STH cadence; epoch rekey; ReceiverLayerPolicy (spatial/temporal/quality); codec_id; ALM reachability(0.5)/backups(2)/heal timers; relay capacity; MLS ciphersuite; feed quality threshold + freshness decay + rating/class filter + CW/publisher subscriptions + user-algorithm presets",
+    "viewForm": "live cell-broadcast tree: publisher cell at apex, epoch-DEK shells pulsing as they rotate, ALM relay fan-out as self-healing branch network (silenced parents wither, backups graft), each subscriber's SVC layer-cap = throughput aperture; feed itself a cohort-bucketed lattice tuned by viewer's algorithm preset",
+    "covered": true
+  },
+  {
+    "id": "cap.eigentrust-policy-management-global-from-local-r",
+    "name": "EigenTrust policy management (global-from-local reputation)",
+    "kind": "capability",
+    "repos": "Registry (Policy C weighted-graph EigenTrust + Policy A-I library); Lens (federation N_eff Kish capacity ceiling = structural global-from-local); Verify (recursive_trust_bootstrap + reputation propagation/slashing); NodeCore (weighted_aggregate over scores + registry_vouch transitive); Persist (resolve_trust BFS — NOT eigenvector, explicit substitute); Edge (TrustGraph budget-halving walk + deterministic_topology scoring); Server (capacity scorer N_eff→capacity:* attestations); Agent (Commons Credits + Coherence Stake/N_eff)",
+    "objects": "Policy A-I (esp. Policy C weighted-graph); 17-dim constraint vector + N_eff_PR/N_eff_H + federation capacity ceiling; recursive_trust_bootstrap/BootstrapVerdict/WitnessRelation; weighted_aggregate/TrustEdge/registry_vouch/trust_grant(TrustPurpose); resolve_trust; TrustGraph.weight+deterministic_topology; Commons Credits/AgentCreditSummary(k_eff)",
+    "transformations": "transitive-trust propagation weighted by canonical-bootstrap distance with per-hop confidence decay (Policy C); local features→z-scored constraint vectors→eigenvalue spectrum→N_eff diversity ceiling that bounds federation capacity (global CANNOT exceed cohort collective diversity); bounded cycle-free witness walk (trust≠membership N1, BootstrapVerdict can't say admitted); rogue-attestation R1 slashing propagates downstream; reputation = non-transferable decaying credit",
+    "knobs": "trust_threshold + recursion depth (0/1/2/3, multiplier curve 1×/4×/20×/100×); MAX_DELEGATION_DEPTH(16)/MAX_WITNESS_CHAIN_LEN(5); TrustGrant.weight(0..255); hardware_class trust-multipliers; N_eff window/sample_gate(20)/target_n_eff(8.0); published-signal discretization; ciris-canonical default-trust re-rootable",
+    "viewForm": "trust-diffusion field: each key glows by locally-computed score, signed delegates_to/vouch edges carry color outward with per-hop fade, a translucent N_eff ceiling dome caps how bright any cell can get (collective diversity is the literal lid); rogue slashing = darkening wave propagating down the edge graph",
+    "covered": true
+  }
+]
