@@ -13,6 +13,9 @@
 > evaluator / view-form / sandbox pieces are proven by working spikes against the real crates.
 > AGPL-3.0-or-later · part of the [CIRIS](https://ciris.ai) ecosystem.
 
+**New here?** Start with [`WHY.md`](WHY.md) — a 5-minute orientation (the inversion, the small kernel,
+the three layers, and why CEWPOS is *moderation-first*), no prior CIRIS knowledge required.
+
 ## What this is
 
 A small, auditable layer that turns the existing CIRIS data fabric into an operating environment:
