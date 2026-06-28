@@ -1,108 +1,191 @@
 # CEWPOS — CIRIS Epistemic Web Platform OS
 
-> The **agency-free fabric** for an everything-app operating system: a civilizational substrate
-> where identity, data, trust, governance, money, media, and computation are native **CEG
-> attestations** on a unified, content-addressed, post-quantum-signed corpus — evaluated by a
-> deterministic Lisp, surfaced as **typed 3D view-forms**, deployable to the browser end-to-end
-> in WebAssembly.
+> An **immutable, content-addressed object model** + a **deterministic, effect-typed evaluator** +
+> **cryptographic provenance** + **federated trust** — the OS layer over a shipping CIRIS substrate.
+> The only state is **signed attestations**; rendering is isolated from authority in sandboxed
+> WebAssembly; **agents are optional participants the fabric can reject.**
 >
-> **Status:** research + specification + working proof-of-concept spikes. Part of the
-> [CIRIS](https://ciris.ai) ecosystem. AGPL-3.0-or-later.
+> **Status:** the CIRIS substrate is **shipping** — `ciris-persist` v11.5 · `ciris-verify` v8.3 ·
+> `ciris-edge` v7.4 · `ciris-server` v0.5.58, continuously verified by
+> [CIRISConformance](https://github.com/CIRISAI/CIRISConformance) (16,000+ tests), with the agent on
+> the app store and the **CEG wire at 1.0-RC29 (the 1+4 surface frozen)**. *This repo* is the OS layer
+> over that substrate: the object model is complete and schema-validated, and the new
+> evaluator / view-form / sandbox pieces are proven by working spikes against the real crates.
+> AGPL-3.0-or-later · part of the [CIRIS](https://ciris.ai) ecosystem.
 
-## What it is, in one line
+## What this is
 
-**CEWPOS is superalignment infrastructure in the shape of a civilizational operating system —
-where the OS *is* the alignment strategy.**
+A small, auditable layer that turns the existing CIRIS data fabric into an operating environment:
 
-It takes the **institutional / accountability** road to the superalignment problem, *not* the
-singleton road. It does not try to align one god-model from the inside (RLHF, Constitutional-AI,
-interpretability — the [road CIRIS explicitly rejects](https://ciris.ai/compare)). It bets that
-safety through advanced AI comes from a **federation of externally-verifiable, accountable agents**
-— and from **structurally preventing the unaccountable singleton** ("ρ→1 single-voice collapse") —
-and it realizes that bet as the **everything-app OS the federation runs on**. The same fabric that
-carries civilization's identity, data, money, governance, and media is exactly what makes every
-agent operating inside it accountable. The civilizational OS is not a side-effect of the alignment
-goal; it is the *body* that goal requires. A signature you cannot forge, a membership you cannot
-fake, an audit you cannot escape — external, independently-verifiable constraints, not a model's
-self-report.
+- **One immutable object model — CEG** (the CIRIS Epistemic Grammar). Every meaningful thing —
+  identity, config, consent, a moderation action, a payment claim, a media stream — is a **signed
+  attestation**, content-addressed and canonical.
+- **A small trusted core.** Semantics are a **closed set of five structural operators** (`scores` +
+  `delegates_to` / `supersedes` / `withdraws` / `recants`). The system grows by **vocabulary, not new
+  primitives** — the same discipline behind Git's object model, RDF, content-addressed storage,
+  capability systems, and Lisp homoiconicity. Keeping the evaluator small keeps it auditable.
+- **A deterministic evaluator** (the *Attestation Calculus*) rather than an open-ended runtime. It is
+  total and effect-typed; its **only effect is a gate-checked `emit`**.
+- **Rendering isolated from authority.** Views are pure functions compiled to **WASM components with
+  zero ambient authority** — a render can compute a scene and nothing else.
+- **Agents are not privileged.** The model emits attestations *into* a fabric that admits or rejects
+  them; the platform never has to "trust" the model.
 
-## The thesis
+## The problem it addresses
 
-CEG (the CIRIS Epistemic Grammar) already **is** a homoiconic, immutable, content-addressed Lisp —
-it just needed an evaluator. CEWPOS gives it one, the **Attestation Calculus**:
+Most "AI operating system" proposals build a large autonomous runtime you must trust. CEWPOS inverts
+that: instead of
 
-- a **closed set of 5 structural operators** (`scores` + `delegates_to`/`supersedes`/`withdraws`/`recants`)
-  over an **open namespace** (dimensions, subject_kinds, composition policies);
-- **a new domain is new *vocabulary*, not a new primitive** — land title, a vaccination record, and a
-  group chat are the same grammar wearing different prefixes;
-- the fabric is **agency-free** — mechanism, not moral judgment (the admission gate is "mechanism,
-  not quality"). The agent (CIRIS's PDMA observation→decision loop) plugs in **last**, as one
-  deferred transformation whose only effect is a gate-checked `emit`;
-- truth is the **append-only signed history** (supersession, never mutation), hybrid Ed25519 +
-  ML-DSA-65 signed for posterity.
+```
+AI → controls system
+```
 
-This is the "third path" that resolves the Lisp × CEG question: not a mutable Lisp-Machine image
-(which collides with every CEG invariant), but **CEG-as-the-canonical-Lisp + a disciplined,
-total, effect-typed evaluator**. Design rationale: [`CEWPOS_ATTESTATION_CALCULUS.md`](CEWPOS_ATTESTATION_CALCULUS.md).
+it is
 
-## What's here
+```
+attestation fabric ← AI emits attestations (admitted or rejected at a gate)
+```
 
-| Path | What it is |
-|---|---|
-| [`CEWPOS_ATTESTATION_CALCULUS.md`](CEWPOS_ATTESTATION_CALCULUS.md) | The design memo — the Lisp×CEG verdict and the third path. |
-| [`object-model/`](object-model/) | **The agency-free fabric, mapped.** `schema.json` (the unified object-model schema) + three prose maps (Constitution algebra, the repo knob/capability surface, the civilizational surface) + the schema-conformant JSON dataset (`cewpos-object-model.json`) + the Object Model FSD. |
-| [`attestation-calculus-spike/`](attestation-calculus-spike/) | The calculus + the **real substrate trio** (`ciris-persist` / `ciris-verify` / `ciris-edge`) wired end-to-end behind feature flags, following the cohabitation patterns proven by [CIRISConformance](https://github.com/CIRISAI/CIRISConformance). |
-| [`view-forms-spike/`](view-forms-spike/) | A CEG `scores` attestation **rendered to pixels by Bevy** (`out/attestation-render.png`); also builds to `wasm32`. |
-| [`view-form-component/`](view-form-component/) | A view-form as a **sandboxed WASM Component** (zero ambient authority — an agent-generated view can only return a scene). |
-| `wasm-component-toolchain-spike/` | The verified known-good WASM Component Model toolchain. |
+The goal is to make **every meaningful state transition externally auditable** — *verify the
+constraint*, don't *trust the model*. A signature you cannot forge, a membership you cannot fake, an
+audit you cannot escape.
+
+## Architecture
+
+| Layer | Components | State |
+|---|---|---|
+| **Substrate** (shipping) | `ciris-persist` (the signed corpus / storage) · `ciris-verify` (hybrid Ed25519 + ML-DSA-65 crypto, identity, license) · `ciris-edge` (Reticulum/HTTP transport + streaming media) · `ciris-nodecore` (federation consensus) · `ciris-registry` (authority) · `ciris-server` (the fabric node + KMP/Compose clients) | production, conformance-verified |
+| **Calculus** (this repo) | the deterministic evaluator · the typed view-form / Scene-IR layer · the WASM-component sandbox | object model complete; new pieces spike-proven |
+| **Agent** (shipping, optional) | `CIRISAgent` — the moral-reasoning loop (PDMA/CSDMA/WBD) | on the app store; plugs in *last*, as one transformation whose only effect is a gate-checked `emit` |
+
+## The data model — CEG
+
+CEG is, structurally, a **homoiconic, immutable, content-addressed Lisp** — it just needed an
+evaluator. Its surface is JSON; its canonical form is **JCS (RFC 8785)**; its identity is the
+**SHA-256 of the canonical bytes**; its authenticity is a **hybrid Ed25519 + ML-DSA-65** signature
+kept for posterity. Truth is the **append-only signed history** — you `supersedes`/`withdraws`/
+`recants`, never mutate. That buys deterministic replay, complete provenance, easy distributed sync,
+and cryptographic audit trails.
+
+## The evaluator — the Attestation Calculus
+
+Not a mutable Lisp-Machine image (which collides with every CEG invariant), but **CEG-as-the-canonical-
+Lisp + a disciplined, total, effect-typed evaluator**:
+
+- the reader admits only the **closed 1+4** special forms;
+- pure computation is free; the **single effect is `emit`**, which must clear the **four-test
+  admission gate** (rules hash-pinned · mechanism-not-quality · re-checkable · never sole evidence);
+- a **new domain is new vocabulary** (a dimension / `subject_kind` / composition policy), *never* a
+  new primitive.
+
+Design rationale: [`CEWPOS_ATTESTATION_CALCULUS.md`](CEWPOS_ATTESTATION_CALCULUS.md).
+
+## Example — an attestation, evaluated and rendered
+
+A `scores` attestation reads as an s-expression and prints back **byte-identically** under JCS:
+
+```
+(scores :dimension "evaluation:quality" :score 0.85 :confidence 0.92 :cohort_scope "self")
+```
+
+A pure, total **view-form** maps it to a renderer-neutral Scene IR (here: score `0.85` → green;
+confidence `0.92` → scale), which a Bevy renderer turns into pixels —
+[`view-forms-spike/out/attestation-render.png`](view-forms-spike/out/attestation-render.png), rendered
+headless on an Apple-M4 GPU and also built to `wasm32` for the browser. Same attestation in → same
+scene out, on any platform.
+
+## Federation & trust
+
+State is **agent-centric** (no global ledger). Config and identity are CEG attestations at a **node
+tier** (the node's own state) or an **owner-self tier** (the human owner's identity/consent), composed
+hierarchically. A write is cheap and local; **promotion to federation** is the one moment the hybrid
+post-quantum signature is paid. **Structural invisibility** means self/family content never even emits
+a discovery attestation — it can't be found, not merely "access-controlled." The full path —
+conformant Engine emit → distinct-peer shared-substrate federation → a promoted `SignedAttestation`
+crossing a **real `ciris-edge` wire** — is wired end-to-end in [`attestation-calculus-spike/`](attestation-calculus-spike/).
+
+## Security
+
+- **Capability-isolated rendering.** A view-form is a **WASM component instantiated with zero imports**
+  — no kernel, substrate, network, or clock. A malicious view-form that *demands* a host capability is
+  **rejected at instantiation** (proven in [`view-form-component/`](view-form-component/)).
+- **Post-quantum throughout** — hybrid Ed25519 + ML-DSA-65 signatures; X25519 + ML-KEM-768 content
+  cascade. Harvest-now-decrypt-later is in the threat model.
+- **"Agency-free" means *mechanism-neutral*, not value-free.** The substrate carries no moral agency of
+  its own — but admission, delegation, revocation, scoring, and conflict-resolution are still
+  **governance decisions**. CEWPOS's claim is narrower and more honest: those decisions are
+  **externalized as signed data and adjudicated at an explicit gate**, rather than baked into opaque
+  code. *Policy-externalized*, not policy-free.
+
+## Maturity — what ships vs. what's spike-proven
+
+This is **not a greenfield runtime**. It is a thin, auditable OS layer over a fabric that already ships:
+
+- **Substrate (production):** persist / verify / edge / server at v7–11 (95k–246k LOC each),
+  continuously verified by CIRISConformance ([ciris.ai/verification](https://ciris.ai/verification/),
+  16k+ tests across 6 projects). `ciris-edge` includes the full streaming-media tier (realtime A/V with
+  Opus/AV1 codecs, application-layer multicast, MLS/TreeKEM rekey, content-fetch byte-pull); `ciris-persist`
+  the chunk-DAG + stream-STH store. The **CEG wire is 1.0-RC29 with the 1+4 surface frozen.**
+- **Clients (shipping):** CIRISServer ships a Kotlin-Multiplatform / Compose client across Android, iOS,
+  and desktop; **CIRISAgent is on the app store.**
+- **This repo (the OS layer):** the **object model is complete and schema-validated** (see below); the
+  **evaluator, view-form, and WASM-sandbox pieces are proven by working spikes** against the real
+  crates. The spikes are proof-of-concept; the substrate beneath them is not.
+
+## The object model
+
+[`object-model/`](object-model/) maps the agency-free fabric as one queryable, schema-validated dataset
+— **361 objects · 247 transformations · 132 knobs · 8 capabilities · 476 civilizational functions** —
+in [`cewpos-object-model.json`](object-model/cewpos-object-model.json) (conforming to
+[`schema.json`](object-model/schema.json)), with three prose maps (the Constitution algebra, the repo
+knob/capability surface, the civilizational surface), the [Object Model FSD](object-model/CEWPOS_OBJECT_MODEL.md),
+the adversarial [gap analysis](object-model/gap-analysis.md), and a CC-amendment proposal
+([fair exchange is mostly in-grammar](object-model/CC1.7-fair-exchange.md)).
+
+Coverage of the civilizational surface: **~82% in-grammar, ~95% expressible** (in-grammar or honestly
+bridged to an external rail). An adversarial re-test against the Constitution found the "principled
+gaps" residue is mostly **clean unbuilt vocabulary builds** (each a new `subject_kind`/composition via
+the amendment process, no new primitive), with only a handful of genuine refusals — an honest roadmap,
+not a wall.
 
 ## What's proven (real toolchains, on disk)
 
-- **Homoiconicity** — a CEG envelope reads to an s-expr and prints back byte-identically under JCS
-  (RFC 8785); **closed operators** (the reader admits only the 1+4); **gate-checked emit → promote**
-  with **real** hybrid Ed25519 + ML-DSA-65 signing and verification.
-- **The real trio** — conformant `ciris-persist` Engine emit, distinct-peer shared-substrate
-  federation, and a promoted `SignedAttestation` crossing a **real `ciris-edge` wire** A→B.
-- **Typed view-forms = 3D renderings** — a `scores` attestation → pure `view_form()` → typed Scene
-  IR → **Bevy GPU render** (Apple M4 Metal) → PNG; and a successful `wasm32-unknown-unknown` build
-  (browser end-to-end).
-- **Safe by construction** — a view-form is a **WASM Component instantiated with zero imports**; a
-  malicious view-form that *demands* a host capability is **rejected at instantiation**.
-- **Exhaustiveness** — of 550 civilizational functions, **~82% are in-grammar and ~95% expressible**
-  (in-grammar or honestly bridged). An adversarial re-test of the residue against CC 0.6 + MISSION
-  ([`object-model/gap-analysis.md`](object-model/gap-analysis.md)) found the "principled gaps" claim
-  was over-stated: only **~5–6 are true constitutional refusals** (atomic fair-exchange + the
-  totally-ordered-ledger family per CC 1.7 / 3.3.10; real-time safety-critical control; biometric /
-  mass-surveillance personhood per CC 3.1.5.4; hard DRM; physical-truth anchoring). The rest are
-  **~5 clean unbuilt builds** (property/chattel/patent/easement `subject_kind`s, a hardware-attestation
-  module, a conditional-execution composition, a durable-telemetry `subject_kind` — all via CC 4.5.1,
-  *no new primitive*), ~2 hard-research, ~2 honest bridges, ~3 deferred-to-agent compute, and ~4–5
-  simply mislabeled (already in-grammar). Honest roadmap, not twenty-seven refusals.
+- **Homoiconicity** — JCS round-trip is byte-identical; the reader admits only the 1+4; `emit → promote`
+  is gate-checked with **real** hybrid Ed25519 + ML-DSA-65 signing and verification.
+- **The real trio** — conformant `ciris-persist` emit · distinct-peer shared-substrate federation · a
+  promoted `SignedAttestation` over a **real `ciris-edge` wire**.
+- **Typed view-forms = 3D renderings** — a CEG attestation → pure `view_form()` → Scene IR → Bevy GPU
+  render → PNG, and a `wasm32` browser build.
+- **Safe by construction** — a zero-import WASM component; a capability-demanding view rejected at
+  instantiation.
 
-## Honest framing
+## Why it's shaped this way — the bigger picture
 
-CEWPOS is the **governance-first / "the other road"** position in AI safety: accountability and
-verification over value-internalization, and a *federation of accountable agents* over an
-unaccountable singleton. The substrate is the part that's provably soundable; the open frontier —
-as for every civilizational substrate before it — is **legitimacy, inclusion, and adoption**, not
-architecture. The repo proves the fabric; it does not claim to have solved the human-governance
-layer it deliberately defers to.
+*(Motivation, after the engineering.)* CEWPOS takes the **institutional / accountability** road in AI
+safety — [the "other road"](https://ciris.ai/compare) — rather than aligning one model from the inside.
+The bet: safety through advanced AI comes from a **federation of externally-verifiable, accountable
+agents**, and from **structurally preventing the unaccountable singleton**. Read that way, the
+"everything-app OS / civilizational substrate" framing is not a manifesto flourish — it's the *body*
+that bet requires: the same fabric that carries a society's identity, data, money, governance, and media
+is exactly what makes every agent operating inside it accountable. That is the long-range thesis; the
+engineering above stands on its own without it.
+
+## The hard part — vocabulary governance
+
+The biggest risk is **not the calculus**; it's **vocabulary explosion.** "New domains require vocabulary,
+not primitives" is elegant, but someone must then govern namespaces, interoperability, ontology
+evolution, conflicting vocabularies, and semantic drift — the work of a standards body. The architecture
+is *prepared* for this (the four-test admission gate + the CC 4.5.1 amendment process + an adversarially-
+certified Constitution), and it is exactly where CIRIS concentrates its effort. But the governance
+process — *legitimacy, inclusion, adoption* — is the real open frontier, not the architecture. The repo
+proves the fabric; it does not claim to have solved the human layer it deliberately defers to.
 
 ## Ecosystem & references
 
-CEWPOS is the OS-ification of a shipped, continuously-verified CIRIS stack — not a greenfield:
-
-- **CIRIS** — [ciris.ai](https://ciris.ai) · **Continuous verification** (the conformance suite that
-  *proves* the system enforces its constitution, 16,000+ tests) — [ciris.ai/verification](https://ciris.ai/verification/)
-- **[CIRISConformance](https://github.com/CIRISAI/CIRISConformance)** — the federation-cohabitation +
-  cross-artifact conformance harness (persist + verify + edge + nodecore + lenscore + registry). The
-  authoritative reference for how the trio is wired together, and the proof the separately-shipped
-  components enforce the constitution as one system.
-- **[CIRISServer](https://cirisai.github.io/CIRISServer)** — the base fabric node (the cohabitation
-  runtime / substrate host); the CEWPOS spec FSDs (`CEWPOS.md`, `HYBRID_LISP_OS.md`,
-  `CEWPOS_RENDERED_OBJECTS.md`) live in its `FSD/`.
-- Substrate crates the spikes wire against: [CIRISPersist](https://github.com/CIRISAI/CIRISPersist) ·
-  [CIRISVerify](https://github.com/CIRISAI/CIRISVerify) · [CIRISEdge](https://github.com/CIRISAI/CIRISEdge).
+- **CIRIS** — [ciris.ai](https://ciris.ai) · **continuous verification** — [ciris.ai/verification](https://ciris.ai/verification/) · **comparison / "the other road"** — [ciris.ai/compare](https://ciris.ai/compare)
+- **[CIRISConformance](https://github.com/CIRISAI/CIRISConformance)** — the federation-cohabitation + cross-artifact conformance harness; the proof the separately-shipped components enforce the constitution as one system.
+- **[CIRISServer](https://cirisai.github.io/CIRISServer)** — the base fabric node + clients; the CEWPOS spec FSDs (`CEWPOS.md`, `HYBRID_LISP_OS.md`, `CEWPOS_RENDERED_OBJECTS.md`) live in its `FSD/`.
+- Substrate crates: [CIRISPersist](https://github.com/CIRISAI/CIRISPersist) · [CIRISVerify](https://github.com/CIRISAI/CIRISVerify) · [CIRISEdge](https://github.com/CIRISAI/CIRISEdge) · [CIRISNodeCore](https://github.com/CIRISAI/CIRISNodeCore) · [CIRISRegistry](https://github.com/CIRISAI/CIRISRegistry).
 
 ## License
 
