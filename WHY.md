@@ -91,6 +91,12 @@ And the substrate ships: `ciris-persist` v11.5, `ciris-verify` v8.3, `ciris-edge
 `ciris-server` v0.5.58 (with KMP/Compose clients), the agent on the app store, the CEG wire at
 1.0-RC29 with the 1+4 surface frozen.
 
+## The rendering model — an old idea made secure
+
+The view-form model returns to a principle as old as mainframes: **the client presents, it does not own the application.** A 3270 terminal rendered fields described by a host; HTML moved some authority to the browser; React moved it almost entirely to the client. CEWPOS reverses the trend — not by re-centralizing, but by making the host-authoritative model *cryptographically verifiable*. A view-form is a WASM function that maps an attestation to a Scene IR and **nothing else**: zero imports, capability-sandboxed, rejected at instantiation if it asks for more.
+
+The progression in one line: `3270 → HTML → React SPA → agent-generated UI (A2UI) → CEWPOS semantic views`. Every step from terminals to SPAs increased client authority. What changes here is not the authority relationship but the *assurance*: the view is signed, replayable, and incapable of reaching outside the scene — green screens with a third dimension and a capability model.
+
 ## Then read
 
 1. [`README.md`](README.md) — the engineering overview (architecture, data model, evaluator, security).

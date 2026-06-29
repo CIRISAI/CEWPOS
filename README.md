@@ -99,6 +99,26 @@ confidence `0.92` → scale), which a Bevy renderer turns into pixels —
 headless on an Apple-M4 GPU and also built to `wasm32` for the browser. Same attestation in → same
 scene out, on any platform.
 
+## View-forms — the lineage
+
+The semantic-view model returns to a principle as old as mainframes:
+
+| Era | Model | Who owns the application? |
+|---|---|---|
+| 3270 / green screen | terminal renders host-described fields | host |
+| HTML forms | browser renders server-sent markup | shared |
+| React SPA | client builds the whole application | client |
+| Agent-generated UI (A2UI) | LLM emits declarative JSON; host renders trusted components | host, again |
+| **CEWPOS semantic views** | WASM view-form emits Scene IR; trusted renderer presents | host — and verifiable |
+
+Google's A2UI makes the return of host authority explicit: *"safe like data, expressive like code."* The direction is the same as CEWPOS; the implementation differs. A2UI relies on LLM output and a trusted-component catalog; CEWPOS view-forms are **deterministic, content-addressed WASM functions** — signed, replayable, and capability-sandboxed (zero imports; a capability-demanding view rejected at instantiation).
+
+The deeper analogy is Smalltalk: every **object** carries an **inspector**, not every page a component tree. You don't build screens that assemble an object graph — you discover the view-form for an object and render its inspector. Here, the inspector is portable, signed, GPU-accelerated, and incapable of reaching outside the scene.
+
+> **Green screens weren't obsolete — they were incomplete.** WebAssembly and modern GPUs let us keep the deterministic, host-authoritative model while replacing fixed terminal layouts with secure, programmable, three-dimensional object views.
+
+What CEWPOS adds to that lineage: **immutable semantic objects** (CEG) + **object-specific renderers** (WASM view-forms) + **capability isolation** (zero-import component model) + **deterministic scene graphs** (Scene IR) + **cryptographic identity** (content-addressed, hybrid-signed). The pieces all exist independently; the combination is new.
+
 ## Federation & trust
 
 State is **agent-centric** (no global ledger). Config and identity are CEG attestations at a **node
