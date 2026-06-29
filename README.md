@@ -5,20 +5,26 @@
 > The only state is **signed attestations**; rendering is isolated from authority in sandboxed
 > WebAssembly; **agents are optional participants the fabric can reject.**
 >
-> **Status:** the CIRIS substrate is **shipping** — `ciris-persist` v11.5 · `ciris-verify` v8.3 ·
-> `ciris-edge` v7.4 · `ciris-server` v0.5.58, continuously verified by
-> [CIRISConformance](https://github.com/CIRISAI/CIRISConformance) (16,000+ tests), with the agent on
-> the app store and the **CEG wire at 1.0-RC29 (the 1+4 surface frozen)**. *This repo* is the OS layer
-> over that substrate: the object model is complete and schema-validated, and the new
-> evaluator / view-form / sandbox pieces are proven by working spikes against the real crates.
-> AGPL-3.0-or-later · part of the [CIRIS](https://ciris.ai) ecosystem.
+> **CIRISServer** (v0.5.58) and **CIRISAgent** (app store) are the **shipping production software** —
+> the fabric node and the AI agent. Their current interface is a KMP/Compose client (Android, iOS,
+> desktop, in the CIRISServer repo). **CEWPOS is the native-interface rewrite of that client**: a
+> native OS layer built on the Attestation Calculus, WASM-sandboxed view-forms, and a Bevy renderer,
+> running directly against the substrate crates rather than through a mobile framework.
+> Continuously verified by [CIRISConformance](https://github.com/CIRISAI/CIRISConformance) (16,000+
+> tests) · CEG wire 1.0-RC29 (1+4 frozen) · AGPL-3.0-or-later · part of the [CIRIS](https://ciris.ai) ecosystem.
 
 **New here?** Start with [`WHY.md`](WHY.md) — a 5-minute orientation (the inversion, the small kernel,
 the three layers, and why CEWPOS is *moderation-first*), no prior CIRIS knowledge required.
 
 ## What this is
 
-A small, auditable layer that turns the existing CIRIS data fabric into an operating environment:
+**CIRISServer** and **CIRISAgent** are the existing production deployment — the fabric node and the
+AI agent, continuously shipped and conformance-verified. Their current interface is a KMP/Compose
+app (Android, iOS, desktop) that lives in the CIRISServer repository.
+
+**CEWPOS is the native-interface rewrite of that client.** It replaces the KMP/Compose layer with a
+native OS interface built directly on the substrate crates — no mobile framework in the middle. The
+key architectural additions over the KMP client:
 
 - **One immutable object model — CEG** (the CIRIS Epistemic Grammar). Every meaningful thing —
   identity, config, consent, a moderation action, a payment claim, a media stream — is a **signed
@@ -30,7 +36,8 @@ A small, auditable layer that turns the existing CIRIS data fabric into an opera
 - **A deterministic evaluator** (the *Attestation Calculus*) rather than an open-ended runtime. It is
   total and effect-typed; its **only effect is a gate-checked `emit`**.
 - **Rendering isolated from authority.** Views are pure functions compiled to **WASM components with
-  zero ambient authority** — a render can compute a scene and nothing else.
+  zero ambient authority** — a render can compute a scene and nothing else. This replaces the KMP
+  Compose UI with typed, sandboxed **view-forms** that output a renderer-neutral Scene IR.
 - **Agents are not privileged.** The model emits attestations *into* a fabric that admits or rejects
   them; the platform never has to "trust" the model.
 
@@ -57,11 +64,34 @@ more than telling the truth.
 
 ## Architecture
 
-| Layer | Components | State |
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  CIRISAgent  (shipping · app store · moral-reasoning loop)      │
+│  emits gate-checked attestations only — not privileged          │
+├─────────────────────────────────────────────────────────────────┤
+│  CEWPOS  (this repo · replaces KMP/Compose client)              │
+│  Attestation Calculus · WASM view-forms · Bevy renderer         │
+├─────────────────────────────────────────────────────────────────┤
+│  CIRISServer v0.5.58  (shipping · production fabric node)       │
+│  CEG wire 1.0-RC29 (1+4 frozen) · conformance-verified          │
+├──────────────┬──────────────┬──────────────┬────────────────────┤
+│ciris-persist │ ciris-verify │  ciris-edge  │ ciris-nodecore /   │
+│v11.5 · 246k  │ v8.3 · 104k  │ v7.4 · 95k   │ ciris-registry     │
+│chunk-DAG     │ hybrid PQC   │ transport +  │ federation         │
+│stream-STH    │ Ed25519+     │ streaming AV │ consensus +        │
+│append-only   │ ML-DSA-65    │ MLS/TreeKEM  │ authority          │
+└──────────────┴──────────────┴──────────────┴────────────────────┘
+```
+
+| Layer | Shipping today | Status |
 |---|---|---|
-| **Substrate** (shipping) | `ciris-persist` (the signed corpus / storage) · `ciris-verify` (hybrid Ed25519 + ML-DSA-65 crypto, identity, license) · `ciris-edge` (Reticulum/HTTP transport + streaming media) · `ciris-nodecore` (federation consensus) · `ciris-registry` (authority) · `ciris-server` (the fabric node + KMP/Compose clients) | production, conformance-verified |
-| **Calculus** (this repo) | the deterministic evaluator · the typed view-form / Scene-IR layer · the WASM-component sandbox | object model complete; new pieces spike-proven |
-| **Agent** (shipping, optional) | `CIRISAgent` — the moral-reasoning loop (PDMA/CSDMA/WBD) | on the app store; plugs in *last*, as one transformation whose only effect is a gate-checked `emit` |
+| **Substrate crates** | `ciris-persist` v11.5 · `ciris-verify` v8.3 · `ciris-edge` v7.4 | production, conformance-verified |
+| **Fabric node** | `ciris-server` v0.5.58 + `ciris-nodecore` + `ciris-registry` | production |
+| **Current client** | KMP/Compose — Android, iOS, desktop (in CIRISServer repo) | shipping; CEWPOS replaces this |
+| **Agent** | `CIRISAgent` — PDMA/CSDMA/WBD moral-reasoning loop | on the app store; optional participant |
+| **CEWPOS** *(this repo)* | Attestation Calculus · WASM view-forms · Bevy renderer · native OS interface | object model complete; evaluator + view-forms spike-proven |
+
+See [`DEPLOYMENT.md`](DEPLOYMENT.md) for bare-metal requirements and node deployment topology.
 
 ## The data model — CEG
 
@@ -144,18 +174,19 @@ crossing a **real `ciris-edge` wire** — is wired end-to-end in [`attestation-c
 
 ## Maturity — what ships vs. what's spike-proven
 
-This is **not a greenfield runtime**. It is a thin, auditable OS layer over a fabric that already ships:
+**CIRISServer and CIRISAgent are production software**, not prototypes:
 
 - **Substrate (production):** persist / verify / edge / server at v7–11 (95k–246k LOC each),
   continuously verified by CIRISConformance ([ciris.ai/verification](https://ciris.ai/verification/),
   16k+ tests across 6 projects). `ciris-edge` includes the full streaming-media tier (realtime A/V with
   Opus/AV1 codecs, application-layer multicast, MLS/TreeKEM rekey, content-fetch byte-pull); `ciris-persist`
   the chunk-DAG + stream-STH store. The **CEG wire is 1.0-RC29 with the 1+4 surface frozen.**
-- **Clients (shipping):** CIRISServer ships a Kotlin-Multiplatform / Compose client across Android, iOS,
-  and desktop; **CIRISAgent is on the app store.**
-- **This repo (the OS layer):** the **object model is complete and schema-validated** (see below); the
-  **evaluator, view-form, and WASM-sandbox pieces are proven by working spikes** against the real
-  crates. The spikes are proof-of-concept; the substrate beneath them is not.
+- **Current client (shipping):** CIRISServer ships a Kotlin-Multiplatform / Compose client across
+  Android, iOS, and desktop. **CIRISAgent is on the app store.**
+- **CEWPOS (the native-interface rewrite):** replaces the KMP/Compose client with a native OS layer.
+  The **object model is complete and schema-validated** (see below); the **evaluator, view-form, and
+  WASM-sandbox pieces are proven by working spikes** against the real substrate crates. The spikes are
+  proof-of-concept; the production substrate beneath them is not.
 
 ## The object model
 
