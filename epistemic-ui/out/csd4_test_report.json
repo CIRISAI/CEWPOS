@@ -1,0 +1,3402 @@
+{
+  "catalogue_version": 3,
+  "total_atoms": 110,
+  "total_topologies": 20,
+  "pin_verified": true,
+  "selftest_passed": true,
+  "cohort1_cards_checked": 20,
+  "cohort1_cards_passed": 20,
+  "pending_requirements_count": 0,
+  "total_catalogue_csds": 103,
+  "trace_resolutions": [
+    {
+      "csd_id": "CSD-037",
+      "test_name": "roster",
+      "declared_topology": "T3",
+      "matched_topology": "T3",
+      "step_id": "rel[10]:roster",
+      "step_index": 18,
+      "atoms_required": [
+        "roster.visible",
+        "device.joined"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a Devices & keys",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-091",
+      "test_name": "conversation",
+      "declared_topology": "T2",
+      "matched_topology": "T2",
+      "step_id": "rel[7]:message",
+      "step_index": 15,
+      "atoms_required": [
+        "room.pair.keyed",
+        "message.delivered"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": "/v1/chat/${ROOM_ID}/messages",
+      "probe_node": null,
+      "ui_surface": "Just me / Pair / Circle \u203a Chats",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-091",
+      "test_name": "outsider",
+      "declared_topology": "T2",
+      "matched_topology": "T2",
+      "step_id": "negatives",
+      "step_index": 17,
+      "atoms_required": [
+        "person.outsider",
+        "room.pair.keyed",
+        "negatives.held"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Just me / Pair / Circle \u203a Chats",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-092",
+      "test_name": "contact_by_code",
+      "declared_topology": "T3",
+      "matched_topology": "T3",
+      "step_id": "rel[4]:contact",
+      "step_index": 12,
+      "atoms_required": [
+        "contact.via_code"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Circle \u203a People",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-094",
+      "test_name": "owner_sees_request",
+      "declared_topology": "T3",
+      "matched_topology": "T3",
+      "step_id": "rel[5]:join_request",
+      "step_index": 13,
+      "atoms_required": [
+        "device.join_requested"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": "/v1/self/device-requests",
+      "probe_node": "A1",
+      "ui_surface": "My things \u203a Devices & keys",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-094",
+      "test_name": "new_device_holds",
+      "declared_topology": "T3",
+      "matched_topology": "T3",
+      "step_id": "rel[6]:join_approve",
+      "step_index": 14,
+      "atoms_required": [
+        "device.join_approved",
+        "node.unclaimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": "/v1/setup/add-device",
+      "probe_node": "A2",
+      "ui_surface": "My things \u203a Devices & keys",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-094",
+      "test_name": "applied",
+      "declared_topology": "T3",
+      "matched_topology": "T3",
+      "step_id": "rel[7]:join_complete",
+      "step_index": 15,
+      "atoms_required": [
+        "device.joined"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a Devices & keys",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-094",
+      "test_name": "joined",
+      "declared_topology": "T3",
+      "matched_topology": "T3",
+      "step_id": "rel[12]:file",
+      "step_index": 20,
+      "atoms_required": [
+        "device.joined",
+        "file.held"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a Devices & keys",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-095",
+      "test_name": "add_held",
+      "declared_topology": "T10",
+      "matched_topology": "T10",
+      "step_id": "rel[7]:join_approve",
+      "step_index": 13,
+      "atoms_required": [
+        "key.membership.proposed_add",
+        "device.join_requested"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": "/v1/self/roster/proposals",
+      "probe_node": "A2",
+      "ui_surface": "My things \u203a Devices & keys",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P9 CeremonyBlock"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-095",
+      "test_name": "evict_held",
+      "declared_topology": "T10",
+      "matched_topology": "T10",
+      "step_id": "rel[13]:evict_propose",
+      "step_index": 19,
+      "atoms_required": [
+        "key.membership.proposed_evict",
+        "key.holder.thief",
+        "self.roster_size.three_more"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": "/v1/self/roster/proposals",
+      "probe_node": "A2",
+      "ui_surface": "My things \u203a Devices & keys",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P9 CeremonyBlock"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-095",
+      "test_name": "evicted_by_quorum",
+      "declared_topology": "T10",
+      "matched_topology": "T10",
+      "step_id": "rel[14]:evict_cosign",
+      "step_index": 20,
+      "atoms_required": [
+        "key.membership.evicted",
+        "key.holder.thief"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": "/v1/self/roster/proposals",
+      "probe_node": "A2",
+      "ui_surface": "My things \u203a Devices & keys",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P9 CeremonyBlock"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-096",
+      "test_name": "one_handler",
+      "declared_topology": "T1",
+      "matched_topology": "T1",
+      "step_id": "rel[3]:session",
+      "step_index": 9,
+      "atoms_required": [
+        "session.unified",
+        "note.synced"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a Devices & keys",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-100",
+      "test_name": "household",
+      "declared_topology": "T4",
+      "matched_topology": "T4",
+      "step_id": "rel[5]:member",
+      "step_index": 12,
+      "atoms_required": [
+        "household.formed",
+        "household.member"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Family \u203a People / Rules / Safety",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-101",
+      "test_name": "child_seated",
+      "declared_topology": "T4",
+      "matched_topology": "T4",
+      "step_id": "rel[5]:member",
+      "step_index": 12,
+      "atoms_required": [
+        "child.member"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Family \u203a People / Rules / Safety",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-102",
+      "test_name": "held_change",
+      "declared_topology": "T5",
+      "matched_topology": "T5",
+      "step_id": "rel[6]:quorum_change",
+      "step_index": 14,
+      "atoms_required": [
+        "quorum_change.held",
+        "community.member"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Communities & Businesses \u203a Rules / People / Safety",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-103",
+      "test_name": "applied_change",
+      "declared_topology": "T5",
+      "matched_topology": "T5",
+      "step_id": "rel[7]:cosign",
+      "step_index": 15,
+      "atoms_required": [
+        "quorum_change.applied"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Communities & Businesses \u203a Rules / People / Safety",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-105",
+      "test_name": "rooted_pair",
+      "declared_topology": "T8",
+      "matched_topology": "T8",
+      "step_id": "rel[3]:rooted_with",
+      "step_index": 10,
+      "atoms_required": [
+        "root.infrastructure",
+        "pair.rooted"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Everyone \u203a Safety / Rules / Decisions",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-107",
+      "test_name": "custody",
+      "declared_topology": "T1",
+      "matched_topology": "T1",
+      "step_id": "rel[5]:custody",
+      "step_index": 11,
+      "atoms_required": [
+        "file.custody_received",
+        "file.large"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Circle \u203a Files",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-107",
+      "test_name": "withdrawn",
+      "declared_topology": "T1",
+      "matched_topology": "T1",
+      "step_id": "rel[6]:withdraw",
+      "step_index": 12,
+      "atoms_required": [
+        "file.withdrawn"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Circle \u203a Files",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-111",
+      "test_name": "shutdown_dialogue",
+      "declared_topology": "T7",
+      "matched_topology": "T7",
+      "step_id": "rel[1]:steward",
+      "step_index": 7,
+      "atoms_required": [
+        "agent.bound",
+        "steward.bonded"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[0]:agent: relation `agent`: a CIRISAgent process hard-bound to the node: the server serves no agent routes without one (src/py_adapter.rs proxy_routes); halt_agent drives an EXTERNAL agent",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This agent \u203a Decisions",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet",
+        "P9 CeremonyBlock"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-117",
+      "test_name": "judges_judged",
+      "declared_topology": "T7",
+      "matched_topology": "T7",
+      "step_id": "rel[2]:wise_authority",
+      "step_index": 8,
+      "atoms_required": [
+        "wa.present",
+        "agent.bound"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[0]:agent: relation `agent`: a CIRISAgent process hard-bound to the node: the server serves no agent routes without one (src/py_adapter.rs proxy_routes); halt_agent drives an EXTERNAL agent",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a Someone I trust",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P9 CeremonyBlock"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-118",
+      "test_name": "first_run",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "nodes",
+      "step_index": 1,
+      "atoms_required": [
+        "root.none",
+        "node.unclaimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": "/v1/setup/status",
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node \u203a Rules",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P4ReceiptSheet",
+        "P7 Banner"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-118",
+      "test_name": "declared",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node \u203a Rules",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P4ReceiptSheet",
+        "P7 Banner"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-119",
+      "test_name": "guardian_bond",
+      "declared_topology": "T4",
+      "matched_topology": "T4",
+      "step_id": "rel[6]:guardian_bond",
+      "step_index": 13,
+      "atoms_required": [
+        "guardian.bound",
+        "child.member"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[6]:guardian_bond: relation `guardian_bond`: the guardian bond (CC 3.4.13): no server route writes it \u2014 family roles are free words (src/family_api.rs), CSD-119 drives the route",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Family \u203a Safety",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-119",
+      "test_name": "age_band",
+      "declared_topology": "T4",
+      "matched_topology": "T4",
+      "step_id": "rel[7]:age_assurance",
+      "step_index": 14,
+      "atoms_required": [
+        "age.assured"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[6]:guardian_bond: relation `guardian_bond`: the guardian bond (CC 3.4.13): no server route writes it \u2014 family roles are free words (src/family_api.rs), CSD-119 drives the route",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Family \u203a Safety",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-120",
+      "test_name": "affiliation",
+      "declared_topology": "T6",
+      "matched_topology": "T6",
+      "step_id": "rel[3]:member",
+      "step_index": 10,
+      "atoms_required": [
+        "community.formed",
+        "community.member"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Communities & Businesses \u203a Rules",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P8 ConfirmSheet",
+        "P9 CeremonyBlock"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-120",
+      "test_name": "licensing",
+      "declared_topology": "T6",
+      "matched_topology": "T6",
+      "step_id": "rel[4]:authority",
+      "step_index": 11,
+      "atoms_required": [
+        "authority.licensing",
+        "community.member"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[4]:authority: relation `authority`: a licensing authority affiliation (CSD-120\u2013126, the Registry fold): no server route",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Communities & Businesses \u203a Rules",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P8 ConfirmSheet",
+        "P9 CeremonyBlock"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-120",
+      "test_name": "chain",
+      "declared_topology": "T6",
+      "matched_topology": "T6",
+      "step_id": "rel[5]:delegation",
+      "step_index": 12,
+      "atoms_required": [
+        "delegation.chain"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[4]:authority: relation `authority`: a licensing authority affiliation (CSD-120\u2013126, the Registry fold): no server route",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Communities & Businesses \u203a Rules",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P8 ConfirmSheet",
+        "P9 CeremonyBlock"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-127",
+      "test_name": "first_contact",
+      "declared_topology": "T9",
+      "matched_topology": "T9",
+      "step_id": "nodes",
+      "step_index": 3,
+      "atoms_required": [
+        "root.two",
+        "party.outside_roots"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at canonical:C2: a canonical beyond the first (C2): one root per mesh \u2014 mint_accord_root rewrites the mesh's base env, so a second root cannot share it",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Everyone \u203a Decisions",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P4ReceiptSheet",
+        "P7 Banner",
+        "P9 CeremonyBlock"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-128",
+      "test_name": "protected_reporter",
+      "declared_topology": "T5",
+      "matched_topology": "T5",
+      "step_id": "rel[8]:moderator",
+      "step_index": 16,
+      "atoms_required": [
+        "moderator.named",
+        "community.member"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Neighbours / Communities \u203a Safety",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-129",
+      "test_name": "halted",
+      "declared_topology": "T8",
+      "matched_topology": "T8",
+      "step_id": "rel[4]:halt",
+      "step_index": 11,
+      "atoms_required": [
+        "root.halted"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": "/v1/accord/halt-status",
+      "probe_node": null,
+      "ui_surface": "Everyone \u203a Safety",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P4ReceiptSheet",
+        "P7 Banner",
+        "P9 CeremonyBlock"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-129",
+      "test_name": "confirmed",
+      "declared_topology": "T8",
+      "matched_topology": "T8",
+      "step_id": "rel[5]:confirm",
+      "step_index": 12,
+      "atoms_required": [
+        "root.halt_confirmed",
+        "root.halted"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Everyone \u203a Safety",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P4ReceiptSheet",
+        "P7 Banner",
+        "P9 CeremonyBlock"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    },
+    {
+      "csd_id": "CSD-129",
+      "test_name": "resumed",
+      "declared_topology": "T8",
+      "matched_topology": "T8",
+      "step_id": "rel[6]:resume",
+      "step_index": 13,
+      "atoms_required": [
+        "root.resumed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": "/v1/accord/halt-status",
+      "probe_node": null,
+      "ui_surface": "Everyone \u203a Safety",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P4ReceiptSheet",
+        "P7 Banner",
+        "P9 CeremonyBlock"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ]
+    }
+  ],
+  "migration_entries": [
+    {
+      "csd_id": "CSD-001",
+      "title": "Delegation (read-only preamble)",
+      "stage": "retired",
+      "cohort": "RETIRED",
+      "necessity": "RETIRED",
+      "derives": [],
+      "topology": "-",
+      "instant_atoms": [],
+      "instant_step": "-",
+      "surface_placement": "Folded into CSD-055 \u00a76",
+      "primitives": [],
+      "cewpos_status": "Retired (folded per CSD roster)"
+    },
+    {
+      "csd_id": "CSD-002",
+      "title": "Environment graph (what this circle has, wants and can lend)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "NONE",
+      "derives": [
+        "ops"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-003",
+      "title": "Constitutional card (is the halt authority armed, who holds it)",
+      "stage": "building",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "4a",
+        "4b"
+      ],
+      "topology": "T8",
+      "instant_atoms": [
+        "root.infrastructure",
+        "root.rooted"
+      ],
+      "instant_step": "canonical:C",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-004",
+      "title": "Federation capacity attestations",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "6b"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-005",
+      "title": "People (Contacts on the primitives)",
+      "stage": "testable",
+      "cohort": "COHORT_2_TESTABLE",
+      "necessity": "FORCED",
+      "derives": [
+        "1a",
+        "1b",
+        "1d"
+      ],
+      "topology": "T3",
+      "instant_atoms": [
+        "contact.added"
+      ],
+      "instant_step": "rel[4]:contact",
+      "surface_placement": "Circle \u203a People",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-006",
+      "title": "The receipt (what every CEG item asserts)",
+      "stage": "testable",
+      "cohort": "COHORT_2_TESTABLE",
+      "necessity": "FORCED",
+      "derives": [
+        "2a",
+        "2b",
+        "2c"
+      ],
+      "topology": "T1",
+      "instant_atoms": [
+        "file.held"
+      ],
+      "instant_step": "rel[4]:file",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-007",
+      "title": "Files (the drive plane)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "1b",
+        "1d"
+      ],
+      "topology": "T1",
+      "instant_atoms": [
+        "file.held"
+      ],
+      "instant_step": "rel[4]:file",
+      "surface_placement": "Circle \u203a Files",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-008",
+      "title": "Notes to self",
+      "stage": "testable",
+      "cohort": "COHORT_2_TESTABLE",
+      "necessity": "NONE",
+      "derives": [
+        "ops"
+      ],
+      "topology": "T1",
+      "instant_atoms": [
+        "file.held"
+      ],
+      "instant_step": "rel[4]:file",
+      "surface_placement": "Just me / Pair / Circle \u203a Chats",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-010",
+      "title": "Interact (the agent conversation)",
+      "stage": "building",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "2a",
+        "5a",
+        "7c"
+      ],
+      "topology": "T7",
+      "instant_atoms": [
+        "agent.bound",
+        "steward.bonded"
+      ],
+      "instant_step": "rel[1]:steward",
+      "surface_placement": "My things \u203a This agent",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-011",
+      "title": "Cognitive Sessions (the agent's own state)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "OPS",
+      "derives": [
+        "ops"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This agent",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-012",
+      "title": "Scheduler (what the agent will do later)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "2a",
+        "5a"
+      ],
+      "topology": "T7",
+      "instant_atoms": [
+        "agent.bound",
+        "steward.bonded"
+      ],
+      "instant_step": "rel[1]:steward",
+      "surface_placement": "My things \u203a This agent",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-013",
+      "title": "Tickets (duties other people's requests put on this node)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "1c"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "Circle \u203a People",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-014",
+      "title": "Tools (what the agent can reach for)",
+      "stage": "building",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "9a",
+        "2a"
+      ],
+      "topology": "T7",
+      "instant_atoms": [
+        "agent.bound",
+        "steward.bonded"
+      ],
+      "instant_step": "rel[1]:steward",
+      "surface_placement": "My things \u203a This agent",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-015",
+      "title": "Skills (importing someone else's code)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "5g"
+      ],
+      "topology": "T7",
+      "instant_atoms": [
+        "agent.bound",
+        "steward.bonded"
+      ],
+      "instant_step": "rel[1]:steward",
+      "surface_placement": "My things \u203a This agent",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-016",
+      "title": "Services (what is running here)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "OPS",
+      "derives": [
+        "ops"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-020",
+      "title": "Adapters (channels the agent acts through)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "2a",
+        "5a"
+      ],
+      "topology": "T7",
+      "instant_atoms": [
+        "agent.bound",
+        "steward.bonded"
+      ],
+      "instant_step": "rel[1]:steward",
+      "surface_placement": "My things \u203a This agent",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-021",
+      "title": "LLM (what the agent thinks with)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "OPS",
+      "derives": [
+        "ops"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This agent",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-022",
+      "title": "Settings (every build's, and the agent's)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "OPS",
+      "derives": [
+        "ops"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This agent",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-023",
+      "title": "Config (what this node runs, what a root asks)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "4c",
+        "2h"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "Everyone \u203a Safety / Rules / Decisions",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-024",
+      "title": "Runtime (reasoning stopped mid-thought)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "2a"
+      ],
+      "topology": "T7",
+      "instant_atoms": [
+        "agent.bound",
+        "steward.bonded"
+      ],
+      "instant_step": "rel[1]:steward",
+      "surface_placement": "My things \u203a This agent",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-025",
+      "title": "System (is this node well)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "OPS",
+      "derives": [
+        "ops"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-026",
+      "title": "Interface (how this device draws the agent)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "NONE",
+      "derives": [
+        "ops"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This agent",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-027",
+      "title": "Memory (what the node holds, as a list)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "1d",
+        "1e"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-028",
+      "title": "Graph (the same memory, drawn)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "1e"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-029",
+      "title": "Logs (from the node or the brain)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "OPS",
+      "derives": [
+        "ops"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-030",
+      "title": "Telemetry (what the agent costs, where it goes)",
+      "stage": "envisioned",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "1a",
+        "1d"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This agent",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-031",
+      "title": "Transport (how this node is reachable)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "OPS",
+      "derives": [
+        "ops"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-032",
+      "title": "This node's federation identity",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "OPS",
+      "derives": [
+        "ops"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a Devices & keys",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-033",
+      "title": "The peers this node holds",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "6d"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-034",
+      "title": "Network map",
+      "stage": "retired",
+      "cohort": "RETIRED",
+      "necessity": "RETIRED",
+      "derives": [],
+      "topology": "-",
+      "instant_atoms": [],
+      "instant_step": "-",
+      "surface_placement": "Folded into CSD-046",
+      "primitives": [],
+      "cewpos_status": "Retired (folded per CSD roster)"
+    },
+    {
+      "csd_id": "CSD-035",
+      "title": "Nodes (My things \u203a This node \u203a Nodes)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "1d"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-036",
+      "title": "Network (My things \u203a This node \u203a Network)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "4b"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-037",
+      "title": "My Identity (devices that are me)",
+      "stage": "sketched",
+      "cohort": "COHORT_1_PINNED",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "2e"
+      ],
+      "topology": "T3",
+      "instant_atoms": [
+        "roster.visible",
+        "device.joined"
+      ],
+      "instant_step": "rel[10]:roster",
+      "surface_placement": "My things \u203a Devices & keys",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-039",
+      "title": "Data (Everything I shared)",
+      "stage": "building",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "1a",
+        "1c"
+      ],
+      "topology": "T17",
+      "instant_atoms": [
+        "row.standing.tombstoned",
+        "blob.custody.purged"
+      ],
+      "instant_step": "rel[10]:purge",
+      "surface_placement": "My things \u203a Everything I shared",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-040",
+      "title": "Storage",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "OPS",
+      "derives": [
+        "ops"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a Everything I shared",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-041",
+      "title": "Wise Authority (Someone I trust)",
+      "stage": "building",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "7c",
+        "5a",
+        "5d",
+        "8b"
+      ],
+      "topology": "T7",
+      "instant_atoms": [
+        "agent.bound",
+        "steward.bonded"
+      ],
+      "instant_step": "rel[1]:steward",
+      "surface_placement": "My things \u203a Someone I trust",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-042",
+      "title": "Help",
+      "stage": "sketched",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "2h"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a Help & principles",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-043",
+      "title": "Users (accounts on this node)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "OPS",
+      "derives": [
+        "ops"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "Communities & Businesses \u203a Rules / People / Safety",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-044",
+      "title": "Health & Reputation in its circles",
+      "stage": "sketched",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "2c",
+        "8b",
+        "6b"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-045",
+      "title": "This node's own standing (shed, stop, compulsion)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "N5",
+        "2a"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-046",
+      "title": "The peer set as a graph",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "OPS",
+      "derives": [
+        "ops"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-047",
+      "title": "Fetch content by digest",
+      "stage": "testable",
+      "cohort": "COHORT_2_TESTABLE",
+      "necessity": "OPS",
+      "derives": [
+        "ops"
+      ],
+      "topology": "T1",
+      "instant_atoms": [
+        "file.held"
+      ],
+      "instant_step": "rel[4]:file",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-048",
+      "title": "Interfaces (transports carrying traffic)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "OPS",
+      "derives": [
+        "ops"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-049",
+      "title": "Queue (sent, received, carrying)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "OPS",
+      "derives": [
+        "ops"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-050",
+      "title": "The layer hub (one card, four scopes)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "1d"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-051",
+      "title": "Everyone's Rules card opens radio settings",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "2h"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-052",
+      "title": "Trust (the attestation ladder)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "OPS",
+      "derives": [
+        "ops"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-053",
+      "title": "Manage Consent (a grant and the way back)",
+      "stage": "building",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "1a",
+        "1b",
+        "1c"
+      ],
+      "topology": "T1",
+      "instant_atoms": [
+        "file.held"
+      ],
+      "instant_step": "rel[4]:file",
+      "surface_placement": "My things \u203a Everything I shared",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-054",
+      "title": "Consent (the subject's half)",
+      "stage": "building",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "1e",
+        "1a",
+        "1c"
+      ],
+      "topology": "T1",
+      "instant_atoms": [
+        "file.held"
+      ],
+      "instant_step": "rel[4]:file",
+      "surface_placement": "My things \u203a Everything I shared",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-055",
+      "title": "Delegations (offer, approve, refuse, revoke)",
+      "stage": "building",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "2f",
+        "2e"
+      ],
+      "topology": "T6",
+      "instant_atoms": [
+        "community.formed",
+        "community.member"
+      ],
+      "instant_step": "rel[3]:member",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-056",
+      "title": "Billing (off the wire)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "OPS",
+      "derives": [
+        "ops"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-057",
+      "title": "Wallet (real money in a circle)",
+      "stage": "testable",
+      "cohort": "COHORT_2_TESTABLE",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "2a"
+      ],
+      "topology": "T1",
+      "instant_atoms": [
+        "file.held"
+      ],
+      "instant_step": "rel[4]:file",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-065",
+      "title": "Moderation (duty, existence invariant, brake)",
+      "stage": "building",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "3d",
+        "2d",
+        "6d",
+        "N2"
+      ],
+      "topology": "T15",
+      "instant_atoms": [
+        "member.stage.proposed"
+      ],
+      "instant_step": "rel[18]:invite",
+      "surface_placement": "Communities & Businesses \u203a Rules / People / Safety",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-066",
+      "title": "Child Safety (posture and watchlist)",
+      "stage": "building",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "3c",
+        "1f"
+      ],
+      "topology": "T4",
+      "instant_atoms": [
+        "child.member",
+        "age.assured"
+      ],
+      "instant_step": "rel[7]:age_assurance",
+      "surface_placement": "Family \u203a People / Rules / Safety",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-067",
+      "title": "Accord (Trust Root) \u2014 kill switch, roster, four kinds",
+      "stage": "building",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "4a",
+        "4b",
+        "4c",
+        "4d"
+      ],
+      "topology": "T8",
+      "instant_atoms": [
+        "root.infrastructure",
+        "root.rooted"
+      ],
+      "instant_step": "canonical:C",
+      "surface_placement": "Everyone \u203a Safety / Rules / Decisions",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-068",
+      "title": "Provision Accord Holder (custody floor)",
+      "stage": "testable",
+      "cohort": "COHORT_2_TESTABLE",
+      "necessity": "FORCED",
+      "derives": [
+        "4b"
+      ],
+      "topology": "T8",
+      "instant_atoms": [
+        "root.infrastructure",
+        "root.rooted"
+      ],
+      "instant_step": "canonical:C",
+      "surface_placement": "Everyone \u203a Safety / Rules / Decisions",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-069",
+      "title": "Accord Genesis Ceremony",
+      "stage": "building",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "4b",
+        "4c"
+      ],
+      "topology": "T8",
+      "instant_atoms": [
+        "root.infrastructure",
+        "root.rooted"
+      ],
+      "instant_step": "canonical:C",
+      "surface_placement": "Everyone \u203a Safety / Rules / Decisions",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-070",
+      "title": "Commons (1-of-N to protect, m-of-n to undo)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "2c",
+        "6a"
+      ],
+      "topology": "T15",
+      "instant_atoms": [
+        "member.stage.proposed"
+      ],
+      "instant_step": "rel[18]:invite",
+      "surface_placement": "Everyone \u203a Safety / Rules / Decisions",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-071",
+      "title": "Audit (one card, five homes)",
+      "stage": "building",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "2b",
+        "2a",
+        "8a"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-080",
+      "title": "Startup",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "OPS",
+      "derives": [
+        "ops"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.unclaimed"
+      ],
+      "instant_step": "nodes",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-081",
+      "title": "Login",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "OPS",
+      "derives": [
+        "ops"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.unclaimed"
+      ],
+      "instant_step": "nodes",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-082",
+      "title": "Setup, the with-AI pass",
+      "stage": "building",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "3c",
+        "1e"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.unclaimed"
+      ],
+      "instant_step": "nodes",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-083",
+      "title": "Setup, the run-without-AI pass",
+      "stage": "building",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "3c"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.unclaimed"
+      ],
+      "instant_step": "nodes",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-084",
+      "title": "Server connection",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "OPS",
+      "derives": [
+        "ops"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.unclaimed"
+      ],
+      "instant_step": "nodes",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-085",
+      "title": "Claim a node",
+      "stage": "building",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "3a"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.unclaimed"
+      ],
+      "instant_step": "nodes",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-086",
+      "title": "Add Federation ID (the catch-up)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "OPS",
+      "derives": [
+        "ops"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.unclaimed"
+      ],
+      "instant_step": "nodes",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-087",
+      "title": "Verify an agent build",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "2b"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This agent",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-090",
+      "title": "Duty Conferral (two holders hand someone moderation)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "3d",
+        "2f"
+      ],
+      "topology": "T8",
+      "instant_atoms": [
+        "root.infrastructure",
+        "root.rooted"
+      ],
+      "instant_step": "canonical:C",
+      "surface_placement": "Communities & Businesses \u203a Rules / People / Safety",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-091",
+      "title": "User chat (one room, two people)",
+      "stage": "building",
+      "cohort": "COHORT_1_PINNED",
+      "necessity": "FORCED",
+      "derives": [
+        "2b",
+        "1d"
+      ],
+      "topology": "T2",
+      "instant_atoms": [
+        "room.pair.keyed",
+        "message.delivered"
+      ],
+      "instant_step": "rel[7]:message",
+      "surface_placement": "Just me / Pair / Circle \u203a Chats",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-092",
+      "title": "Share my contact code",
+      "stage": "testable",
+      "cohort": "COHORT_1_PINNED",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "1a",
+        "1d"
+      ],
+      "topology": "T3",
+      "instant_atoms": [
+        "contact.via_code"
+      ],
+      "instant_step": "rel[4]:contact",
+      "surface_placement": "Circle \u203a People",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-093",
+      "title": "Show approval code (new device)",
+      "stage": "sketched",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "6a"
+      ],
+      "topology": "T3",
+      "instant_atoms": [
+        "contact.added"
+      ],
+      "instant_step": "rel[4]:contact",
+      "surface_placement": "My things \u203a Devices & keys",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-094",
+      "title": "Approve a new device",
+      "stage": "sketched",
+      "cohort": "COHORT_1_PINNED",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "6a",
+        "1a"
+      ],
+      "topology": "T3",
+      "instant_atoms": [
+        "device.join_requested"
+      ],
+      "instant_step": "rel[5]:join_request",
+      "surface_placement": "My things \u203a Devices & keys",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-095",
+      "title": "Self-key roster (held additions and quorum evictions)",
+      "stage": "building",
+      "cohort": "COHORT_1_PINNED",
+      "necessity": "FORCED",
+      "derives": [
+        "2e",
+        "6a"
+      ],
+      "topology": "T10",
+      "instant_atoms": [
+        "key.membership.proposed_add",
+        "device.join_requested"
+      ],
+      "instant_step": "rel[7]:join_approve",
+      "surface_placement": "My things \u203a Devices & keys",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P9 CeremonyBlock"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-096",
+      "title": "Unified session handler (one device handles each exchange)",
+      "stage": "building",
+      "cohort": "COHORT_1_PINNED",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "1d"
+      ],
+      "topology": "T1",
+      "instant_atoms": [
+        "session.unified",
+        "note.synced"
+      ],
+      "instant_step": "rel[3]:session",
+      "surface_placement": "My things \u203a Devices & keys",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-100",
+      "title": "The household (Family hub)",
+      "stage": "building",
+      "cohort": "COHORT_1_PINNED",
+      "necessity": "FORCED",
+      "derives": [
+        "6d",
+        "1d"
+      ],
+      "topology": "T4",
+      "instant_atoms": [
+        "household.formed",
+        "household.member"
+      ],
+      "instant_step": "rel[5]:member",
+      "surface_placement": "Family \u203a People / Rules / Safety",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-101",
+      "title": "Household members (the roster)",
+      "stage": "testable",
+      "cohort": "COHORT_1_PINNED",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "1d"
+      ],
+      "topology": "T4",
+      "instant_atoms": [
+        "child.member"
+      ],
+      "instant_step": "rel[5]:member",
+      "surface_placement": "Family \u203a People / Rules / Safety",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-102",
+      "title": "Communities and affiliations: the community itself",
+      "stage": "building",
+      "cohort": "COHORT_1_PINNED",
+      "necessity": "FORCED",
+      "derives": [
+        "6c",
+        "6d",
+        "3d"
+      ],
+      "topology": "T5",
+      "instant_atoms": [
+        "quorum_change.held",
+        "community.member"
+      ],
+      "instant_step": "rel[6]:quorum_change",
+      "surface_placement": "Communities & Businesses \u203a Rules / People / Safety",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-103",
+      "title": "Community roster and rooms",
+      "stage": "building",
+      "cohort": "COHORT_1_PINNED",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "1d"
+      ],
+      "topology": "T5",
+      "instant_atoms": [
+        "quorum_change.applied"
+      ],
+      "instant_step": "rel[7]:cosign",
+      "surface_placement": "Communities & Businesses \u203a Rules / People / Safety",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-104",
+      "title": "Verify someone's key (short-code ceremony)",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "2b"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.claimed"
+      ],
+      "instant_step": "person:me",
+      "surface_placement": "My things \u203a This node",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-105",
+      "title": "This node's trust root (posture, adopt, un-trust)",
+      "stage": "building",
+      "cohort": "COHORT_1_PINNED",
+      "necessity": "FORCED",
+      "derives": [
+        "4b",
+        "4c"
+      ],
+      "topology": "T8",
+      "instant_atoms": [
+        "root.infrastructure",
+        "pair.rooted"
+      ],
+      "instant_step": "rel[3]:rooted_with",
+      "surface_placement": "Everyone \u203a Safety / Rules / Decisions",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-106",
+      "title": "Invitations to a household or community",
+      "stage": "building",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "1a",
+        "1d"
+      ],
+      "topology": "T15",
+      "instant_atoms": [
+        "member.stage.proposed"
+      ],
+      "instant_step": "rel[18]:invite",
+      "surface_placement": "Family \u203a People / Rules / Safety",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-107",
+      "title": "Where is this file (custody)",
+      "stage": "building",
+      "cohort": "COHORT_1_PINNED",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "1a",
+        "1b"
+      ],
+      "topology": "T1",
+      "instant_atoms": [
+        "file.custody_received",
+        "file.large"
+      ],
+      "instant_step": "rel[5]:custody",
+      "surface_placement": "Circle \u203a Files",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-108",
+      "title": "Steward purge (rows that never belonged)",
+      "stage": "sketched",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "2b",
+        "1c"
+      ],
+      "topology": "T17",
+      "instant_atoms": [
+        "row.standing.tombstoned",
+        "blob.custody.purged"
+      ],
+      "instant_step": "rel[10]:purge",
+      "surface_placement": "Everyone \u203a Safety / Rules / Decisions",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-110",
+      "title": "The rooms you talk in",
+      "stage": "building",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "1d"
+      ],
+      "topology": "T15",
+      "instant_atoms": [
+        "member.stage.proposed"
+      ],
+      "instant_step": "rel[18]:invite",
+      "surface_placement": "Just me / Pair / Circle \u203a Chats",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-111",
+      "title": "Steward shutdown dialogue",
+      "stage": "building",
+      "cohort": "COHORT_1_PINNED",
+      "necessity": "FORCED",
+      "derives": [
+        "2g",
+        "5a",
+        "5b"
+      ],
+      "topology": "T7",
+      "instant_atoms": [
+        "agent.bound",
+        "steward.bonded"
+      ],
+      "instant_step": "rel[1]:steward",
+      "surface_placement": "My things \u203a This agent \u203a Decisions",
+      "primitives": [
+        "P1 CardShell",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet",
+        "P9 CeremonyBlock"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-112",
+      "title": "Identity record and drift review",
+      "stage": "building",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "5d",
+        "5e"
+      ],
+      "topology": "T7",
+      "instant_atoms": [
+        "agent.bound",
+        "steward.bonded"
+      ],
+      "instant_step": "rel[1]:steward",
+      "surface_placement": "My things \u203a This agent \u203a Rules",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P4ReceiptSheet",
+        "P9 CeremonyBlock"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-113",
+      "title": "Retirement floor",
+      "stage": "building",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "5f"
+      ],
+      "topology": "T16",
+      "instant_atoms": [
+        "agent.retirement.decided"
+      ],
+      "instant_step": "rel[4]:retirement",
+      "surface_placement": "My things \u203a This agent \u203a Record",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-114",
+      "title": "Upgrade offer",
+      "stage": "building",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "5g"
+      ],
+      "topology": "T7",
+      "instant_atoms": [
+        "agent.bound",
+        "steward.bonded"
+      ],
+      "instant_step": "rel[1]:steward",
+      "surface_placement": "My things \u203a This agent \u203a Rules",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-115",
+      "title": "Steward bond, tier and intent",
+      "stage": "building",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "3a",
+        "3b",
+        "3e"
+      ],
+      "topology": "T7",
+      "instant_atoms": [
+        "agent.bound",
+        "steward.bonded"
+      ],
+      "instant_step": "rel[1]:steward",
+      "surface_placement": "My things \u203a This agent \u203a Rules",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-116",
+      "title": "Principles and order",
+      "stage": "building",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "7a",
+        "7b"
+      ],
+      "topology": "T7",
+      "instant_atoms": [
+        "agent.bound",
+        "steward.bonded"
+      ],
+      "instant_step": "rel[1]:steward",
+      "surface_placement": "My things \u203a Help & principles",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-117",
+      "title": "The judges are judged (WA rulings, audits, appeals)",
+      "stage": "building",
+      "cohort": "COHORT_1_PINNED",
+      "necessity": "FORCED",
+      "derives": [
+        "8b",
+        "8c"
+      ],
+      "topology": "T7",
+      "instant_atoms": [
+        "wa.present",
+        "agent.bound"
+      ],
+      "instant_step": "rel[2]:wise_authority",
+      "surface_placement": "My things \u203a Someone I trust",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P9 CeremonyBlock"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-118",
+      "title": "Never allowed, and the operator's declaration",
+      "stage": "building",
+      "cohort": "COHORT_1_PINNED",
+      "necessity": "FORCED",
+      "derives": [
+        "9a",
+        "9c",
+        "2h"
+      ],
+      "topology": "T0",
+      "instant_atoms": [
+        "root.none",
+        "node.unclaimed"
+      ],
+      "instant_step": "nodes",
+      "surface_placement": "My things \u203a This node \u203a Rules",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P4ReceiptSheet",
+        "P7 Banner"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-119",
+      "title": "Guardian bond and confidential help channel",
+      "stage": "building",
+      "cohort": "COHORT_1_PINNED",
+      "necessity": "FORCED",
+      "derives": [
+        "3c"
+      ],
+      "topology": "T4",
+      "instant_atoms": [
+        "guardian.bound",
+        "child.member"
+      ],
+      "instant_step": "rel[6]:guardian_bond",
+      "surface_placement": "Family \u203a Safety",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-120",
+      "title": "Affiliation (found an organization)",
+      "stage": "envisioned",
+      "cohort": "COHORT_1_PINNED",
+      "necessity": "FORCED",
+      "derives": [
+        "6c",
+        "3b"
+      ],
+      "topology": "T6",
+      "instant_atoms": [
+        "community.formed",
+        "community.member"
+      ],
+      "instant_step": "rel[3]:member",
+      "surface_placement": "Communities & Businesses \u203a Rules",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P8 ConfirmSheet",
+        "P9 CeremonyBlock"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-121",
+      "title": "Members and roles",
+      "stage": "envisioned",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "2f",
+        "3b"
+      ],
+      "topology": "T6",
+      "instant_atoms": [
+        "community.formed",
+        "community.member"
+      ],
+      "instant_step": "rel[3]:member",
+      "surface_placement": "Communities & Businesses \u203a People",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P8 ConfirmSheet",
+        "P9 CeremonyBlock"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-122",
+      "title": "Licensure",
+      "stage": "envisioned",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "2c",
+        "2f"
+      ],
+      "topology": "T6",
+      "instant_atoms": [
+        "community.formed",
+        "community.member"
+      ],
+      "instant_step": "rel[3]:member",
+      "surface_placement": "Communities & Businesses \u203a Rules",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-123",
+      "title": "Partners",
+      "stage": "envisioned",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "2c",
+        "N2"
+      ],
+      "topology": "T6",
+      "instant_atoms": [
+        "community.formed",
+        "community.member"
+      ],
+      "instant_step": "rel[3]:member",
+      "surface_placement": "Communities & Businesses \u203a People",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-124",
+      "title": "Authority delegations (licence and grant rights)",
+      "stage": "envisioned",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "2f"
+      ],
+      "topology": "T6",
+      "instant_atoms": [
+        "community.formed",
+        "community.member"
+      ],
+      "instant_step": "rel[3]:member",
+      "surface_placement": "Communities & Businesses \u203a Rules",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-125",
+      "title": "Grants",
+      "stage": "envisioned",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "FORCED",
+      "derives": [
+        "1d",
+        "2f"
+      ],
+      "topology": "T6",
+      "instant_atoms": [
+        "community.formed",
+        "community.member"
+      ],
+      "instant_step": "rel[3]:member",
+      "surface_placement": "Communities & Businesses \u203a Files",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-126",
+      "title": "Affiliation keys",
+      "stage": "envisioned",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "necessity": "SUPPORTS",
+      "derives": [
+        "2e",
+        "3b"
+      ],
+      "topology": "T6",
+      "instant_atoms": [
+        "community.formed",
+        "community.member"
+      ],
+      "instant_step": "rel[3]:member",
+      "surface_placement": "Communities & Businesses \u203a Safety",
+      "primitives": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P9 CeremonyBlock"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-127",
+      "title": "First contact, and leaving a root",
+      "stage": "building",
+      "cohort": "COHORT_1_PINNED",
+      "necessity": "FORCED",
+      "derives": [
+        "6e",
+        "4c"
+      ],
+      "topology": "T9",
+      "instant_atoms": [
+        "root.two",
+        "party.outside_roots"
+      ],
+      "instant_step": "nodes",
+      "surface_placement": "Everyone \u203a Decisions",
+      "primitives": [
+        "P1 CardShell",
+        "P4ReceiptSheet",
+        "P7 Banner",
+        "P9 CeremonyBlock"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-128",
+      "title": "The protected reporter channel",
+      "stage": "building",
+      "cohort": "COHORT_1_PINNED",
+      "necessity": "FORCED",
+      "derives": [
+        "2d"
+      ],
+      "topology": "T5",
+      "instant_atoms": [
+        "moderator.named",
+        "community.member"
+      ],
+      "instant_step": "rel[8]:moderator",
+      "surface_placement": "Neighbours / Communities \u203a Safety",
+      "primitives": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    },
+    {
+      "csd_id": "CSD-129",
+      "title": "Accord halt latch, quorum confirmation, and resume",
+      "stage": "building",
+      "cohort": "COHORT_1_PINNED",
+      "necessity": "FORCED",
+      "derives": [
+        "4a",
+        "4b",
+        "4c",
+        "4d"
+      ],
+      "topology": "T8",
+      "instant_atoms": [
+        "root.halted"
+      ],
+      "instant_step": "rel[4]:halt",
+      "surface_placement": "Everyone \u203a Safety",
+      "primitives": [
+        "P1 CardShell",
+        "P4ReceiptSheet",
+        "P7 Banner",
+        "P9 CeremonyBlock"
+      ],
+      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+    }
+  ],
+  "live_probes": [
+    {
+      "name": "CIRISServer Embedded Node Health",
+      "url": "http://127.0.0.1:4243/health",
+      "reachable": true,
+      "status_code": 200,
+      "summary": "standing=identified, key_id=ciris-agent-bootstrap-j7uo5vwfei, version=0.5.223"
+    },
+    {
+      "name": "CIRISAgent API Root",
+      "url": "http://127.0.0.1:8080/",
+      "reachable": true,
+      "status_code": 200,
+      "summary": "207 bytes"
+    },
+    {
+      "name": "CEWPOS Epistemic UI Surface",
+      "url": "http://127.0.0.1:8787/index.html",
+      "reachable": true,
+      "status_code": 200,
+      "summary": "5 Circles=True, 7 Tabs=True, ProgressiveDisclosure(\u2630/\u22ef)=True"
+    },
+    {
+      "name": "CEWPOS Promise Cards Bundle (CSD-111..128)",
+      "url": "http://127.0.0.1:8787/out/all_promise_cards.json",
+      "reachable": true,
+      "status_code": 200,
+      "summary": "18 reserved CSD cards projected (CSD-111..CSD-128)"
+    }
+  ]
+}

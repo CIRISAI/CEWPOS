@@ -897,6 +897,48 @@ def build_all_11_promise_cards() -> Dict[str, Any]:
             "placement": "Family › Safety (extends CSD-066)",
             "primitives": ["CardShell", "LineageChainBlock"],
         },
+        "CSD-120": {
+            "promises": ["6c", "3b"],
+            "title": "Affiliation — Found an Organization, Declare Charter, Nest or Dissolve (#206)",
+            "placement": "Communities & Businesses › Rules",
+            "primitives": ["CardShell", "FieldRow", "ConfirmSheet", "TwoPathCeremonyBlock"],
+        },
+        "CSD-121": {
+            "promises": ["2f", "3b"],
+            "title": "Affiliation Members & Termed Roles (365d Attenuated Delegations) (#206)",
+            "placement": "Communities & Businesses › People",
+            "primitives": ["CardShell", "ItemRow", "ConfirmSheet", "TwoPathCeremonyBlock"],
+        },
+        "CSD-122": {
+            "promises": ["2c", "2f"],
+            "title": "Licensure — Issue, Probate, Suspend, Revoke & Subject Contest (#206)",
+            "placement": "Communities & Businesses › Rules",
+            "primitives": ["CardShell", "ItemRow", "ReceiptSheet", "ConfirmSheet"],
+        },
+        "CSD-123": {
+            "promises": ["2c", "N2"],
+            "title": "Partners — Bilateral / Multilateral Organizational Recognition (#206)",
+            "placement": "Communities & Businesses › People",
+            "primitives": ["CardShell", "ItemRow", "ReceiptSheet"],
+        },
+        "CSD-124": {
+            "promises": ["2f"],
+            "title": "Authority Delegations — Issuance Rights Chain (Depth ≤ 5, 365d, Cascade) (#206)",
+            "placement": "Communities & Businesses › Rules (extends CSD-055)",
+            "primitives": ["CardShell", "LineageChainBlock", "ReceiptSheet", "ConfirmSheet"],
+        },
+        "CSD-125": {
+            "promises": ["1d", "2f"],
+            "title": "Grants — Non-Transferable Leaf Access Grants (`key_grant:*`) (#206)",
+            "placement": "Communities & Businesses › Files",
+            "primitives": ["CardShell", "ItemRow", "ReceiptSheet", "ConfirmSheet"],
+        },
+        "CSD-126": {
+            "promises": ["2e", "3b"],
+            "title": "Affiliation Keys — Register, Rotate, Revoke & Threshold Escrow (#206)",
+            "placement": "Communities & Businesses › Safety",
+            "primitives": ["CardShell", "ItemRow", "ReceiptSheet", "TwoPathCeremonyBlock"],
+        },
         "CSD-127": {
             "promises": ["6e", "4c"],
             "title": "First-Contact Gate, Local-Only Device Badge & 1-Step Trust-Root Exit (Inv_ExitOneStep)",

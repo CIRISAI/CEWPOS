@@ -125,6 +125,102 @@
       "LineageChainBlock"
     ]
   },
+  "CSD-120": {
+    "promises": [
+      "6c",
+      "3b"
+    ],
+    "title": "Affiliation \u2014 Found an Organization, Declare Charter, Nest or Dissolve (#206)",
+    "placement": "Communities & Businesses \u203a Rules",
+    "primitives": [
+      "CardShell",
+      "FieldRow",
+      "ConfirmSheet",
+      "TwoPathCeremonyBlock"
+    ]
+  },
+  "CSD-121": {
+    "promises": [
+      "2f",
+      "3b"
+    ],
+    "title": "Affiliation Members & Termed Roles (365d Attenuated Delegations) (#206)",
+    "placement": "Communities & Businesses \u203a People",
+    "primitives": [
+      "CardShell",
+      "ItemRow",
+      "ConfirmSheet",
+      "TwoPathCeremonyBlock"
+    ]
+  },
+  "CSD-122": {
+    "promises": [
+      "2c",
+      "2f"
+    ],
+    "title": "Licensure \u2014 Issue, Probate, Suspend, Revoke & Subject Contest (#206)",
+    "placement": "Communities & Businesses \u203a Rules",
+    "primitives": [
+      "CardShell",
+      "ItemRow",
+      "ReceiptSheet",
+      "ConfirmSheet"
+    ]
+  },
+  "CSD-123": {
+    "promises": [
+      "2c",
+      "N2"
+    ],
+    "title": "Partners \u2014 Bilateral / Multilateral Organizational Recognition (#206)",
+    "placement": "Communities & Businesses \u203a People",
+    "primitives": [
+      "CardShell",
+      "ItemRow",
+      "ReceiptSheet"
+    ]
+  },
+  "CSD-124": {
+    "promises": [
+      "2f"
+    ],
+    "title": "Authority Delegations \u2014 Issuance Rights Chain (Depth \u2264 5, 365d, Cascade) (#206)",
+    "placement": "Communities & Businesses \u203a Rules (extends CSD-055)",
+    "primitives": [
+      "CardShell",
+      "LineageChainBlock",
+      "ReceiptSheet",
+      "ConfirmSheet"
+    ]
+  },
+  "CSD-125": {
+    "promises": [
+      "1d",
+      "2f"
+    ],
+    "title": "Grants \u2014 Non-Transferable Leaf Access Grants (`key_grant:*`) (#206)",
+    "placement": "Communities & Businesses \u203a Files",
+    "primitives": [
+      "CardShell",
+      "ItemRow",
+      "ReceiptSheet",
+      "ConfirmSheet"
+    ]
+  },
+  "CSD-126": {
+    "promises": [
+      "2e",
+      "3b"
+    ],
+    "title": "Affiliation Keys \u2014 Register, Rotate, Revoke & Threshold Escrow (#206)",
+    "placement": "Communities & Businesses \u203a Safety",
+    "primitives": [
+      "CardShell",
+      "ItemRow",
+      "ReceiptSheet",
+      "TwoPathCeremonyBlock"
+    ]
+  },
   "CSD-127": {
     "promises": [
       "6e",
