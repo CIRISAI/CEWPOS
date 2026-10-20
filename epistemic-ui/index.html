@@ -33,17 +33,17 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── Calm Centered Shell (Single-Column, Zero Dashboard Clutter) ── */
+    /* ── Calm Centered Single-Column Shell ── */
     .shell {
       max-width: 640px;
       margin: 0 auto;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding: 0 16px 88px;
+      padding: 0 16px 92px;
     }
 
-    /* ── Top Bar: Only 2 Permanent Anchors (`My things` & `Stop`) + Quiet Title ── */
+    /* ── Top Bar: `My things`, Context Title, `Stop`, `⋯` ── */
     .topbar {
       display: flex;
       align-items: center;
@@ -55,7 +55,10 @@
       background: var(--bone);
       z-index: 20;
     }
-    .topbar-title {
+    .topbar-center {
+      display: flex;
+      align-items: center;
+      gap: 8px;
       font-weight: 600;
       font-size: 15px;
       letter-spacing: -0.01em;
@@ -66,7 +69,7 @@
       gap: 8px;
     }
 
-    /* ── Buttons & Icon Triggers (`☰` Hamburger & `⋯` Ellipsis) ── */
+    /* ── Buttons & Quiet Triggers (`☰` Hamburger & `⋯` Ellipsis) ── */
     .btn {
       font-family: var(--sans);
       font-size: 13px;
@@ -82,7 +85,7 @@
     .btn:hover { background: var(--paper); }
     .btn-ghost {
       background: transparent;
-      border-color: transparent;
+      border: 1px solid transparent;
       color: var(--ink-mute);
       padding: 4px 8px;
       border-radius: 6px;
@@ -112,13 +115,13 @@
     }
     .btn-brand:hover { opacity: 0.92; background: var(--brand); }
 
-    /* ── Tabs Strip (Quiet Horizontal Text) ── */
+    /* ── 7 Circle Tabs ── */
     .tabs {
       display: flex;
       gap: 4px;
       overflow-x: auto;
       padding: 12px 0;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .tab-pill {
       border: none;
@@ -138,31 +141,31 @@
       font-weight: 600;
     }
 
-    /* ── Quiet Lens Line (`my rules · ⋯`) ── */
+    /* ── Quiet Context / Lens Line (`⋯` to expand) ── */
     .quiet-lens {
       display: flex;
       align-items: center;
       justify-content: space-between;
       font-size: 12px;
       color: var(--ink-mute);
-      padding: 4px 2px 12px;
+      padding: 2px 2px 10px;
     }
     .lens-drawer {
       background: var(--paper);
       border: 1px solid var(--hairline);
       border-radius: 10px;
       padding: 12px 14px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       font-size: 12px;
     }
 
-    /* ── P1: CardShell (Quiet Hairline Frame) ── */
+    /* ── P1: CardShell ── */
     .card {
       background: #fff;
       border: 1px solid var(--hairline);
       border-radius: 12px;
       padding: 4px 16px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     .card-header {
       display: flex;
@@ -171,15 +174,15 @@
       padding: 12px 0;
     }
     .card-header-title {
-      font-size: 13px;
-      font-weight: 600;
+      font-size: 14px;
+      font-weight: 500;
       color: var(--obsidian);
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    /* ── P3: ItemRow — Strictly 3 Scannable Inline Facts (`Title`, `ScopePill`, `☰`) ── */
+    /* ── P3: ItemRow — Strictly 3 Scannable Inline Elements (`Title`, `ScopePill`/`Chip`, `☰`/`⋯`) ── */
     .item-row {
       display: flex;
       align-items: center;
@@ -206,7 +209,7 @@
       flex-shrink: 0;
     }
 
-    /* ── P5: ScopePill (The SOLE place Circle color + name is rendered) ── */
+    /* ── P5: ScopePill ── */
     .scope-pill {
       display: inline-flex;
       align-items: center;
@@ -242,17 +245,19 @@
     .chip.danger { background: rgba(184, 35, 35, 0.12); color: var(--danger); }
     .chip.brand { background: rgba(31, 94, 122, 0.1); color: var(--brand); }
 
-    /* ── Expandable Detail Drawer (Hidden Until `⋯` or `☰` Clicked) ── */
+    /* ── Expandable Detail Drawer (`⋯`) ── */
     .expand-body {
       border-top: 1px solid #F2EFE9;
-      padding: 12px 0 14px;
+      padding: 10px 0 14px;
       font-size: 12px;
       color: var(--ink-mute);
     }
     .kv-row {
       display: flex;
       justify-content: space-between;
-      padding: 5px 0;
+      align-items: baseline;
+      gap: 12px;
+      padding: 6px 0;
       border-bottom: 1px dashed #F2EFE9;
     }
     .kv-row:last-child { border-bottom: none; }
@@ -280,7 +285,23 @@
       color: var(--danger);
     }
 
-    /* ── Bottom Circle Bar (5 Circles, Fixed & Calm) ── */
+    /* ── Compose / Chat Input Bar ── */
+    .compose-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .compose-input {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--hairline);
+      background: #fff;
+      font-family: var(--sans);
+      font-size: 13px;
+    }
+
+    /* ── Bottom Circle Bar (5 Circles) ── */
     .bottom-circles {
       position: fixed;
       bottom: 0;
@@ -317,7 +338,7 @@
       box-shadow: 0 1px 2px rgba(0,0,0,0.04);
     }
 
-    /* ── Slide-Up / Popover Sheet for `☰` Receipt, `ConfirmSheet`, and `My things` ── */
+    /* ── Slide-Up Sheet (`☰` Receipt, `ConfirmSheet`, `My things`) ── */
     .sheet-backdrop {
       position: fixed;
       inset: 0;
@@ -351,7 +372,7 @@
     }
     canvas#spatialCanvas {
       width: 100%;
-      height: 150px;
+      height: 140px;
       background: var(--bone);
       border: 1px solid var(--hairline);
       border-radius: 8px;
@@ -363,19 +384,19 @@
 <body>
 
   <div class="shell">
-    <!-- Top Bar: Calm 3-item header. Everything else is tucked under `My things` or `⋯` -->
+    <!-- Top Bar -->
     <header class="topbar">
       <button id="btn_my_things" data-csd-tag="btn_my_things" class="btn" onclick="openMyThingsSheet()">
         &#9670; My things
       </button>
 
-      <div class="topbar-title" id="headerTitle">Just me</div>
+      <div class="topbar-center" id="headerTitle"></div>
 
       <div class="topbar-right">
         <button id="btn_stop_everything" data-csd-tag="btn_stop_everything" class="btn btn-stop" onclick="toggleHalt()">
           Stop
         </button>
-        <button id="btn_overflow_inspector" data-csd-tag="btn_overflow_inspector" class="btn-ghost" title="Developer / CSD-4 Inspector" onclick="openInspectorSheet()">
+        <button id="btn_overflow_inspector" data-csd-tag="btn_overflow_inspector" class="btn-ghost" title="More / CSD-4 Tree" onclick="openInspectorSheet()">
           &ctdot;
         </button>
       </div>
@@ -391,7 +412,7 @@
   <!-- Fixed Bottom Bar: The 5 Circles -->
   <nav class="bottom-circles" id="circleNav"></nav>
 
-  <!-- Modal / Sheet Host (Hidden until a `☰` Receipt, `⋯` Sheet, or `My things` is tapped) -->
+  <!-- Modal / Sheet Host -->
   <div id="sheetHost"></div>
 
   <script>
@@ -414,44 +435,65 @@
       { id: "Help", label: "Help & principles", sub: "Published principles & limits", requiresAgent: false },
     ];
 
-    const CLAIMS = [
-      {
-        id: "row_0",
-        op: "scores",
-        dimension: "evaluation:quality",
-        title: "Quality review (+0.85)",
-        score: 0.85,
-        confidence: 0.92,
-        subject: "ed25519:alice",
-        attester: "ed25519:viewer_self",
-        scope: "JustMe",
-        cw_opinion: null,
-      },
-      {
-        id: "row_1",
-        op: "scores",
-        dimension: "holds_bytes:beach.jpg",
-        title: "beach.jpg",
-        score: 0.40,
-        confidence: 0.95,
-        subject: "ed25519:viewer_self",
-        attester: "ed25519:viewer_self",
-        scope: "Neighbours",
-        cw_opinion: { by: "neighbour_dan", rule: "cw_class:sunburn_note" },
-      },
-      {
-        id: "row_2",
-        op: "delegates_to",
-        dimension: "licensure:steward_bond:v1",
-        title: "Steward — Agent bond",
-        score: 1.0,
-        confidence: 1.0,
-        subject: "ed25519:agent_self",
-        attester: "ed25519:viewer_self",
-        scope: "Family",
-        cw_opinion: null,
-      },
+    // ── Rich Signed CEG Claims across all 5 Circles × 7 Tabs ──
+    let CLAIMS = [
+      // FILES
+      { id: "f_self_1", tab: "Files", scope: "JustMe", op: "scores", dimension: "holds_bytes:journal-2026.md", title: "journal-2026.md", score: 0.9, confidence: 1.0, subject: "ed25519:viewer_self", attester: "ed25519:viewer_self" },
+      { id: "f_self_2", tab: "Files", scope: "JustMe", op: "scores", dimension: "holds_bytes:tax-notes.pdf", title: "tax-notes.pdf", score: 0.8, confidence: 1.0, subject: "ed25519:viewer_self", attester: "ed25519:viewer_self" },
+      { id: "f_fam_1", tab: "Files", scope: "Family", op: "scores", dimension: "holds_bytes:trip-itinerary.pdf", title: "trip-itinerary.pdf", score: 0.95, confidence: 0.95, subject: "ed25519:family_group", attester: "ed25519:mom" },
+      { id: "f_fam_2", tab: "Files", scope: "Family", op: "scores", dimension: "holds_bytes:sourdough-recipe.md", title: "sourdough-recipe.md", score: 0.9, confidence: 0.9, subject: "ed25519:viewer_self", attester: "ed25519:viewer_self" },
+      { id: "f_nei_1", tab: "Files", scope: "Neighbours", op: "scores", dimension: "holds_bytes:beach.jpg", title: "beach.jpg", score: 0.4, confidence: 0.95, subject: "ed25519:viewer_self", attester: "ed25519:viewer_self", cw_opinion: { by: "neighbour_dan", rule: "cw_class:sunburn_note" } },
+      { id: "f_nei_2", tab: "Files", scope: "Neighbours", op: "scores", dimension: "holds_bytes:tool-library-list.csv", title: "tool-library-list.csv", score: 0.85, confidence: 0.9, subject: "ed25519:oak_street", attester: "ed25519:neighbour_dan" },
+      { id: "f_com_1", tab: "Files", scope: "CommunitiesAndBusinesses", op: "scores", dimension: "holds_bytes:coop-budget-q4.csv", title: "coop-budget-q4.csv", score: 0.88, confidence: 0.94, subject: "ed25519:solar_coop", attester: "ed25519:steward_maya" },
+      { id: "f_all_1", tab: "Files", scope: "Everyone", op: "scores", dimension: "holds_bytes:ciris-constitution-rc9.pdf", title: "ciris-constitution-rc9.pdf", score: 0.99, confidence: 0.99, subject: "ed25519:ciris_root", attester: "ed25519:viewer_self" },
+
+      // CHATS
+      { id: "c_self_1", tab: "Chats", scope: "JustMe", op: "scores", dimension: "message:note_to_self", title: "Note: Remember to rotate backup key on Sunday", score: 0.5, confidence: 1.0, subject: "ed25519:viewer_self", attester: "ed25519:viewer_self" },
+      { id: "c_fam_1", tab: "Chats", scope: "Family", op: "scores", dimension: "message:family_room", title: "Mom: Dinner at 7pm tonight?", score: 0.9, confidence: 1.0, subject: "ed25519:family_group", attester: "ed25519:mom" },
+      { id: "c_fam_2", tab: "Chats", scope: "Family", op: "scores", dimension: "message:family_room", title: "Sam: I'll bring the salad", score: 0.85, confidence: 1.0, subject: "ed25519:family_group", attester: "ed25519:sam" },
+      { id: "c_nei_1", tab: "Chats", scope: "Neighbours", op: "scores", dimension: "message:oak_street", title: "Dan: Borrowed the ladder, returning by 5pm", score: 0.8, confidence: 0.95, subject: "ed25519:oak_street", attester: "ed25519:neighbour_dan" },
+      { id: "c_com_1", tab: "Chats", scope: "CommunitiesAndBusinesses", op: "scores", dimension: "message:solar_coop", title: "Maya: Roof panel inspection passed!", score: 0.95, confidence: 0.98, subject: "ed25519:solar_coop", attester: "ed25519:steward_maya" },
+      { id: "c_all_1", tab: "Chats", scope: "Everyone", op: "scores", dimension: "message:commons_townhall", title: "Townhall: CC rc9 formal verification suite is green", score: 0.92, confidence: 0.96, subject: "ed25519:ciris_root", attester: "ed25519:steward_maya" },
+
+      // PEOPLE
+      { id: "p_self_1", tab: "People", scope: "JustMe", op: "scores", dimension: "self_roster:laptop_key", title: "This laptop (ed25519 + ML-DSA-65)", score: 1.0, confidence: 1.0, subject: "ed25519:viewer_self", attester: "ed25519:viewer_self" },
+      { id: "p_self_2", tab: "People", scope: "JustMe", op: "scores", dimension: "self_roster:phone_key", title: "Pixel phone key", score: 1.0, confidence: 1.0, subject: "ed25519:viewer_self", attester: "ed25519:viewer_self" },
+      { id: "p_fam_1", tab: "People", scope: "Family", op: "scores", dimension: "membership:family", title: "Mom (Accord holder)", score: 1.0, confidence: 1.0, subject: "ed25519:mom", attester: "ed25519:viewer_self" },
+      { id: "p_fam_2", tab: "People", scope: "Family", op: "scores", dimension: "membership:family", title: "Sam (Accord holder)", score: 1.0, confidence: 1.0, subject: "ed25519:sam", attester: "ed25519:viewer_self" },
+      { id: "p_nei_1", tab: "People", scope: "Neighbours", op: "scores", dimension: "membership:community", title: "Dan (Named Moderator · CC 4.5.4)", score: 0.95, confidence: 0.98, subject: "ed25519:neighbour_dan", attester: "ed25519:viewer_self" },
+      { id: "p_com_1", tab: "People", scope: "CommunitiesAndBusinesses", op: "scores", dimension: "membership:affiliation", title: "Maya (Co-op Steward)", score: 0.96, confidence: 0.99, subject: "ed25519:steward_maya", attester: "ed25519:viewer_self" },
+      { id: "p_all_1", tab: "People", scope: "Everyone", op: "scores", dimension: "trust_root:seat", title: "CIRIS Public Root Stewards (Rooted)", score: 0.98, confidence: 1.0, subject: "ed25519:ciris_root", attester: "ed25519:ciris_root" },
+
+      // SAFETY
+      { id: "s_self_1", tab: "Safety", scope: "JustMe", op: "scores", dimension: "custody_hw:enclave", title: "Hardware keystore sealed (Hybrid PQC)", score: 1.0, confidence: 1.0, subject: "ed25519:viewer_self", attester: "ed25519:viewer_self" },
+      { id: "s_fam_1", tab: "Safety", scope: "Family", op: "delegates_to", dimension: "bond:guardian:v1", title: "Guardian bond & child confidential help channel (CSD-119)", score: 1.0, confidence: 1.0, subject: "ed25519:child_leo", attester: "ed25519:viewer_self" },
+      { id: "s_nei_1", tab: "Safety", scope: "Neighbours", op: "scores", dimension: "moderation:standing", title: "Named moderator active (Dan · CC 4.5.4)", score: 1.0, confidence: 1.0, subject: "ed25519:oak_street", attester: "ed25519:neighbour_dan" },
+      { id: "s_com_1", tab: "Safety", scope: "CommunitiesAndBusinesses", op: "scores", dimension: "quarantine:status", title: "Zero active quarantine holds", score: 1.0, confidence: 1.0, subject: "ed25519:solar_coop", attester: "ed25519:steward_maya" },
+      { id: "s_all_1", tab: "Safety", scope: "Everyone", op: "scores", dimension: "first_contact:gate", title: "First-Contact Gate & 1-step Root Exit (CSD-127)", score: 1.0, confidence: 1.0, subject: "ed25519:ciris_root", attester: "ed25519:ciris_root" },
+
+      // RULES
+      { id: "r_self_1", tab: "Rules", scope: "JustMe", op: "scores", dimension: "rule:smallest_circle", title: "Born in Just me (Inv_SmallestCircle)", score: 1.0, confidence: 1.0, subject: "ed25519:viewer_self", attester: "ed25519:viewer_self" },
+      { id: "r_fam_1", tab: "Rules", scope: "Family", op: "scores", dimension: "accord:halt_policy", title: "Accord halt: 1-of-3 immediate pause · 2-of-3 confirm", score: 1.0, confidence: 1.0, subject: "ed25519:family_group", attester: "ed25519:mom" },
+      { id: "r_nei_1", tab: "Rules", scope: "Neighbours", op: "scores", dimension: "cw_class:sunburn_note", title: "Neighbour note on beach.jpg (opinion, blurs by your rule)", score: -0.4, confidence: 0.9, subject: "ed25519:viewer_self", attester: "ed25519:neighbour_dan" },
+      { id: "r_com_1", tab: "Rules", scope: "CommunitiesAndBusinesses", op: "scores", dimension: "rule:default_standing", title: "Standing changes: >2/3 enact · 72h silence window", score: 1.0, confidence: 1.0, subject: "ed25519:solar_coop", attester: "ed25519:steward_maya" },
+      { id: "r_all_1", tab: "Rules", scope: "Everyone", op: "scores", dimension: "consent:contextual_integrity", title: "9-Axis ContextualIntegrity required before mesh crossing", score: 1.0, confidence: 1.0, subject: "ed25519:ciris_root", attester: "ed25519:ciris_root" },
+
+      // RECORD
+      { id: "rec_self_1", tab: "Record", scope: "JustMe", op: "scores", dimension: "sth:local_stream", title: "Local signed tree head #42 (verified)", score: 1.0, confidence: 1.0, subject: "ed25519:viewer_self", attester: "ed25519:viewer_self" },
+      { id: "rec_fam_1", tab: "Record", scope: "Family", op: "scores", dimension: "custody:ack:v1", title: "Custody ack from Mom's tablet (72h TTL)", score: 1.0, confidence: 1.0, subject: "ed25519:family_group", attester: "ed25519:mom" },
+      { id: "rec_nei_1", tab: "Record", scope: "Neighbours", op: "withdraws", dimension: "withdraws:old_event_flyer", title: "Withdrawn: Old block party flyer (Rule 0 producer)", score: 0.0, confidence: 1.0, subject: "ed25519:oak_street", attester: "ed25519:neighbour_dan" },
+      { id: "rec_com_1", tab: "Record", scope: "CommunitiesAndBusinesses", op: "supersedes", dimension: "supersedes:budget_v1", title: "Superseded: Q4 budget v1 -> v2", score: 1.0, confidence: 1.0, subject: "ed25519:solar_coop", attester: "ed25519:steward_maya" },
+      { id: "rec_all_1", tab: "Record", scope: "Everyone", op: "scores", dimension: "sth:federation_checkpoint", title: "Federation transparency checkpoint #1,024", score: 1.0, confidence: 1.0, subject: "ed25519:ciris_root", attester: "ed25519:ciris_root" },
     ];
+
+    // ── Circle-Specific TwoPath Ceremonies (`Decisions` Tab) ──
+    const CEREMONIES_BY_CIRCLE = {
+      JustMe: { title: "Add tablet key to self-roster", policy: "self_roster_add (24h window · 1 lone floor)", need: 2 },
+      Family: { title: "Renew Family Helper AI steward bond", policy: "custodian_replace (2-of-2 cosigned · 365d review)", need: 2 },
+      Neighbours: { title: "Invite Priya to Neighbours circle", policy: "community_invite (>2/3 + invitee acceptance · 72h)", need: 3 },
+      CommunitiesAndBusinesses: { title: "Approve Q4 Solar Co-op budget", policy: "default_standing (>2/3 enact · >=1/3 brake · 72h)", need: 4 },
+      Everyone: { title: "Confirm v4 genesis hardware amend", policy: "default_irreversible (>2/3 after 7d window only)", need: 5 },
+    };
 
     let state = {
       circleId: "JustMe",
@@ -460,15 +502,21 @@
       hasAgent: true,
       halted: false,
       blurEnabled: true,
-      lensExpanded: false,
-      ceremonyExpanded: false,
-      lineageExpanded: false,
-      haltDetailExpanded: false,
-      rosterSize: 3,
-      rosterApprovals: 1,
-      rosterObjections: 0,
+      expandedIds: {}, // key -> bool for any `⋯` toggle
+      ceremonyVotes: {
+        JustMe: { app: 1, obj: 0 },
+        Family: { app: 1, obj: 0 },
+        Neighbours: { app: 2, obj: 0 },
+        CommunitiesAndBusinesses: { app: 3, obj: 0 },
+        Everyone: { app: 4, obj: 0 },
+      },
       retirementStage: 1,
     };
+
+    function toggleExpand(key) {
+      state.expandedIds[key] = !state.expandedIds[key];
+      renderAll();
+    }
 
     function getCircle(id) {
       return CIRCLES.find(c => c.id === id) || CIRCLES[0];
@@ -501,7 +549,7 @@
       document.getElementById("sheetHost").innerHTML = "";
     }
 
-    // ── `◆ My things` Sheet (Hidden until tapped) ──
+    // ── `◆ My things` Sheet ──
     function openMyThingsSheet() {
       const host = document.getElementById("sheetHost");
       host.innerHTML = `
@@ -531,9 +579,10 @@
       `;
     }
 
-    // ── `☰` Receipt Sheet (CSD-006: All 5 envelope facts + actions live here, NOT cluttering the row) ──
+    // ── `☰` Receipt Sheet (`CSD-006`: 5 Universal Envelope Facts + Actions) ──
     function openReceiptSheet(claimId) {
       const c = CLAIMS.find(x => x.id === claimId);
+      if (!c) return;
       const sc = getCircle(c.scope);
       const host = document.getElementById("sheetHost");
       host.innerHTML = `
@@ -570,19 +619,22 @@
               </div>
             </div>
 
-            <!-- Secondary 3D Spatial View-Form tucked inside a quiet `<details>` disclosure -->
             <details style="margin:10px 0; font-size:12px; color:var(--ink-mute);">
               <summary style="cursor:pointer; user-select:none;">&ctdot; Spatial 3D view-form (<code>view_form(&amp;Form)</code>)</summary>
-              <canvas id="spatialCanvas" width="480" height="150" data-csd-tag="csd_spatial_canvas"></canvas>
+              <canvas id="spatialCanvas" width="480" height="140" data-csd-tag="csd_spatial_canvas"></canvas>
             </details>
 
             <div style="display:flex; gap:8px; margin-top:14px;">
-              <button class="btn" data-csd-tag="btn_act_withdraw_${c.id}" onclick="oneStepWithdraw('${c.id}')">
-                Take back (1-step)
-              </button>
-              <button class="btn btn-brand" data-csd-tag="btn_act_widen_${c.id}" onclick="openWidenConfirm('${c.id}')">
-                Share outward&hellip;
-              </button>
+              ${c.scope !== 'JustMe' ? `
+                <button class="btn" data-csd-tag="btn_act_withdraw_${c.id}" onclick="oneStepWithdraw('${c.id}')">
+                  Take back to Just me (1-step)
+                </button>
+              ` : ''}
+              ${c.scope !== 'Everyone' ? `
+                <button class="btn btn-brand" data-csd-tag="btn_act_widen_${c.id}" onclick="openWidenConfirm('${c.id}')">
+                  Share outward&hellip;
+                </button>
+              ` : ''}
             </div>
           </div>
         </div>
@@ -595,14 +647,15 @@
 
     function oneStepWithdraw(claimId) {
       const c = CLAIMS.find(x => x.id === claimId);
-      c.scope = "JustMe";
+      if (c) c.scope = "JustMe";
       closeSheet();
       renderAll();
     }
 
-    // ── `ConfirmSheet` (P8: 3 Facts for Outward Share) ──
+    // ── `ConfirmSheet` (`P8`: 3 Facts for Outward Share or Protected Report) ──
     function openWidenConfirm(claimId) {
       const c = CLAIMS.find(x => x.id === claimId);
+      if (!c) return;
       const host = document.getElementById("sheetHost");
       host.innerHTML = `
         <div class="sheet-backdrop" onclick="if(event.target===this)closeSheet()">
@@ -630,7 +683,49 @@
       `;
     }
 
-    // ── `⋯` Developer / CSD-4 Tree Inspector Sheet (Completely hidden from main screen) ──
+    function openProtectedReportSheet() {
+      const host = document.getElementById("sheetHost");
+      host.innerHTML = `
+        <div class="sheet-backdrop" onclick="if(event.target===this)closeSheet()">
+          <div class="sheet" data-csd-tag="csd_128_protected_reporter">
+            <div class="sheet-header">
+              <span class="sheet-title">File protected safety report (CSD-128)</span>
+              <button class="btn-ghost" onclick="closeSheet()">&#10005;</button>
+            </div>
+            <div class="card" style="padding:8px 14px;">
+              <div class="kv-row"><span>1. Who sees your name</span><strong>Moderator &amp; sealed audit record only (never public)</strong></div>
+              <div class="kv-row"><span>2. What is filed</span><span>Signed report row with contestable evidence</span></div>
+              <div class="kv-row"><span>3. Can I undo it?</span><span>1-step withdraw or recant at any time</span></div>
+            </div>
+            <div style="display:flex; gap:8px; margin-top:12px;">
+              <button class="btn btn-brand" onclick="closeSheet()">Submit signed report</button>
+              <button class="btn" onclick="closeSheet()">Cancel</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function sendChatMessage() {
+      const inp = document.getElementById("chatInput");
+      if (!inp || !inp.value.trim()) return;
+      const text = inp.value.trim();
+      CLAIMS.unshift({
+        id: "c_new_" + Date.now(),
+        tab: "Chats",
+        scope: state.circleId,
+        op: "scores",
+        dimension: "message:room",
+        title: "You: " + text,
+        score: 0.9,
+        confidence: 1.0,
+        subject: "ed25519:room",
+        attester: "ed25519:viewer_self",
+      });
+      renderAll();
+    }
+
+    // ── `⋯` CSD/4 Inspector Sheet ──
     function openInspectorSheet() {
       const tagged = Array.from(document.querySelectorAll("[data-csd-tag]"));
       const host = document.getElementById("sheetHost");
@@ -676,24 +771,202 @@
       ctx.fill();
     }
 
-    // ── Main Render: Quiet by default; details tucked behind `☰` and `⋯` ──
+    function renderItemRow(c) {
+      const sc = getCircle(c.scope);
+      const isBlurred = state.blurEnabled && c.cw_opinion;
+      return `
+        <div class="item-row ${isBlurred ? 'blurred' : ''}" data-csd-tag="csd_item_${c.id}">
+          <div class="item-title">
+            ${c.title}
+            ${isBlurred ? '<span class="chip warn" style="margin-left:6px;">blurred by rule</span>' : ''}
+          </div>
+          <div class="item-right">
+            <span class="scope-pill" data-csd-tag="csd_scope_${c.id}">
+              <span class="circle-dot" style="background:${sc.color}"></span>
+              ${sc.label}
+            </span>
+            <button class="btn-ghost" data-csd-tag="btn_receipt_${c.id}" title="Receipt &amp; actions" onclick="openReceiptSheet('${c.id}')">
+              &#9776;
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // ── Render Active Instrument (`My things`) ──
+    function renderInstrumentSurface(inst) {
+      if (inst.requiresAgent && !state.hasAgent) {
+        return `
+          <div class="state-banner" data-csd-tag="state_no_agent">
+            <span>No AI agent is attached to this node.</span>
+            <span class="chip">Bare node</span>
+          </div>
+        `;
+      }
+
+      if (inst.id === "DevicesAndKeys") {
+        const myKeys = CLAIMS.filter(c => c.tab === "People" && c.scope === "JustMe");
+        return `
+          <div class="card" data-csd-tag="csd_devices_keys_card">
+            ${myKeys.map(renderItemRow).join("")}
+          </div>
+          ${renderCeremonyCard("JustMe")}
+        `;
+      }
+
+      if (inst.id === "EverythingIShared") {
+        const shared = CLAIMS.filter(c => c.attester === "ed25519:viewer_self" && c.scope !== "JustMe");
+        if (shared.length === 0) {
+          return `<div class="state-banner" data-csd-tag="state_empty_shared"><span>Nothing shared outside Just me.</span><span class="chip ok">Private</span></div>`;
+        }
+        return `<div class="card" data-csd-tag="csd_shared_card">${shared.map(renderItemRow).join("")}</div>`;
+      }
+
+      if (inst.id === "ThisAgent") {
+        const steps = ["Decided", "Frozen", "SecretsDestroyed", "HandedOver", "Notified", "CustodianMinted", "Retired"];
+        const curStep = steps[state.retirementStage - 1];
+        return `
+          ${renderExpandableCard("csd_115_bond", "Steward — Agent bond (CSD-115)", "Bonded · 365d", "ok", `
+            <div class="kv-row"><span>Powers</span><span class="mono-hint">agency:operate, agency:defer_wa</span></div>
+            <div class="kv-row"><span>Depth</span><span>Depth 1 (Inv_BondDepthOne)</span></div>
+          `)}
+          ${renderExpandableCard("csd_111_shutdown", "Planned shutdown dialogue (CSD-111)", "5m window", "brand", `
+            <div class="kv-row"><span>Agent response</span><span>May Accept, Object, or Postpone on record</span></div>
+            <div class="kv-row"><span>G14 limit</span><span>Software records objection; physical power remains external</span></div>
+          `)}
+          ${renderExpandableCard("csd_114_upgrade", "Upgrade offer v1.0-rc9 (CSD-114)", "12/12 peers ok", "ok", `
+            <div class="kv-row"><span>Risk band</span><span>Low · Agent may refuse on record (G23)</span></div>
+          `)}
+          ${renderExpandableCard("csd_118_never", "Never allowed bounds (CSD-118)", "Hard refusal G17", "danger", `
+            <div class="kv-row"><span>prohibited:deception_fraud</span><span class="chip danger">NEVER_ALLOWED</span></div>
+            <div class="kv-row"><span>prohibited:manipulation_coercion</span><span class="chip danger">NEVER_ALLOWED</span></div>
+          `)}
+          <div class="card" data-csd-tag="csd_113_retirement">
+            <div class="card-header">
+              <div class="card-header-title">
+                <span>Retirement ladder (CSD-113)</span>
+                <span class="chip brand">Step ${state.retirementStage}/7 &middot; ${curStep}</span>
+              </div>
+              <button class="btn-ghost" onclick="toggleExpand('retire')">&ctdot;</button>
+            </div>
+            ${state.expandedIds['retire'] ? `
+              <div class="expand-body">
+                ${steps.map((s, idx) => `
+                  <div class="kv-row">
+                    <span style="${idx + 1 === state.retirementStage ? 'font-weight:600; color:var(--obsidian);' : ''}">${idx + 1}. ${s}</span>
+                    <span>${idx === 0 ? 'Cancelable (1-step)' : 'Forward-only'}</span>
+                  </div>
+                `).join("")}
+                <div style="display:flex; gap:8px; margin-top:10px;">
+                  <button class="btn" onclick="state.retirementStage=Math.min(7,state.retirementStage+1); renderAll();">Next step</button>
+                  <button class="btn-ghost" onclick="state.retirementStage=1; renderAll();">Reset</button>
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }
+
+      if (inst.id === "ThisNode") {
+        return `
+          ${renderExpandableCard("csd_node_standing", "Trust root standing", "Rooted", "ok", `
+            <div class="kv-row"><span>Local node</span><span class="mono-hint">127.0.0.1:4243 (identified)</span></div>
+            <div class="kv-row"><span>Agent runtime</span><span class="mono-hint">127.0.0.1:8080 (22/22 services)</span></div>
+            <div class="kv-row"><span>Crypto</span><span class="mono-hint">Ed25519 + ML-DSA-65 / X25519 + ML-KEM-768</span></div>
+          `)}
+        `;
+      }
+
+      if (inst.id === "SomeoneITrust") {
+        return `
+          ${renderExpandableCard("csd_117_wa", "Wise Authority rulings & conduct (CSD-117)", "Judges are judged", "brand", `
+            <div class="kv-row"><span>Standing</span><span>Every WA deferral ruling is signed, peer-reviewed, and contestable</span></div>
+          `)}
+        `;
+      }
+
+      return `
+        ${renderExpandableCard("csd_116_principles", "Published ethical principles (CSD-116)", "Lexical order", "brand", `
+          <div class="kv-row"><span>1. Meta-Goal M-1</span><span>Adaptive coherence &amp; flourishing</span></div>
+          <div class="kv-row"><span>2. Tie-break rule</span><span>Protect the most vulnerable party first (CC 1.4)</span></div>
+          <div class="kv-row"><span>3. Guarantee G14</span><span>Always state what the protocol cannot verify</span></div>
+        `)}
+      `;
+    }
+
+    function renderExpandableCard(tag, title, chipLabel, chipTone, bodyHtml) {
+      const open = !!state.expandedIds[tag];
+      return `
+        <div class="card" data-csd-tag="${tag}">
+          <div class="card-header">
+            <div class="card-header-title">
+              <span>${title}</span>
+              <span class="chip ${chipTone}">${chipLabel}</span>
+            </div>
+            <button class="btn-ghost" data-csd-tag="btn_${tag}_ellipsis" onclick="toggleExpand('${tag}')">&ctdot;</button>
+          </div>
+          ${open ? `<div class="expand-body">${bodyHtml}</div>` : ''}
+        </div>
+      `;
+    }
+
+    function renderCeremonyCard(circleId) {
+      const spec = CEREMONIES_BY_CIRCLE[circleId] || CEREMONIES_BY_CIRCLE.JustMe;
+      const votes = state.ceremonyVotes[circleId] || { app: 1, obj: 0 };
+      let statusLabel = `${votes.app} of ${spec.need} signed`;
+      let statusTone = "warn";
+      if (votes.obj > 0) {
+        statusLabel = "Objected";
+        statusTone = "danger";
+      } else if (votes.app >= spec.need) {
+        statusLabel = "Approved";
+        statusTone = "ok";
+      }
+      const key = "ceremony_" + circleId;
+      const open = !!state.expandedIds[key];
+
+      return `
+        <div class="card" data-csd-tag="csd_two_path_ceremony_${circleId}">
+          <div class="card-header">
+            <div class="card-header-title">
+              <span>${spec.title}</span>
+              <span class="chip ${statusTone}">${statusLabel}</span>
+            </div>
+            <button class="btn-ghost" data-csd-tag="btn_ceremony_ellipsis" onclick="toggleExpand('${key}')">&ctdot;</button>
+          </div>
+          ${open ? `
+            <div class="expand-body">
+              <div class="kv-row"><span>Rule</span><span class="mono-hint">${spec.policy}</span></div>
+              <div class="kv-row"><span>Tally</span><span>${votes.app} approvals &middot; ${votes.obj} objections</span></div>
+              <div style="display:flex; gap:8px; margin-top:10px;">
+                <button class="btn btn-brand" onclick="state.ceremonyVotes['${circleId}'].app++; renderAll();">Approve</button>
+                <button class="btn" onclick="state.ceremonyVotes['${circleId}'].obj++; renderAll();">Object</button>
+                <button class="btn-ghost" onclick="state.ceremonyVotes['${circleId}']={app:1,obj:0}; renderAll();">Reset</button>
+              </div>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    // ── Main Render ──
     function renderAll() {
       const circle = getCircle(state.circleId);
 
-      // Header
+      // Header Title
       const headerTitle = document.getElementById("headerTitle");
       if (state.instrumentId) {
         const inst = INSTRUMENTS.find(i => i.id === state.instrumentId);
-        headerTitle.textContent = inst.label;
+        headerTitle.innerHTML = `<span style="color:var(--ink-mute); font-weight:400;">My things /</span> <span>${inst.label}</span>`;
       } else {
-        headerTitle.textContent = circle.label;
+        headerTitle.innerHTML = `<span class="circle-dot" style="background:${circle.color}"></span><span>${circle.label}</span>`;
       }
 
       const stopBtn = document.getElementById("btn_stop_everything");
       stopBtn.textContent = state.halted ? "Halted (423)" : "Stop";
       stopBtn.className = state.halted ? "btn btn-stop halted" : "btn btn-stop";
 
-      // Tabs
+      // Tabs Bar
       const tabsBar = document.getElementById("tabsBar");
       if (state.instrumentId) {
         tabsBar.style.display = "none";
@@ -706,7 +979,7 @@
         `).join("");
       }
 
-      // Bottom Circle Bar
+      // Bottom Circle Switcher
       document.getElementById("circleNav").innerHTML = CIRCLES.map(c => `
         <button class="circle-btn ${!state.instrumentId && state.circleId === c.id ? 'active' : ''}"
                 data-csd-tag="nav_circle_${c.id}"
@@ -718,14 +991,14 @@
 
       let html = "";
 
-      // Halt banner: 1 concise line + `⋯` to expand data-door proof
+      // Global Halt Banner (`P7`)
       if (state.halted) {
         html += `
           <div class="state-banner danger" data-csd-tag="state_halt_423">
             <span><strong>Agent paused (423 Locked)</strong> &middot; Data doors remain open</span>
-            <button class="btn-ghost" data-csd-tag="btn_halt_ellipsis" onclick="state.haltDetailExpanded=!state.haltDetailExpanded; renderAll();">&ctdot;</button>
+            <button class="btn-ghost" onclick="toggleExpand('halt_detail')">&ctdot;</button>
           </div>
-          ${state.haltDetailExpanded ? `
+          ${state.expandedIds['halt_detail'] ? `
             <div class="lens-drawer" data-csd-tag="state_halt_423_data_doors_open">
               Autonomous actions are refused (<code>HALT_LATCHED_423</code>). Reading, exporting, and 1-step take-back continue normally (<code>Inv_X1_LatchDoesNotBlockServing</code>).
             </div>
@@ -733,134 +1006,70 @@
         `;
       }
 
-      // Runtime Narrowing (`CC 4.4.3.4.3`) when viewing an agent instrument on a bare node
+      // If an instrument under `My things` is active, render it
       if (state.instrumentId) {
         const inst = INSTRUMENTS.find(i => i.id === state.instrumentId);
-        if (inst.requiresAgent && !state.hasAgent) {
-          html += `
-            <div class="state-banner" data-csd-tag="state_no_agent">
-              <span>No AI agent is attached to this node.</span>
-              <span class="chip">Bare node</span>
-            </div>
-          `;
-          document.getElementById("surfaceRoot").innerHTML = html;
-          return;
-        }
+        html += renderInstrumentSurface(inst);
+        document.getElementById("surfaceRoot").innerHTML = html;
+        return;
       }
 
-      // Quiet Policy Lens summary line + `⋯` expansion
-      html += `
-        <div class="quiet-lens" data-csd-tag="csd_policy_lens_bar">
-          <span>Lens: <strong>my rules</strong> &middot; 1 helper</span>
-          <button class="btn-ghost" data-csd-tag="btn_lens_ellipsis" title="Expand lens options" onclick="state.lensExpanded=!state.lensExpanded; renderAll();">&ctdot;</button>
-        </div>
-        ${state.lensExpanded ? `
-          <div class="lens-drawer">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span>Blur items with neighbour content notes (<code>cw_class</code>)</span>
-              <button class="btn" data-csd-tag="btn_toggle_blur" onclick="state.blurEnabled=!state.blurEnabled; renderAll();">
-                ${state.blurEnabled ? 'Blur: On' : 'Blur: Off'}
-              </button>
-            </div>
+      // Otherwise render the active `(Circle × Tab)`
+      const rows = CLAIMS.filter(c => c.scope === state.circleId && c.tab === state.tab);
+
+      if (state.tab === "Files" || state.tab === "Chats") {
+        html += `
+          <div class="quiet-lens" data-csd-tag="csd_policy_lens_bar">
+            <span>Lens: <strong>my rules</strong> &middot; ${rows.length} ${state.tab.toLowerCase()}</span>
+            <button class="btn-ghost" onclick="toggleExpand('lens')">&ctdot;</button>
           </div>
-        ` : ''}
-      `;
-
-      // Primary Claims Card: Each row shows ONLY Title + ScopePill + `☰` Receipt button!
-      html += `
-        <div class="card" data-csd-tag="csd_main_card">
-          ${CLAIMS.map(c => {
-            const sc = getCircle(c.scope);
-            const isBlurred = state.blurEnabled && c.cw_opinion !== null;
-            return `
-              <div class="item-row ${isBlurred ? 'blurred' : ''}" data-csd-tag="csd_item_${c.id}">
-                <div class="item-title">
-                  ${c.title}
-                  ${isBlurred ? '<span class="chip warn" style="margin-left:6px;">blurred by rule</span>' : ''}
-                </div>
-                <div class="item-right">
-                  <span class="scope-pill" data-csd-tag="csd_scope_${c.id}">
-                    <span class="circle-dot" style="background:${sc.color}"></span>
-                    ${sc.label}
-                  </span>
-                  <button class="btn-ghost" data-csd-tag="btn_receipt_${c.id}" title="Receipt &amp; actions" onclick="openReceiptSheet('${c.id}')">
-                    &#9776;
-                  </button>
-                </div>
-              </div>
-            `;
-          }).join("")}
-        </div>
-      `;
-
-      // Ceremony Card (`P9`): Collapsed to 1 quiet summary row by default; expands on `⋯`
-      const enactNeeded = Math.floor(state.rosterSize / 2) + 1;
-      const others = Math.max(0, state.rosterSize - 1);
-      const cancelNeeded = others === 0 ? 1 : Math.floor(others / 2) + 1;
-      let verdictLabel = `${state.rosterApprovals} of ${enactNeeded} signed`;
-      let verdictClass = "warn";
-      if (state.rosterObjections >= cancelNeeded) {
-        verdictLabel = "Cancelled";
-        verdictClass = "danger";
-      } else if (state.rosterApprovals >= enactNeeded) {
-        verdictLabel = "Approved";
-        verdictClass = "ok";
-      }
-
-      html += `
-        <div class="card" data-csd-tag="csd_two_path_ceremony">
-          <div class="card-header">
-            <div class="card-header-title">
-              <span>Add device key to self-roster</span>
-              <span class="chip ${verdictClass}">${verdictLabel}</span>
-            </div>
-            <button class="btn-ghost" data-csd-tag="btn_ceremony_ellipsis" title="Show ceremony details" onclick="state.ceremonyExpanded=!state.ceremonyExpanded; renderAll();">&ctdot;</button>
-          </div>
-          ${state.ceremonyExpanded ? `
-            <div class="expand-body">
-              <div class="kv-row"><span>Policy</span><span class="mono-hint">self_roster_add (24h window, 1 lone floor)</span></div>
-              <div class="kv-row"><span>Quorum</span><span>${state.rosterApprovals} / ${enactNeeded} approvals &middot; ${state.rosterObjections} / ${cancelNeeded} objections</span></div>
-              <div style="display:flex; gap:8px; margin-top:10px;">
-                <button class="btn btn-brand" data-csd-tag="btn_ceremony_assent" onclick="state.rosterApprovals++; renderAll();">Approve</button>
-                <button class="btn" data-csd-tag="btn_ceremony_object" onclick="state.rosterObjections++; renderAll();">Object</button>
-                <button class="btn" onclick="state.rosterApprovals=1; state.rosterObjections=0; renderAll();">Reset</button>
+          ${state.expandedIds['lens'] ? `
+            <div class="lens-drawer">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span>Blur items with neighbour content notes (<code>cw_class</code>)</span>
+                <button class="btn" onclick="state.blurEnabled=!state.blurEnabled; renderAll();">
+                  ${state.blurEnabled ? 'Blur: On' : 'Blur: Off'}
+                </button>
               </div>
             </div>
           ` : ''}
-        </div>
-      `;
+        `;
+      }
 
-      // Lineage / Retirement Card (`P11`): Collapsed to 1 quiet summary row by default; expands on `⋯`
-      const steps = ["Decided", "Frozen", "SecretsDestroyed", "HandedOver", "Notified", "CustodianMinted", "Retired"];
-      const currentStepName = steps[state.retirementStage - 1];
-      html += `
-        <div class="card" data-csd-tag="csd_lineage_and_conscience">
-          <div class="card-header">
-            <div class="card-header-title">
-              <span>Steward bond &amp; lifecycle</span>
-              <span class="chip brand">Step ${state.retirementStage}/7 &middot; ${currentStepName}</span>
-            </div>
-            <button class="btn-ghost" data-csd-tag="btn_lineage_ellipsis" title="Show 7-step lifecycle" onclick="state.lineageExpanded=!state.lineageExpanded; renderAll();">&ctdot;</button>
+      if (state.tab === "Decisions") {
+        html += renderCeremonyCard(state.circleId);
+      } else {
+        html += `
+          <div class="card" data-csd-tag="csd_main_card">
+            ${rows.length > 0 ? rows.map(renderItemRow).join("") : `
+              <div class="item-row"><span style="color:var(--ink-mute); font-size:13px;">No ${state.tab.toLowerCase()} in ${circle.label} yet.</span></div>
+            `}
           </div>
-          ${state.lineageExpanded ? `
-            <div class="expand-body">
-              ${steps.map((s, idx) => `
-                <div class="kv-row" data-csd-tag="csd_retire_step_${idx + 1}">
-                  <span style="${idx + 1 === state.retirementStage ? 'font-weight:600; color:var(--obsidian);' : ''}">
-                    ${idx + 1}. ${s}
-                  </span>
-                  <span>${idx === 0 ? 'Cancelable (1-step)' : 'Forward-only'}</span>
-                </div>
-              `).join("")}
-              <div style="display:flex; gap:8px; margin-top:10px;">
-                <button class="btn" data-csd-tag="btn_advance_retirement" onclick="state.retirementStage = Math.min(7, state.retirementStage + 1); renderAll();">Next step</button>
-                ${state.retirementStage === 1 ? `<button class="btn" data-csd-tag="btn_cancel_retirement" onclick="state.lineageExpanded=false; renderAll();">Cancel retirement (1-step)</button>` : ''}
-                <button class="btn-ghost" onclick="state.retirementStage = 1; renderAll();">Reset</button>
-              </div>
-            </div>
-          ` : ''}
-        </div>
-      `;
+        `;
+      }
+
+      // Contextual footer action per tab (quiet, 1-line)
+      if (state.tab === "Chats") {
+        html += `
+          <div class="compose-row">
+            <input id="chatInput" class="compose-input" placeholder="Write a signed message to ${circle.label}&hellip;" onkeydown="if(event.key==='Enter')sendChatMessage()" />
+            <button class="btn btn-brand" onclick="sendChatMessage()">Send</button>
+          </div>
+        `;
+      } else if (state.tab === "People" && state.circleId !== "JustMe") {
+        html += `
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:4px 2px;">
+            <span style="font-size:12px; color:var(--ink-mute);">One-step exit (<code>Inv_ExitOneStep</code>)</span>
+            <button class="btn" data-csd-tag="btn_leave_circle" onclick="selectCircle('JustMe')">Leave ${circle.label} (1-step)</button>
+          </div>
+        `;
+      } else if (state.tab === "Safety" && (state.circleId === "Neighbours" || state.circleId === "CommunitiesAndBusinesses")) {
+        html += `
+          <div style="display:flex; justify-content:flex-end; padding:4px 2px;">
+            <button class="btn" data-csd-tag="btn_open_protected_report" onclick="openProtectedReportSheet()">File protected report&hellip;</button>
+          </div>
+        `;
+      }
 
       document.getElementById("surfaceRoot").innerHTML = html;
     }
