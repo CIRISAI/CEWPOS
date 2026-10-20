@@ -1,0 +1,863 @@
+CSD-002:
+  topology: T0
+  tests:
+    node_local_surface:
+      at:
+      - root.none
+      - node.claimed
+CSD-003:
+  topology: T12
+  tests:
+    root_stalled:
+      at:
+      - root.standing.Stalled
+      - root.liveness.stalled
+    root_recovered:
+      at:
+      - root.liveness.live
+      - seat.identity_type.human
+CSD-004:
+  topology: T0
+  tests:
+    node_local_surface:
+      at:
+      - root.none
+      - node.claimed
+CSD-005:
+  topology: T2
+  tests:
+    contacts_list:
+      at:
+      - contact.reachable
+      - contact.added
+      probe:
+        path: /v1/contacts
+        status: 200
+CSD-006:
+  topology: T1
+  tests:
+    five_ceg_facts:
+      at:
+      - file.held
+      - row.standing.admitted
+CSD-007:
+  topology: T1
+  tests:
+    memory_and_files_held:
+      at:
+      - file.held
+      - note.synced
+CSD-008:
+  topology: T1
+  tests:
+    note_synced_self_room:
+      at:
+      - room.self.keyed
+      - note.synced
+CSD-010:
+  topology: T16
+  tests:
+    agent_acting_conversation:
+      at:
+      - agent.halt_gate.acting
+CSD-011:
+  topology: T0
+  tests:
+    node_local_surface:
+      at:
+      - root.none
+      - node.claimed
+CSD-012:
+  topology: T7
+  tests:
+    agent_runtime_surface:
+      at:
+      - agent.bound
+      - steward.bonded
+CSD-013:
+  topology: T0
+  tests:
+    node_local_surface:
+      at:
+      - root.none
+      - node.claimed
+CSD-014:
+  topology: T7
+  tests:
+    tools_and_prohibited:
+      at:
+      - agent.bound
+      - steward.bonded
+CSD-015:
+  topology: T7
+  tests:
+    agent_runtime_surface:
+      at:
+      - agent.bound
+      - steward.bonded
+CSD-016:
+  topology: T0
+  tests:
+    node_local_surface:
+      at:
+      - root.none
+      - node.claimed
+CSD-020:
+  topology: T7
+  tests:
+    agent_runtime_surface:
+      at:
+      - agent.bound
+      - steward.bonded
+CSD-021:
+  topology: T0
+  tests:
+    node_local_surface:
+      at:
+      - root.none
+      - node.claimed
+CSD-022:
+  topology: T0
+  tests:
+    node_local_surface:
+      at:
+      - root.none
+      - node.claimed
+CSD-023:
+  topology: T1
+  tests:
+    peered_mesh_surface:
+      at:
+      - canonical.peered
+      - peer.direct
+CSD-024:
+  topology: T7
+  tests:
+    agent_runtime_surface:
+      at:
+      - agent.bound
+      - steward.bonded
+CSD-025:
+  topology: T0
+  tests:
+    node_local_surface:
+      at:
+      - root.none
+      - node.claimed
+CSD-026:
+  topology: T0
+  tests:
+    node_local_surface:
+      at:
+      - root.none
+      - node.claimed
+CSD-027:
+  topology: T1
+  tests:
+    memory_and_files_held:
+      at:
+      - file.held
+      - note.synced
+CSD-028:
+  topology: T1
+  tests:
+    memory_and_files_held:
+      at:
+      - file.held
+      - note.synced
+CSD-029:
+  topology: T0
+  tests:
+    node_local_surface:
+      at:
+      - root.none
+      - node.claimed
+CSD-030:
+  topology: T0
+  tests:
+    node_local_surface:
+      at:
+      - root.none
+      - node.claimed
+CSD-031:
+  topology: T0
+  tests:
+    node_local_surface:
+      at:
+      - root.none
+      - node.claimed
+CSD-032:
+  topology: T0
+  tests:
+    node_local_surface:
+      at:
+      - root.none
+      - node.claimed
+CSD-033:
+  topology: T1
+  tests:
+    peered_mesh_surface:
+      at:
+      - canonical.peered
+      - peer.direct
+CSD-035:
+  topology: T0
+  tests:
+    node_local_surface:
+      at:
+      - root.none
+      - node.claimed
+CSD-036:
+  topology: T1
+  tests:
+    peered_mesh_surface:
+      at:
+      - canonical.peered
+      - peer.direct
+CSD-037:
+  topology: T3
+  tests:
+    roster:
+      at:
+      - roster.visible
+      - device.joined
+CSD-039:
+  topology: T17
+  tests:
+    shared_row_admitted:
+      at:
+      - row.standing.admitted
+      - row.scope.family
+    withdrawn_and_purged:
+      at:
+      - row.standing.tombstoned
+      - blob.custody.purged
+CSD-040:
+  topology: T0
+  tests:
+    node_local_surface:
+      at:
+      - root.none
+      - node.claimed
+CSD-041:
+  topology: T7
+  tests:
+    wa_deferral_inbox:
+      at:
+      - agent.bound
+      - wa.present
+CSD-042:
+  topology: T0
+  tests:
+    node_local_surface:
+      at:
+      - root.none
+      - node.claimed
+CSD-043:
+  topology: T0
+  tests:
+    node_local_surface:
+      at:
+      - root.none
+      - node.claimed
+CSD-044:
+  topology: T17
+  tests:
+    circle_reputation_contest:
+      at:
+      - row.standing.admitted
+      - row.scope.community
+CSD-045:
+  topology: T1
+  tests:
+    peered_mesh_surface:
+      at:
+      - canonical.peered
+      - peer.direct
+CSD-046:
+  topology: T1
+  tests:
+    peered_mesh_surface:
+      at:
+      - canonical.peered
+      - peer.direct
+CSD-047:
+  topology: T1
+  tests:
+    fetch_by_digest:
+      at:
+      - file.held
+      - file.large
+CSD-048:
+  topology: T0
+  tests:
+    node_local_surface:
+      at:
+      - root.none
+      - node.claimed
+CSD-049:
+  topology: T0
+  tests:
+    node_local_surface:
+      at:
+      - root.none
+      - node.claimed
+CSD-050:
+  topology: T5
+  tests:
+    circle_hub_and_rooms:
+      at:
+      - community.formed
+      - community.member
+CSD-051:
+  topology: T0
+  tests:
+    node_local_surface:
+      at:
+      - root.none
+      - node.claimed
+CSD-052:
+  topology: T0
+  tests:
+    node_local_surface:
+      at:
+      - root.none
+      - node.claimed
+CSD-053:
+  topology: T14
+  tests:
+    replication_granted:
+      at:
+      - consent.community_trust.granted
+    replication_revoked_boundary:
+      at:
+      - consent.community_trust.bounded
+      - consent.replication.none
+CSD-054:
+  topology: T14
+  tests:
+    consent_granted:
+      at:
+      - consent.state.granted
+    decay_severed:
+      at:
+      - consent.state.revoked
+      - consent.decay.identity_severed
+    decay_anonymized:
+      at:
+      - consent.state.revoked
+      - consent.decay.patterns_anonymized
+    decay_complete:
+      at:
+      - consent.state.revoked
+      - consent.decay.complete
+CSD-055:
+  topology: T18
+  tests:
+    delegation_withdrawn:
+      at:
+      - delegation.link.withdrawn
+    delegation_expired:
+      at:
+      - delegation.link.expired
+CSD-056:
+  topology: T0
+  tests:
+    node_local_surface:
+      at:
+      - root.none
+      - node.claimed
+CSD-057:
+  topology: T18
+  tests:
+    wallet_settlement_grant:
+      at:
+      - grant.state.held
+CSD-065:
+  topology: T15
+  tests:
+    moderator_lapsed:
+      at:
+      - group.moderator.lapsed
+    moderator_merit_promoted:
+      at:
+      - group.moderator.merit_promoted
+    room_fail_secure:
+      at:
+      - group.moderator.fail_secure
+      - group.federating.no
+CSD-066:
+  topology: T4
+  tests:
+    protective_posture:
+      at:
+      - child.member
+      - age.assured
+CSD-067:
+  topology: T19
+  tests:
+    holders_under_coercion:
+      at:
+      - root.holder_disposition.honest
+      - root.holder_disposition.coerced
+      - root.holder_disposition.censored
+      - root.holder_disposition.lost
+CSD-068:
+  topology: T8
+  tests:
+    provision_holder_custody:
+      at:
+      - root.infrastructure
+      - root.rooted
+CSD-069:
+  topology: T13
+  tests:
+    witnessed_lineage_genesis:
+      at:
+      - root.head.stale
+      - seat.identity_type.node_bearing
+CSD-070:
+  topology: T5
+  tests:
+    circle_hub_and_rooms:
+      at:
+      - community.formed
+      - community.member
+CSD-071:
+  topology: T1
+  tests:
+    audit_chain_five_homes:
+      at:
+      - file.held
+      - row.standing.admitted
+CSD-080:
+  topology: T0
+  tests:
+    connection_door:
+      at:
+      - root.none
+      - node.unclaimed
+CSD-081:
+  topology: T0
+  tests:
+    connection_door:
+      at:
+      - root.none
+      - node.unclaimed
+CSD-082:
+  topology: T7
+  tests:
+    setup_with_ai:
+      at:
+      - agent.bound
+      - steward.bonded
+CSD-083:
+  topology: T0
+  tests:
+    setup_without_ai:
+      at:
+      - root.none
+      - node.claimed
+CSD-084:
+  topology: T0
+  tests:
+    connection_door:
+      at:
+      - root.none
+      - node.unclaimed
+CSD-085:
+  topology: T0
+  tests:
+    unclaimed_pin:
+      at:
+      - root.none
+      - node.unclaimed
+      probe:
+        path: /v1/setup/status
+        status: 200
+    claimed_owner:
+      at:
+      - root.none
+      - node.claimed
+CSD-086:
+  topology: T0
+  tests:
+    node_local_surface:
+      at:
+      - root.none
+      - node.claimed
+CSD-087:
+  topology: T0
+  tests:
+    node_local_surface:
+      at:
+      - root.none
+      - node.claimed
+CSD-090:
+  topology: T8
+  tests:
+    duty_conferral:
+      at:
+      - root.infrastructure
+      - root.rooted
+CSD-091:
+  topology: T2
+  tests:
+    conversation:
+      at:
+      - room.pair.keyed
+      - message.delivered
+      probe:
+        path: /v1/chat/${ROOM_ID}/messages
+        status: 200
+    outsider:
+      at:
+      - person.outsider
+      - room.pair.keyed
+      - negatives.held
+CSD-092:
+  topology: T3
+  tests:
+    contact_by_code:
+      at:
+      - contact.via_code
+CSD-093:
+  topology: T11
+  tests:
+    lone_device_recovery:
+      at:
+      - key.holder.lost
+      - key.membership.evicted
+      - self.roster_size.one
+CSD-094:
+  topology: T3
+  tests:
+    owner_sees_request:
+      at:
+      - device.join_requested
+      probe:
+        node: A1
+        path: /v1/self/device-requests
+        status: 200
+    new_device_holds:
+      at:
+      - device.join_approved
+      - node.unclaimed
+      probe:
+        node: A2
+        path: /v1/setup/add-device
+        status: 200
+        expect:
+          state: approved
+    applied:
+      at:
+      - device.joined
+    joined:
+      at:
+      - device.joined
+      - file.held
+CSD-095:
+  topology: T10
+  tests:
+    add_held:
+      at:
+      - key.membership.proposed_add
+      - device.join_requested
+      probe:
+        node: A2
+        path: /v1/self/roster/proposals
+        status: 200
+        expect:
+          proposals.0.proposal.kind: add
+          proposals.0.decision.outcome: pending
+    evict_held:
+      at:
+      - key.membership.proposed_evict
+      - key.holder.thief
+      - self.roster_size.three_more
+      probe:
+        node: A2
+        path: /v1/self/roster/proposals
+        status: 200
+        expect:
+          proposals.0.proposal.kind: evict
+          proposals.0.decision.outcome: pending
+    evicted_by_quorum:
+      at:
+      - key.membership.evicted
+      - key.holder.thief
+      probe:
+        node: A2
+        path: /v1/self/roster/proposals
+        status: 200
+        expect:
+          proposals.0: null
+CSD-096:
+  topology: T1
+  tests:
+    one_handler:
+      at:
+      - session.unified
+      - note.synced
+CSD-100:
+  topology: T4
+  tests:
+    household:
+      at:
+      - household.formed
+      - household.member
+CSD-101:
+  topology: T4
+  tests:
+    child_seated:
+      at:
+      - child.member
+CSD-102:
+  topology: T5
+  tests:
+    held_change:
+      at:
+      - quorum_change.held
+      - community.member
+CSD-103:
+  topology: T5
+  tests:
+    applied_change:
+      at:
+      - quorum_change.applied
+CSD-104:
+  topology: T1
+  tests:
+    peered_mesh_surface:
+      at:
+      - canonical.peered
+      - peer.direct
+CSD-105:
+  topology: T8
+  tests:
+    rooted_pair:
+      at:
+      - root.infrastructure
+      - pair.rooted
+CSD-106:
+  topology: T15
+  tests:
+    invite_proposed:
+      at:
+      - member.stage.proposed
+    invite_accepted_awaiting_group:
+      at:
+      - member.stage.accepted_awaiting_group
+    invite_declined:
+      at:
+      - member.stage.declined
+CSD-107:
+  topology: T1
+  tests:
+    custody:
+      at:
+      - file.custody_received
+      - file.large
+    withdrawn:
+      at:
+      - file.withdrawn
+CSD-108:
+  topology: T17
+  tests:
+    steward_purge_tombstone:
+      at:
+      - row.standing.tombstoned
+      - blob.custody.purged
+CSD-110:
+  topology: T5
+  tests:
+    circle_hub_and_rooms:
+      at:
+      - community.formed
+      - community.member
+CSD-111:
+  topology: T7
+  tests:
+    shutdown_dialogue:
+      at:
+      - agent.bound
+      - steward.bonded
+CSD-112:
+  topology: T7
+  tests:
+    wa_identity_and_drift:
+      at:
+      - agent.bound
+      - wa.present
+CSD-113:
+  topology: T16
+  tests:
+    retirement_decided:
+      at:
+      - agent.retirement.decided
+    retirement_frozen:
+      at:
+      - agent.retirement.frozen
+    retirement_secrets_destroyed:
+      at:
+      - agent.retirement.secrets_destroyed
+    retirement_handed_over:
+      at:
+      - agent.retirement.handed_over
+    retirement_notified:
+      at:
+      - agent.retirement.notified
+    retirement_custodian_minted:
+      at:
+      - agent.retirement.custodian_minted
+    retirement_retired:
+      at:
+      - agent.retirement.retired
+CSD-114:
+  topology: T7
+  tests:
+    upgrade_offer_and_refusal:
+      at:
+      - agent.bound
+      - steward.bonded
+CSD-115:
+  topology: T16
+  tests:
+    bond_unbound:
+      at:
+      - agent.bond.unbound
+    bond_lapsed:
+      at:
+      - agent.bond.lapsed
+CSD-116:
+  topology: T7
+  tests:
+    published_principles_order:
+      at:
+      - agent.bound
+      - steward.bonded
+CSD-117:
+  topology: T7
+  tests:
+    judges_judged:
+      at:
+      - wa.present
+      - agent.bound
+CSD-118:
+  topology: T0
+  tests:
+    first_run:
+      at:
+      - root.none
+      - node.unclaimed
+      probe:
+        path: /v1/setup/status
+        status: 200
+    declared:
+      at:
+      - root.none
+      - node.claimed
+CSD-119:
+  topology: T4
+  tests:
+    guardian_bond:
+      at:
+      - guardian.bound
+      - child.member
+    age_band:
+      at:
+      - age.assured
+CSD-120:
+  topology: T6
+  tests:
+    affiliation:
+      at:
+      - community.formed
+      - community.member
+    licensing:
+      at:
+      - authority.licensing
+      - community.member
+    chain:
+      at:
+      - delegation.chain
+CSD-121:
+  topology: T15
+  tests:
+    member_removed:
+      at:
+      - member.stage.removed
+    member_resigned:
+      at:
+      - member.stage.resigned
+CSD-122:
+  topology: T6
+  tests:
+    licensure_issuance_and_contest:
+      at:
+      - authority.licensing
+      - community.member
+CSD-123:
+  topology: T6
+  tests:
+    organizational_partners:
+      at:
+      - community.formed
+      - community.member
+CSD-124:
+  topology: T6
+  tests:
+    authority_delegation_chain:
+      at:
+      - delegation.chain
+      - community.member
+CSD-125:
+  topology: T18
+  tests:
+    leaf_access_grants:
+      at:
+      - grant.state.held
+CSD-126:
+  topology: T19
+  tests:
+    affiliation_key_revocation:
+      at:
+      - key.revocation.revoked_after
+      - key.revocation.revoked_all
+CSD-127:
+  topology: T9
+  tests:
+    first_contact:
+      at:
+      - root.two
+      - party.outside_roots
+CSD-128:
+  topology: T5
+  tests:
+    protected_reporter:
+      at:
+      - moderator.named
+      - community.member
+CSD-129:
+  topology: T8
+  tests:
+    halted:
+      at:
+      - root.halted
+      probe:
+        path: /v1/accord/halt-status
+        status: 200
+        expect:
+          halted: true
+    confirmed:
+      at:
+      - root.halt_confirmed
+      - root.halted
+    resumed:
+      at:
+      - root.resumed
+      probe:
+        path: /v1/accord/halt-status
+        status: 200
+        expect:
+          halted: false

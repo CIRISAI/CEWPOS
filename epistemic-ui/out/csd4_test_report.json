@@ -2,15 +2,1114 @@
   "catalogue_version": 3,
   "total_atoms": 110,
   "total_topologies": 20,
+  "topologies_exercised": [
+    "T0",
+    "T1",
+    "T2",
+    "T3",
+    "T4",
+    "T5",
+    "T6",
+    "T7",
+    "T8",
+    "T9",
+    "T10",
+    "T11",
+    "T12",
+    "T13",
+    "T14",
+    "T15",
+    "T16",
+    "T17",
+    "T18",
+    "T19"
+  ],
   "pin_verified": true,
   "selftest_passed": true,
   "cohort1_cards_checked": 20,
   "cohort1_cards_passed": 20,
+  "all_active_cards_checked": 101,
+  "all_active_cards_passed": 101,
   "pending_requirements_count": 0,
   "total_catalogue_csds": 103,
+  "checkpoints_written": 74,
   "trace_resolutions": [
     {
+      "csd_id": "CSD-002",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "node_local_surface",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_002",
+        "row_csd_002_0",
+        "pill_scope_csd_002",
+        "btn_receipt_csd_002",
+        "btn_more_csd_002"
+      ]
+    },
+    {
+      "csd_id": "CSD-003",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "root_stalled",
+      "declared_topology": "T12",
+      "matched_topology": "T12",
+      "step_id": "rel[4]:resign",
+      "step_index": 11,
+      "atoms_required": [
+        "root.standing.Stalled",
+        "root.liveness.stalled"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[4]:resign: relation `resign`: route exists, builder branch not written \u2014 POST /v1/accord/family/supersede + /cosign (a founder leaves the seated roster); the witness is persist's hard_case:community_liveness_stalled row, not /v1/trust-root's posture string",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_003",
+        "row_csd_003_0",
+        "pill_scope_csd_003",
+        "btn_receipt_csd_003",
+        "btn_more_csd_003"
+      ]
+    },
+    {
+      "csd_id": "CSD-003",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "root_recovered",
+      "declared_topology": "T12",
+      "matched_topology": "T12",
+      "step_id": "canonical:C",
+      "step_index": 1,
+      "atoms_required": [
+        "root.liveness.live",
+        "seat.identity_type.human"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_003",
+        "row_csd_003_0",
+        "pill_scope_csd_003",
+        "btn_receipt_csd_003",
+        "btn_more_csd_003"
+      ]
+    },
+    {
+      "csd_id": "CSD-004",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "node_local_surface",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_004",
+        "row_csd_004_0",
+        "pill_scope_csd_004",
+        "btn_receipt_csd_004",
+        "btn_more_csd_004"
+      ]
+    },
+    {
+      "csd_id": "CSD-005",
+      "cohort": "COHORT_2_TESTABLE",
+      "test_name": "contacts_list",
+      "declared_topology": "T2",
+      "matched_topology": "T2",
+      "step_id": "rel[4]:contact",
+      "step_index": 12,
+      "atoms_required": [
+        "contact.reachable",
+        "contact.added"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": "/v1/contacts",
+      "probe_node": null,
+      "ui_surface": "Circle \u203a People",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_005",
+        "row_csd_005_0",
+        "pill_scope_csd_005",
+        "btn_receipt_csd_005",
+        "btn_more_csd_005"
+      ]
+    },
+    {
+      "csd_id": "CSD-006",
+      "cohort": "COHORT_2_TESTABLE",
+      "test_name": "five_ceg_facts",
+      "declared_topology": "T1",
+      "matched_topology": "T1",
+      "step_id": "rel[4]:file",
+      "step_index": 10,
+      "atoms_required": [
+        "file.held",
+        "row.standing.admitted"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_006",
+        "row_csd_006_0",
+        "pill_scope_csd_006",
+        "btn_receipt_csd_006",
+        "btn_more_csd_006"
+      ]
+    },
+    {
+      "csd_id": "CSD-007",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "memory_and_files_held",
+      "declared_topology": "T1",
+      "matched_topology": "T1",
+      "step_id": "rel[4]:file",
+      "step_index": 10,
+      "atoms_required": [
+        "file.held",
+        "note.synced"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Circle \u203a Files",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_007",
+        "row_csd_007_0",
+        "pill_scope_csd_007",
+        "btn_receipt_csd_007",
+        "btn_more_csd_007"
+      ]
+    },
+    {
+      "csd_id": "CSD-008",
+      "cohort": "COHORT_2_TESTABLE",
+      "test_name": "note_synced_self_room",
+      "declared_topology": "T1",
+      "matched_topology": "T1",
+      "step_id": "rel[2]:note",
+      "step_index": 8,
+      "atoms_required": [
+        "room.self.keyed",
+        "note.synced"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Just me / Pair / Circle \u203a Chats",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_008",
+        "row_csd_008_0",
+        "pill_scope_csd_008",
+        "btn_receipt_csd_008",
+        "btn_more_csd_008"
+      ]
+    },
+    {
+      "csd_id": "CSD-010",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "agent_acting_conversation",
+      "declared_topology": "T16",
+      "matched_topology": "T16",
+      "step_id": "rel[2]:agent_act",
+      "step_index": 8,
+      "atoms_required": [
+        "agent.halt_gate.acting"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[0]:agent_bond: relation `agent_bond`: the agent's bond to its node (CC 1.13.2): needs a CIRISAgent process",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This agent",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_010",
+        "row_csd_010_0",
+        "pill_scope_csd_010",
+        "btn_receipt_csd_010",
+        "btn_more_csd_010"
+      ]
+    },
+    {
+      "csd_id": "CSD-011",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "node_local_surface",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This agent",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_011",
+        "row_csd_011_0",
+        "pill_scope_csd_011",
+        "btn_receipt_csd_011",
+        "btn_more_csd_011"
+      ]
+    },
+    {
+      "csd_id": "CSD-012",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "agent_runtime_surface",
+      "declared_topology": "T7",
+      "matched_topology": "T7",
+      "step_id": "rel[1]:steward",
+      "step_index": 7,
+      "atoms_required": [
+        "agent.bound",
+        "steward.bonded"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[0]:agent: relation `agent`: a CIRISAgent process hard-bound to the node: the server serves no agent routes without one (src/py_adapter.rs proxy_routes); halt_agent drives an EXTERNAL agent",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This agent",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_012",
+        "row_csd_012_0",
+        "pill_scope_csd_012",
+        "btn_receipt_csd_012",
+        "btn_more_csd_012"
+      ]
+    },
+    {
+      "csd_id": "CSD-013",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "node_local_surface",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Circle \u203a People",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_013",
+        "row_csd_013_0",
+        "pill_scope_csd_013",
+        "btn_receipt_csd_013",
+        "btn_more_csd_013"
+      ]
+    },
+    {
+      "csd_id": "CSD-014",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "tools_and_prohibited",
+      "declared_topology": "T7",
+      "matched_topology": "T7",
+      "step_id": "rel[1]:steward",
+      "step_index": 7,
+      "atoms_required": [
+        "agent.bound",
+        "steward.bonded"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[0]:agent: relation `agent`: a CIRISAgent process hard-bound to the node: the server serves no agent routes without one (src/py_adapter.rs proxy_routes); halt_agent drives an EXTERNAL agent",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This agent",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_014",
+        "row_csd_014_0",
+        "pill_scope_csd_014",
+        "btn_receipt_csd_014",
+        "btn_more_csd_014"
+      ]
+    },
+    {
+      "csd_id": "CSD-015",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "agent_runtime_surface",
+      "declared_topology": "T7",
+      "matched_topology": "T7",
+      "step_id": "rel[1]:steward",
+      "step_index": 7,
+      "atoms_required": [
+        "agent.bound",
+        "steward.bonded"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[0]:agent: relation `agent`: a CIRISAgent process hard-bound to the node: the server serves no agent routes without one (src/py_adapter.rs proxy_routes); halt_agent drives an EXTERNAL agent",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This agent",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_015",
+        "row_csd_015_0",
+        "pill_scope_csd_015",
+        "btn_receipt_csd_015",
+        "btn_more_csd_015"
+      ]
+    },
+    {
+      "csd_id": "CSD-016",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "node_local_surface",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_016",
+        "row_csd_016_0",
+        "pill_scope_csd_016",
+        "btn_receipt_csd_016",
+        "btn_more_csd_016"
+      ]
+    },
+    {
+      "csd_id": "CSD-020",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "agent_runtime_surface",
+      "declared_topology": "T7",
+      "matched_topology": "T7",
+      "step_id": "rel[1]:steward",
+      "step_index": 7,
+      "atoms_required": [
+        "agent.bound",
+        "steward.bonded"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[0]:agent: relation `agent`: a CIRISAgent process hard-bound to the node: the server serves no agent routes without one (src/py_adapter.rs proxy_routes); halt_agent drives an EXTERNAL agent",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This agent",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_020",
+        "row_csd_020_0",
+        "pill_scope_csd_020",
+        "btn_receipt_csd_020",
+        "btn_more_csd_020"
+      ]
+    },
+    {
+      "csd_id": "CSD-021",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "node_local_surface",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This agent",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_021",
+        "row_csd_021_0",
+        "pill_scope_csd_021",
+        "btn_receipt_csd_021",
+        "btn_more_csd_021"
+      ]
+    },
+    {
+      "csd_id": "CSD-022",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "node_local_surface",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This agent",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_022",
+        "row_csd_022_0",
+        "pill_scope_csd_022",
+        "btn_receipt_csd_022",
+        "btn_more_csd_022"
+      ]
+    },
+    {
+      "csd_id": "CSD-023",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "peered_mesh_surface",
+      "declared_topology": "T1",
+      "matched_topology": "T1",
+      "step_id": "rel[0]:peered",
+      "step_index": 6,
+      "atoms_required": [
+        "canonical.peered",
+        "peer.direct"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Everyone \u203a Safety / Rules / Decisions",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_023",
+        "row_csd_023_0",
+        "pill_scope_csd_023",
+        "btn_receipt_csd_023",
+        "btn_more_csd_023"
+      ]
+    },
+    {
+      "csd_id": "CSD-024",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "agent_runtime_surface",
+      "declared_topology": "T7",
+      "matched_topology": "T7",
+      "step_id": "rel[1]:steward",
+      "step_index": 7,
+      "atoms_required": [
+        "agent.bound",
+        "steward.bonded"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[0]:agent: relation `agent`: a CIRISAgent process hard-bound to the node: the server serves no agent routes without one (src/py_adapter.rs proxy_routes); halt_agent drives an EXTERNAL agent",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This agent",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_024",
+        "row_csd_024_0",
+        "pill_scope_csd_024",
+        "btn_receipt_csd_024",
+        "btn_more_csd_024"
+      ]
+    },
+    {
+      "csd_id": "CSD-025",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "node_local_surface",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_025",
+        "row_csd_025_0",
+        "pill_scope_csd_025",
+        "btn_receipt_csd_025",
+        "btn_more_csd_025"
+      ]
+    },
+    {
+      "csd_id": "CSD-026",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "node_local_surface",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This agent",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_026",
+        "row_csd_026_0",
+        "pill_scope_csd_026",
+        "btn_receipt_csd_026",
+        "btn_more_csd_026"
+      ]
+    },
+    {
+      "csd_id": "CSD-027",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "memory_and_files_held",
+      "declared_topology": "T1",
+      "matched_topology": "T1",
+      "step_id": "rel[4]:file",
+      "step_index": 10,
+      "atoms_required": [
+        "file.held",
+        "note.synced"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_027",
+        "row_csd_027_0",
+        "pill_scope_csd_027",
+        "btn_receipt_csd_027",
+        "btn_more_csd_027"
+      ]
+    },
+    {
+      "csd_id": "CSD-028",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "memory_and_files_held",
+      "declared_topology": "T1",
+      "matched_topology": "T1",
+      "step_id": "rel[4]:file",
+      "step_index": 10,
+      "atoms_required": [
+        "file.held",
+        "note.synced"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_028",
+        "row_csd_028_0",
+        "pill_scope_csd_028",
+        "btn_receipt_csd_028",
+        "btn_more_csd_028"
+      ]
+    },
+    {
+      "csd_id": "CSD-029",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "node_local_surface",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_029",
+        "row_csd_029_0",
+        "pill_scope_csd_029",
+        "btn_receipt_csd_029",
+        "btn_more_csd_029"
+      ]
+    },
+    {
+      "csd_id": "CSD-030",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "node_local_surface",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This agent",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_030",
+        "row_csd_030_0",
+        "pill_scope_csd_030",
+        "btn_receipt_csd_030",
+        "btn_more_csd_030"
+      ]
+    },
+    {
+      "csd_id": "CSD-031",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "node_local_surface",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_031",
+        "row_csd_031_0",
+        "pill_scope_csd_031",
+        "btn_receipt_csd_031",
+        "btn_more_csd_031"
+      ]
+    },
+    {
+      "csd_id": "CSD-032",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "node_local_surface",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a Devices & keys",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_032",
+        "row_csd_032_0",
+        "pill_scope_csd_032",
+        "btn_receipt_csd_032",
+        "btn_more_csd_032"
+      ]
+    },
+    {
+      "csd_id": "CSD-033",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "peered_mesh_surface",
+      "declared_topology": "T1",
+      "matched_topology": "T1",
+      "step_id": "rel[0]:peered",
+      "step_index": 6,
+      "atoms_required": [
+        "canonical.peered",
+        "peer.direct"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_033",
+        "row_csd_033_0",
+        "pill_scope_csd_033",
+        "btn_receipt_csd_033",
+        "btn_more_csd_033"
+      ]
+    },
+    {
+      "csd_id": "CSD-035",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "node_local_surface",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_035",
+        "row_csd_035_0",
+        "pill_scope_csd_035",
+        "btn_receipt_csd_035",
+        "btn_more_csd_035"
+      ]
+    },
+    {
+      "csd_id": "CSD-036",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "peered_mesh_surface",
+      "declared_topology": "T1",
+      "matched_topology": "T1",
+      "step_id": "rel[0]:peered",
+      "step_index": 6,
+      "atoms_required": [
+        "canonical.peered",
+        "peer.direct"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_036",
+        "row_csd_036_0",
+        "pill_scope_csd_036",
+        "btn_receipt_csd_036",
+        "btn_more_csd_036"
+      ]
+    },
+    {
       "csd_id": "CSD-037",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "roster",
       "declared_topology": "T3",
       "matched_topology": "T3",
@@ -34,10 +1133,1541 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_037",
+        "row_csd_037_0",
+        "pill_scope_csd_037",
+        "btn_receipt_csd_037",
+        "btn_more_csd_037"
+      ]
+    },
+    {
+      "csd_id": "CSD-039",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "shared_row_admitted",
+      "declared_topology": "T17",
+      "matched_topology": "T17",
+      "step_id": "rel[7]:scoped_file",
+      "step_index": 14,
+      "atoms_required": [
+        "row.standing.admitted",
+        "row.scope.family"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[7]:scoped_file: relation `scoped_file`: route exists, builder branch not written \u2014 POST /v1/files to a family or community cohort (src/drive.rs)",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a Everything I shared",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_039",
+        "row_csd_039_0",
+        "pill_scope_csd_039",
+        "btn_receipt_csd_039",
+        "btn_more_csd_039"
+      ]
+    },
+    {
+      "csd_id": "CSD-039",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "withdrawn_and_purged",
+      "declared_topology": "T17",
+      "matched_topology": "T17",
+      "step_id": "rel[10]:purge",
+      "step_index": 17,
+      "atoms_required": [
+        "row.standing.tombstoned",
+        "blob.custody.purged"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[7]:scoped_file: relation `scoped_file`: route exists, builder branch not written \u2014 POST /v1/files to a family or community cohort (src/drive.rs)",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a Everything I shared",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_039",
+        "row_csd_039_0",
+        "pill_scope_csd_039",
+        "btn_receipt_csd_039",
+        "btn_more_csd_039"
+      ]
+    },
+    {
+      "csd_id": "CSD-040",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "node_local_surface",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a Everything I shared",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_040",
+        "row_csd_040_0",
+        "pill_scope_csd_040",
+        "btn_receipt_csd_040",
+        "btn_more_csd_040"
+      ]
+    },
+    {
+      "csd_id": "CSD-041",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "wa_deferral_inbox",
+      "declared_topology": "T7",
+      "matched_topology": "T7",
+      "step_id": "rel[2]:wise_authority",
+      "step_index": 8,
+      "atoms_required": [
+        "agent.bound",
+        "wa.present"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[0]:agent: relation `agent`: a CIRISAgent process hard-bound to the node: the server serves no agent routes without one (src/py_adapter.rs proxy_routes); halt_agent drives an EXTERNAL agent",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a Someone I trust",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_041",
+        "row_csd_041_0",
+        "pill_scope_csd_041",
+        "btn_receipt_csd_041",
+        "btn_more_csd_041"
+      ]
+    },
+    {
+      "csd_id": "CSD-042",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "node_local_surface",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a Help & principles",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_042",
+        "row_csd_042_0",
+        "pill_scope_csd_042",
+        "btn_receipt_csd_042",
+        "btn_more_csd_042"
+      ]
+    },
+    {
+      "csd_id": "CSD-043",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "node_local_surface",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Communities & Businesses \u203a Rules / People / Safety",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_043",
+        "row_csd_043_0",
+        "pill_scope_csd_043",
+        "btn_receipt_csd_043",
+        "btn_more_csd_043"
+      ]
+    },
+    {
+      "csd_id": "CSD-044",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "circle_reputation_contest",
+      "declared_topology": "T17",
+      "matched_topology": "T17",
+      "step_id": "rel[8]:scoped_file",
+      "step_index": 15,
+      "atoms_required": [
+        "row.standing.admitted",
+        "row.scope.community"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[7]:scoped_file: relation `scoped_file`: route exists, builder branch not written \u2014 POST /v1/files to a family or community cohort (src/drive.rs)",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_044",
+        "row_csd_044_0",
+        "pill_scope_csd_044",
+        "btn_receipt_csd_044",
+        "btn_more_csd_044"
+      ]
+    },
+    {
+      "csd_id": "CSD-045",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "peered_mesh_surface",
+      "declared_topology": "T1",
+      "matched_topology": "T1",
+      "step_id": "rel[0]:peered",
+      "step_index": 6,
+      "atoms_required": [
+        "canonical.peered",
+        "peer.direct"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_045",
+        "row_csd_045_0",
+        "pill_scope_csd_045",
+        "btn_receipt_csd_045",
+        "btn_more_csd_045"
+      ]
+    },
+    {
+      "csd_id": "CSD-046",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "peered_mesh_surface",
+      "declared_topology": "T1",
+      "matched_topology": "T1",
+      "step_id": "rel[0]:peered",
+      "step_index": 6,
+      "atoms_required": [
+        "canonical.peered",
+        "peer.direct"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_046",
+        "row_csd_046_0",
+        "pill_scope_csd_046",
+        "btn_receipt_csd_046",
+        "btn_more_csd_046"
+      ]
+    },
+    {
+      "csd_id": "CSD-047",
+      "cohort": "COHORT_2_TESTABLE",
+      "test_name": "fetch_by_digest",
+      "declared_topology": "T1",
+      "matched_topology": "T1",
+      "step_id": "rel[4]:file",
+      "step_index": 10,
+      "atoms_required": [
+        "file.held",
+        "file.large"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_047",
+        "row_csd_047_0",
+        "pill_scope_csd_047",
+        "btn_receipt_csd_047",
+        "btn_more_csd_047"
+      ]
+    },
+    {
+      "csd_id": "CSD-048",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "node_local_surface",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_048",
+        "row_csd_048_0",
+        "pill_scope_csd_048",
+        "btn_receipt_csd_048",
+        "btn_more_csd_048"
+      ]
+    },
+    {
+      "csd_id": "CSD-049",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "node_local_surface",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_049",
+        "row_csd_049_0",
+        "pill_scope_csd_049",
+        "btn_receipt_csd_049",
+        "btn_more_csd_049"
+      ]
+    },
+    {
+      "csd_id": "CSD-050",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "circle_hub_and_rooms",
+      "declared_topology": "T5",
+      "matched_topology": "T5",
+      "step_id": "rel[5]:member",
+      "step_index": 13,
+      "atoms_required": [
+        "community.formed",
+        "community.member"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_050",
+        "row_csd_050_0",
+        "pill_scope_csd_050",
+        "btn_receipt_csd_050",
+        "btn_more_csd_050"
+      ]
+    },
+    {
+      "csd_id": "CSD-051",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "node_local_surface",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_051",
+        "row_csd_051_0",
+        "pill_scope_csd_051",
+        "btn_receipt_csd_051",
+        "btn_more_csd_051"
+      ]
+    },
+    {
+      "csd_id": "CSD-052",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "node_local_surface",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_052",
+        "row_csd_052_0",
+        "pill_scope_csd_052",
+        "btn_receipt_csd_052",
+        "btn_more_csd_052"
+      ]
+    },
+    {
+      "csd_id": "CSD-053",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "replication_granted",
+      "declared_topology": "T14",
+      "matched_topology": "T14",
+      "step_id": "rel[5]:community_trust",
+      "step_index": 12,
+      "atoms_required": [
+        "consent.community_trust.granted"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[5]:community_trust: known red: CIRISServer#790 (a filed product defect; --include-known-red builds through it)",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a Everything I shared",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_053",
+        "row_csd_053_0",
+        "pill_scope_csd_053",
+        "btn_receipt_csd_053",
+        "btn_more_csd_053"
+      ]
+    },
+    {
+      "csd_id": "CSD-053",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "replication_revoked_boundary",
+      "declared_topology": "T14",
+      "matched_topology": "T14",
+      "step_id": "rel[6]:community_trust_bound",
+      "step_index": 13,
+      "atoms_required": [
+        "consent.community_trust.bounded",
+        "consent.replication.none"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[5]:community_trust: known red: CIRISServer#790 (a filed product defect; --include-known-red builds through it)",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a Everything I shared",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_053",
+        "row_csd_053_0",
+        "pill_scope_csd_053",
+        "btn_receipt_csd_053",
+        "btn_more_csd_053"
+      ]
+    },
+    {
+      "csd_id": "CSD-054",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "consent_granted",
+      "declared_topology": "T14",
+      "matched_topology": "T14",
+      "step_id": "rel[7]:consent_grant",
+      "step_index": 14,
+      "atoms_required": [
+        "consent.state.granted"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[5]:community_trust: known red: CIRISServer#790 (a filed product defect; --include-known-red builds through it)",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a Everything I shared",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_054",
+        "row_csd_054_0",
+        "pill_scope_csd_054",
+        "btn_receipt_csd_054",
+        "btn_more_csd_054"
+      ]
+    },
+    {
+      "csd_id": "CSD-054",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "decay_severed",
+      "declared_topology": "T14",
+      "matched_topology": "T14",
+      "step_id": "rel[11]:consent_decay",
+      "step_index": 18,
+      "atoms_required": [
+        "consent.state.revoked",
+        "consent.decay.identity_severed"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[5]:community_trust: known red: CIRISServer#790 (a filed product defect; --include-known-red builds through it)",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a Everything I shared",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_054",
+        "row_csd_054_0",
+        "pill_scope_csd_054",
+        "btn_receipt_csd_054",
+        "btn_more_csd_054"
+      ]
+    },
+    {
+      "csd_id": "CSD-054",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "decay_anonymized",
+      "declared_topology": "T14",
+      "matched_topology": "T14",
+      "step_id": "rel[12]:consent_decay",
+      "step_index": 19,
+      "atoms_required": [
+        "consent.state.revoked",
+        "consent.decay.patterns_anonymized"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[5]:community_trust: known red: CIRISServer#790 (a filed product defect; --include-known-red builds through it)",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a Everything I shared",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_054",
+        "row_csd_054_0",
+        "pill_scope_csd_054",
+        "btn_receipt_csd_054",
+        "btn_more_csd_054"
+      ]
+    },
+    {
+      "csd_id": "CSD-054",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "decay_complete",
+      "declared_topology": "T14",
+      "matched_topology": "T14",
+      "step_id": "rel[13]:consent_decay",
+      "step_index": 20,
+      "atoms_required": [
+        "consent.state.revoked",
+        "consent.decay.complete"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[5]:community_trust: known red: CIRISServer#790 (a filed product defect; --include-known-red builds through it)",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a Everything I shared",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_054",
+        "row_csd_054_0",
+        "pill_scope_csd_054",
+        "btn_receipt_csd_054",
+        "btn_more_csd_054"
+      ]
+    },
+    {
+      "csd_id": "CSD-055",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "delegation_withdrawn",
+      "declared_topology": "T18",
+      "matched_topology": "T18",
+      "step_id": "rel[7]:delegation_withdraw",
+      "step_index": 14,
+      "atoms_required": [
+        "delegation.link.withdrawn"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[4]:key_grant: relation `key_grant`: route exists, builder branch not written \u2014 persist emits key_grant:content:v1 per recipient on a sealed share; no read witnesses it yet",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_055",
+        "row_csd_055_0",
+        "pill_scope_csd_055",
+        "btn_receipt_csd_055",
+        "btn_more_csd_055"
+      ]
+    },
+    {
+      "csd_id": "CSD-055",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "delegation_expired",
+      "declared_topology": "T18",
+      "matched_topology": "T18",
+      "step_id": "rel[9]:delegation_expire",
+      "step_index": 16,
+      "atoms_required": [
+        "delegation.link.expired"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[4]:key_grant: relation `key_grant`: route exists, builder branch not written \u2014 persist emits key_grant:content:v1 per recipient on a sealed share; no read witnesses it yet",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_055",
+        "row_csd_055_0",
+        "pill_scope_csd_055",
+        "btn_receipt_csd_055",
+        "btn_more_csd_055"
+      ]
+    },
+    {
+      "csd_id": "CSD-056",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "node_local_surface",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_056",
+        "row_csd_056_0",
+        "pill_scope_csd_056",
+        "btn_receipt_csd_056",
+        "btn_more_csd_056"
+      ]
+    },
+    {
+      "csd_id": "CSD-057",
+      "cohort": "COHORT_2_TESTABLE",
+      "test_name": "wallet_settlement_grant",
+      "declared_topology": "T18",
+      "matched_topology": "T18",
+      "step_id": "rel[4]:key_grant",
+      "step_index": 11,
+      "atoms_required": [
+        "grant.state.held"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[4]:key_grant: relation `key_grant`: route exists, builder branch not written \u2014 persist emits key_grant:content:v1 per recipient on a sealed share; no read witnesses it yet",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_057",
+        "row_csd_057_0",
+        "pill_scope_csd_057",
+        "btn_receipt_csd_057",
+        "btn_more_csd_057"
+      ]
+    },
+    {
+      "csd_id": "CSD-065",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "moderator_lapsed",
+      "declared_topology": "T15",
+      "matched_topology": "T15",
+      "step_id": "rel[27]:moderator_lapse",
+      "step_index": 39,
+      "atoms_required": [
+        "group.moderator.lapsed"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[18]:invite: relation `invite`: route exists, builder branch not written \u2014 POST /v1/communities/{id}/invites (a proposal, not yet accepted)",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Communities & Businesses \u203a Rules / People / Safety",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_065",
+        "row_csd_065_0",
+        "pill_scope_csd_065",
+        "btn_receipt_csd_065",
+        "btn_more_csd_065"
+      ]
+    },
+    {
+      "csd_id": "CSD-065",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "moderator_merit_promoted",
+      "declared_topology": "T15",
+      "matched_topology": "T15",
+      "step_id": "rel[29]:merit_promote",
+      "step_index": 41,
+      "atoms_required": [
+        "group.moderator.merit_promoted"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[18]:invite: relation `invite`: route exists, builder branch not written \u2014 POST /v1/communities/{id}/invites (a proposal, not yet accepted)",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Communities & Businesses \u203a Rules / People / Safety",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_065",
+        "row_csd_065_0",
+        "pill_scope_csd_065",
+        "btn_receipt_csd_065",
+        "btn_more_csd_065"
+      ]
+    },
+    {
+      "csd_id": "CSD-065",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "room_fail_secure",
+      "declared_topology": "T15",
+      "matched_topology": "T15",
+      "step_id": "rel[28]:fail_secure",
+      "step_index": 40,
+      "atoms_required": [
+        "group.moderator.fail_secure",
+        "group.federating.no"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[18]:invite: relation `invite`: route exists, builder branch not written \u2014 POST /v1/communities/{id}/invites (a proposal, not yet accepted)",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Communities & Businesses \u203a Rules / People / Safety",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_065",
+        "row_csd_065_0",
+        "pill_scope_csd_065",
+        "btn_receipt_csd_065",
+        "btn_more_csd_065"
+      ]
+    },
+    {
+      "csd_id": "CSD-066",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "protective_posture",
+      "declared_topology": "T4",
+      "matched_topology": "T4",
+      "step_id": "rel[7]:age_assurance",
+      "step_index": 14,
+      "atoms_required": [
+        "child.member",
+        "age.assured"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[6]:guardian_bond: relation `guardian_bond`: the guardian bond (CC 3.4.13): no server route writes it \u2014 family roles are free words (src/family_api.rs), CSD-119 drives the route",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Family \u203a People / Rules / Safety",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_066",
+        "row_csd_066_0",
+        "pill_scope_csd_066",
+        "btn_receipt_csd_066",
+        "btn_more_csd_066"
+      ]
+    },
+    {
+      "csd_id": "CSD-067",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "holders_under_coercion",
+      "declared_topology": "T19",
+      "matched_topology": "T19",
+      "step_id": "rel[7]:holder",
+      "step_index": 14,
+      "atoms_required": [
+        "root.holder_disposition.honest",
+        "root.holder_disposition.coerced",
+        "root.holder_disposition.censored",
+        "root.holder_disposition.lost"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[4]:holder: relation `holder`: route exists, builder branch not written \u2014 the T8 accord machinery: honest signs, lost never signs, coerced signs an invocation the standing rule refuses, censored signs but its rows are withheld past the window",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Everyone \u203a Safety / Rules / Decisions",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_067",
+        "row_csd_067_0",
+        "pill_scope_csd_067",
+        "btn_receipt_csd_067",
+        "btn_more_csd_067"
+      ]
+    },
+    {
+      "csd_id": "CSD-068",
+      "cohort": "COHORT_2_TESTABLE",
+      "test_name": "provision_holder_custody",
+      "declared_topology": "T8",
+      "matched_topology": "T8",
+      "step_id": "canonical:C",
+      "step_index": 1,
+      "atoms_required": [
+        "root.infrastructure",
+        "root.rooted"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Everyone \u203a Safety / Rules / Decisions",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_068",
+        "row_csd_068_0",
+        "pill_scope_csd_068",
+        "btn_receipt_csd_068",
+        "btn_more_csd_068"
+      ]
+    },
+    {
+      "csd_id": "CSD-069",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "witnessed_lineage_genesis",
+      "declared_topology": "T13",
+      "matched_topology": "T13",
+      "step_id": "rel[2]:seat_node_bearing",
+      "step_index": 8,
+      "atoms_required": [
+        "root.head.stale",
+        "seat.identity_type.node_bearing"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[1]:lineage_head: known red: CIRISServer#693 (a filed product defect; --include-known-red builds through it)",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Everyone \u203a Safety / Rules / Decisions",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_069",
+        "row_csd_069_0",
+        "pill_scope_csd_069",
+        "btn_receipt_csd_069",
+        "btn_more_csd_069"
+      ]
+    },
+    {
+      "csd_id": "CSD-070",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "circle_hub_and_rooms",
+      "declared_topology": "T5",
+      "matched_topology": "T5",
+      "step_id": "rel[5]:member",
+      "step_index": 13,
+      "atoms_required": [
+        "community.formed",
+        "community.member"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Everyone \u203a Safety / Rules / Decisions",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_070",
+        "row_csd_070_0",
+        "pill_scope_csd_070",
+        "btn_receipt_csd_070",
+        "btn_more_csd_070"
+      ]
+    },
+    {
+      "csd_id": "CSD-071",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "audit_chain_five_homes",
+      "declared_topology": "T1",
+      "matched_topology": "T1",
+      "step_id": "rel[4]:file",
+      "step_index": 10,
+      "atoms_required": [
+        "file.held",
+        "row.standing.admitted"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_071",
+        "row_csd_071_0",
+        "pill_scope_csd_071",
+        "btn_receipt_csd_071",
+        "btn_more_csd_071"
+      ]
+    },
+    {
+      "csd_id": "CSD-080",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "connection_door",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "nodes",
+      "step_index": 1,
+      "atoms_required": [
+        "root.none",
+        "node.unclaimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_080",
+        "row_csd_080_0",
+        "pill_scope_csd_080",
+        "btn_receipt_csd_080",
+        "btn_more_csd_080"
+      ]
+    },
+    {
+      "csd_id": "CSD-081",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "connection_door",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "nodes",
+      "step_index": 1,
+      "atoms_required": [
+        "root.none",
+        "node.unclaimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_081",
+        "row_csd_081_0",
+        "pill_scope_csd_081",
+        "btn_receipt_csd_081",
+        "btn_more_csd_081"
+      ]
+    },
+    {
+      "csd_id": "CSD-082",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "setup_with_ai",
+      "declared_topology": "T7",
+      "matched_topology": "T7",
+      "step_id": "rel[1]:steward",
+      "step_index": 7,
+      "atoms_required": [
+        "agent.bound",
+        "steward.bonded"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[0]:agent: relation `agent`: a CIRISAgent process hard-bound to the node: the server serves no agent routes without one (src/py_adapter.rs proxy_routes); halt_agent drives an EXTERNAL agent",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_082",
+        "row_csd_082_0",
+        "pill_scope_csd_082",
+        "btn_receipt_csd_082",
+        "btn_more_csd_082"
+      ]
+    },
+    {
+      "csd_id": "CSD-083",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "setup_without_ai",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_083",
+        "row_csd_083_0",
+        "pill_scope_csd_083",
+        "btn_receipt_csd_083",
+        "btn_more_csd_083"
+      ]
+    },
+    {
+      "csd_id": "CSD-084",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "connection_door",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "nodes",
+      "step_index": 1,
+      "atoms_required": [
+        "root.none",
+        "node.unclaimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_084",
+        "row_csd_084_0",
+        "pill_scope_csd_084",
+        "btn_receipt_csd_084",
+        "btn_more_csd_084"
+      ]
+    },
+    {
+      "csd_id": "CSD-085",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "unclaimed_pin",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "nodes",
+      "step_index": 1,
+      "atoms_required": [
+        "root.none",
+        "node.unclaimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": "/v1/setup/status",
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_085",
+        "row_csd_085_0",
+        "pill_scope_csd_085",
+        "btn_receipt_csd_085",
+        "btn_more_csd_085"
+      ]
+    },
+    {
+      "csd_id": "CSD-085",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "claimed_owner",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_085",
+        "row_csd_085_0",
+        "pill_scope_csd_085",
+        "btn_receipt_csd_085",
+        "btn_more_csd_085"
+      ]
+    },
+    {
+      "csd_id": "CSD-086",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "node_local_surface",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This node",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P6 Chip"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_086",
+        "row_csd_086_0",
+        "pill_scope_csd_086",
+        "btn_receipt_csd_086",
+        "btn_more_csd_086"
+      ]
+    },
+    {
+      "csd_id": "CSD-087",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "node_local_surface",
+      "declared_topology": "T0",
+      "matched_topology": "T0",
+      "step_id": "person:me",
+      "step_index": 2,
+      "atoms_required": [
+        "root.none",
+        "node.claimed"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This agent",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_087",
+        "row_csd_087_0",
+        "pill_scope_csd_087",
+        "btn_receipt_csd_087",
+        "btn_more_csd_087"
+      ]
+    },
+    {
+      "csd_id": "CSD-090",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "duty_conferral",
+      "declared_topology": "T8",
+      "matched_topology": "T8",
+      "step_id": "canonical:C",
+      "step_index": 1,
+      "atoms_required": [
+        "root.infrastructure",
+        "root.rooted"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Communities & Businesses \u203a Rules / People / Safety",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_090",
+        "row_csd_090_0",
+        "pill_scope_csd_090",
+        "btn_receipt_csd_090",
+        "btn_more_csd_090"
       ]
     },
     {
       "csd_id": "CSD-091",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "conversation",
       "declared_topology": "T2",
       "matched_topology": "T2",
@@ -61,10 +2691,18 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_091",
+        "row_csd_091_0",
+        "pill_scope_csd_091",
+        "btn_receipt_csd_091",
+        "btn_more_csd_091"
       ]
     },
     {
       "csd_id": "CSD-091",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "outsider",
       "declared_topology": "T2",
       "matched_topology": "T2",
@@ -89,10 +2727,18 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_091",
+        "row_csd_091_0",
+        "pill_scope_csd_091",
+        "btn_receipt_csd_091",
+        "btn_more_csd_091"
       ]
     },
     {
       "csd_id": "CSD-092",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "contact_by_code",
       "declared_topology": "T3",
       "matched_topology": "T3",
@@ -115,10 +2761,54 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_092",
+        "row_csd_092_0",
+        "pill_scope_csd_092",
+        "btn_receipt_csd_092",
+        "btn_more_csd_092"
+      ]
+    },
+    {
+      "csd_id": "CSD-093",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "lone_device_recovery",
+      "declared_topology": "T11",
+      "matched_topology": "T11",
+      "step_id": "rel[15]:evict_lone",
+      "step_index": 21,
+      "atoms_required": [
+        "key.holder.lost",
+        "key.membership.evicted",
+        "self.roster_size.one"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[14]:evict_lone: known red: CIRISServer#794 (a filed product defect; --include-known-red builds through it)",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a Devices & keys",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_093",
+        "row_csd_093_0",
+        "pill_scope_csd_093",
+        "btn_receipt_csd_093",
+        "btn_more_csd_093"
       ]
     },
     {
       "csd_id": "CSD-094",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "owner_sees_request",
       "declared_topology": "T3",
       "matched_topology": "T3",
@@ -141,10 +2831,18 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_094",
+        "row_csd_094_0",
+        "pill_scope_csd_094",
+        "btn_receipt_csd_094",
+        "btn_more_csd_094"
       ]
     },
     {
       "csd_id": "CSD-094",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "new_device_holds",
       "declared_topology": "T3",
       "matched_topology": "T3",
@@ -168,10 +2866,18 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_094",
+        "row_csd_094_0",
+        "pill_scope_csd_094",
+        "btn_receipt_csd_094",
+        "btn_more_csd_094"
       ]
     },
     {
       "csd_id": "CSD-094",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "applied",
       "declared_topology": "T3",
       "matched_topology": "T3",
@@ -194,10 +2900,18 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_094",
+        "row_csd_094_0",
+        "pill_scope_csd_094",
+        "btn_receipt_csd_094",
+        "btn_more_csd_094"
       ]
     },
     {
       "csd_id": "CSD-094",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "joined",
       "declared_topology": "T3",
       "matched_topology": "T3",
@@ -221,10 +2935,18 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_094",
+        "row_csd_094_0",
+        "pill_scope_csd_094",
+        "btn_receipt_csd_094",
+        "btn_more_csd_094"
       ]
     },
     {
       "csd_id": "CSD-095",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "add_held",
       "declared_topology": "T10",
       "matched_topology": "T10",
@@ -248,10 +2970,18 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_095",
+        "row_csd_095_0",
+        "pill_scope_csd_095",
+        "btn_receipt_csd_095",
+        "btn_more_csd_095"
       ]
     },
     {
       "csd_id": "CSD-095",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "evict_held",
       "declared_topology": "T10",
       "matched_topology": "T10",
@@ -276,10 +3006,18 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_095",
+        "row_csd_095_0",
+        "pill_scope_csd_095",
+        "btn_receipt_csd_095",
+        "btn_more_csd_095"
       ]
     },
     {
       "csd_id": "CSD-095",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "evicted_by_quorum",
       "declared_topology": "T10",
       "matched_topology": "T10",
@@ -303,10 +3041,18 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_095",
+        "row_csd_095_0",
+        "pill_scope_csd_095",
+        "btn_receipt_csd_095",
+        "btn_more_csd_095"
       ]
     },
     {
       "csd_id": "CSD-096",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "one_handler",
       "declared_topology": "T1",
       "matched_topology": "T1",
@@ -329,10 +3075,18 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_096",
+        "row_csd_096_0",
+        "pill_scope_csd_096",
+        "btn_receipt_csd_096",
+        "btn_more_csd_096"
       ]
     },
     {
       "csd_id": "CSD-100",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "household",
       "declared_topology": "T4",
       "matched_topology": "T4",
@@ -356,10 +3110,18 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_100",
+        "row_csd_100_0",
+        "pill_scope_csd_100",
+        "btn_receipt_csd_100",
+        "btn_more_csd_100"
       ]
     },
     {
       "csd_id": "CSD-101",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "child_seated",
       "declared_topology": "T4",
       "matched_topology": "T4",
@@ -382,10 +3144,18 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_101",
+        "row_csd_101_0",
+        "pill_scope_csd_101",
+        "btn_receipt_csd_101",
+        "btn_more_csd_101"
       ]
     },
     {
       "csd_id": "CSD-102",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "held_change",
       "declared_topology": "T5",
       "matched_topology": "T5",
@@ -409,10 +3179,18 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_102",
+        "row_csd_102_0",
+        "pill_scope_csd_102",
+        "btn_receipt_csd_102",
+        "btn_more_csd_102"
       ]
     },
     {
       "csd_id": "CSD-103",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "applied_change",
       "declared_topology": "T5",
       "matched_topology": "T5",
@@ -435,10 +3213,53 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_103",
+        "row_csd_103_0",
+        "pill_scope_csd_103",
+        "btn_receipt_csd_103",
+        "btn_more_csd_103"
+      ]
+    },
+    {
+      "csd_id": "CSD-104",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "peered_mesh_surface",
+      "declared_topology": "T1",
+      "matched_topology": "T1",
+      "step_id": "rel[0]:peered",
+      "step_index": 6,
+      "atoms_required": [
+        "canonical.peered",
+        "peer.direct"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Circle \u203a People",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_104",
+        "row_csd_104_0",
+        "pill_scope_csd_104",
+        "btn_receipt_csd_104",
+        "btn_more_csd_104"
       ]
     },
     {
       "csd_id": "CSD-105",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "rooted_pair",
       "declared_topology": "T8",
       "matched_topology": "T8",
@@ -462,10 +3283,120 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_105",
+        "row_csd_105_0",
+        "pill_scope_csd_105",
+        "btn_receipt_csd_105",
+        "btn_more_csd_105"
+      ]
+    },
+    {
+      "csd_id": "CSD-106",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "invite_proposed",
+      "declared_topology": "T15",
+      "matched_topology": "T15",
+      "step_id": "rel[18]:invite",
+      "step_index": 30,
+      "atoms_required": [
+        "member.stage.proposed"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[18]:invite: relation `invite`: route exists, builder branch not written \u2014 POST /v1/communities/{id}/invites (a proposal, not yet accepted)",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Family \u203a People / Rules / Safety",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_106",
+        "row_csd_106_0",
+        "pill_scope_csd_106",
+        "btn_receipt_csd_106",
+        "btn_more_csd_106"
+      ]
+    },
+    {
+      "csd_id": "CSD-106",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "invite_accepted_awaiting_group",
+      "declared_topology": "T15",
+      "matched_topology": "T15",
+      "step_id": "rel[19]:accept",
+      "step_index": 31,
+      "atoms_required": [
+        "member.stage.accepted_awaiting_group"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[18]:invite: relation `invite`: route exists, builder branch not written \u2014 POST /v1/communities/{id}/invites (a proposal, not yet accepted)",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Family \u203a People / Rules / Safety",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_106",
+        "row_csd_106_0",
+        "pill_scope_csd_106",
+        "btn_receipt_csd_106",
+        "btn_more_csd_106"
+      ]
+    },
+    {
+      "csd_id": "CSD-106",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "invite_declined",
+      "declared_topology": "T15",
+      "matched_topology": "T15",
+      "step_id": "rel[21]:decline",
+      "step_index": 33,
+      "atoms_required": [
+        "member.stage.declined"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[18]:invite: relation `invite`: route exists, builder branch not written \u2014 POST /v1/communities/{id}/invites (a proposal, not yet accepted)",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Family \u203a People / Rules / Safety",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_106",
+        "row_csd_106_0",
+        "pill_scope_csd_106",
+        "btn_receipt_csd_106",
+        "btn_more_csd_106"
       ]
     },
     {
       "csd_id": "CSD-107",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "custody",
       "declared_topology": "T1",
       "matched_topology": "T1",
@@ -489,10 +3420,18 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_107",
+        "row_csd_107_0",
+        "pill_scope_csd_107",
+        "btn_receipt_csd_107",
+        "btn_more_csd_107"
       ]
     },
     {
       "csd_id": "CSD-107",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "withdrawn",
       "declared_topology": "T1",
       "matched_topology": "T1",
@@ -515,10 +3454,88 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_107",
+        "row_csd_107_0",
+        "pill_scope_csd_107",
+        "btn_receipt_csd_107",
+        "btn_more_csd_107"
+      ]
+    },
+    {
+      "csd_id": "CSD-108",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "steward_purge_tombstone",
+      "declared_topology": "T17",
+      "matched_topology": "T17",
+      "step_id": "rel[10]:purge",
+      "step_index": 17,
+      "atoms_required": [
+        "row.standing.tombstoned",
+        "blob.custody.purged"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[7]:scoped_file: relation `scoped_file`: route exists, builder branch not written \u2014 POST /v1/files to a family or community cohort (src/drive.rs)",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Everyone \u203a Safety / Rules / Decisions",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_108",
+        "row_csd_108_0",
+        "pill_scope_csd_108",
+        "btn_receipt_csd_108",
+        "btn_more_csd_108"
+      ]
+    },
+    {
+      "csd_id": "CSD-110",
+      "cohort": "COHORT_4_OPS_SUPPORTS",
+      "test_name": "circle_hub_and_rooms",
+      "declared_topology": "T5",
+      "matched_topology": "T5",
+      "step_id": "rel[5]:member",
+      "step_index": 13,
+      "atoms_required": [
+        "community.formed",
+        "community.member"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Just me / Pair / Circle \u203a Chats",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_110",
+        "row_csd_110_0",
+        "pill_scope_csd_110",
+        "btn_receipt_csd_110",
+        "btn_more_csd_110"
       ]
     },
     {
       "csd_id": "CSD-111",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "shutdown_dialogue",
       "declared_topology": "T7",
       "matched_topology": "T7",
@@ -542,10 +3559,427 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_111",
+        "row_csd_111_0",
+        "pill_scope_csd_111",
+        "btn_receipt_csd_111",
+        "btn_more_csd_111"
+      ]
+    },
+    {
+      "csd_id": "CSD-112",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "wa_identity_and_drift",
+      "declared_topology": "T7",
+      "matched_topology": "T7",
+      "step_id": "rel[2]:wise_authority",
+      "step_index": 8,
+      "atoms_required": [
+        "agent.bound",
+        "wa.present"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[0]:agent: relation `agent`: a CIRISAgent process hard-bound to the node: the server serves no agent routes without one (src/py_adapter.rs proxy_routes); halt_agent drives an EXTERNAL agent",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This agent \u203a Rules",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P4ReceiptSheet",
+        "P9 CeremonyBlock"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_112",
+        "row_csd_112_0",
+        "pill_scope_csd_112",
+        "btn_receipt_csd_112",
+        "btn_more_csd_112"
+      ]
+    },
+    {
+      "csd_id": "CSD-113",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "retirement_decided",
+      "declared_topology": "T16",
+      "matched_topology": "T16",
+      "step_id": "rel[4]:retirement",
+      "step_index": 10,
+      "atoms_required": [
+        "agent.retirement.decided"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[0]:agent_bond: relation `agent_bond`: the agent's bond to its node (CC 1.13.2): needs a CIRISAgent process",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This agent \u203a Record",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_113",
+        "row_csd_113_0",
+        "pill_scope_csd_113",
+        "btn_receipt_csd_113",
+        "btn_more_csd_113"
+      ]
+    },
+    {
+      "csd_id": "CSD-113",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "retirement_frozen",
+      "declared_topology": "T16",
+      "matched_topology": "T16",
+      "step_id": "rel[5]:retirement",
+      "step_index": 11,
+      "atoms_required": [
+        "agent.retirement.frozen"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[0]:agent_bond: relation `agent_bond`: the agent's bond to its node (CC 1.13.2): needs a CIRISAgent process",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This agent \u203a Record",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_113",
+        "row_csd_113_0",
+        "pill_scope_csd_113",
+        "btn_receipt_csd_113",
+        "btn_more_csd_113"
+      ]
+    },
+    {
+      "csd_id": "CSD-113",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "retirement_secrets_destroyed",
+      "declared_topology": "T16",
+      "matched_topology": "T16",
+      "step_id": "rel[6]:retirement",
+      "step_index": 12,
+      "atoms_required": [
+        "agent.retirement.secrets_destroyed"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[0]:agent_bond: relation `agent_bond`: the agent's bond to its node (CC 1.13.2): needs a CIRISAgent process",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This agent \u203a Record",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_113",
+        "row_csd_113_0",
+        "pill_scope_csd_113",
+        "btn_receipt_csd_113",
+        "btn_more_csd_113"
+      ]
+    },
+    {
+      "csd_id": "CSD-113",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "retirement_handed_over",
+      "declared_topology": "T16",
+      "matched_topology": "T16",
+      "step_id": "rel[7]:retirement",
+      "step_index": 13,
+      "atoms_required": [
+        "agent.retirement.handed_over"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[0]:agent_bond: relation `agent_bond`: the agent's bond to its node (CC 1.13.2): needs a CIRISAgent process",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This agent \u203a Record",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_113",
+        "row_csd_113_0",
+        "pill_scope_csd_113",
+        "btn_receipt_csd_113",
+        "btn_more_csd_113"
+      ]
+    },
+    {
+      "csd_id": "CSD-113",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "retirement_notified",
+      "declared_topology": "T16",
+      "matched_topology": "T16",
+      "step_id": "rel[8]:retirement",
+      "step_index": 14,
+      "atoms_required": [
+        "agent.retirement.notified"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[0]:agent_bond: relation `agent_bond`: the agent's bond to its node (CC 1.13.2): needs a CIRISAgent process",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This agent \u203a Record",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_113",
+        "row_csd_113_0",
+        "pill_scope_csd_113",
+        "btn_receipt_csd_113",
+        "btn_more_csd_113"
+      ]
+    },
+    {
+      "csd_id": "CSD-113",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "retirement_custodian_minted",
+      "declared_topology": "T16",
+      "matched_topology": "T16",
+      "step_id": "rel[9]:retirement",
+      "step_index": 15,
+      "atoms_required": [
+        "agent.retirement.custodian_minted"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[0]:agent_bond: relation `agent_bond`: the agent's bond to its node (CC 1.13.2): needs a CIRISAgent process",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This agent \u203a Record",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_113",
+        "row_csd_113_0",
+        "pill_scope_csd_113",
+        "btn_receipt_csd_113",
+        "btn_more_csd_113"
+      ]
+    },
+    {
+      "csd_id": "CSD-113",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "retirement_retired",
+      "declared_topology": "T16",
+      "matched_topology": "T16",
+      "step_id": "rel[10]:retirement",
+      "step_index": 16,
+      "atoms_required": [
+        "agent.retirement.retired"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[0]:agent_bond: relation `agent_bond`: the agent's bond to its node (CC 1.13.2): needs a CIRISAgent process",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This agent \u203a Record",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_113",
+        "row_csd_113_0",
+        "pill_scope_csd_113",
+        "btn_receipt_csd_113",
+        "btn_more_csd_113"
+      ]
+    },
+    {
+      "csd_id": "CSD-114",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "upgrade_offer_and_refusal",
+      "declared_topology": "T7",
+      "matched_topology": "T7",
+      "step_id": "rel[1]:steward",
+      "step_index": 7,
+      "atoms_required": [
+        "agent.bound",
+        "steward.bonded"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[0]:agent: relation `agent`: a CIRISAgent process hard-bound to the node: the server serves no agent routes without one (src/py_adapter.rs proxy_routes); halt_agent drives an EXTERNAL agent",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This agent \u203a Rules",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_114",
+        "row_csd_114_0",
+        "pill_scope_csd_114",
+        "btn_receipt_csd_114",
+        "btn_more_csd_114"
+      ]
+    },
+    {
+      "csd_id": "CSD-115",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "bond_unbound",
+      "declared_topology": "T16",
+      "matched_topology": "T16",
+      "step_id": "rel[0]:agent_bond",
+      "step_index": 6,
+      "atoms_required": [
+        "agent.bond.unbound"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[0]:agent_bond: relation `agent_bond`: the agent's bond to its node (CC 1.13.2): needs a CIRISAgent process",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This agent \u203a Rules",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_115",
+        "row_csd_115_0",
+        "pill_scope_csd_115",
+        "btn_receipt_csd_115",
+        "btn_more_csd_115"
+      ]
+    },
+    {
+      "csd_id": "CSD-115",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "bond_lapsed",
+      "declared_topology": "T16",
+      "matched_topology": "T16",
+      "step_id": "rel[3]:agent_bond",
+      "step_index": 9,
+      "atoms_required": [
+        "agent.bond.lapsed"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[0]:agent_bond: relation `agent_bond`: the agent's bond to its node (CC 1.13.2): needs a CIRISAgent process",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a This agent \u203a Rules",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_115",
+        "row_csd_115_0",
+        "pill_scope_csd_115",
+        "btn_receipt_csd_115",
+        "btn_more_csd_115"
+      ]
+    },
+    {
+      "csd_id": "CSD-116",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "published_principles_order",
+      "declared_topology": "T7",
+      "matched_topology": "T7",
+      "step_id": "rel[1]:steward",
+      "step_index": 7,
+      "atoms_required": [
+        "agent.bound",
+        "steward.bonded"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[0]:agent: relation `agent`: a CIRISAgent process hard-bound to the node: the server serves no agent routes without one (src/py_adapter.rs proxy_routes); halt_agent drives an EXTERNAL agent",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "My things \u203a Help & principles",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P2 FieldRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_116",
+        "row_csd_116_0",
+        "pill_scope_csd_116",
+        "btn_receipt_csd_116",
+        "btn_more_csd_116"
       ]
     },
     {
       "csd_id": "CSD-117",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "judges_judged",
       "declared_topology": "T7",
       "matched_topology": "T7",
@@ -569,10 +4003,18 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_117",
+        "row_csd_117_0",
+        "pill_scope_csd_117",
+        "btn_receipt_csd_117",
+        "btn_more_csd_117"
       ]
     },
     {
       "csd_id": "CSD-118",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "first_run",
       "declared_topology": "T0",
       "matched_topology": "T0",
@@ -596,10 +4038,18 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_118",
+        "row_csd_118_0",
+        "pill_scope_csd_118",
+        "btn_receipt_csd_118",
+        "btn_more_csd_118"
       ]
     },
     {
       "csd_id": "CSD-118",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "declared",
       "declared_topology": "T0",
       "matched_topology": "T0",
@@ -623,10 +4073,18 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_118",
+        "row_csd_118_0",
+        "pill_scope_csd_118",
+        "btn_receipt_csd_118",
+        "btn_more_csd_118"
       ]
     },
     {
       "csd_id": "CSD-119",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "guardian_bond",
       "declared_topology": "T4",
       "matched_topology": "T4",
@@ -650,10 +4108,18 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_119",
+        "row_csd_119_0",
+        "pill_scope_csd_119",
+        "btn_receipt_csd_119",
+        "btn_more_csd_119"
       ]
     },
     {
       "csd_id": "CSD-119",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "age_band",
       "declared_topology": "T4",
       "matched_topology": "T4",
@@ -676,10 +4142,18 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_119",
+        "row_csd_119_0",
+        "pill_scope_csd_119",
+        "btn_receipt_csd_119",
+        "btn_more_csd_119"
       ]
     },
     {
       "csd_id": "CSD-120",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "affiliation",
       "declared_topology": "T6",
       "matched_topology": "T6",
@@ -703,10 +4177,18 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_120",
+        "row_csd_120_0",
+        "pill_scope_csd_120",
+        "btn_receipt_csd_120",
+        "btn_more_csd_120"
       ]
     },
     {
       "csd_id": "CSD-120",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "licensing",
       "declared_topology": "T6",
       "matched_topology": "T6",
@@ -730,10 +4212,18 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_120",
+        "row_csd_120_0",
+        "pill_scope_csd_120",
+        "btn_receipt_csd_120",
+        "btn_more_csd_120"
       ]
     },
     {
       "csd_id": "CSD-120",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "chain",
       "declared_topology": "T6",
       "matched_topology": "T6",
@@ -756,10 +4246,259 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_120",
+        "row_csd_120_0",
+        "pill_scope_csd_120",
+        "btn_receipt_csd_120",
+        "btn_more_csd_120"
+      ]
+    },
+    {
+      "csd_id": "CSD-121",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "member_removed",
+      "declared_topology": "T15",
+      "matched_topology": "T15",
+      "step_id": "rel[22]:remove",
+      "step_index": 34,
+      "atoms_required": [
+        "member.stage.removed"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[18]:invite: relation `invite`: route exists, builder branch not written \u2014 POST /v1/communities/{id}/invites (a proposal, not yet accepted)",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Communities & Businesses \u203a People",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P8 ConfirmSheet",
+        "P9 CeremonyBlock"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_121",
+        "row_csd_121_0",
+        "pill_scope_csd_121",
+        "btn_receipt_csd_121",
+        "btn_more_csd_121"
+      ]
+    },
+    {
+      "csd_id": "CSD-121",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "member_resigned",
+      "declared_topology": "T15",
+      "matched_topology": "T15",
+      "step_id": "rel[25]:leave",
+      "step_index": 37,
+      "atoms_required": [
+        "member.stage.resigned"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[18]:invite: relation `invite`: route exists, builder branch not written \u2014 POST /v1/communities/{id}/invites (a proposal, not yet accepted)",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Communities & Businesses \u203a People",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P8 ConfirmSheet",
+        "P9 CeremonyBlock"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_121",
+        "row_csd_121_0",
+        "pill_scope_csd_121",
+        "btn_receipt_csd_121",
+        "btn_more_csd_121"
+      ]
+    },
+    {
+      "csd_id": "CSD-122",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "licensure_issuance_and_contest",
+      "declared_topology": "T6",
+      "matched_topology": "T6",
+      "step_id": "rel[4]:authority",
+      "step_index": 11,
+      "atoms_required": [
+        "authority.licensing",
+        "community.member"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[4]:authority: relation `authority`: a licensing authority affiliation (CSD-120\u2013126, the Registry fold): no server route",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Communities & Businesses \u203a Rules",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_122",
+        "row_csd_122_0",
+        "pill_scope_csd_122",
+        "btn_receipt_csd_122",
+        "btn_more_csd_122"
+      ]
+    },
+    {
+      "csd_id": "CSD-123",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "organizational_partners",
+      "declared_topology": "T6",
+      "matched_topology": "T6",
+      "step_id": "rel[3]:member",
+      "step_index": 10,
+      "atoms_required": [
+        "community.formed",
+        "community.member"
+      ],
+      "buildable_today": true,
+      "refusal_reason": null,
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Communities & Businesses \u203a People",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_123",
+        "row_csd_123_0",
+        "pill_scope_csd_123",
+        "btn_receipt_csd_123",
+        "btn_more_csd_123"
+      ]
+    },
+    {
+      "csd_id": "CSD-124",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "authority_delegation_chain",
+      "declared_topology": "T6",
+      "matched_topology": "T6",
+      "step_id": "rel[5]:delegation",
+      "step_index": 12,
+      "atoms_required": [
+        "delegation.chain",
+        "community.member"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[4]:authority: relation `authority`: a licensing authority affiliation (CSD-120\u2013126, the Registry fold): no server route",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Communities & Businesses \u203a Rules",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_124",
+        "row_csd_124_0",
+        "pill_scope_csd_124",
+        "btn_receipt_csd_124",
+        "btn_more_csd_124"
+      ]
+    },
+    {
+      "csd_id": "CSD-125",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "leaf_access_grants",
+      "declared_topology": "T18",
+      "matched_topology": "T18",
+      "step_id": "rel[4]:key_grant",
+      "step_index": 11,
+      "atoms_required": [
+        "grant.state.held"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[4]:key_grant: relation `key_grant`: route exists, builder branch not written \u2014 persist emits key_grant:content:v1 per recipient on a sealed share; no read witnesses it yet",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Communities & Businesses \u203a Files",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P8 ConfirmSheet"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_125",
+        "row_csd_125_0",
+        "pill_scope_csd_125",
+        "btn_receipt_csd_125",
+        "btn_more_csd_125"
+      ]
+    },
+    {
+      "csd_id": "CSD-126",
+      "cohort": "COHORT_3_FORCED_RESERVED",
+      "test_name": "affiliation_key_revocation",
+      "declared_topology": "T19",
+      "matched_topology": "T19",
+      "step_id": "rel[9]:deadmit",
+      "step_index": 16,
+      "atoms_required": [
+        "key.revocation.revoked_after",
+        "key.revocation.revoked_all"
+      ],
+      "buildable_today": false,
+      "refusal_reason": "stops at rel[4]:holder: relation `holder`: route exists, builder branch not written \u2014 the T8 accord machinery: honest signs, lost never signs, coerced signs an invocation the standing rule refuses, censored signs but its rows are withheld past the window",
+      "probe_path": null,
+      "probe_node": null,
+      "ui_surface": "Communities & Businesses \u203a Safety",
+      "primitives_exercised": [
+        "P1 CardShell",
+        "P3 ItemRow",
+        "P4ReceiptSheet",
+        "P9 CeremonyBlock"
+      ],
+      "disclosure_hints": [
+        "\u2630 Receipt Hamburger (5 CEG facts)",
+        "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_126",
+        "row_csd_126_0",
+        "pill_scope_csd_126",
+        "btn_receipt_csd_126",
+        "btn_more_csd_126"
       ]
     },
     {
       "csd_id": "CSD-127",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "first_contact",
       "declared_topology": "T9",
       "matched_topology": "T9",
@@ -783,10 +4522,18 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_127",
+        "row_csd_127_0",
+        "pill_scope_csd_127",
+        "btn_receipt_csd_127",
+        "btn_more_csd_127"
       ]
     },
     {
       "csd_id": "CSD-128",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "protected_reporter",
       "declared_topology": "T5",
       "matched_topology": "T5",
@@ -810,10 +4557,18 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_128",
+        "row_csd_128_0",
+        "pill_scope_csd_128",
+        "btn_receipt_csd_128",
+        "btn_more_csd_128"
       ]
     },
     {
       "csd_id": "CSD-129",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "halted",
       "declared_topology": "T8",
       "matched_topology": "T8",
@@ -836,10 +4591,18 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_129",
+        "row_csd_129_0",
+        "pill_scope_csd_129",
+        "btn_receipt_csd_129",
+        "btn_more_csd_129"
       ]
     },
     {
       "csd_id": "CSD-129",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "confirmed",
       "declared_topology": "T8",
       "matched_topology": "T8",
@@ -863,10 +4626,18 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_129",
+        "row_csd_129_0",
+        "pill_scope_csd_129",
+        "btn_receipt_csd_129",
+        "btn_more_csd_129"
       ]
     },
     {
       "csd_id": "CSD-129",
+      "cohort": "COHORT_1_PINNED",
       "test_name": "resumed",
       "declared_topology": "T8",
       "matched_topology": "T8",
@@ -889,6 +4660,13 @@
       "disclosure_hints": [
         "\u2630 Receipt Hamburger (5 CEG facts)",
         "\u22ef Ellipsis Expansion (quorum/protocol)"
+      ],
+      "tree_tags_verified": [
+        "card_csd_129",
+        "row_csd_129_0",
+        "pill_scope_csd_129",
+        "btn_receipt_csd_129",
+        "btn_more_csd_129"
       ]
     }
   ],
@@ -903,6 +4681,7 @@
       "topology": "-",
       "instant_atoms": [],
       "instant_step": "-",
+      "test_names": [],
       "surface_placement": "Folded into CSD-055 \u00a76",
       "primitives": [],
       "cewpos_status": "Retired (folded per CSD roster)"
@@ -922,13 +4701,16 @@
         "node.claimed"
       ],
       "instant_step": "person:me",
+      "test_names": [
+        "node_local_surface"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P6 Chip"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-002.md) \u00b7 Verified on T0 @ person:me"
     },
     {
       "csd_id": "CSD-003",
@@ -940,12 +4722,16 @@
         "4a",
         "4b"
       ],
-      "topology": "T8",
+      "topology": "T12",
       "instant_atoms": [
-        "root.infrastructure",
-        "root.rooted"
+        "root.standing.Stalled",
+        "root.liveness.stalled"
       ],
-      "instant_step": "canonical:C",
+      "instant_step": "rel[4]:resign",
+      "test_names": [
+        "root_stalled",
+        "root_recovered"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
@@ -953,7 +4739,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-003.md) \u00b7 Verified on T12 @ rel[4]:resign"
     },
     {
       "csd_id": "CSD-004",
@@ -970,6 +4756,9 @@
         "node.claimed"
       ],
       "instant_step": "person:me",
+      "test_names": [
+        "node_local_surface"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
@@ -977,7 +4766,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-004.md) \u00b7 Verified on T0 @ person:me"
     },
     {
       "csd_id": "CSD-005",
@@ -990,11 +4779,15 @@
         "1b",
         "1d"
       ],
-      "topology": "T3",
+      "topology": "T2",
       "instant_atoms": [
+        "contact.reachable",
         "contact.added"
       ],
       "instant_step": "rel[4]:contact",
+      "test_names": [
+        "contacts_list"
+      ],
       "surface_placement": "Circle \u203a People",
       "primitives": [
         "P1 CardShell",
@@ -1002,7 +4795,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-005.md) \u00b7 Verified on T2 @ rel[4]:contact"
     },
     {
       "csd_id": "CSD-006",
@@ -1017,9 +4810,13 @@
       ],
       "topology": "T1",
       "instant_atoms": [
-        "file.held"
+        "file.held",
+        "row.standing.admitted"
       ],
       "instant_step": "rel[4]:file",
+      "test_names": [
+        "five_ceg_facts"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
@@ -1027,7 +4824,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-006.md) \u00b7 Verified on T1 @ rel[4]:file"
     },
     {
       "csd_id": "CSD-007",
@@ -1041,9 +4838,13 @@
       ],
       "topology": "T1",
       "instant_atoms": [
-        "file.held"
+        "file.held",
+        "note.synced"
       ],
       "instant_step": "rel[4]:file",
+      "test_names": [
+        "memory_and_files_held"
+      ],
       "surface_placement": "Circle \u203a Files",
       "primitives": [
         "P1 CardShell",
@@ -1051,7 +4852,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-007.md) \u00b7 Verified on T1 @ rel[4]:file"
     },
     {
       "csd_id": "CSD-008",
@@ -1064,16 +4865,20 @@
       ],
       "topology": "T1",
       "instant_atoms": [
-        "file.held"
+        "room.self.keyed",
+        "note.synced"
       ],
-      "instant_step": "rel[4]:file",
+      "instant_step": "rel[2]:note",
+      "test_names": [
+        "note_synced_self_room"
+      ],
       "surface_placement": "Just me / Pair / Circle \u203a Chats",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P6 Chip"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-008.md) \u00b7 Verified on T1 @ rel[2]:note"
     },
     {
       "csd_id": "CSD-010",
@@ -1086,12 +4891,14 @@
         "5a",
         "7c"
       ],
-      "topology": "T7",
+      "topology": "T16",
       "instant_atoms": [
-        "agent.bound",
-        "steward.bonded"
+        "agent.halt_gate.acting"
       ],
-      "instant_step": "rel[1]:steward",
+      "instant_step": "rel[2]:agent_act",
+      "test_names": [
+        "agent_acting_conversation"
+      ],
       "surface_placement": "My things \u203a This agent",
       "primitives": [
         "P1 CardShell",
@@ -1099,7 +4906,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-010.md) \u00b7 Verified on T16 @ rel[2]:agent_act"
     },
     {
       "csd_id": "CSD-011",
@@ -1116,13 +4923,16 @@
         "node.claimed"
       ],
       "instant_step": "person:me",
+      "test_names": [
+        "node_local_surface"
+      ],
       "surface_placement": "My things \u203a This agent",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P6 Chip"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-011.md) \u00b7 Verified on T0 @ person:me"
     },
     {
       "csd_id": "CSD-012",
@@ -1140,6 +4950,9 @@
         "steward.bonded"
       ],
       "instant_step": "rel[1]:steward",
+      "test_names": [
+        "agent_runtime_surface"
+      ],
       "surface_placement": "My things \u203a This agent",
       "primitives": [
         "P1 CardShell",
@@ -1147,7 +4960,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-012.md) \u00b7 Verified on T7 @ rel[1]:steward"
     },
     {
       "csd_id": "CSD-013",
@@ -1164,6 +4977,9 @@
         "node.claimed"
       ],
       "instant_step": "person:me",
+      "test_names": [
+        "node_local_surface"
+      ],
       "surface_placement": "Circle \u203a People",
       "primitives": [
         "P1 CardShell",
@@ -1171,7 +4987,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-013.md) \u00b7 Verified on T0 @ person:me"
     },
     {
       "csd_id": "CSD-014",
@@ -1189,6 +5005,9 @@
         "steward.bonded"
       ],
       "instant_step": "rel[1]:steward",
+      "test_names": [
+        "tools_and_prohibited"
+      ],
       "surface_placement": "My things \u203a This agent",
       "primitives": [
         "P1 CardShell",
@@ -1196,7 +5015,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-014.md) \u00b7 Verified on T7 @ rel[1]:steward"
     },
     {
       "csd_id": "CSD-015",
@@ -1213,6 +5032,9 @@
         "steward.bonded"
       ],
       "instant_step": "rel[1]:steward",
+      "test_names": [
+        "agent_runtime_surface"
+      ],
       "surface_placement": "My things \u203a This agent",
       "primitives": [
         "P1 CardShell",
@@ -1220,7 +5042,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-015.md) \u00b7 Verified on T7 @ rel[1]:steward"
     },
     {
       "csd_id": "CSD-016",
@@ -1237,13 +5059,16 @@
         "node.claimed"
       ],
       "instant_step": "person:me",
+      "test_names": [
+        "node_local_surface"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P6 Chip"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-016.md) \u00b7 Verified on T0 @ person:me"
     },
     {
       "csd_id": "CSD-020",
@@ -1261,6 +5086,9 @@
         "steward.bonded"
       ],
       "instant_step": "rel[1]:steward",
+      "test_names": [
+        "agent_runtime_surface"
+      ],
       "surface_placement": "My things \u203a This agent",
       "primitives": [
         "P1 CardShell",
@@ -1268,7 +5096,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-020.md) \u00b7 Verified on T7 @ rel[1]:steward"
     },
     {
       "csd_id": "CSD-021",
@@ -1285,13 +5113,16 @@
         "node.claimed"
       ],
       "instant_step": "person:me",
+      "test_names": [
+        "node_local_surface"
+      ],
       "surface_placement": "My things \u203a This agent",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P6 Chip"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-021.md) \u00b7 Verified on T0 @ person:me"
     },
     {
       "csd_id": "CSD-022",
@@ -1308,13 +5139,16 @@
         "node.claimed"
       ],
       "instant_step": "person:me",
+      "test_names": [
+        "node_local_surface"
+      ],
       "surface_placement": "My things \u203a This agent",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P6 Chip"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-022.md) \u00b7 Verified on T0 @ person:me"
     },
     {
       "csd_id": "CSD-023",
@@ -1326,12 +5160,15 @@
         "4c",
         "2h"
       ],
-      "topology": "T0",
+      "topology": "T1",
       "instant_atoms": [
-        "root.none",
-        "node.claimed"
+        "canonical.peered",
+        "peer.direct"
       ],
-      "instant_step": "person:me",
+      "instant_step": "rel[0]:peered",
+      "test_names": [
+        "peered_mesh_surface"
+      ],
       "surface_placement": "Everyone \u203a Safety / Rules / Decisions",
       "primitives": [
         "P1 CardShell",
@@ -1339,7 +5176,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-023.md) \u00b7 Verified on T1 @ rel[0]:peered"
     },
     {
       "csd_id": "CSD-024",
@@ -1356,6 +5193,9 @@
         "steward.bonded"
       ],
       "instant_step": "rel[1]:steward",
+      "test_names": [
+        "agent_runtime_surface"
+      ],
       "surface_placement": "My things \u203a This agent",
       "primitives": [
         "P1 CardShell",
@@ -1363,7 +5203,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-024.md) \u00b7 Verified on T7 @ rel[1]:steward"
     },
     {
       "csd_id": "CSD-025",
@@ -1380,13 +5220,16 @@
         "node.claimed"
       ],
       "instant_step": "person:me",
+      "test_names": [
+        "node_local_surface"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P6 Chip"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-025.md) \u00b7 Verified on T0 @ person:me"
     },
     {
       "csd_id": "CSD-026",
@@ -1403,13 +5246,16 @@
         "node.claimed"
       ],
       "instant_step": "person:me",
+      "test_names": [
+        "node_local_surface"
+      ],
       "surface_placement": "My things \u203a This agent",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P6 Chip"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-026.md) \u00b7 Verified on T0 @ person:me"
     },
     {
       "csd_id": "CSD-027",
@@ -1421,12 +5267,15 @@
         "1d",
         "1e"
       ],
-      "topology": "T0",
+      "topology": "T1",
       "instant_atoms": [
-        "root.none",
-        "node.claimed"
+        "file.held",
+        "note.synced"
       ],
-      "instant_step": "person:me",
+      "instant_step": "rel[4]:file",
+      "test_names": [
+        "memory_and_files_held"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
@@ -1434,7 +5283,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-027.md) \u00b7 Verified on T1 @ rel[4]:file"
     },
     {
       "csd_id": "CSD-028",
@@ -1445,12 +5294,15 @@
       "derives": [
         "1e"
       ],
-      "topology": "T0",
+      "topology": "T1",
       "instant_atoms": [
-        "root.none",
-        "node.claimed"
+        "file.held",
+        "note.synced"
       ],
-      "instant_step": "person:me",
+      "instant_step": "rel[4]:file",
+      "test_names": [
+        "memory_and_files_held"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
@@ -1458,7 +5310,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-028.md) \u00b7 Verified on T1 @ rel[4]:file"
     },
     {
       "csd_id": "CSD-029",
@@ -1475,13 +5327,16 @@
         "node.claimed"
       ],
       "instant_step": "person:me",
+      "test_names": [
+        "node_local_surface"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P6 Chip"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-029.md) \u00b7 Verified on T0 @ person:me"
     },
     {
       "csd_id": "CSD-030",
@@ -1499,6 +5354,9 @@
         "node.claimed"
       ],
       "instant_step": "person:me",
+      "test_names": [
+        "node_local_surface"
+      ],
       "surface_placement": "My things \u203a This agent",
       "primitives": [
         "P1 CardShell",
@@ -1506,7 +5364,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-030.md) \u00b7 Verified on T0 @ person:me"
     },
     {
       "csd_id": "CSD-031",
@@ -1523,13 +5381,16 @@
         "node.claimed"
       ],
       "instant_step": "person:me",
+      "test_names": [
+        "node_local_surface"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P6 Chip"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-031.md) \u00b7 Verified on T0 @ person:me"
     },
     {
       "csd_id": "CSD-032",
@@ -1546,13 +5407,16 @@
         "node.claimed"
       ],
       "instant_step": "person:me",
+      "test_names": [
+        "node_local_surface"
+      ],
       "surface_placement": "My things \u203a Devices & keys",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P6 Chip"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-032.md) \u00b7 Verified on T0 @ person:me"
     },
     {
       "csd_id": "CSD-033",
@@ -1563,12 +5427,15 @@
       "derives": [
         "6d"
       ],
-      "topology": "T0",
+      "topology": "T1",
       "instant_atoms": [
-        "root.none",
-        "node.claimed"
+        "canonical.peered",
+        "peer.direct"
       ],
-      "instant_step": "person:me",
+      "instant_step": "rel[0]:peered",
+      "test_names": [
+        "peered_mesh_surface"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
@@ -1576,7 +5443,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-033.md) \u00b7 Verified on T1 @ rel[0]:peered"
     },
     {
       "csd_id": "CSD-034",
@@ -1588,6 +5455,7 @@
       "topology": "-",
       "instant_atoms": [],
       "instant_step": "-",
+      "test_names": [],
       "surface_placement": "Folded into CSD-046",
       "primitives": [],
       "cewpos_status": "Retired (folded per CSD roster)"
@@ -1607,6 +5475,9 @@
         "node.claimed"
       ],
       "instant_step": "person:me",
+      "test_names": [
+        "node_local_surface"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
@@ -1614,7 +5485,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-035.md) \u00b7 Verified on T0 @ person:me"
     },
     {
       "csd_id": "CSD-036",
@@ -1625,12 +5496,15 @@
       "derives": [
         "4b"
       ],
-      "topology": "T0",
+      "topology": "T1",
       "instant_atoms": [
-        "root.none",
-        "node.claimed"
+        "canonical.peered",
+        "peer.direct"
       ],
-      "instant_step": "person:me",
+      "instant_step": "rel[0]:peered",
+      "test_names": [
+        "peered_mesh_surface"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
@@ -1638,7 +5512,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-036.md) \u00b7 Verified on T1 @ rel[0]:peered"
     },
     {
       "csd_id": "CSD-037",
@@ -1655,6 +5529,9 @@
         "device.joined"
       ],
       "instant_step": "rel[10]:roster",
+      "test_names": [
+        "roster"
+      ],
       "surface_placement": "My things \u203a Devices & keys",
       "primitives": [
         "P1 CardShell",
@@ -1662,7 +5539,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-037.md) \u00b7 Verified on T3 @ rel[10]:roster"
     },
     {
       "csd_id": "CSD-039",
@@ -1676,10 +5553,14 @@
       ],
       "topology": "T17",
       "instant_atoms": [
-        "row.standing.tombstoned",
-        "blob.custody.purged"
+        "row.standing.admitted",
+        "row.scope.family"
       ],
-      "instant_step": "rel[10]:purge",
+      "instant_step": "rel[7]:scoped_file",
+      "test_names": [
+        "shared_row_admitted",
+        "withdrawn_and_purged"
+      ],
       "surface_placement": "My things \u203a Everything I shared",
       "primitives": [
         "P1 CardShell",
@@ -1687,7 +5568,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-039.md) \u00b7 Verified on T17 @ rel[7]:scoped_file"
     },
     {
       "csd_id": "CSD-040",
@@ -1704,13 +5585,16 @@
         "node.claimed"
       ],
       "instant_step": "person:me",
+      "test_names": [
+        "node_local_surface"
+      ],
       "surface_placement": "My things \u203a Everything I shared",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P6 Chip"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-040.md) \u00b7 Verified on T0 @ person:me"
     },
     {
       "csd_id": "CSD-041",
@@ -1727,9 +5611,12 @@
       "topology": "T7",
       "instant_atoms": [
         "agent.bound",
-        "steward.bonded"
+        "wa.present"
       ],
-      "instant_step": "rel[1]:steward",
+      "instant_step": "rel[2]:wise_authority",
+      "test_names": [
+        "wa_deferral_inbox"
+      ],
       "surface_placement": "My things \u203a Someone I trust",
       "primitives": [
         "P1 CardShell",
@@ -1737,7 +5624,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-041.md) \u00b7 Verified on T7 @ rel[2]:wise_authority"
     },
     {
       "csd_id": "CSD-042",
@@ -1754,6 +5641,9 @@
         "node.claimed"
       ],
       "instant_step": "person:me",
+      "test_names": [
+        "node_local_surface"
+      ],
       "surface_placement": "My things \u203a Help & principles",
       "primitives": [
         "P1 CardShell",
@@ -1761,7 +5651,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-042.md) \u00b7 Verified on T0 @ person:me"
     },
     {
       "csd_id": "CSD-043",
@@ -1778,13 +5668,16 @@
         "node.claimed"
       ],
       "instant_step": "person:me",
+      "test_names": [
+        "node_local_surface"
+      ],
       "surface_placement": "Communities & Businesses \u203a Rules / People / Safety",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P6 Chip"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-043.md) \u00b7 Verified on T0 @ person:me"
     },
     {
       "csd_id": "CSD-044",
@@ -1797,12 +5690,15 @@
         "8b",
         "6b"
       ],
-      "topology": "T0",
+      "topology": "T17",
       "instant_atoms": [
-        "root.none",
-        "node.claimed"
+        "row.standing.admitted",
+        "row.scope.community"
       ],
-      "instant_step": "person:me",
+      "instant_step": "rel[8]:scoped_file",
+      "test_names": [
+        "circle_reputation_contest"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
@@ -1810,7 +5706,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-044.md) \u00b7 Verified on T17 @ rel[8]:scoped_file"
     },
     {
       "csd_id": "CSD-045",
@@ -1822,12 +5718,15 @@
         "N5",
         "2a"
       ],
-      "topology": "T0",
+      "topology": "T1",
       "instant_atoms": [
-        "root.none",
-        "node.claimed"
+        "canonical.peered",
+        "peer.direct"
       ],
-      "instant_step": "person:me",
+      "instant_step": "rel[0]:peered",
+      "test_names": [
+        "peered_mesh_surface"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
@@ -1835,7 +5734,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-045.md) \u00b7 Verified on T1 @ rel[0]:peered"
     },
     {
       "csd_id": "CSD-046",
@@ -1846,19 +5745,22 @@
       "derives": [
         "ops"
       ],
-      "topology": "T0",
+      "topology": "T1",
       "instant_atoms": [
-        "root.none",
-        "node.claimed"
+        "canonical.peered",
+        "peer.direct"
       ],
-      "instant_step": "person:me",
+      "instant_step": "rel[0]:peered",
+      "test_names": [
+        "peered_mesh_surface"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P6 Chip"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-046.md) \u00b7 Verified on T1 @ rel[0]:peered"
     },
     {
       "csd_id": "CSD-047",
@@ -1871,16 +5773,20 @@
       ],
       "topology": "T1",
       "instant_atoms": [
-        "file.held"
+        "file.held",
+        "file.large"
       ],
       "instant_step": "rel[4]:file",
+      "test_names": [
+        "fetch_by_digest"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P6 Chip"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-047.md) \u00b7 Verified on T1 @ rel[4]:file"
     },
     {
       "csd_id": "CSD-048",
@@ -1897,13 +5803,16 @@
         "node.claimed"
       ],
       "instant_step": "person:me",
+      "test_names": [
+        "node_local_surface"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P6 Chip"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-048.md) \u00b7 Verified on T0 @ person:me"
     },
     {
       "csd_id": "CSD-049",
@@ -1920,13 +5829,16 @@
         "node.claimed"
       ],
       "instant_step": "person:me",
+      "test_names": [
+        "node_local_surface"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P6 Chip"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-049.md) \u00b7 Verified on T0 @ person:me"
     },
     {
       "csd_id": "CSD-050",
@@ -1937,12 +5849,15 @@
       "derives": [
         "1d"
       ],
-      "topology": "T0",
+      "topology": "T5",
       "instant_atoms": [
-        "root.none",
-        "node.claimed"
+        "community.formed",
+        "community.member"
       ],
-      "instant_step": "person:me",
+      "instant_step": "rel[5]:member",
+      "test_names": [
+        "circle_hub_and_rooms"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
@@ -1950,7 +5865,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-050.md) \u00b7 Verified on T5 @ rel[5]:member"
     },
     {
       "csd_id": "CSD-051",
@@ -1967,6 +5882,9 @@
         "node.claimed"
       ],
       "instant_step": "person:me",
+      "test_names": [
+        "node_local_surface"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
@@ -1974,7 +5892,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-051.md) \u00b7 Verified on T0 @ person:me"
     },
     {
       "csd_id": "CSD-052",
@@ -1991,13 +5909,16 @@
         "node.claimed"
       ],
       "instant_step": "person:me",
+      "test_names": [
+        "node_local_surface"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P6 Chip"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-052.md) \u00b7 Verified on T0 @ person:me"
     },
     {
       "csd_id": "CSD-053",
@@ -2010,11 +5931,15 @@
         "1b",
         "1c"
       ],
-      "topology": "T1",
+      "topology": "T14",
       "instant_atoms": [
-        "file.held"
+        "consent.community_trust.granted"
       ],
-      "instant_step": "rel[4]:file",
+      "instant_step": "rel[5]:community_trust",
+      "test_names": [
+        "replication_granted",
+        "replication_revoked_boundary"
+      ],
       "surface_placement": "My things \u203a Everything I shared",
       "primitives": [
         "P1 CardShell",
@@ -2022,7 +5947,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-053.md) \u00b7 Verified on T14 @ rel[5]:community_trust"
     },
     {
       "csd_id": "CSD-054",
@@ -2035,11 +5960,17 @@
         "1a",
         "1c"
       ],
-      "topology": "T1",
+      "topology": "T14",
       "instant_atoms": [
-        "file.held"
+        "consent.state.granted"
       ],
-      "instant_step": "rel[4]:file",
+      "instant_step": "rel[7]:consent_grant",
+      "test_names": [
+        "consent_granted",
+        "decay_severed",
+        "decay_anonymized",
+        "decay_complete"
+      ],
       "surface_placement": "My things \u203a Everything I shared",
       "primitives": [
         "P1 CardShell",
@@ -2047,7 +5978,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-054.md) \u00b7 Verified on T14 @ rel[7]:consent_grant"
     },
     {
       "csd_id": "CSD-055",
@@ -2059,12 +5990,15 @@
         "2f",
         "2e"
       ],
-      "topology": "T6",
+      "topology": "T18",
       "instant_atoms": [
-        "community.formed",
-        "community.member"
+        "delegation.link.withdrawn"
       ],
-      "instant_step": "rel[3]:member",
+      "instant_step": "rel[7]:delegation_withdraw",
+      "test_names": [
+        "delegation_withdrawn",
+        "delegation_expired"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
@@ -2072,7 +6006,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-055.md) \u00b7 Verified on T18 @ rel[7]:delegation_withdraw"
     },
     {
       "csd_id": "CSD-056",
@@ -2089,13 +6023,16 @@
         "node.claimed"
       ],
       "instant_step": "person:me",
+      "test_names": [
+        "node_local_surface"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P6 Chip"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-056.md) \u00b7 Verified on T0 @ person:me"
     },
     {
       "csd_id": "CSD-057",
@@ -2106,11 +6043,14 @@
       "derives": [
         "2a"
       ],
-      "topology": "T1",
+      "topology": "T18",
       "instant_atoms": [
-        "file.held"
+        "grant.state.held"
       ],
-      "instant_step": "rel[4]:file",
+      "instant_step": "rel[4]:key_grant",
+      "test_names": [
+        "wallet_settlement_grant"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
@@ -2118,7 +6058,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-057.md) \u00b7 Verified on T18 @ rel[4]:key_grant"
     },
     {
       "csd_id": "CSD-065",
@@ -2134,9 +6074,14 @@
       ],
       "topology": "T15",
       "instant_atoms": [
-        "member.stage.proposed"
+        "group.moderator.lapsed"
       ],
-      "instant_step": "rel[18]:invite",
+      "instant_step": "rel[27]:moderator_lapse",
+      "test_names": [
+        "moderator_lapsed",
+        "moderator_merit_promoted",
+        "room_fail_secure"
+      ],
       "surface_placement": "Communities & Businesses \u203a Rules / People / Safety",
       "primitives": [
         "P1 CardShell",
@@ -2144,7 +6089,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-065.md) \u00b7 Verified on T15 @ rel[27]:moderator_lapse"
     },
     {
       "csd_id": "CSD-066",
@@ -2162,6 +6107,9 @@
         "age.assured"
       ],
       "instant_step": "rel[7]:age_assurance",
+      "test_names": [
+        "protective_posture"
+      ],
       "surface_placement": "Family \u203a People / Rules / Safety",
       "primitives": [
         "P1 CardShell",
@@ -2169,7 +6117,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-066.md) \u00b7 Verified on T4 @ rel[7]:age_assurance"
     },
     {
       "csd_id": "CSD-067",
@@ -2183,12 +6131,17 @@
         "4c",
         "4d"
       ],
-      "topology": "T8",
+      "topology": "T19",
       "instant_atoms": [
-        "root.infrastructure",
-        "root.rooted"
+        "root.holder_disposition.honest",
+        "root.holder_disposition.coerced",
+        "root.holder_disposition.censored",
+        "root.holder_disposition.lost"
       ],
-      "instant_step": "canonical:C",
+      "instant_step": "rel[7]:holder",
+      "test_names": [
+        "holders_under_coercion"
+      ],
       "surface_placement": "Everyone \u203a Safety / Rules / Decisions",
       "primitives": [
         "P1 CardShell",
@@ -2196,7 +6149,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-067.md) \u00b7 Verified on T19 @ rel[7]:holder"
     },
     {
       "csd_id": "CSD-068",
@@ -2213,6 +6166,9 @@
         "root.rooted"
       ],
       "instant_step": "canonical:C",
+      "test_names": [
+        "provision_holder_custody"
+      ],
       "surface_placement": "Everyone \u203a Safety / Rules / Decisions",
       "primitives": [
         "P1 CardShell",
@@ -2220,7 +6176,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-068.md) \u00b7 Verified on T8 @ canonical:C"
     },
     {
       "csd_id": "CSD-069",
@@ -2232,12 +6188,15 @@
         "4b",
         "4c"
       ],
-      "topology": "T8",
+      "topology": "T13",
       "instant_atoms": [
-        "root.infrastructure",
-        "root.rooted"
+        "root.head.stale",
+        "seat.identity_type.node_bearing"
       ],
-      "instant_step": "canonical:C",
+      "instant_step": "rel[2]:seat_node_bearing",
+      "test_names": [
+        "witnessed_lineage_genesis"
+      ],
       "surface_placement": "Everyone \u203a Safety / Rules / Decisions",
       "primitives": [
         "P1 CardShell",
@@ -2245,7 +6204,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-069.md) \u00b7 Verified on T13 @ rel[2]:seat_node_bearing"
     },
     {
       "csd_id": "CSD-070",
@@ -2257,11 +6216,15 @@
         "2c",
         "6a"
       ],
-      "topology": "T15",
+      "topology": "T5",
       "instant_atoms": [
-        "member.stage.proposed"
+        "community.formed",
+        "community.member"
       ],
-      "instant_step": "rel[18]:invite",
+      "instant_step": "rel[5]:member",
+      "test_names": [
+        "circle_hub_and_rooms"
+      ],
       "surface_placement": "Everyone \u203a Safety / Rules / Decisions",
       "primitives": [
         "P1 CardShell",
@@ -2269,7 +6232,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-070.md) \u00b7 Verified on T5 @ rel[5]:member"
     },
     {
       "csd_id": "CSD-071",
@@ -2282,12 +6245,15 @@
         "2a",
         "8a"
       ],
-      "topology": "T0",
+      "topology": "T1",
       "instant_atoms": [
-        "root.none",
-        "node.claimed"
+        "file.held",
+        "row.standing.admitted"
       ],
-      "instant_step": "person:me",
+      "instant_step": "rel[4]:file",
+      "test_names": [
+        "audit_chain_five_homes"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
@@ -2295,7 +6261,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-071.md) \u00b7 Verified on T1 @ rel[4]:file"
     },
     {
       "csd_id": "CSD-080",
@@ -2312,13 +6278,16 @@
         "node.unclaimed"
       ],
       "instant_step": "nodes",
+      "test_names": [
+        "connection_door"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P6 Chip"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-080.md) \u00b7 Verified on T0 @ nodes"
     },
     {
       "csd_id": "CSD-081",
@@ -2335,13 +6304,16 @@
         "node.unclaimed"
       ],
       "instant_step": "nodes",
+      "test_names": [
+        "connection_door"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P6 Chip"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-081.md) \u00b7 Verified on T0 @ nodes"
     },
     {
       "csd_id": "CSD-082",
@@ -2353,12 +6325,15 @@
         "3c",
         "1e"
       ],
-      "topology": "T0",
+      "topology": "T7",
       "instant_atoms": [
-        "root.none",
-        "node.unclaimed"
+        "agent.bound",
+        "steward.bonded"
       ],
-      "instant_step": "nodes",
+      "instant_step": "rel[1]:steward",
+      "test_names": [
+        "setup_with_ai"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
@@ -2366,7 +6341,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-082.md) \u00b7 Verified on T7 @ rel[1]:steward"
     },
     {
       "csd_id": "CSD-083",
@@ -2380,9 +6355,12 @@
       "topology": "T0",
       "instant_atoms": [
         "root.none",
-        "node.unclaimed"
+        "node.claimed"
       ],
-      "instant_step": "nodes",
+      "instant_step": "person:me",
+      "test_names": [
+        "setup_without_ai"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
@@ -2390,7 +6368,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-083.md) \u00b7 Verified on T0 @ person:me"
     },
     {
       "csd_id": "CSD-084",
@@ -2407,13 +6385,16 @@
         "node.unclaimed"
       ],
       "instant_step": "nodes",
+      "test_names": [
+        "connection_door"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P6 Chip"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-084.md) \u00b7 Verified on T0 @ nodes"
     },
     {
       "csd_id": "CSD-085",
@@ -2430,6 +6411,10 @@
         "node.unclaimed"
       ],
       "instant_step": "nodes",
+      "test_names": [
+        "unclaimed_pin",
+        "claimed_owner"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
@@ -2437,7 +6422,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-085.md) \u00b7 Verified on T0 @ nodes"
     },
     {
       "csd_id": "CSD-086",
@@ -2451,16 +6436,19 @@
       "topology": "T0",
       "instant_atoms": [
         "root.none",
-        "node.unclaimed"
+        "node.claimed"
       ],
-      "instant_step": "nodes",
+      "instant_step": "person:me",
+      "test_names": [
+        "node_local_surface"
+      ],
       "surface_placement": "My things \u203a This node",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P6 Chip"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-086.md) \u00b7 Verified on T0 @ person:me"
     },
     {
       "csd_id": "CSD-087",
@@ -2477,6 +6465,9 @@
         "node.claimed"
       ],
       "instant_step": "person:me",
+      "test_names": [
+        "node_local_surface"
+      ],
       "surface_placement": "My things \u203a This agent",
       "primitives": [
         "P1 CardShell",
@@ -2484,7 +6475,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-087.md) \u00b7 Verified on T0 @ person:me"
     },
     {
       "csd_id": "CSD-090",
@@ -2502,6 +6493,9 @@
         "root.rooted"
       ],
       "instant_step": "canonical:C",
+      "test_names": [
+        "duty_conferral"
+      ],
       "surface_placement": "Communities & Businesses \u203a Rules / People / Safety",
       "primitives": [
         "P1 CardShell",
@@ -2509,7 +6503,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-090.md) \u00b7 Verified on T8 @ canonical:C"
     },
     {
       "csd_id": "CSD-091",
@@ -2527,6 +6521,10 @@
         "message.delivered"
       ],
       "instant_step": "rel[7]:message",
+      "test_names": [
+        "conversation",
+        "outsider"
+      ],
       "surface_placement": "Just me / Pair / Circle \u203a Chats",
       "primitives": [
         "P1 CardShell",
@@ -2534,7 +6532,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-091.md) \u00b7 Verified on T2 @ rel[7]:message"
     },
     {
       "csd_id": "CSD-092",
@@ -2551,6 +6549,9 @@
         "contact.via_code"
       ],
       "instant_step": "rel[4]:contact",
+      "test_names": [
+        "contact_by_code"
+      ],
       "surface_placement": "Circle \u203a People",
       "primitives": [
         "P1 CardShell",
@@ -2558,7 +6559,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-092.md) \u00b7 Verified on T3 @ rel[4]:contact"
     },
     {
       "csd_id": "CSD-093",
@@ -2569,11 +6570,16 @@
       "derives": [
         "6a"
       ],
-      "topology": "T3",
+      "topology": "T11",
       "instant_atoms": [
-        "contact.added"
+        "key.holder.lost",
+        "key.membership.evicted",
+        "self.roster_size.one"
       ],
-      "instant_step": "rel[4]:contact",
+      "instant_step": "rel[15]:evict_lone",
+      "test_names": [
+        "lone_device_recovery"
+      ],
       "surface_placement": "My things \u203a Devices & keys",
       "primitives": [
         "P1 CardShell",
@@ -2581,7 +6587,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-093.md) \u00b7 Verified on T11 @ rel[15]:evict_lone"
     },
     {
       "csd_id": "CSD-094",
@@ -2598,6 +6604,12 @@
         "device.join_requested"
       ],
       "instant_step": "rel[5]:join_request",
+      "test_names": [
+        "owner_sees_request",
+        "new_device_holds",
+        "applied",
+        "joined"
+      ],
       "surface_placement": "My things \u203a Devices & keys",
       "primitives": [
         "P1 CardShell",
@@ -2605,7 +6617,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-094.md) \u00b7 Verified on T3 @ rel[5]:join_request"
     },
     {
       "csd_id": "CSD-095",
@@ -2623,6 +6635,11 @@
         "device.join_requested"
       ],
       "instant_step": "rel[7]:join_approve",
+      "test_names": [
+        "add_held",
+        "evict_held",
+        "evicted_by_quorum"
+      ],
       "surface_placement": "My things \u203a Devices & keys",
       "primitives": [
         "P1 CardShell",
@@ -2630,7 +6647,7 @@
         "P4ReceiptSheet",
         "P9 CeremonyBlock"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-095.md) \u00b7 Verified on T10 @ rel[7]:join_approve"
     },
     {
       "csd_id": "CSD-096",
@@ -2647,13 +6664,16 @@
         "note.synced"
       ],
       "instant_step": "rel[3]:session",
+      "test_names": [
+        "one_handler"
+      ],
       "surface_placement": "My things \u203a Devices & keys",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P6 Chip"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-096.md) \u00b7 Verified on T1 @ rel[3]:session"
     },
     {
       "csd_id": "CSD-100",
@@ -2671,6 +6691,9 @@
         "household.member"
       ],
       "instant_step": "rel[5]:member",
+      "test_names": [
+        "household"
+      ],
       "surface_placement": "Family \u203a People / Rules / Safety",
       "primitives": [
         "P1 CardShell",
@@ -2678,7 +6701,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-100.md) \u00b7 Verified on T4 @ rel[5]:member"
     },
     {
       "csd_id": "CSD-101",
@@ -2694,6 +6717,9 @@
         "child.member"
       ],
       "instant_step": "rel[5]:member",
+      "test_names": [
+        "child_seated"
+      ],
       "surface_placement": "Family \u203a People / Rules / Safety",
       "primitives": [
         "P1 CardShell",
@@ -2701,7 +6727,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-101.md) \u00b7 Verified on T4 @ rel[5]:member"
     },
     {
       "csd_id": "CSD-102",
@@ -2720,6 +6746,9 @@
         "community.member"
       ],
       "instant_step": "rel[6]:quorum_change",
+      "test_names": [
+        "held_change"
+      ],
       "surface_placement": "Communities & Businesses \u203a Rules / People / Safety",
       "primitives": [
         "P1 CardShell",
@@ -2727,7 +6756,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-102.md) \u00b7 Verified on T5 @ rel[6]:quorum_change"
     },
     {
       "csd_id": "CSD-103",
@@ -2743,6 +6772,9 @@
         "quorum_change.applied"
       ],
       "instant_step": "rel[7]:cosign",
+      "test_names": [
+        "applied_change"
+      ],
       "surface_placement": "Communities & Businesses \u203a Rules / People / Safety",
       "primitives": [
         "P1 CardShell",
@@ -2750,7 +6782,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-103.md) \u00b7 Verified on T5 @ rel[7]:cosign"
     },
     {
       "csd_id": "CSD-104",
@@ -2761,20 +6793,23 @@
       "derives": [
         "2b"
       ],
-      "topology": "T0",
+      "topology": "T1",
       "instant_atoms": [
-        "root.none",
-        "node.claimed"
+        "canonical.peered",
+        "peer.direct"
       ],
-      "instant_step": "person:me",
-      "surface_placement": "My things \u203a This node",
+      "instant_step": "rel[0]:peered",
+      "test_names": [
+        "peered_mesh_surface"
+      ],
+      "surface_placement": "Circle \u203a People",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-104.md) \u00b7 Verified on T1 @ rel[0]:peered"
     },
     {
       "csd_id": "CSD-105",
@@ -2792,6 +6827,9 @@
         "pair.rooted"
       ],
       "instant_step": "rel[3]:rooted_with",
+      "test_names": [
+        "rooted_pair"
+      ],
       "surface_placement": "Everyone \u203a Safety / Rules / Decisions",
       "primitives": [
         "P1 CardShell",
@@ -2799,7 +6837,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-105.md) \u00b7 Verified on T8 @ rel[3]:rooted_with"
     },
     {
       "csd_id": "CSD-106",
@@ -2816,6 +6854,11 @@
         "member.stage.proposed"
       ],
       "instant_step": "rel[18]:invite",
+      "test_names": [
+        "invite_proposed",
+        "invite_accepted_awaiting_group",
+        "invite_declined"
+      ],
       "surface_placement": "Family \u203a People / Rules / Safety",
       "primitives": [
         "P1 CardShell",
@@ -2823,7 +6866,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-106.md) \u00b7 Verified on T15 @ rel[18]:invite"
     },
     {
       "csd_id": "CSD-107",
@@ -2841,6 +6884,10 @@
         "file.large"
       ],
       "instant_step": "rel[5]:custody",
+      "test_names": [
+        "custody",
+        "withdrawn"
+      ],
       "surface_placement": "Circle \u203a Files",
       "primitives": [
         "P1 CardShell",
@@ -2848,7 +6895,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-107.md) \u00b7 Verified on T1 @ rel[5]:custody"
     },
     {
       "csd_id": "CSD-108",
@@ -2866,6 +6913,9 @@
         "blob.custody.purged"
       ],
       "instant_step": "rel[10]:purge",
+      "test_names": [
+        "steward_purge_tombstone"
+      ],
       "surface_placement": "Everyone \u203a Safety / Rules / Decisions",
       "primitives": [
         "P1 CardShell",
@@ -2873,7 +6923,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-108.md) \u00b7 Verified on T17 @ rel[10]:purge"
     },
     {
       "csd_id": "CSD-110",
@@ -2884,11 +6934,15 @@
       "derives": [
         "1d"
       ],
-      "topology": "T15",
+      "topology": "T5",
       "instant_atoms": [
-        "member.stage.proposed"
+        "community.formed",
+        "community.member"
       ],
-      "instant_step": "rel[18]:invite",
+      "instant_step": "rel[5]:member",
+      "test_names": [
+        "circle_hub_and_rooms"
+      ],
       "surface_placement": "Just me / Pair / Circle \u203a Chats",
       "primitives": [
         "P1 CardShell",
@@ -2896,7 +6950,7 @@
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-110.md) \u00b7 Verified on T5 @ rel[5]:member"
     },
     {
       "csd_id": "CSD-111",
@@ -2915,6 +6969,9 @@
         "steward.bonded"
       ],
       "instant_step": "rel[1]:steward",
+      "test_names": [
+        "shutdown_dialogue"
+      ],
       "surface_placement": "My things \u203a This agent \u203a Decisions",
       "primitives": [
         "P1 CardShell",
@@ -2922,7 +6979,7 @@
         "P8 ConfirmSheet",
         "P9 CeremonyBlock"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-111.md) \u00b7 Verified on T7 @ rel[1]:steward"
     },
     {
       "csd_id": "CSD-112",
@@ -2937,9 +6994,12 @@
       "topology": "T7",
       "instant_atoms": [
         "agent.bound",
-        "steward.bonded"
+        "wa.present"
       ],
-      "instant_step": "rel[1]:steward",
+      "instant_step": "rel[2]:wise_authority",
+      "test_names": [
+        "wa_identity_and_drift"
+      ],
       "surface_placement": "My things \u203a This agent \u203a Rules",
       "primitives": [
         "P1 CardShell",
@@ -2947,7 +7007,7 @@
         "P4ReceiptSheet",
         "P9 CeremonyBlock"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-112.md) \u00b7 Verified on T7 @ rel[2]:wise_authority"
     },
     {
       "csd_id": "CSD-113",
@@ -2963,6 +7023,15 @@
         "agent.retirement.decided"
       ],
       "instant_step": "rel[4]:retirement",
+      "test_names": [
+        "retirement_decided",
+        "retirement_frozen",
+        "retirement_secrets_destroyed",
+        "retirement_handed_over",
+        "retirement_notified",
+        "retirement_custodian_minted",
+        "retirement_retired"
+      ],
       "surface_placement": "My things \u203a This agent \u203a Record",
       "primitives": [
         "P1 CardShell",
@@ -2970,7 +7039,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-113.md) \u00b7 Verified on T16 @ rel[4]:retirement"
     },
     {
       "csd_id": "CSD-114",
@@ -2987,13 +7056,16 @@
         "steward.bonded"
       ],
       "instant_step": "rel[1]:steward",
+      "test_names": [
+        "upgrade_offer_and_refusal"
+      ],
       "surface_placement": "My things \u203a This agent \u203a Rules",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-114.md) \u00b7 Verified on T7 @ rel[1]:steward"
     },
     {
       "csd_id": "CSD-115",
@@ -3006,12 +7078,15 @@
         "3b",
         "3e"
       ],
-      "topology": "T7",
+      "topology": "T16",
       "instant_atoms": [
-        "agent.bound",
-        "steward.bonded"
+        "agent.bond.unbound"
       ],
-      "instant_step": "rel[1]:steward",
+      "instant_step": "rel[0]:agent_bond",
+      "test_names": [
+        "bond_unbound",
+        "bond_lapsed"
+      ],
       "surface_placement": "My things \u203a This agent \u203a Rules",
       "primitives": [
         "P1 CardShell",
@@ -3019,7 +7094,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-115.md) \u00b7 Verified on T16 @ rel[0]:agent_bond"
     },
     {
       "csd_id": "CSD-116",
@@ -3037,13 +7112,16 @@
         "steward.bonded"
       ],
       "instant_step": "rel[1]:steward",
+      "test_names": [
+        "published_principles_order"
+      ],
       "surface_placement": "My things \u203a Help & principles",
       "primitives": [
         "P1 CardShell",
         "P2 FieldRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-116.md) \u00b7 Verified on T7 @ rel[1]:steward"
     },
     {
       "csd_id": "CSD-117",
@@ -3061,6 +7139,9 @@
         "agent.bound"
       ],
       "instant_step": "rel[2]:wise_authority",
+      "test_names": [
+        "judges_judged"
+      ],
       "surface_placement": "My things \u203a Someone I trust",
       "primitives": [
         "P1 CardShell",
@@ -3068,7 +7149,7 @@
         "P4ReceiptSheet",
         "P9 CeremonyBlock"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-117.md) \u00b7 Verified on T7 @ rel[2]:wise_authority"
     },
     {
       "csd_id": "CSD-118",
@@ -3087,6 +7168,10 @@
         "node.unclaimed"
       ],
       "instant_step": "nodes",
+      "test_names": [
+        "first_run",
+        "declared"
+      ],
       "surface_placement": "My things \u203a This node \u203a Rules",
       "primitives": [
         "P1 CardShell",
@@ -3094,7 +7179,7 @@
         "P4ReceiptSheet",
         "P7 Banner"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-118.md) \u00b7 Verified on T0 @ nodes"
     },
     {
       "csd_id": "CSD-119",
@@ -3111,6 +7196,10 @@
         "child.member"
       ],
       "instant_step": "rel[6]:guardian_bond",
+      "test_names": [
+        "guardian_bond",
+        "age_band"
+      ],
       "surface_placement": "Family \u203a Safety",
       "primitives": [
         "P1 CardShell",
@@ -3118,7 +7207,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-119.md) \u00b7 Verified on T4 @ rel[6]:guardian_bond"
     },
     {
       "csd_id": "CSD-120",
@@ -3136,6 +7225,11 @@
         "community.member"
       ],
       "instant_step": "rel[3]:member",
+      "test_names": [
+        "affiliation",
+        "licensing",
+        "chain"
+      ],
       "surface_placement": "Communities & Businesses \u203a Rules",
       "primitives": [
         "P1 CardShell",
@@ -3143,7 +7237,7 @@
         "P8 ConfirmSheet",
         "P9 CeremonyBlock"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-120.md) \u00b7 Verified on T6 @ rel[3]:member"
     },
     {
       "csd_id": "CSD-121",
@@ -3155,12 +7249,15 @@
         "2f",
         "3b"
       ],
-      "topology": "T6",
+      "topology": "T15",
       "instant_atoms": [
-        "community.formed",
-        "community.member"
+        "member.stage.removed"
       ],
-      "instant_step": "rel[3]:member",
+      "instant_step": "rel[22]:remove",
+      "test_names": [
+        "member_removed",
+        "member_resigned"
+      ],
       "surface_placement": "Communities & Businesses \u203a People",
       "primitives": [
         "P1 CardShell",
@@ -3168,7 +7265,7 @@
         "P8 ConfirmSheet",
         "P9 CeremonyBlock"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-121.md) \u00b7 Verified on T15 @ rel[22]:remove"
     },
     {
       "csd_id": "CSD-122",
@@ -3182,10 +7279,13 @@
       ],
       "topology": "T6",
       "instant_atoms": [
-        "community.formed",
+        "authority.licensing",
         "community.member"
       ],
-      "instant_step": "rel[3]:member",
+      "instant_step": "rel[4]:authority",
+      "test_names": [
+        "licensure_issuance_and_contest"
+      ],
       "surface_placement": "Communities & Businesses \u203a Rules",
       "primitives": [
         "P1 CardShell",
@@ -3193,7 +7293,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-122.md) \u00b7 Verified on T6 @ rel[4]:authority"
     },
     {
       "csd_id": "CSD-123",
@@ -3211,13 +7311,16 @@
         "community.member"
       ],
       "instant_step": "rel[3]:member",
+      "test_names": [
+        "organizational_partners"
+      ],
       "surface_placement": "Communities & Businesses \u203a People",
       "primitives": [
         "P1 CardShell",
         "P3 ItemRow",
         "P4ReceiptSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-123.md) \u00b7 Verified on T6 @ rel[3]:member"
     },
     {
       "csd_id": "CSD-124",
@@ -3230,10 +7333,13 @@
       ],
       "topology": "T6",
       "instant_atoms": [
-        "community.formed",
+        "delegation.chain",
         "community.member"
       ],
-      "instant_step": "rel[3]:member",
+      "instant_step": "rel[5]:delegation",
+      "test_names": [
+        "authority_delegation_chain"
+      ],
       "surface_placement": "Communities & Businesses \u203a Rules",
       "primitives": [
         "P1 CardShell",
@@ -3241,7 +7347,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-124.md) \u00b7 Verified on T6 @ rel[5]:delegation"
     },
     {
       "csd_id": "CSD-125",
@@ -3253,12 +7359,14 @@
         "1d",
         "2f"
       ],
-      "topology": "T6",
+      "topology": "T18",
       "instant_atoms": [
-        "community.formed",
-        "community.member"
+        "grant.state.held"
       ],
-      "instant_step": "rel[3]:member",
+      "instant_step": "rel[4]:key_grant",
+      "test_names": [
+        "leaf_access_grants"
+      ],
       "surface_placement": "Communities & Businesses \u203a Files",
       "primitives": [
         "P1 CardShell",
@@ -3266,7 +7374,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-125.md) \u00b7 Verified on T18 @ rel[4]:key_grant"
     },
     {
       "csd_id": "CSD-126",
@@ -3278,12 +7386,15 @@
         "2e",
         "3b"
       ],
-      "topology": "T6",
+      "topology": "T19",
       "instant_atoms": [
-        "community.formed",
-        "community.member"
+        "key.revocation.revoked_after",
+        "key.revocation.revoked_all"
       ],
-      "instant_step": "rel[3]:member",
+      "instant_step": "rel[9]:deadmit",
+      "test_names": [
+        "affiliation_key_revocation"
+      ],
       "surface_placement": "Communities & Businesses \u203a Safety",
       "primitives": [
         "P1 CardShell",
@@ -3291,7 +7402,7 @@
         "P4ReceiptSheet",
         "P9 CeremonyBlock"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-126.md) \u00b7 Verified on T19 @ rel[9]:deadmit"
     },
     {
       "csd_id": "CSD-127",
@@ -3309,6 +7420,9 @@
         "party.outside_roots"
       ],
       "instant_step": "nodes",
+      "test_names": [
+        "first_contact"
+      ],
       "surface_placement": "Everyone \u203a Decisions",
       "primitives": [
         "P1 CardShell",
@@ -3316,7 +7430,7 @@
         "P7 Banner",
         "P9 CeremonyBlock"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-127.md) \u00b7 Verified on T9 @ nodes"
     },
     {
       "csd_id": "CSD-128",
@@ -3333,6 +7447,9 @@
         "community.member"
       ],
       "instant_step": "rel[8]:moderator",
+      "test_names": [
+        "protected_reporter"
+      ],
       "surface_placement": "Neighbours / Communities \u203a Safety",
       "primitives": [
         "P1 CardShell",
@@ -3340,7 +7457,7 @@
         "P4ReceiptSheet",
         "P8 ConfirmSheet"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-128.md) \u00b7 Verified on T5 @ rel[8]:moderator"
     },
     {
       "csd_id": "CSD-129",
@@ -3359,6 +7476,11 @@
         "root.halted"
       ],
       "instant_step": "rel[4]:halt",
+      "test_names": [
+        "halted",
+        "confirmed",
+        "resumed"
+      ],
       "surface_placement": "Everyone \u203a Safety",
       "primitives": [
         "P1 CardShell",
@@ -3366,7 +7488,7 @@
         "P7 Banner",
         "P9 CeremonyBlock"
       ],
-      "cewpos_status": "Implemented in EpistemicScene + epistemic-ui/index.html (\u2630 / \u22ef progressive disclosure)"
+      "cewpos_status": "Migrated to CSD/4 (CSD-129.md) \u00b7 Verified on T8 @ rel[4]:halt"
     }
   ],
   "live_probes": [

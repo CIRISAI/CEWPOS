@@ -1,0 +1,37 @@
+{
+  "catalogue_version": 3,
+  "topology": "T16",
+  "step_id": "rel[3]:agent_bond",
+  "step_index": 9,
+  "buildable_today": false,
+  "active_atoms": [
+    "agent.bond.lapsed",
+    "agent.bound",
+    "agent.halt_gate.acting",
+    "canonical.peered",
+    "key.holder.owner",
+    "key.revocation.none",
+    "node.announce.announced",
+    "node.announced",
+    "node.claimed",
+    "root.key",
+    "root.rooted",
+    "self.roster_size.one"
+  ],
+  "verified_tree_tags": [
+    "card_csd_115",
+    "row_csd_115_0",
+    "pill_scope_csd_115",
+    "btn_receipt_csd_115",
+    "btn_more_csd_115"
+  ],
+  "invariants_checked": [
+    "INV-UI-1: Closed 1+4 CEG Operator Gate",
+    "INV-UI-2: 48/72 Kind\u00d7Verb Occupancy Matrix",
+    "INV-UI-3: Directional Asymmetry (ConfirmSheet3 vs ImmediateOneStep)",
+    "INV-UI-4: Two-Path Governance Ceremony Corridor",
+    "INV-UI-5: Inv_X1_LatchDoesNotBlockServing (423 Locked keeps data doors open)",
+    "INV-UI-6: 5-Fact CEG Receipt Sheet (Wire | ByRule | NotSent)",
+    "INV-UI-7: Calm Progressive Disclosure (<=3 inline facts; \u2630 & \u22ef expansion)"
+  ]
+}

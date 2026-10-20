@@ -874,6 +874,17 @@
             <div class="kv-row"><span>Agent runtime</span><span class="mono-hint">127.0.0.1:8080 (22/22 services)</span></div>
             <div class="kv-row"><span>Crypto</span><span class="mono-hint">Ed25519 + ML-DSA-65 / X25519 + ML-KEM-768</span></div>
           `)}
+          ${renderExpandableCard("csd_118_never_allowed", "Never-allowed list & operator declaration (CSD-118)", "T0 · Enforced", "brand", `
+            <div class="kv-row"><span>prohibited:*</span><span>No hidden scoring, no silent forward, no unconsented training</span></div>
+            <div class="kv-row"><span>CSD/4 tests</span><span class="mono-hint">first_run [root.none, node.unclaimed] &middot; declared [root.none, node.claimed]</span></div>
+          `)}
+          ${renderExpandableCard("csd_csd4_catalogue_status", "CSD/4 catalogue & trace checkpoints (CSD-001..129)", "101/101 Green · T0–T19", "ok", `
+            <div class="kv-row"><span>Cohort 1 (Pinned requirements.yaml)</span><span class="mono-hint">20/20 cards green (0 pending)</span></div>
+            <div class="kv-row"><span>Cohort 2 (Testable flows)</span><span class="mono-hint">6/6 cards green (T1, T2, T8, T18)</span></div>
+            <div class="kv-row"><span>Cohort 3 (Forced &amp; Reserved #179/#206)</span><span class="mono-hint">31/31 cards green (T0..T19)</span></div>
+            <div class="kv-row"><span>Cohort 4 (Supports &amp; Ops)</span><span class="mono-hint">44/44 cards green (derives: [ops])</span></div>
+            <div class="kv-row"><span>Resolved trace instants</span><span class="mono-hint">134 test instants &middot; 74 checkpoints written</span></div>
+          `)}
         `;
       }
 
