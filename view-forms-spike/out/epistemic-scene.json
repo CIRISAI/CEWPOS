@@ -1,0 +1,223 @@
+{
+  "topology": "T4",
+  "nodes": [
+    {
+      "primitive": "ShellHeader",
+      "circle": "Everyone",
+      "tab": "Decisions",
+      "active_instrument": null,
+      "shows_circle_governance_subtitle": true,
+      "halt_status": "LatchedLone(86400s)",
+      "my_things_tag": "btn_my_things",
+      "stop_everything_tag": "btn_stop_everything"
+    },
+    {
+      "primitive": "StateBanner",
+      "tag": "state_halt_423",
+      "state": "Error",
+      "tone": "Danger",
+      "title": "Agent Act Gate Halted (423 Locked)",
+      "data_doors_open_banner": "Data doors remain OPEN (Inv_X1_LatchDoesNotBlockServing): reading, exporting, and 1-step withdrawal work normally while the agent is paused."
+    },
+    {
+      "primitive": "PolicyLens",
+      "tag": "csd_policy_lens_bar",
+      "active_rules": [
+        "my_rules"
+      ],
+      "helper_keys": [
+        "ed25519:neighbour_dan"
+      ],
+      "sort_label": "newest_first"
+    },
+    {
+      "primitive": "Card",
+      "tag": "csd_main_card",
+      "title": "Everyone \u00b7 Decisions",
+      "accent": "Brand",
+      "fields": [
+        {
+          "tag": "csd-field-root_standing",
+          "label": "Trust Root Standing",
+          "value": "Rooted",
+          "protocol_wire_name": "root.standing",
+          "basis": {
+            "kind": "ByRule",
+            "value": "Rooted",
+            "gloss": null,
+            "cc_ref": "CC 6.2"
+          }
+        },
+        {
+          "tag": "csd-field-self_roster_size",
+          "label": "Self-Key Roster Size",
+          "value": "3",
+          "protocol_wire_name": "self.roster_size",
+          "basis": {
+            "kind": "Wire",
+            "value": "3",
+            "gloss": null,
+            "cc_ref": null
+          }
+        }
+      ],
+      "items": [
+        {
+          "id": "row_0",
+          "tag": "csd_item_row_0",
+          "title": "evaluation:quality",
+          "subtitle": "op:scores",
+          "scope_pill": {
+            "tag": "csd_scope_row_0",
+            "circle": "Everyone",
+            "color_hex": "#B08A3E",
+            "label": "Everyone",
+            "local_only_badge": false
+          },
+          "chips": [
+            {
+              "tag": "csd_chip_standing_row_0",
+              "kind": "Badge",
+              "label": "Admitted",
+              "tone": "Ok"
+            }
+          ],
+          "lens_verdict": {
+            "verdict": "Clear"
+          },
+          "has_hamburger": true,
+          "hamburger_tag": "btn_receipt_row_0",
+          "receipt": {
+            "subject_key_ids": {
+              "kind": "Wire",
+              "value": "ed25519:alice",
+              "gloss": "Named subject(s) with Take-Back & Contest standing",
+              "cc_ref": null
+            },
+            "attesting_key_id": {
+              "kind": "Wire",
+              "value": "ed25519:viewer_self",
+              "gloss": "Hybrid Ed25519 + ML-DSA-65 signer",
+              "cc_ref": null
+            },
+            "cohort_scope": {
+              "kind": "Wire",
+              "value": "federation",
+              "gloss": "Everyone",
+              "cc_ref": null
+            },
+            "dimension": {
+              "kind": "Wire",
+              "value": "evaluation:quality",
+              "gloss": "Confidence (Account)",
+              "cc_ref": null
+            },
+            "consent_scope": {
+              "kind": "ByRule",
+              "value": "op:scores admission rule",
+              "gloss": null,
+              "cc_ref": "CC 2.1 / CC 2.4"
+            },
+            "for_key_id": null,
+            "holders": 1,
+            "notes": [],
+            "acts": [
+              "WithdrawTakeBack",
+              "WidenScope",
+              "RecantAssertion"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "primitive": "SpatialCanvas",
+      "tag": "csd_spatial_canvas",
+      "scene": {
+        "nodes": [
+          {
+            "pos": [
+              0.0,
+              -1.2,
+              0.0
+            ],
+            "scale": 9.0,
+            "mesh": "Plane",
+            "color": [
+              0.88,
+              0.87,
+              0.84,
+              1.0
+            ],
+            "label": null
+          },
+          {
+            "pos": [
+              -3.0,
+              -0.6,
+              0.0
+            ],
+            "scale": 0.35,
+            "mesh": "Cube",
+            "color": [
+              0.85,
+              0.12,
+              0.12,
+              1.0
+            ],
+            "label": "score=-1"
+          },
+          {
+            "pos": [
+              3.0,
+              -0.6,
+              0.0
+            ],
+            "scale": 0.35,
+            "mesh": "Cube",
+            "color": [
+              0.2,
+              0.72,
+              0.3,
+              1.0
+            ],
+            "label": "score=+1"
+          },
+          {
+            "pos": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": 1.554,
+            "mesh": "Sphere",
+            "color": [
+              0.2488,
+              0.675,
+              0.2865,
+              1.0
+            ],
+            "label": "evaluation:quality"
+          }
+        ],
+        "camera": {
+          "eye": [
+            3.6,
+            3.0,
+            5.6
+          ],
+          "look_at": [
+            0.0,
+            0.2,
+            0.0
+          ]
+        },
+        "background": [
+          0.9804,
+          0.9765,
+          0.9608
+        ]
+      }
+    }
+  ]
+}

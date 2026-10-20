@@ -11,9 +11,11 @@ description = "Minimal-and-adequate Attestation Calculus: CEG-as-Lisp evaluator 
 default = []
 # real-persist: wire the REAL ciris-persist Engine. `emit`/`promote` delegate to
 # the conformant one-call build-sign-admit (LocalSigner::from_config ->
-# register_self_federation_key -> emit_attestation_self), plus a two-Engine
-# shared-substrate federation demo. ciris-persist is git-pinned to v11.2.0 so it
-# is the SAME crate instance ciris-edge links (path-vs-git source mismatch would
+# register_self_federation_key -> emit_attestation_self) and `enter_mesh` (with
+# 9-axis ContextualIntegrity verification), plus a two-Engine shared-substrate
+# federation demo. ciris-persist is git-pinned to v59.0.0 (matching ciris-edge
+# v43.0.0's pin; v59.1.0 is the v4 genesis bundle hardware amend over v59.0.0)
+# so it is the SAME crate instance ciris-edge links (a tag/source mismatch would
 # fork SignedAttestation/Engine into two incompatible types).
 real-persist = ["dep:ciris-persist", "dep:tokio"]
 # real-edge: implies real-persist and additionally stands up two real ciris-edge
@@ -32,7 +34,7 @@ real-edge = [
 ]
 
 [dependencies]
-ciris-crypto = { path = "/Users/macmini/CIRISVerify/src/ciris-crypto", default-features = false, features = ["ed25519", "pqc-ml-dsa", "random"] }
+ciris-crypto = { git = "https://github.com/CIRISAI/CIRISVerify", tag = "v20.2.0", version = "20", default-features = false, features = ["ed25519", "pqc-ml-dsa", "random"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 # Integration fix: ciris-crypto's `random`/`rng_health` modules use
@@ -48,18 +50,20 @@ base64 = "0.22"
 # real-edge only: used by the edge KeyRecord timestamps in src/transport.rs.
 chrono = { version = "0.4", features = ["serde"], optional = true }
 # The real ciris-persist Engine (real-persist + real-edge). GIT-pinned to
-# v11.2.0 — NOT a path dep — so it is byte-identical to the ciris-persist that
-# ciris-edge links; a path/git source split would produce two distinct
+# v59.0.0 — matching ciris-edge v43.0.0's pin — so it is byte-identical to the
+# ciris-persist that ciris-edge links; a source split would produce two distinct
 # `SignedAttestation` types that cannot be handed across the edge wire.
-ciris-persist = { git = "https://github.com/CIRISAI/CIRISPersist", tag = "v11.2.0", version = "11", features = ["sqlite"], optional = true }
+ciris-persist = { git = "https://github.com/CIRISAI/CIRISPersist", tag = "v59.0.0", version = "59", features = ["sqlite"], optional = true }
 tokio = { version = "1", features = ["rt-multi-thread", "macros"], optional = true }
-# real-edge only: the production federation transport. Path dep; its own
-# ciris-persist / ciris-keyring / ciris-crypto git pins (v11.2.0 / v8.3.0) unify
-# with ours. transport-http is the localhost-loopback medium (Reticulum is the
-# production medium but needs no extra wiring for the 2-node demo).
-ciris-edge = { path = "/Users/macmini/CIRISEdge", features = ["transport-http"], optional = true }
+# real-edge only: the production federation transport (v43.0.0, sealed transport
+# cut). Its own ciris-persist / ciris-keyring / ciris-crypto git pins
+# (v59.0.0 / v20.2.0) unify with ours. transport-http is the localhost-loopback
+# medium (Reticulum with hybrid X25519 + ML-KEM-768 transit-kex is the
+# production medium, while transport-http needs no extra link setup for the
+# 2-node demo).
+ciris-edge = { git = "https://github.com/CIRISAI/CIRISEdge", tag = "v43.0.0", version = "43", default-features = false, features = ["transport-http"], optional = true }
 # real-edge only: ciris_keyring::load_local_seed builds edge's classical
-# LocalSigner from a 32-byte seed file. Same git source + tag as ciris-edge's
-# (and ciris-persist's) ciris-keyring so cargo unifies to ONE instance; the
-# `software` feature is what surfaces load_local_seed.
-ciris-keyring = { git = "https://github.com/CIRISAI/CIRISVerify", tag = "v8.3.0", version = "8", features = ["software", "pqc-ml-dsa"], optional = true }
+# LocalSigner from a 32-byte seed file. Same git source + tag (v20.2.0) as
+# ciris-edge's (and ciris-persist's) ciris-keyring so cargo unifies to ONE
+# instance; the `software` feature is what surfaces load_local_seed.
+ciris-keyring = { git = "https://github.com/CIRISAI/CIRISVerify", tag = "v20.2.0", version = "20", features = ["software", "pqc-ml-dsa"], optional = true }

@@ -31,13 +31,16 @@ use std::time::Duration;
 
 use attestation_calculus_spike::forms::{read_form, Form};
 use view_forms_spike::scene::{Camera as IrCamera, MeshKind, Scene};
-use view_forms_spike::view_form;
+use view_forms_spike::{project_epistemic_scene, view_form, ViewerContext};
 
 // 512 is a multiple of 64 => width*4 = 2048 is 256-byte aligned (no GPU row
 // padding). Big enough to be legible, still a fast headless render.
 const WIDTH: u32 = 512;
 const HEIGHT: u32 = 512;
-const OUT_PATH: &str = "/Users/macmini/CEWPOS/view-forms-spike/out/attestation-render.png";
+const OUT_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/out/attestation-render.png");
+const EPISTEMIC_OUT_PATH: &str =
+    concat!(env!("CARGO_MANIFEST_DIR"), "/out/epistemic-scene.json");
+const CSD4_TREE_OUT_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/out/csd4-tree.json");
 const PRE_ROLL_FRAMES: u32 = 8; // warm the PBR pipeline before reading back
 const MAX_FRAMES: u32 = 600; // hard safety cap so the process always exits
 
@@ -72,12 +75,30 @@ fn build_scores_form() -> Form {
 }
 
 fn main() {
-    // 1) CALCULUS -> PURE VIEW -> TYPED SCENE IR (all before any Bevy/GPU work).
+    // 1) CALCULUS -> PURE VIEW -> TYPED SCENE IR & EPISTEMIC SCENE IR (all before any Bevy/GPU work).
     let form = build_scores_form();
     let scene = view_form(&form);
+    let viewer_ctx = ViewerContext::default();
+    let epistemic_scene = project_epistemic_scene(&viewer_ctx, std::slice::from_ref(&form), &[]);
+    let csd4_tree = epistemic_scene.csd4_tree();
 
-    // Print the Scene IR summary (node count + the score->color it chose).
+    if let Some(parent) = std::path::Path::new(EPISTEMIC_OUT_PATH).parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
+    if let Ok(json_str) = serde_json::to_string_pretty(&epistemic_scene) {
+        let _ = std::fs::write(EPISTEMIC_OUT_PATH, json_str);
+    }
+    if let Ok(tree_str) = serde_json::to_string_pretty(&csd4_tree) {
+        let _ = std::fs::write(CSD4_TREE_OUT_PATH, tree_str);
+    }
+
+    // Print the Scene IR summary (node count + the score->color it chose) + CSD/4 tree summary.
     println!("[view-forms] read Form: op=scores dimension=evaluation:quality score=0.85 confidence=0.92");
+    println!(
+        "[view-forms] EpistemicScene IR: {} top-level primitives, {} CSD/4 automation tags",
+        epistemic_scene.nodes.len(),
+        csd4_tree.len()
+    );
     println!("[view-forms] Scene IR: {} nodes, background={:?}", scene.node_count(), scene.background);
     if let Some(subject) = scene.node_with_label("evaluation:quality") {
         println!(

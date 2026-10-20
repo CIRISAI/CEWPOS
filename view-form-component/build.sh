@@ -7,10 +7,10 @@
 #   target wasm32-unknown-unknown  (the zero-import target — NOT wasip1/wasip2).
 set -euo pipefail
 
-ROOT="/Users/macmini/CEWPOS/view-form-component"
-export CARGO_TARGET_DIR="/tmp/wasm-component-target"
-WT="/tmp/wasmtools-bin/wasm-tools-1.252.0-aarch64-macos/wasm-tools"   # wasm-tools CLI
-CC="/tmp/wasmtools-bin/cargo-component"                                # cargo-component CLI
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-/tmp/wasm-component-target}"
+WT="${WT:-$(command -v wasm-tools || echo /tmp/wasmtools-bin/wasm-tools-1.252.0-aarch64-macos/wasm-tools)}"   # wasm-tools CLI
+CC="${CC:-$(command -v cargo-component || echo /tmp/wasmtools-bin/cargo-component)}"                          # cargo-component CLI
 TGT="$CARGO_TARGET_DIR/wasm32-unknown-unknown/release"
 DIST="$ROOT/dist"; mkdir -p "$DIST" "$ROOT/out"
 

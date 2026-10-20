@@ -17,14 +17,14 @@ local Unix socket — no HTTP round-trip on the hot path.
 │                                                      │
 │  ┌────────────────┐    Unix socket    ┌────────────┐ │
 │  │  CIRISServer   │ ◄──────────────► │   CEWPOS   │ │
-│  │  v0.5.58       │                  │  (native)  │ │
+│  │  v0.5.232      │                  │  (native)  │ │
 │  │  + substrate   │                  │  Bevy GPU  │ │
 │  │    crates      │                  │  WASM view │ │
 │  └────────────────┘                  └────────────┘ │
 │          │                                           │
 │   ciris-persist · ciris-verify · ciris-edge          │
 └──────────│───────────────────────────────────────────┘
-           │ ciris-edge (Reticulum / HTTP)
+           │ ciris-edge (sealed Reticulum / HTTP)
            ▼
     federation peers
 ```
@@ -137,17 +137,20 @@ serial links with no IP dependency.
 
 ### Rust toolchain
 
-MSRV: **Rust 1.75+**. Install via `rustup`. The WASM renderer target also requires:
+MSRV: **Rust 1.86+** for the substrate crates (`ciris-persist` v59.1, `ciris-verify` v20.2,
+`ciris-edge` v43.0) and **Rust 1.95+** for the Bevy 0.19 renderer. Install via `rustup`. The WASM
+renderer/component targets also require:
 
 ```sh
 rustup target add wasm32-unknown-unknown
-cargo install wasm-pack            # for browser WASM builds
+cargo install wasm-tools cargo-component wasm-pack
 ```
 
 ### WASM runtime
 
-**wasmtime 14+** — embedded in the CEWPOS binary; not separately installed. View-forms are
-instantiated with zero imports; the runtime enforces capability isolation at instantiation.
+**wasmtime 46+** — embedded in the CEWPOS binary; not separately installed. View-forms are
+instantiated against an empty `Linker<()>` with zero imports; the runtime enforces capability
+isolation at instantiation.
 
 ### Display server (full-node / thin-client only)
 
@@ -178,16 +181,18 @@ Entropy source: OS `OsRng` (`/dev/urandom` on Linux, `SecRandomCopyBytes` on mac
 generation uses SHA-256 over `(domain | alias | base_seed)` for deterministic peer identity
 derivation.
 
-### Signature schemes (in use today)
+### Signature & encryption schemes (in use today)
 
 | Purpose | Scheme |
 |---|---|
-| Attestation signing (local tier) | Ed25519 |
-| Attestation signing (federation promotion) | Ed25519 + ML-DSA-65 (hybrid) |
-| Content encryption cascade | X25519 + ML-KEM-768 (hybrid) |
+| Attestation signing (local tier) | Ed25519 (or deferred until `enter_mesh`) |
+| Attestation signing (federation mesh crossing) | Ed25519 + ML-DSA-65 (hybrid, over `EnvelopeCore` + `RowMirror` JCS bytes) |
+| Content encryption cascade (`key-grant`) | X25519 + ML-KEM-768 (hybrid) |
+| Reticulum link transport seal (`transit-kex`, `ciris-edge` v43.0) | X25519 + ML-KEM-768 per-link hybrid KEX (CC 5.3.3.5 E1; seeded by v4 genesis bundle) |
+| Realtime A/V relay hop (`ciris-verify` v20.2) | Per-hop transit key + double-AEAD `SealedAvChunk` |
 
 Harvest-now-decrypt-later is in the threat model — the hybrid PQC scheme is not a future
-aspiration, it is on the wire today.
+aspiration, it is on the wire and across every Reticulum link today.
 
 ### TPM 2.0 (optional)
 
@@ -220,24 +225,37 @@ Every `emit` from the CEWPOS interface (and from CIRISAgent) clears:
 4. **Never sole evidence** — no attestation is the only basis for a consequential action; corroboration
    is required.
 
-### Reverse-quorum halt (fire-on-1)
+### Reverse-quorum halt (1-to-pause · 2-of-3-to-confirm · 2-of-3-to-resume)
 
-A single accountable signer (a named Wise Authority) can halt the system. This is a day-one
-structural invariant, not a governance future-work item.
+As ruled in `CIRISConstitution` (`#146`) and enforced in `ciris-verify` v20.0+ and `ciris-server`
+v0.5.226+ (`FSD/CONSTITUTIONAL_HALT.md`):
+
+- **1-of-N immediate pause:** Any single seated `accord_holder` can trip the halt latch immediately.
+- **Agent pause, zero data disruption:** The fabric node process **does not terminate** — storage,
+  replication, messaging, streams, and trace ingest continue uninterrupted. `GET /v1/accord/halt-status`
+  (polled by the agent's act gate) is the latch's sole reader.
+- **24-hour fuse unless confirmed:** A lone pause automatically lapses after `halt_fuse_secs` (24h)
+  unless a strict majority (`2-of-3`) co-signs `accord:lifecycle:confirmed` naming `confirms_halt_id`.
+- **Strict-majority resume:** An `accord:lifecycle:active` signed by a strict majority (`2-of-3`)
+  naming `resumes_halt_id` clears the latch.
 
 ### Structural invisibility
 
-Self and family content never emits a `holds_bytes:sha256:*` discovery attestation. It cannot be
-found by federation peers — undiscoverable, not merely access-controlled. No deployment option
-weakens this.
+Holding claims (`custody:ack:v1`, 72h TTL — replacing the retired `holds_bytes:sha256:*` carrier in
+`ciris-persist` v55.0, CC 5.2 / 3.1.3.3) are federation-discoverable **only** for Commons placements.
+Self and family content holding claims remain scoped to their cohort and never enter the federation
+holder directory — undiscoverable by federation peers, not merely access-controlled. No deployment
+option weakens this.
 
 ---
 
 ## Minimum viable full-node deployment (step sketch)
 
-1. **Install CIRISServer v0.5.58** per the [CIRISServer docs](https://cirisai.github.io/CIRISServer).
-   Verify the node is running and the CEG wire (1.0-RC29) is active.
-2. **Build CEWPOS** against the same workspace (substrate crates pinned to matching versions):
+1. **Install CIRISServer v0.5.232** per the [CIRISServer repo](https://github.com/CIRISAI/CIRISServer).
+   Verify the node is running with the baked v4 genesis bundle (`canonical_seed.json`, 2-of-3
+   hardware-amended in `ciris-persist` v59.1.0) and the CC `v1.0-rc8.1` wire grammar active.
+2. **Build CEWPOS** against the same workspace (substrate crates pinned to matching versions:
+   `ciris-persist` v59.0/v59.1, `ciris-verify` v20.2, `ciris-edge` v43.0):
    ```sh
    cargo build --release --features real-persist,real-edge
    ```
@@ -245,9 +263,11 @@ weakens this.
    ```sh
    cewpos init --domain <your-domain> --alias <node-alias>
    ```
-   This calls `register_self_federation_key` via ciris-persist and stores the keypair in the OS
-   keyring. The `LocalSigner` is available immediately; the `SignedAttestation` promotion path
-   requires a running CIRISServer node to be reachable.
+   This calls `register_self_federation_key` via `ciris-persist` (binding the subject and derived
+   `-fp` fingerprint id into the registration envelope) and stores the keypair in the OS keyring.
+   The `LocalSigner` is available immediately; the `SignedAttestation` mesh-crossing path
+   (`enter_mesh` with 9-axis `ContextualIntegrity` verification) requires a running CIRISServer node
+   to be reachable.
 4. **Register a named moderator** before enabling community-tier capabilities (CC 4.5.4). The
    node will refuse to open community-scoped attestation paths until this invariant is satisfied.
 5. **Start the CEWPOS interface:**

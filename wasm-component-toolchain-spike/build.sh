@@ -4,10 +4,10 @@
 #            wit-bindgen 0.58.0, wasmtime 46.0.1, target wasm32-unknown-unknown.
 set -euo pipefail
 
-ROOT="/Users/macmini/CEWPOS/wasm-component-toolchain-spike"
-export CARGO_TARGET_DIR="/tmp/wasm-component-target"
-WT="/tmp/wasmtools-bin/wasm-tools-1.252.0-aarch64-macos/wasm-tools"   # wasm-tools CLI
-CC="/tmp/wasmtools-bin/cargo-component"                                # cargo-component CLI
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-/tmp/wasm-component-target}"
+WT="${WT:-$(command -v wasm-tools || echo /tmp/wasmtools-bin/wasm-tools-1.252.0-aarch64-macos/wasm-tools)}"   # wasm-tools CLI
+CC="${CC:-$(command -v cargo-component || echo /tmp/wasmtools-bin/cargo-component)}"                          # cargo-component CLI
 TGT="$CARGO_TARGET_DIR/wasm32-unknown-unknown/release"
 DIST="$ROOT/dist"; mkdir -p "$DIST"
 

@@ -28,10 +28,8 @@ use std::time::Duration;
 
 use base64::engine::general_purpose::STANDARD as B64;
 use base64::Engine as _;
-// ciris-crypto: the PATH crate (also used by the default effect path) — only
-// used here to scrub-sign directory KeyRecords and read Ed25519 pubkeys. The
-// signatures are raw bytes stored as base64 strings, so they never cross a
-// crypto trait boundary with edge/persist (which link git ciris-crypto v8.3.0).
+// ciris-crypto (git v20.2.0, unified across edge/persist/spike): used here to
+// scrub-sign directory KeyRecords and read Ed25519 pubkeys.
 use ciris_crypto::{ClassicalSigner, Ed25519Signer};
 use ciris_edge::identity::LocalSigner as EdgeLocalSigner;
 use ciris_edge::messages::AttestationGossip;
@@ -125,8 +123,10 @@ fn signed_record(subject: &FedKey, signer: &FedKey, identity_type: &str) -> Resu
         scrub_timestamp: ts,
         pqc_completed_at: None,
         persist_row_hash: String::new(),
-        roles: Vec::new(),
+        capability_roles: Vec::new(),
         attestation_evidence: None,
+        consent_role: None,
+        additional_scrubs: Vec::new(),
     })
 }
 

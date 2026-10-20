@@ -7,8 +7,9 @@
 > organic merge, but it requires inverting the proposition. That inversion — CEG *is* the
 > canonical immutable Lisp; give it a disciplined evaluator — is the **third path**, named
 > here the **Attestation Calculus**.
-> **Grounding:** CIRIS Constitution CC 0.6 (CIRISRegistry `FSD/CIRIS_Constitution/`);
-> CIRISVerify `9e6f295` (ciris-crypto 8.3.0); CIRISPersist `8c70147` (ciris-persist 11.2.0).
+> **Grounding:** CIRIS Constitution `v1.0-rc8.1` ([`CIRISAI/CIRISConstitution`](https://github.com/CIRISAI/CIRISConstitution), evolved from CC 0.6);
+> `CIRISVerify` `3c16f9c` (`v20.2.0`); `CIRISPersist` `32512f5` (`v59.1.0` / `v59.0.0` `bb59ea8`);
+> `CIRISEdge` `1d53883` (`v43.0.0`); `CIRISServer` `ffff40e` (`0.5.232`).
 > Reference projects downloaded under `referenced-projects/` (juner_os; Tumbleweed System 100.0).
 
 ## 0. The question

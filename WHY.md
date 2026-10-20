@@ -62,8 +62,9 @@ governance is a **structural invariant**, not a bolt-on.
 - **Every** state transition passes the admission gate (rules hash-pinned · mechanism-not-quality ·
   re-checkable · never sole evidence).
 - Conflicts **defer to accountable adjudicators** (Wise Authorities); bad actors are **slashable**;
-  a single accountable signer can **halt** (reverse-quorum) — because *the one thing that must never be
-  automated is who gets to halt it.*
+  a single seated `accord_holder` can **pause the agent immediately** (reverse-quorum: 1 pauses with
+  zero fabric/data disruption, a lone pause lapses after 24h unless a strict majority confirms, and a
+  strict majority resumes) — because *the one thing that must never be automated is who gets to halt it.*
 
 So the questions that sink other federated systems — *who resolves conflicting vocabularies? who
 handles semantic drift? who governs evolution?* — are not an afterthought here. They are the **core
@@ -82,14 +83,15 @@ answer: recognized frameworks, adversarially mapped — not invented in a vacuum
 This matters because architecture diagrams are cheap. The CIRIS stack follows a discipline of
 **claim → invariant → implement → verify → prove**:
 
-- **[ciris.ai/verification](https://ciris.ai/verification/)** — a conformance suite (16,000+ tests
-  across the separately-shipped components) that *proves the system enforces its constitution* rather
-  than asserting it in prose.
-- **[ciris.ai/proof](https://ciris.ai/proof)** — the underlying evidence artifacts.
+- **[ciris.ai/verification](https://ciris.ai/verification/)** — a conformance suite (17,000+ tests and
+  219 conformance specifications across the separately-shipped components) that *proves the system
+  enforces its constitution* rather than asserting it in prose.
+- **[ciris.ai/proof](https://ciris.ai/proof)** — the underlying evidence artifacts (316+ evidence-pinned
+  constitutional claims).
 
-And the substrate ships: `ciris-persist` v11.5, `ciris-verify` v8.3, `ciris-edge` v7.4,
-`ciris-server` v0.5.58 (with KMP/Compose clients), the agent on the app store, the CEG wire at
-1.0-RC29 with the 1+4 surface frozen.
+And the substrate ships: `ciris-persist` v59.1, `ciris-verify` v20.2, `ciris-edge` v43.0,
+`ciris-server` v0.5.232 (with KMP/Compose clients in `CIRISServer` / `CIRISClient`), the agent on
+the app store, and the CIRIS Constitution + CEG wire at `v1.0-rc8.1` with the 1+4 surface frozen.
 
 ## The rendering model — an old idea made secure
 

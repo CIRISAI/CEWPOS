@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CEWPOS × CIRISClient — Formal Epistemic UI Shell (CC rc9 · CSD/4 · 12 Primitives)</title>
+  <style>
+    :root {
+      --bone: #FAF9F5;
+      --paper: #F2EFE9;
+      --obsidian: #141413;
+      --ink-mute: #5C5A54;
+      --hairline: #D8D4CA;
+      --brand: #1F5E7A;
+      --ok: #207A3C;
+      --warn: #B86B14;
+      --danger: #B82323;
+      --c-justme: #22C0E8;
+      --c-family: #419CA0;
+      --c-neighbours: #7A6FD6;
+      --c-communities: #C96A38;
+      --c-everyone: #B08A3E;
+      --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+      --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bone);
+      color: var(--obsidian);
+      font-family: var(--sans);
+      line-height: 1.45;
+    }
+    /* Top Bar (CirclesShell.kt: 2 permanent anchors — My things & Stop everything) */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background: var(--paper);
+      border-bottom: 1px solid var(--hairline);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .topbar-center {
+      text-align: center;
+    }
+    .topbar-title {
+      font-weight: 700;
+      font-size: 16px;
+    }
+    .topbar-subtitle {
+      font-size: 12px;
+      color: var(--ink-mute);
+      font-family: var(--mono);
+    }
+    .btn {
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 13px;
+      border-radius: 6px;
+      border: 1px solid var(--hairline);
+      background: #fff;
+      color: var(--obsidian);
+      cursor: pointer;
+    }
+    .btn:hover { background: var(--paper); }
+    .btn-stop {
+      background: var(--danger);
+      color: #fff;
+      border-color: var(--danger);
+    }
+    .btn-stop.halted {
+      background: #fff;
+      color: var(--danger);
+      border: 2px solid var(--danger);
+    }
+    .btn-brand {
+      background: var(--brand);
+      color: #fff;
+      border-color: var(--brand);
+    }
+    /* Layout */
+    .layout {
+      display: grid;
+      grid-template-columns: 240px 1fr 340px;
+      min-height: calc(100vh - 58px);
+    }
+    .rail {
+      background: var(--paper);
+      border-right: 1px solid var(--hairline);
+      padding: 16px 12px;
+    }
+    .rail-section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--ink-mute);
+      margin: 14px 8px 6px;
+    }
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      text-align: left;
+      padding: 8px 10px;
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--obsidian);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .nav-btn.active {
+      background: #fff;
+      font-weight: 700;
+      box-shadow: 0 0 0 1px var(--hairline);
+    }
+    .circle-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    /* Main Workspace */
+    .main {
+      padding: 18px 24px;
+      max-width: 920px;
+    }
+    .tabs-bar {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--hairline);
+      padding-bottom: 10px;
+    }
+    /* P6: Chip */
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--hairline);
+      background: #fff;
+      cursor: pointer;
+    }
+    .chip.selected {
+      background: rgba(31, 94, 122, 0.12);
+      border-color: var(--brand);
+      color: var(--brand);
+    }
+    .chip.tone-ok { background: rgba(32, 122, 60, 0.12); color: var(--ok); border-color: rgba(32,122,60,0.3); }
+    .chip.tone-warn { background: rgba(184, 107, 20, 0.12); color: var(--warn); border-color: rgba(184,107,20,0.3); }
+    .chip.tone-danger { background: rgba(184, 35, 35, 0.12); color: var(--danger); border-color: rgba(184,35,35,0.3); }
+    .chip.tone-brand { background: rgba(31, 94, 122, 0.12); color: var(--brand); border-color: rgba(31,94,122,0.3); }
+
+    /* P5: ScopePill (The sole place circle color + name is rendered) */
+    .scope-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid var(--hairline);
+      background: #fff;
+    }
+
+    /* P7: StateBlock */
+    .state-block {
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin-bottom: 14px;
+      font-size: 13px;
+      border: 1px solid var(--hairline);
+      background: #fff;
+    }
+    .state-block.danger {
+      border-color: var(--danger);
+      background: rgba(184, 35, 35, 0.06);
+      color: var(--danger);
+    }
+    .state-block.data-doors {
+      border-color: var(--ok);
+      background: rgba(32, 122, 60, 0.08);
+      color: var(--obsidian);
+    }
+
+    /* P12b: PolicyLensBar */
+    .lens-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 12px;
+      background: var(--paper);
+      border: 1px solid var(--hairline);
+      border-radius: 8px;
+      margin-bottom: 14px;
+      font-size: 12px;
+    }
+
+    /* P1: CardShell (never nests!) */
+    .card-shell {
+      background: #fff;
+      border: 1px solid var(--hairline);
+      border-top: 3px solid var(--brand);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+    }
+    .card-shell.danger-accent { border-top-color: var(--danger); }
+    .card-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin: 0 0 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* P2: FieldRow */
+    .field-row {
+      display: grid;
+      grid-template-columns: 180px 1fr auto;
+      gap: 10px;
+      padding: 7px 0;
+      border-bottom: 1px solid #EFEDE6;
+      font-size: 13px;
+      align-items: baseline;
+    }
+    .field-label { color: var(--ink-mute); font-weight: 500; }
+    .field-wire { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); }
+
+    /* P3: ItemRow (max 3 inline facts + receipt hamburger iff wire-backed) */
+    .item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 8px;
+      border-bottom: 1px solid #EFEDE6;
+    }
+    .item-row.blurred .item-main {
+      filter: blur(4px);
+      transition: filter 0.2s;
+    }
+    .item-row.blurred:hover .item-main { filter: none; }
+    .item-title { font-weight: 600; font-size: 13px; }
+    .item-sub { font-size: 12px; color: var(--ink-mute); font-family: var(--mono); }
+    .item-actions { display: flex; align-items: center; gap: 6px; }
+
+    /* P11: LineageChainBlock */
+    .lineage-step {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      border-left: 3px solid var(--hairline);
+      margin: 6px 0;
+      background: var(--bone);
+      font-size: 12px;
+    }
+    .lineage-step.active { border-left-color: var(--brand); font-weight: 600; }
+    .lineage-step.sealed { border-left-color: var(--ok); color: var(--ink-mute); }
+
+    /* Right Inspector Column (CSD/4 Tree + 3D View-Form Canvas + Active Modal) */
+    .inspector {
+      background: var(--paper);
+      border-left: 1px solid var(--hairline);
+      padding: 16px;
+      font-size: 12px;
+    }
+    .tree-box {
+      font-family: var(--mono);
+      font-size: 11px;
+      background: #fff;
+      border: 1px solid var(--hairline);
+      border-radius: 6px;
+      padding: 10px;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    .tree-line { padding: 2px 0; border-bottom: 1px dashed #EFEDE6; }
+    canvas#spatialCanvas {
+      width: 100%;
+      height: 180px;
+      background: var(--bone);
+      border: 1px solid var(--hairline);
+      border-radius: 6px;
+      display: block;
+      margin-bottom: 12px;
+    }
+    .modal-box {
+      background: #fff;
+      border: 2px solid var(--brand);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar: 2 Permanent Constitutional Anchors (`btn_my_things` & `btn_stop_everything`) -->
+  <header class="topbar">
+    <button id="btn_my_things" data-csd-tag="btn_my_things" class="btn" onclick="toggleMyThings()">
+      &#9670; My things
+    </button>
+    <div class="topbar-center">
+      <div class="topbar-title" id="headerTitle">Just me · Files</div>
+      <div class="topbar-subtitle" id="headerSubtitle">Circle scope: self · Topology T0 · 9-Axis CI Gate Active</div>
+    </div>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <label style="font-size:12px; cursor:pointer;">
+        <input type="checkbox" id="chkHasAgent" checked onchange="toggleHasAgent(this.checked)" />
+        Agent Attached (<code>has_agent</code>)
+      </label>
+      <button id="btn_stop_everything" data-csd-tag="btn_stop_everything" class="btn btn-stop" onclick="toggleHalt()">
+        &#9632; Stop everything
+      </button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- Left Rail: 5 Circles (7->5 CohortScope fold) + 6 My Things Instruments + 11 Promise Cards -->
+    <aside class="rail">
+      <div class="rail-section-label">5 Circles (CohortScope Fold)</div>
+      <div id="circleNav"></div>
+
+      <div class="rail-section-label">My Things (6 Instruments)</div>
+      <div id="instrumentNav"></div>
+
+      <div class="rail-section-label">CC rc9 Promise Closure</div>
+      <button class="nav-btn" id="btnPromiseCards" onclick="selectPromiseView()">
+        <span>&#10003; 11 New Cards (CSD-111..128)</span>
+      </button>
+    </aside>
+
+    <!-- Center Surface: Projected Exclusively from the 12 Primitives (P1-P12) -->
+    <main class="main">
+      <div class="tabs-bar" id="tabsBar"></div>
+      <div id="surfaceRoot"></div>
+    </main>
+
+    <!-- Right Inspector: 3D View-Form Canvas + Active Receipt/Confirm Sheet + Live CSD/4 `/tree` -->
+    <aside class="inspector">
+      <div style="font-weight:700; margin-bottom:6px;">P12+3D: Typed Spatial View-Form (<code>view_form(&amp;Form)</code>)</div>
+      <canvas id="spatialCanvas" width="300" height="180" data-csd-tag="csd_spatial_canvas"></canvas>
+
+      <div id="modalHost"></div>
+
+      <div style="font-weight:700; margin:12px 0 6px;">Live <code>CSD/4</code> Automation Tag Tree (<code>/tree</code>)</div>
+      <div class="tree-box" id="csdTreeBox"></div>
+    </aside>
+  </div>
+
+  <script>
+    // =========================================================================
+    // Formal CC rc9 State Vector & Algebra in the Browser
+    // =========================================================================
+    const CIRCLES = [
+      { id: "JustMe", wire: "self", label: "Just me", color: "#22C0E8", rank: 0 },
+      { id: "Family", wire: "family", label: "Family", color: "#419CA0", rank: 1 },
+      { id: "Neighbours", wire: "community", label: "Neighbours", color: "#7A6FD6", rank: 2 },
+      { id: "CommunitiesAndBusinesses", wire: "affiliations", label: "Communities & Businesses", color: "#C96A38", rank: 3 },
+      { id: "Everyone", wire: "federation", label: "Everyone", color: "#B08A3E", rank: 4 },
+    ];
+
+    const TABS = ["Files", "Chats", "People", "Safety", "Rules", "Decisions", "Record"];
+
+    const INSTRUMENTS = [
+      { id: "DevicesAndKeys", label: "Devices & keys (CSD-095)", requiresAgent: false },
+      { id: "EverythingIShared", label: "Everything I shared", requiresAgent: false },
+      { id: "ThisAgent", label: "This agent (H3ERE / Bonds)", requiresAgent: true },
+      { id: "ThisNode", label: "This node (CEWP Substrate)", requiresAgent: false },
+      { id: "SomeoneITrust", label: "Someone I trust (WA)", requiresAgent: true },
+      { id: "Help", label: "Help & Principles (CSD-116)", requiresAgent: false },
+    ];
+
+    const CLAIMS = [
+      {
+        id: "row_0",
+        op: "scores",
+        dimension: "evaluation:quality",
+        title: "evaluation:quality (0.85, conf 0.92)",
+        score: 0.85,
+        confidence: 0.92,
+        subject: "ed25519:alice",
+        attester: "ed25519:viewer_self",
+        scope: "JustMe",
+        cw_opinion: null,
+      },
+      {
+        id: "row_1",
+        op: "scores",
+        dimension: "holds_bytes:beach.jpg",
+        title: "beach.jpg (Family photo)",
+        score: 0.40,
+        confidence: 0.95,
+        subject: "ed25519:viewer_self",
+        attester: "ed25519:viewer_self",
+        scope: "Neighbours",
+        cw_opinion: { by: "ed25519:neighbour_dan", rule: "cw_class:sunburn_note" },
+      },
+      {
+        id: "row_2",
+        op: "delegates_to",
+        dimension: "licensure:steward_bond:v1",
+        title: "Steward -> Agent Bond (365d review)",
+        score: 1.0,
+        confidence: 1.0,
+        subject: "ed25519:agent_self",
+        attester: "ed25519:viewer_self",
+        scope: "Family",
+        cw_opinion: null,
+      },
+    ];
+
+    const PROMISE_CARDS = [
+      { id: "CSD-111", promises: "2g, 5a, 5b", title: "Steward Shutdown Dialogue (5m Window, Agent Accept/Object/Postpone)", primitives: "P1 CardShell + P12 ConscienceStepBlock + P9 TwoPathCeremonyBlock" },
+      { id: "CSD-112", promises: "5d, 5e", title: "WA-Cosigned Identity Edit & Behavioural Drift Review", primitives: "P1 CardShell + P2 FieldRow + P9 TwoPathCeremonyBlock (cosigned)" },
+      { id: "CSD-113", promises: "5f", title: "7-State Agent Retirement Standard Floor (Retirement.tla)", primitives: "P1 CardShell + P11 LineageChainBlock (7 steps, pre-Frozen 1-step cancel)" },
+      { id: "CSD-114", promises: "5g", title: "Upgrade Offer (Version, Risk, Canary Peers & G23 Recorded Refusal)", primitives: "P1 CardShell + P2 FieldRow + P12 ConscienceStepBlock + P8 ConfirmSheet" },
+      { id: "CSD-115", promises: "3a, 3e, 6e", title: "Steward Bond (Depth 1, 365d) & Halt Data-Door Guarantee", primitives: "P1 CardShell + P11 LineageChainBlock + P7 StateBlock" },
+      { id: "CSD-116", promises: "7a, 7b", title: "Published Ethical Principles, Priority Order & Mandatory G14 Limits", primitives: "P1 CardShell + P2 FieldRow (ByRule CC 1.1-1.12 + G14)" },
+      { id: "CSD-117", promises: "8b, 8c", title: "Judges Are Judged — WA Rulings Cadence & Peer Conduct Audit", primitives: "P1 CardShell + P3 ItemRow + P4 ReceiptSheet" },
+      { id: "CSD-118", promises: "9a, 9c", title: "Apophatic Bounds — Public NEVER_ALLOWED List & Engagement Declaration", primitives: "P1 CardShell + P3 ItemRow + P2 FieldRow" },
+      { id: "CSD-119", promises: "3c", title: "Verified Guardian Bond & Child Confidential Help/Contest Channel", primitives: "P1 CardShell + P11 LineageChainBlock (Q3/Q4/Q5)" },
+      { id: "CSD-127", promises: "6e, 4c", title: "First-Contact Gate, Local-Only Badge & 1-Step Root Exit", primitives: "P1 CardShell + P11 LineageChainBlock + P5 ScopePill" },
+      { id: "CSD-128", promises: "2d", title: "Protected Reporter Channel (Name Known to Moderator & Record Only)", primitives: "P1 CardShell + P2 FieldRow + P8 ConfirmSheet (3 facts)" },
+    ];
+
+    let state = {
+      circleId: "JustMe",
+      tab: "Files",
+      instrumentId: null,
+      promiseView: false,
+      hasAgent: true,
+      halted: false,
+      blurEnabled: true,
+      rosterSize: 3,
+      rosterApprovals: 1,
+      rosterObjections: 0,
+      retirementStage: 1, // 1 = Decided (cancelable), 2 = Frozen (sealed)
+      selectedClaimId: "row_0",
+    };
+
+    function getCircle(id) {
+      return CIRCLES.find(c => c.id === id) || CIRCLES[0];
+    }
+
+    function selectCircle(id) {
+      state.circleId = id;
+      state.instrumentId = null;
+      state.promiseView = false;
+      renderAll();
+    }
+
+    function selectTab(tab) {
+      state.tab = tab;
+      state.instrumentId = null;
+      state.promiseView = false;
+      renderAll();
+    }
+
+    function selectInstrument(id) {
+      state.instrumentId = id;
+      state.promiseView = false;
+      renderAll();
+    }
+
+    function selectPromiseView() {
+      state.promiseView = true;
+      state.instrumentId = null;
+      renderAll();
+    }
+
+    function toggleMyThings() {
+      if (state.instrumentId) {
+        state.instrumentId = null;
+      } else {
+        state.instrumentId = "DevicesAndKeys";
+        state.promiseView = false;
+      }
+      renderAll();
+    }
+
+    function toggleHasAgent(val) {
+      state.hasAgent = val;
+      renderAll();
+    }
+
+    function toggleHalt() {
+      // Directional Asymmetry: Halting is 1-step immediate!
+      state.halted = !state.halted;
+      renderAll();
+    }
+
+    function toggleBlurLens() {
+      state.blurEnabled = !state.blurEnabled;
+      renderAll();
+    }
+
+    // =========================================================================
+    // ReceiptSheet (P4, CSD-006) & ConfirmSheet (P8, 3-fact gate)
+    // =========================================================================
+    function showReceipt(claimId) {
+      state.selectedClaimId = claimId;
+      const c = CLAIMS.find(x => x.id === claimId);
+      const circle = getCircle(c.scope);
+      const modal = document.getElementById("modalHost");
+      modal.innerHTML = `
+        <div class="modal-box" data-csd-tag="csd_receipt_${c.id}">
+          <div style="font-weight:700; margin-bottom:6px;">P4: ReceiptSheet (CSD-006 — 5 Envelope Facts)</div>
+          <div class="field-row" style="grid-template-columns:110px 1fr;">
+            <span class="field-label">1. Who about</span>
+            <span><code>${c.subject}</code> <span class="chip tone-ok">Wire</span></span>
+          </div>
+          <div class="field-row" style="grid-template-columns:110px 1fr;">
+            <span class="field-label">2. Who sent</span>
+            <span><code>${c.attester}</code> <span class="chip tone-ok">Wire</span></span>
+          </div>
+          <div class="field-row" style="grid-template-columns:110px 1fr;">
+            <span class="field-label">3. Who sees</span>
+            <span><span class="scope-pill"><span class="circle-dot" style="background:${circle.color}"></span>${circle.label}</span> <span class="chip tone-ok">Wire</span></span>
+          </div>
+          <div class="field-row" style="grid-template-columns:110px 1fr;">
+            <span class="field-label">4. What it is</span>
+            <span><code>${c.dimension}</code> <span class="chip tone-ok">Wire</span></span>
+          </div>
+          <div class="field-row" style="grid-template-columns:110px 1fr;">
+            <span class="field-label">5. Rule</span>
+            <span><code>op:${c.op}</code> <span class="chip tone-brand">ByRule CC 2.1</span></span>
+          </div>
+          <div style="margin-top:10px; display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="btn" data-csd-tag="btn_act_withdraw_${c.id}" onclick="oneStepWithdraw('${c.id}')">1-Step Take Back (Inward)</button>
+            <button class="btn btn-brand" data-csd-tag="btn_act_widen_${c.id}" onclick="openWidenConfirm('${c.id}')">Share to Everyone (Outward &rarr;)</button>
+          </div>
+        </div>
+      `;
+      draw3DViewForm(c);
+      updateCsd4Tree();
+    }
+
+    function oneStepWithdraw(claimId) {
+      // Directional Asymmetry Law: Inward Take-Back NEVER asks for confirmation.
+      const c = CLAIMS.find(x => x.id === claimId);
+      c.scope = "JustMe";
+      document.getElementById("modalHost").innerHTML = `
+        <div class="state-block data-doors" data-csd-tag="csd_one_step_withdraw_done">
+          <strong>1-Step Immediate Withdrawal Executed (CC 2.4.1.1):</strong>
+          <code>${c.title}</code> pulled back to <em>Just me</em> with zero confirmation barrier.
+        </div>
+      `;
+      renderAll();
+    }
+
+    function openWidenConfirm(claimId) {
+      // Directional Asymmetry Law: Outward widening MUST show a 3-Fact ConfirmSheet.
+      const c = CLAIMS.find(x => x.id === claimId);
+      document.getElementById("modalHost").innerHTML = `
+        <div class="modal-box" style="border-color:var(--warn);" data-csd-tag="csd_confirm_sheet_${c.id}">
+          <div style="font-weight:700; margin-bottom:6px;">P8: 3-Fact ConfirmSheet (Outward Gate)</div>
+          <div class="field-row" style="grid-template-columns:110px 1fr;">
+            <span class="field-label">Fact 1: Moving</span>
+            <span><strong>${c.title}</strong></span>
+          </div>
+          <div class="field-row" style="grid-template-columns:110px 1fr;">
+            <span class="field-label">Fact 2: To</span>
+            <span><strong>Everyone (federation)</strong></span>
+          </div>
+          <div class="field-row" style="grid-template-columns:110px 1fr;">
+            <span class="field-label">Fact 3: Undo?</span>
+            <span>1-step withdraw at any time (CC 2.4.1.1)</span>
+          </div>
+          <div class="state-block danger" style="margin-top:8px; padding:8px;">
+            <strong>G14 Honest Limit:</strong> Federation copies cannot be forcibly erased from remote peers once replicated.
+          </div>
+          <div style="display:flex; gap:8px; margin-top:8px;">
+            <button class="btn btn-brand" data-csd-tag="btn_confirm_yes" onclick="confirmWiden('${c.id}')">Confirm Share</button>
+            <button class="btn" data-csd-tag="btn_confirm_cancel" onclick="document.getElementById('modalHost').innerHTML=''; updateCsd4Tree();">Cancel</button>
+          </div>
+        </div>
+      `;
+      updateCsd4Tree();
+    }
+
+    function confirmWiden(claimId) {
+      const c = CLAIMS.find(x => x.id === claimId);
+      c.scope = "Everyone";
+      document.getElementById("modalHost").innerHTML = "";
+      renderAll();
+    }
+
+    // =========================================================================
+    // 3D Spatial View-Form Renderer (mirrors `view-forms-spike/src/view_form.rs`)
+    // =========================================================================
+    function draw3DViewForm(claim) {
+      const canvas = document.getElementById("spatialCanvas");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width, h = canvas.height;
+
+      // Bone background (#FAF9F5)
+      ctx.fillStyle = "#FAF9F5";
+      ctx.fillRect(0, 0, w, h);
+
+      // Ground plane
+      ctx.fillStyle = "#E0DDD6";
+      ctx.beginPath();
+      ctx.moveTo(30, h - 28);
+      ctx.lineTo(w - 30, h - 28);
+      ctx.lineTo(w - 10, h - 10);
+      ctx.lineTo(10, h - 10);
+      ctx.closePath();
+      ctx.fill();
+
+      // Reference cubes: score = -1 (red) and score = +1 (green)
+      ctx.fillStyle = "rgb(217, 31, 31)";
+      ctx.fillRect(36, h - 46, 16, 16);
+      ctx.fillStyle = "#5C5A54";
+      ctx.font = "10px monospace";
+      ctx.fillText("score=-1", 22, h - 14);
+
+      ctx.fillStyle = "rgb(51, 184, 77)";
+      ctx.fillRect(w - 52, h - 46, 16, 16);
+      ctx.fillStyle = "#5C5A54";
+      ctx.fillText("score=+1", w - 68, h - 14);
+
+      // Subject sphere: lerp red->green by score, radius by confidence
+      const t = Math.max(0, Math.min(1, (claim.score + 1) / 2));
+      const r = Math.round((0.85 + (0.20 - 0.85) * t) * 255);
+      const g = Math.round((0.12 + (0.72 - 0.12) * t) * 255);
+      const b = Math.round((0.12 + (0.30 - 0.12) * t) * 255);
+      const radius = 18 + claim.confidence * 26;
+
+      const grad = ctx.createRadialGradient(w / 2 - radius * 0.3, h / 2 - 10 - radius * 0.3, 4, w / 2, h / 2 - 10, radius);
+      grad.addColorStop(0, `rgb(${Math.min(255, r + 50)}, ${Math.min(255, g + 50)}, ${Math.min(255, b + 50)})`);
+      grad.addColorStop(1, `rgb(${r}, ${g}, ${b})`);
+
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(w / 2, h / 2 - 10, radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#141413";
+      ctx.font = "bold 11px monospace";
+      ctx.textAlign = "center";
+      ctx.fillText(claim.dimension, w / 2, 18);
+      ctx.textAlign = "start";
+    }
+
+    // =========================================================================
+    // Main Surface Projection from the 12 Primitives
+    // =========================================================================
+    function renderAll() {
+      const circle = getCircle(state.circleId);
+
+      // 1. Left Rail Circles
+      document.getElementById("circleNav").innerHTML = CIRCLES.map(c => `
+        <button class="nav-btn ${!state.instrumentId && !state.promiseView && state.circleId === c.id ? 'active' : ''}"
+                data-csd-tag="nav_circle_${c.id}"
+                onclick="selectCircle('${c.id}')">
+          <span class="circle-dot" style="background:${c.color}"></span>
+          <span>${c.label}</span>
+        </button>
+      `).join("");
+
+      // 2. Left Rail Instruments (Runtime Narrowing: highlight requiresAgent)
+      document.getElementById("instrumentNav").innerHTML = INSTRUMENTS.map(inst => `
+        <button class="nav-btn ${state.instrumentId === inst.id ? 'active' : ''}"
+                data-csd-tag="inst_${inst.id}"
+                onclick="selectInstrument('${inst.id}')">
+          <span>${inst.label} ${inst.requiresAgent && !state.hasAgent ? '(Bare)' : ''}</span>
+        </button>
+      `).join("");
+
+      // 3. Top Bar Title & Subtitle Rule (CirclesShell.kt: never show circle governance subtitle on My Things)
+      const headerTitle = document.getElementById("headerTitle");
+      const headerSub = document.getElementById("headerSubtitle");
+      if (state.promiseView) {
+        headerTitle.textContent = "CC rc9 Promise Closure — 11 New CSD Cards (CSD-111..128)";
+        headerSub.textContent = "100% composed from the 12 Minimum Viable Reusable Primitives (P1–P12)";
+      } else if (state.instrumentId) {
+        const inst = INSTRUMENTS.find(i => i.id === state.instrumentId);
+        headerTitle.textContent = `My things › ${inst.label}`;
+        headerSub.textContent = "Node-local instrument (Circle governance subtitle suppressed per CirclesShell.kt)";
+      } else {
+        headerTitle.textContent = `${circle.label} · ${state.tab}`;
+        headerSub.textContent = `Wire scope: ${circle.wire} · Color token: ${circle.color} · 9-Axis CI Gate Active`;
+      }
+
+      const stopBtn = document.getElementById("btn_stop_everything");
+      stopBtn.textContent = state.halted ? "■ Halted (423 Locked) — Click to Resume" : "■ Stop everything";
+      stopBtn.className = state.halted ? "btn btn-stop halted" : "btn btn-stop";
+
+      // 4. Tabs Bar
+      const tabsBar = document.getElementById("tabsBar");
+      if (state.instrumentId || state.promiseView) {
+        tabsBar.style.display = "none";
+      } else {
+        tabsBar.style.display = "flex";
+        tabsBar.innerHTML = TABS.map(t => `
+          <button class="chip ${state.tab === t ? 'selected' : ''}"
+                  data-csd-tag="tab_${t.toLowerCase()}"
+                  onclick="selectTab('${t}')">${t}</button>
+        `).join("");
+      }
+
+      // 5. Surface Body
+      let html = "";
+
+      // P7: Halt Banner + Inv_X1_LatchDoesNotBlockServing Data-Door Guarantee (CSD-115)
+      if (state.halted) {
+        html += `
+          <div class="state-block danger" data-csd-tag="state_halt_423">
+            <strong>P7 StateBlock — Agent Act Gate Halted (423 Locked):</strong>
+            All autonomous AI actions are refused immediately (<code>HALT_LATCHED_423</code>).
+          </div>
+          <div class="state-block data-doors" data-csd-tag="state_halt_423_data_doors_open">
+            <strong>Theorem <code>Inv_X1_LatchDoesNotBlockServing</code> (CSD-115):</strong>
+            Your data doors remain <strong>OPEN</strong> — reading, exporting, and 1-step withdrawal work normally while the agent is paused.
+          </div>
+        `;
+      }
+
+      // Runtime Narrowing check (CC 4.4.3.4.3)
+      if (state.instrumentId) {
+        const inst = INSTRUMENTS.find(i => i.id === state.instrumentId);
+        if (inst.requiresAgent && !state.hasAgent) {
+          html += `
+            <div class="state-block" data-csd-tag="state_no_agent">
+              <strong>P7 StateBlock (NoAgent — CC 4.4.3.4.3 Runtime Narrowing):</strong>
+              No AI agent brain is attached to this bare CEWP node. Agent-only surfaces narrow away cleanly without fake controls.
+            </div>
+          `;
+          document.getElementById("surfaceRoot").innerHTML = html;
+          updateCsd4Tree();
+          return;
+        }
+      }
+
+      if (state.promiseView) {
+        html += `
+          <div class="card-shell" data-csd-tag="csd_promise_closure_card">
+            <div class="card-title">
+              <span>11 New CSD Cards Closing All 14 Unserved CC rc9 Promise Sub-Rules</span>
+              <span class="chip tone-ok">Zero Custom Widgets Needed</span>
+            </div>
+            ${PROMISE_CARDS.map(pc => `
+              <div class="item-row" data-csd-tag="csd_card_${pc.id}">
+                <div>
+                  <div class="item-title">${pc.id} (Promises ${pc.promises}) — ${pc.title}</div>
+                  <div class="item-sub">Built from: ${pc.primitives}</div>
+                </div>
+                <span class="chip tone-brand">CC rc9 Forced</span>
+              </div>
+            `).join("")}
+          </div>
+        `;
+      } else {
+        // P12b: PolicyLensBar (circles.html Scene 12-13)
+        html += `
+          <div class="lens-bar" data-csd-tag="csd_policy_lens_bar">
+            <div>
+              <strong>P12b PolicyLensBar:</strong>
+              <span class="chip selected">my_rules</span>
+              <span class="chip selected">helper: neighbour_dan</span>
+              <span class="chip">newest_first</span>
+            </div>
+            <button class="btn" data-csd-tag="btn_toggle_blur" onclick="toggleBlurLens()">
+              Opinion Blur: ${state.blurEnabled ? 'ON (Blur cw_class)' : 'OFF (Show Clear)'}
+            </button>
+          </div>
+        `;
+
+        // P1: CardShell + P2: FieldRow + P3: ItemRow (with Hamburger Epistemic Test)
+        html += `
+          <div class="card-shell" data-csd-tag="csd_main_card">
+            <div class="card-title">
+              <span>P1 CardShell — Signed Claims &amp; State Plane Slice</span>
+              <span class="chip tone-brand">Hamburger &harr; Signed Wire Claim</span>
+            </div>
+            <div class="field-row" data-csd-tag="csd-field-root_standing">
+              <span class="field-label">Trust Root Standing</span>
+              <span><strong>Rooted</strong> (computed from local rows, never moved by clock)</span>
+              <span class="field-wire">root.standing · ByRule CC 6.2</span>
+            </div>
+            <div class="field-row" data-csd-tag="csd-field-self_roster_size">
+              <span class="field-label">Self-Key Roster Size</span>
+              <span><strong>${state.rosterSize} keys</strong> (Ed25519 + ML-DSA-65 hybrid)</span>
+              <span class="field-wire">self.roster_size · Wire</span>
+            </div>
+
+            ${CLAIMS.map(c => {
+              const sc = getCircle(c.scope);
+              const isBlurred = state.blurEnabled && c.cw_opinion !== null;
+              return `
+                <div class="item-row ${isBlurred ? 'blurred' : ''}" data-csd-tag="csd_item_${c.id}">
+                  <div class="item-main">
+                    <div class="item-title">${c.title}</div>
+                    <div class="item-sub">op:${c.op} · dim:${c.dimension} ${isBlurred ? '· [Blurred by ' + c.cw_opinion.rule + ' — hover to peek]' : ''}</div>
+                  </div>
+                  <div class="item-actions">
+                    <span class="scope-pill" data-csd-tag="csd_scope_${c.id}">
+                      <span class="circle-dot" style="background:${sc.color}"></span>
+                      ${sc.label} ${sc.id === 'JustMe' ? '(Local)' : ''}
+                    </span>
+                    <button class="btn" data-csd-tag="btn_receipt_${c.id}" onclick="showReceipt('${c.id}')" title="CSD-006 Receipt Hamburger">
+                      &#9776; Receipt
+                    </button>
+                  </div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        `;
+
+        // P9: TwoPathCeremonyBlock (parameterized by `manifests/governance_policy.json`)
+        const enactNeeded = Math.floor(state.rosterSize / 2) + 1;
+        const others = Math.max(0, state.rosterSize - 1);
+        const cancelNeeded = others === 0 ? 1 : Math.floor(others / 2) + 1;
+        let ceremonyVerdict = "Pending (24h window open · 1 lone-signer floor)";
+        let verdictTone = "tone-warn";
+        if (state.rosterObjections >= cancelNeeded) {
+          ceremonyVerdict = `Cancelled (Objection brake ${state.rosterObjections}/${cancelNeeded})`;
+          verdictTone = "tone-danger";
+        } else if (state.rosterApprovals >= enactNeeded || (state.rosterSize === 1 && state.rosterApprovals >= 1)) {
+          ceremonyVerdict = `LandsForward (${state.rosterApprovals}/${enactNeeded} quorum)`;
+          verdictTone = "tone-ok";
+        } else if (state.rosterSize === 2 && state.rosterApprovals === 1) {
+          ceremonyVerdict = "Pending Stalemate (N=2 lone path closed per SelfRoster.tla)";
+        }
+
+        html += `
+          <div class="card-shell" data-csd-tag="csd_two_path_ceremony">
+            <div class="card-title">
+              <span>P9 TwoPathCeremonyBlock — <code>self_roster_add</code> (CSD-095 · TwoPath.tla)</span>
+              <span class="chip ${verdictTone}">${ceremonyVerdict}</span>
+            </div>
+            <div class="field-row" data-csd-tag="csd-field-ceremony_quorum">
+              <span class="field-label">Forward Enact / Brake</span>
+              <span>Approvals: <strong>${state.rosterApprovals} / ${enactNeeded}</strong> · Objections: <strong>${state.rosterObjections} / ${cancelNeeded}</strong></span>
+              <span class="field-wire">governance_policy.json</span>
+            </div>
+            <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
+              <button class="btn btn-brand" data-csd-tag="btn_ceremony_assent" onclick="state.rosterApprovals++; renderAll();">+1 Assent (Co-sign)</button>
+              <button class="btn" data-csd-tag="btn_ceremony_object" onclick="state.rosterObjections++; renderAll();">-1 Object (Brake)</button>
+              <button class="btn" data-csd-tag="btn_ceremony_cycle_n" onclick="state.rosterSize = (state.rosterSize % 3) + 1; state.rosterApprovals = 1; state.rosterObjections = 0; renderAll();">
+                Cycle Roster N (Current N=${state.rosterSize})
+              </button>
+            </div>
+          </div>
+        `;
+
+        // P11: LineageChainBlock (7-Step Retirement Standard Floor CSD-113 + P12a ConscienceStepBlock)
+        const steps = ["Decided", "Frozen", "SecretsDestroyed", "HandedOver", "Notified", "CustodianMinted", "Retired"];
+        html += `
+          <div class="card-shell" data-csd-tag="csd_lineage_and_conscience">
+            <div class="card-title">
+              <span>P11 LineageChainBlock (CSD-113 Retirement) &amp; P12a ConscienceStepBlock (CSD-111/116)</span>
+              <span class="chip tone-brand">Retirement.tla</span>
+            </div>
+            ${steps.map((s, idx) => {
+              const stepNum = idx + 1;
+              const cls = stepNum < state.retirementStage ? "sealed" : (stepNum === state.retirementStage ? "active" : "");
+              return `
+                <div class="lineage-step ${cls}" data-csd-tag="csd_retire_step_${stepNum}">
+                  <span><strong>Step ${stepNum}: ${s}</strong> — ${stepNum === 1 ? '1-step withdraws cancel allowed' : 'Forward-only sealed after Frozen'}</span>
+                  ${stepNum === 1 && state.retirementStage === 1
+                    ? `<button class="btn" data-csd-tag="btn_cancel_retirement" onclick="alert('1-step withdraws cancel executed (legal before Frozen)!')">1-Step Cancel</button>`
+                    : ''}
+                </div>
+              `;
+            }).join("")}
+            <div style="margin-top:8px; display:flex; gap:8px;">
+              <button class="btn" data-csd-tag="btn_advance_retirement" onclick="state.retirementStage = Math.min(7, state.retirementStage + 1); renderAll();">
+                Advance Retirement Step (&rarr;)
+              </button>
+              <button class="btn" onclick="state.retirementStage = 1; renderAll();">Reset to Step 1 (Decided)</button>
+            </div>
+          </div>
+        `;
+      }
+
+      document.getElementById("surfaceRoot").innerHTML = html;
+      draw3DViewForm(CLAIMS.find(x => x.id === state.selectedClaimId) || CLAIMS[0]);
+      updateCsd4Tree();
+    }
+
+    function updateCsd4Tree() {
+      const tagged = Array.from(document.querySelectorAll("[data-csd-tag]"));
+      const box = document.getElementById("csdTreeBox");
+      box.innerHTML = tagged.map(el => {
+        const tag = el.getAttribute("data-csd-tag");
+        const txt = (el.textContent || "").trim().replace(/\s+/g, " ").slice(0, 48);
+        return `<div class="tree-line"><strong>${tag}</strong>: ${txt}</div>`;
+      }).join("");
+    }
+
+    renderAll();
+    showReceipt("row_0");
+  </script>
+</body>
+</html>

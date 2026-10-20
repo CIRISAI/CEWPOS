@@ -274,8 +274,11 @@ pub mod persisted {
     use std::path::PathBuf;
     use std::sync::Arc;
 
-    use ciris_persist::federation::types::attestation_type;
-    use ciris_persist::federation::types::LocalAttestationInput;
+    use ciris_persist::federation::crossing::{
+        self, Audience, CrossingBasis, MeshCrossingOutcome,
+    };
+    use ciris_persist::federation::envelope::EnvelopeCore;
+    use ciris_persist::federation::types::{attestation_type, cohort_scope, LocalAttestationInput};
     use ciris_persist::federation::EmitAttestationInput;
     use ciris_persist::prelude::{
         Attestation, Engine, LocalSigner, LocalSignerConfig, SignedAttestation,
@@ -451,9 +454,13 @@ pub mod persisted {
         /// (Ed25519 ‖ ML-DSA-65) → assemble → `put_attestation`, producing a
         /// FEDERATION-tier row in ONE call. Returns the persist attestation id.
         pub async fn emit(&self, form: &crate::forms::Form, weight: Option<f64>) -> Result<String, BoxErr> {
-            let envelope = scores_envelope_from_form(form);
-            let input =
-                EmitAttestationInput::with_envelope(attestation_type::SCORES, envelope).with_weight(weight);
+            let envelope = EnvelopeCore::from_value(scores_envelope_from_form(form))?;
+            let input = EmitAttestationInput::with_envelope(
+                attestation_type::SCORES,
+                envelope,
+                cohort_scope::FEDERATION,
+            )
+            .with_weight(weight);
             let att_id = self.engine.emit_attestation_self(input).await?;
             Ok(att_id)
         }
@@ -481,21 +488,40 @@ pub mod persisted {
             Ok((id, signed))
         }
 
-        /// `attestation_promote`: `Ok(true)` on a genuine local→federation flip,
-        /// `Ok(false)` (idempotent) on an already-federation row.
+        /// `enter_mesh` (CC 5.3.2.4.2 / CC 4.5.1.1 9-axis `ContextualIntegrity`
+        /// crossing, replacing `attestation_promote` since v39.0.0): `Ok(true)`
+        /// on a genuine local→federation crossing (`MeshCrossingOutcome::Crossed`),
+        /// `Ok(false)` (idempotent) on an already-federation row
+        /// (`MeshCrossingOutcome::AlreadyInMesh`). Preserves the actor's
+        /// signature over byte-identical JCS and keeps `cohort_scope` unchanged
+        /// (widening audience is a separate `widen_audience` supersedes row).
         pub async fn promote(&self, att_id: &str) -> Result<bool, BoxErr> {
-            Ok(self.engine.attestation_promote(att_id).await?)
+            let row = self
+                .engine
+                .federation_directory()
+                .get_attestation(att_id)
+                .await?
+                .ok_or_else(|| -> BoxErr { format!("enter_mesh: row {att_id} not found").into() })?;
+            let audience = Audience::of_row(&row)?;
+            let ci = crossing::describe(&row, audience, CrossingBasis::ProducerAuthority)?;
+            match self.engine.enter_mesh(att_id, &ci, None).await? {
+                MeshCrossingOutcome::Crossed(_) => Ok(true),
+                MeshCrossingOutcome::AlreadyInMesh { .. } => Ok(false),
+                other => Err(format!("unexpected enter_mesh outcome: {other:?}").into()),
+            }
         }
 
         /// Local-tier write (`cohort_scope = "self"`) for exercising a GENUINE
-        /// local→federation promotion. Returns the local attestation id.
+        /// local→federation crossing via `enter_mesh`. Returns the local
+        /// attestation id.
         pub async fn upsert_local(
             &self,
             form: &crate::forms::Form,
             weight: Option<f64>,
         ) -> Result<String, BoxErr> {
-            let envelope = scores_envelope_from_form(form);
+            let envelope = EnvelopeCore::from_value(scores_envelope_from_form(form))?;
             let input = LocalAttestationInput {
+                attestation_id: None,
                 attesting_key_id: self.key_id.clone(),
                 attested_key_id: None,
                 attestation_type: attestation_type::SCORES.to_string(),
@@ -503,7 +529,9 @@ pub mod persisted {
                 expires_at: None,
                 attestation_envelope: envelope,
                 subject_key_ids: vec![],
-                cohort_scope: "self".to_string(),
+                cohort_scope: cohort_scope::SELF.to_string(),
+                scrub_signature_classical: None,
+                scrub_signature_pqc: None,
             };
             let id = self.engine.federation_directory().attestation_upsert_local(input).await?;
             Ok(id)
@@ -516,9 +544,9 @@ pub mod persisted {
     /// reduces a calm Thought through the PDMA-as-eval reduction, then CONFORMANT-
     /// emits the resulting `scores` form as a federation-tier SignedAttestation.
     /// Node B, a SECOND Engine attached to the SAME substrate (it emitted
-    /// nothing), SEES the row. Also exercises `attestation_promote` idempotence
-    /// (Ok(false) on the already-federation emit) and a GENUINE local→federation
-    /// promotion (Ok(true)).
+    /// nothing), SEES the row. Also exercises `enter_mesh` idempotence
+    /// (`Ok(false)` on the already-federation emit) and a GENUINE local→federation
+    /// crossing (`Ok(true)`).
     ///
     /// Returns the captured evidence log (also printed by the demo binary).
     pub async fn federation_shared_substrate_demo() -> Result<String, BoxErr> {
@@ -580,16 +608,16 @@ pub mod persisted {
                 .unwrap_or(false),
         )?;
 
-        // attestation_promote on the already-federation emit is idempotent.
+        // enter_mesh (`promote`) on the already-federation emit is idempotent.
         let promoted = node_a.promote(&att_id).await?;
-        writeln!(log, "  [A] attestation_promote(emit) = {promoted} (already federation => false)")?;
+        writeln!(log, "  [A] enter_mesh(emit) = {promoted} (already federation => false)")?;
 
-        // GENUINE local->federation promotion (Ok(true)).
+        // GENUINE local->federation crossing via enter_mesh (Ok(true)).
         let local_id = node_a.upsert_local(&form, Some(0.80)).await?;
         let promoted_true = node_a.promote(&local_id).await?;
         writeln!(
             log,
-            "  [A] upsert_local id={local_id} -> promote = {promoted_true} (local => federation)"
+            "  [A] upsert_local id={local_id} -> enter_mesh = {promoted_true} (local => federation)"
         )?;
 
         // Node B: a DISTINCT-IDENTITY peer Engine on the SAME DSN (shared

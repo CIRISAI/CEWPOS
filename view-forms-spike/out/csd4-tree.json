@@ -1,0 +1,67 @@
+[
+  {
+    "tag": "btn_my_things",
+    "role": "button",
+    "automation_text": "My things"
+  },
+  {
+    "tag": "btn_stop_everything",
+    "role": "button",
+    "automation_text": "Stop everything"
+  },
+  {
+    "tag": "tab_decisions",
+    "role": "tab",
+    "automation_text": "Everyone \u00b7 Decisions"
+  },
+  {
+    "tag": "state_halt_423",
+    "role": "state_block",
+    "automation_text": "Error"
+  },
+  {
+    "tag": "state_halt_423_data_doors_open",
+    "role": "banner",
+    "automation_text": "Data doors remain OPEN (Inv_X1_LatchDoesNotBlockServing): reading, exporting, and 1-step withdrawal work normally while the agent is paused."
+  },
+  {
+    "tag": "csd_policy_lens_bar",
+    "role": "policy_lens_bar",
+    "automation_text": "my_rules"
+  },
+  {
+    "tag": "csd_main_card",
+    "role": "card_shell",
+    "automation_text": "Everyone \u00b7 Decisions"
+  },
+  {
+    "tag": "csd-field-root_standing",
+    "role": "field_row",
+    "automation_text": "Trust Root Standing: Rooted"
+  },
+  {
+    "tag": "csd-field-self_roster_size",
+    "role": "field_row",
+    "automation_text": "Self-Key Roster Size: 3"
+  },
+  {
+    "tag": "csd_item_row_0",
+    "role": "item_row",
+    "automation_text": "evaluation:quality \u2014 op:scores"
+  },
+  {
+    "tag": "csd_scope_row_0",
+    "role": "scope_pill",
+    "automation_text": "Everyone"
+  },
+  {
+    "tag": "btn_receipt_row_0",
+    "role": "receipt_hamburger",
+    "automation_text": "Receipt"
+  },
+  {
+    "tag": "csd_spatial_canvas",
+    "role": "spatial_canvas",
+    "automation_text": "3D Scene (4 nodes)"
+  }
+]

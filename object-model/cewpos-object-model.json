@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": "1.0",
-    "constitution": "CC 0.6",
+    "constitution": "CC 1.0-rc8.1",
     "sources": [
       "constitution-algebra",
       "repo-knob-inventory",

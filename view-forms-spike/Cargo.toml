@@ -27,6 +27,7 @@ required-features = ["render"]
 # forms::read_form. default-features = false keeps it to the pure calculus
 # (no real-persist / real-edge git trees).
 attestation-calculus-spike = { path = "../attestation-calculus-spike", default-features = false }
+serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 
 # Render-only (native headless). Default Bevy features give the macOS Metal

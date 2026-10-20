@@ -3,10 +3,10 @@
 | | |
 |---|---|
 | **Document** | CEWPOS Object Model — Synthesis FSD |
-| **Status** | COMPLETE (object-model v1.0) |
-| **Constitution** | CC 0.6 |
+| **Status** | COMPLETE (object-model v1.0, substrate caught up to Oct 2026) |
+| **Constitution** | CC 1.0-rc8.1 (originally inventoried at CC 0.6) |
 | **Sources** | constitution-algebra · repo-knob-inventory · civilizational-surface |
-| **Generated** | 2026-06-27 |
+| **Generated** | 2026-06-27 (substrate pins refreshed 2026-10-20) |
 | **Machine form** | [`cewpos-object-model.json`](./cewpos-object-model.json) conforming to [`schema.json`](./schema.json) |
 | **Schema status** | VALID — 0 violations across 856 records (361 objects · 247 transformations · 132 knobs · 8 capabilities · 476 functions · 22 agent-deferred · 10 open-items) |
 
@@ -54,10 +54,10 @@ and to the repo component that realizes it.
 
 | | **LEG A — GRAMMAR** | **LEG B — REALIZATION** | **LEG C — CIVILIZATIONAL TARGET** |
 |---|---|---|---|
-| **Source** | Constitution algebra (CC 0.6) | Repo knob/capability surface | The civilizational-surface map |
+| **Source** | Constitution algebra (CC 1.0-rc8.1 / CC 0.6) | Repo knob/capability surface | The civilizational-surface map |
 | **What it is** | The closed kernel + open namespace | What is actually built & tunable | What the internet/civilization require |
 | **Records** | **361 objects + 247 transformations** | **132 knobs + 8 capabilities** | **476 functions** |
-| **Spanning** | Parts I–VIII | 9 repos (persist 26 · edge 23 · verify 18 · nodecore 16 · registry 16 · agent 13 · server 12 · lens 8) | 8 super-domain clusters |
+| **Spanning** | Parts I–VIII | 9 component surfaces (persist 26 · edge 23 · verify 18 · nodecore 16 · registry 16 · agent 13 · server 12 · lens 8; *note: nodecore, registry, and lens have since folded into `ciris-server` v0.5.232 and `ciris-persist` v59.1*) | 8 super-domain clusters |
 | **Invariant** | 1 + 4 primitives, never a 6th | All 8 capabilities `covered: true` today | Mapped to grammar + component |
 
 **LEG A (Grammar).** Identity & keys, the envelope and its fields, the five primitives, the 8-owner /
@@ -218,8 +218,9 @@ functions.** Inflation concentrates in **Social** (ledger 77/69 vs actual **49/4
 **C-1 — "Realized" silently means "expressible," not "built."** Claimed *"≈509/550 (≈93%) realized by
 an existing CIRIS component."* **Reality:** computed on the inflated 550 base; **31 rows carry `GAP` in
 the component column** and **~7 IG rows** (voice/video call, conferencing, livestream broadcast,
-telemedicine, live lecture, stream anti-equivocation) depend on **Phase-2 / unbuilt CIRISEdge
-streaming** yet are counted as realized.
+telemedicine, live lecture, stream anti-equivocation) depended at initial inventory time on **Phase-2
+CIRISEdge streaming** *(since landed in `ciris-edge` v43.0 + `ciris-verify` v20.2 + `ciris-persist`
+v59.1: realtime A/V spine, per-hop transit key, ALM, MLS/TreeKEM, fountain blob swarm, per-stream STH)*.
 
 **C-2 — Real-property land-title registry (§2.8) tagged IG.** Its own component column says
 *"GAP (unbuilt subject_kind)."* Only the record *shape* is in-grammar; binding the record to actual

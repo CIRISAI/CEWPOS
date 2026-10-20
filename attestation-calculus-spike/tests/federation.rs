@@ -65,12 +65,15 @@ async fn conformant_emit_produces_federation_tier_hybrid_signed_attestation() {
     assert_eq!(signed.attestation.original_content_hash.len(), 64);
     assert!(!signed.attestation.scrub_signature_classical.is_empty());
 
-    // attestation_promote on an already-federation row is idempotent (false).
+    // enter_mesh (`promote`) on an already-federation row is idempotent (false).
     let promoted = node.promote(&att_id).await.expect("promote emitted row");
     assert!(!promoted, "promoting an already-federation row returns Ok(false)");
 }
 
-/// A GENUINE local→federation promotion (Ok(true)) through `attestation_promote`.
+/// A GENUINE local→federation crossing (`Ok(true)`) through `enter_mesh`
+/// (with 9-axis `ContextualIntegrity` verification, CC 4.5.1.1 / CC 5.3.2.4.2).
+/// Preserves the actor signature and `cohort_scope = "self"` while flipping
+/// `tier = "federation"`.
 #[tokio::test]
 async fn genuine_local_to_federation_promotion_returns_true() {
     let node = Persisted::open_in_memory().await.expect("open in-memory engine");
@@ -81,6 +84,10 @@ async fn genuine_local_to_federation_promotion_returns_true() {
 
     let signed = node.get_signed(&local_id).await.expect("read").expect("row present");
     assert_eq!(signed.attestation.tier, "federation");
+    assert_eq!(
+        signed.attestation.cohort_scope, "self",
+        "enter_mesh crosses (local, self) -> (federation, self) without mutating cohort_scope"
+    );
 }
 
 /// The headline (B) demo: two Engines, one shared file substrate; node A emits a

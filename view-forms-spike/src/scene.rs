@@ -15,10 +15,12 @@
 //! Coordinates are right-handed Y-up (the Bevy convention) so consumers need no
 //! axis remapping. Colors are linear-ish sRGB `[r, g, b, a]` in `0.0..=1.0`.
 
+use serde::{Deserialize, Serialize};
+
 /// The primitive shapes the IR can express. Closed and small on purpose: a
 /// renderer only needs a finite mesh vocabulary, and a closed enum means every
 /// `MeshKind` is exhaustively handled by every backend (no `Unknown` escape).
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum MeshKind {
     /// A unit-diameter sphere centered at the node position.
     Sphere,
@@ -31,7 +33,7 @@ pub enum MeshKind {
 
 /// One renderable thing: a positioned, scaled, colored primitive with an
 /// optional human/agent-legible label.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct SceneNode {
     /// World-space position of the node's center, `[x, y, z]`.
     pub pos: [f32; 3],
@@ -60,7 +62,7 @@ impl SceneNode {
 }
 
 /// A renderer-neutral camera: an eye position looking at a target. Up is `+Y`.
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Camera {
     /// Eye / camera position in world space.
     pub eye: [f32; 3],
@@ -72,7 +74,7 @@ pub struct Camera {
 ///
 /// This is the *entire* renderer contract. A backend reads `background` as the
 /// clear color, places a camera per `camera`, and spawns one drawable per node.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Scene {
     pub nodes: Vec<SceneNode>,
     pub camera: Camera,

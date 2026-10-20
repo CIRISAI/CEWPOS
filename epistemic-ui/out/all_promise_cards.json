@@ -1,0 +1,154 @@
+{
+  "CSD-111": {
+    "promises": [
+      "2g",
+      "5a",
+      "5b"
+    ],
+    "title": "Steward Shutdown Dialogue (Reason, 5m Window, Agent Accept/Object/Postpone, Recorded Decision)",
+    "placement": "My things \u203a This agent",
+    "primitives": [
+      "CardShell",
+      "ConscienceStepBlock",
+      "TwoPathCeremonyBlock"
+    ],
+    "policy_family": "custodian_replace"
+  },
+  "CSD-112": {
+    "promises": [
+      "5d",
+      "5e"
+    ],
+    "title": "WA-Cosigned Identity Record Edit & Behavioural Drift Threshold Review",
+    "placement": "My things \u203a This agent",
+    "primitives": [
+      "CardShell",
+      "FieldRow",
+      "TwoPathCeremonyBlock"
+    ],
+    "policy_family": "custodian_replace"
+  },
+  "CSD-113": {
+    "promises": [
+      "5f"
+    ],
+    "title": "7-State Agent Retirement Standard Floor (Retirement.tla)",
+    "placement": "My things \u203a This agent",
+    "primitives": [
+      "CardShell",
+      "LineageChainBlock",
+      "TwoPathCeremonyBlock"
+    ],
+    "steps": [
+      "Decided (1-step cancel active)",
+      "Frozen (cancel sealed)",
+      "SecretsDestroyed",
+      "HandedOver",
+      "Notified",
+      "CustodianMinted",
+      "Retired"
+    ]
+  },
+  "CSD-114": {
+    "promises": [
+      "5g"
+    ],
+    "title": "Upgrade Offer with Version, Changelog, Risk Band, Canary Outcomes & Recorded Refusal (G23)",
+    "placement": "My things \u203a This agent",
+    "primitives": [
+      "CardShell",
+      "FieldRow",
+      "ConscienceStepBlock",
+      "ConfirmSheet"
+    ]
+  },
+  "CSD-115": {
+    "promises": [
+      "3a",
+      "3e",
+      "6e"
+    ],
+    "title": "Steward\u2013Agent Bond (Depth 1, 365d Review, Listed Powers) & Halt Data-Door Guarantee",
+    "placement": "My things \u203a This agent & Setup (CSD-082)",
+    "primitives": [
+      "CardShell",
+      "LineageChainBlock",
+      "StateBlock"
+    ]
+  },
+  "CSD-116": {
+    "promises": [
+      "7a",
+      "7b"
+    ],
+    "title": "Published Ethical Principles, Lexical Priority Order & Mandatory G14 Limits Row",
+    "placement": "My things \u203a Help & ConscienceStepBlock Header",
+    "primitives": [
+      "CardShell",
+      "FieldRow"
+    ]
+  },
+  "CSD-117": {
+    "promises": [
+      "8b",
+      "8c"
+    ],
+    "title": "Judges Are Judged \u2014 Wise Authority Rulings Cadence, Conduct & Appeals",
+    "placement": "My things \u203a Someone I trust",
+    "primitives": [
+      "CardShell",
+      "ItemRow",
+      "ReceiptSheet"
+    ]
+  },
+  "CSD-118": {
+    "promises": [
+      "9a",
+      "9c"
+    ],
+    "title": "Public NEVER_ALLOWED (prohibited:*) List & Operator Engagement Declaration",
+    "placement": "My things \u203a This agent \u203a Tools (CSD-014) & Setup (CSD-082)",
+    "primitives": [
+      "CardShell",
+      "ItemRow",
+      "FieldRow"
+    ]
+  },
+  "CSD-119": {
+    "promises": [
+      "3c"
+    ],
+    "title": "Verified Guardian Bond (365d Review) & Child Confidential Help/Contest Channel (Q3/Q4/Q5)",
+    "placement": "Family \u203a Safety (extends CSD-066)",
+    "primitives": [
+      "CardShell",
+      "LineageChainBlock"
+    ]
+  },
+  "CSD-127": {
+    "promises": [
+      "6e",
+      "4c"
+    ],
+    "title": "First-Contact Gate, Local-Only Device Badge & 1-Step Trust-Root Exit (Inv_ExitOneStep)",
+    "placement": "Everyone \u203a Rules / Safety (extends CSD-105)",
+    "primitives": [
+      "CardShell",
+      "FieldRow",
+      "LineageChainBlock",
+      "ScopePill"
+    ]
+  },
+  "CSD-128": {
+    "promises": [
+      "2d"
+    ],
+    "title": "Protected Reporter Channel (Signed, Name Known to Moderator & Sealed Record Only)",
+    "placement": "Neighbours / Communities \u203a Safety (extends CSD-065)",
+    "primitives": [
+      "CardShell",
+      "FieldRow",
+      "ConfirmSheet"
+    ]
+  }
+}
