@@ -81,8 +81,15 @@
       color: var(--obsidian);
       cursor: pointer;
       transition: background 0.15s, border-color 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
-    .btn:hover { background: var(--paper); }
+    .btn:hover:not(:disabled) { background: var(--paper); }
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
     .btn-ghost {
       background: transparent;
       border: 1px solid transparent;
@@ -113,9 +120,14 @@
       color: #fff;
       border-color: var(--brand);
     }
-    .btn-brand:hover { opacity: 0.92; background: var(--brand); }
+    .btn-brand:hover:not(:disabled) { opacity: 0.92; background: var(--brand); }
+    .btn-danger {
+      background: rgba(184, 35, 35, 0.08);
+      color: var(--danger);
+      border-color: rgba(184, 35, 35, 0.35);
+    }
 
-    /* ── 7 Circle Tabs ── */
+    /* ── 7 Circle Tabs & Step Indicators ── */
     .tabs {
       display: flex;
       gap: 4px;
@@ -180,6 +192,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      flex-wrap: wrap;
     }
 
     /* ── P3: ItemRow — Strictly 3 Scannable Inline Elements (`Title`, `ScopePill`/`Chip`, `☰`/`⋯`) ── */
@@ -278,11 +291,61 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 10px;
     }
     .state-banner.danger {
       border-color: rgba(184, 35, 35, 0.4);
       background: rgba(184, 35, 35, 0.05);
       color: var(--danger);
+    }
+    .state-banner.brand {
+      border-color: rgba(31, 94, 122, 0.35);
+      background: rgba(31, 94, 122, 0.05);
+      color: var(--brand);
+    }
+
+    /* ── Form Inputs & Choice Cards (First-Run Wizard) ── */
+    .field-input {
+      width: 100%;
+      padding: 8px 11px;
+      border-radius: 8px;
+      border: 1px solid var(--hairline);
+      background: var(--bone);
+      font-family: var(--sans);
+      font-size: 13px;
+      color: var(--obsidian);
+    }
+    .choice-btn {
+      flex: 1;
+      text-align: left;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--hairline);
+      background: var(--bone);
+      cursor: pointer;
+      font-family: var(--sans);
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .choice-btn.selected {
+      border-color: var(--brand);
+      background: rgba(31, 94, 122, 0.06);
+    }
+    .choice-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .match-code-box {
+      font-family: var(--mono);
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--brand);
+      background: var(--bone);
+      border: 1px solid var(--hairline);
+      border-radius: 10px;
+      padding: 10px 16px;
+      text-align: center;
+      margin: 8px 0;
     }
 
     /* ── Compose / Chat Input Bar ── */
@@ -388,6 +451,7 @@
     <header class="topbar">
       <button id="btn_my_things" data-csd-tag="btn_my_things" class="btn" onclick="openMyThingsSheet()">
         &#9670; My things
+        <span id="top_devices_badge" style="display:none;" class="chip warn"></span>
       </button>
 
       <div class="topbar-center" id="headerTitle"></div>
@@ -396,7 +460,7 @@
         <button id="btn_stop_everything" data-csd-tag="btn_stop_everything" class="btn btn-stop" onclick="toggleHalt()">
           Stop
         </button>
-        <button id="btn_overflow_inspector" data-csd-tag="btn_overflow_inspector" class="btn-ghost" title="More / CSD-4 Tree" onclick="openInspectorSheet()">
+        <button id="btn_overflow_inspector" data-csd-tag="btn_overflow_inspector" class="btn-ghost" title="First-Run Wizard, Multi-Device Switcher &amp; CSD/4 Tree" onclick="openInspectorSheet()">
           &ctdot;
         </button>
       </div>
@@ -427,10 +491,10 @@
     const TABS = ["Files", "Chats", "People", "Safety", "Rules", "Decisions", "Record"];
 
     const INSTRUMENTS = [
-      { id: "DevicesAndKeys", label: "Devices & keys", sub: "Self-key roster & pairing", requiresAgent: false },
+      { id: "DevicesAndKeys", label: "Devices & keys", sub: "Self-key roster, device approvals & pairing", requiresAgent: false },
       { id: "EverythingIShared", label: "Everything I shared", sub: "One-step take-back & storage", requiresAgent: false },
       { id: "ThisAgent", label: "This agent", sub: "Steward bond, conscience & retirement", requiresAgent: true },
-      { id: "ThisNode", label: "This node", sub: "Trust root standing & transport", requiresAgent: false },
+      { id: "ThisNode", label: "This node", sub: "Trust root standing, first-run & transport", requiresAgent: false },
       { id: "SomeoneITrust", label: "Someone I trust", sub: "Wise Authority & rulings", requiresAgent: true },
       { id: "Help", label: "Help & principles", sub: "Published principles & limits", requiresAgent: false },
     ];
@@ -456,8 +520,8 @@
       { id: "c_all_1", tab: "Chats", scope: "Everyone", op: "scores", dimension: "message:commons_townhall", title: "Townhall: CC rc9 formal verification suite is green", score: 0.92, confidence: 0.96, subject: "ed25519:ciris_root", attester: "ed25519:steward_maya" },
 
       // PEOPLE
-      { id: "p_self_1", tab: "People", scope: "JustMe", op: "scores", dimension: "self_roster:laptop_key", title: "This laptop (ed25519 + ML-DSA-65)", score: 1.0, confidence: 1.0, subject: "ed25519:viewer_self", attester: "ed25519:viewer_self" },
-      { id: "p_self_2", tab: "People", scope: "JustMe", op: "scores", dimension: "self_roster:phone_key", title: "Pixel phone key", score: 1.0, confidence: 1.0, subject: "ed25519:viewer_self", attester: "ed25519:viewer_self" },
+      { id: "p_self_1", tab: "People", scope: "JustMe", op: "scores", dimension: "self_roster:laptop_key", title: "Founder Laptop A1 (ed25519 + ML-DSA-65)", score: 1.0, confidence: 1.0, subject: "ed25519:viewer_self", attester: "ed25519:viewer_self" },
+      { id: "p_self_2", tab: "People", scope: "JustMe", op: "scores", dimension: "self_roster:phone_key", title: "Pixel Phone A2 (ed25519 + ML-DSA-65)", score: 1.0, confidence: 1.0, subject: "ed25519:viewer_self", attester: "ed25519:viewer_self" },
       { id: "p_fam_1", tab: "People", scope: "Family", op: "scores", dimension: "membership:family", title: "Mom (Accord holder)", score: 1.0, confidence: 1.0, subject: "ed25519:mom", attester: "ed25519:viewer_self" },
       { id: "p_fam_2", tab: "People", scope: "Family", op: "scores", dimension: "membership:family", title: "Sam (Accord holder)", score: 1.0, confidence: 1.0, subject: "ed25519:sam", attester: "ed25519:viewer_self" },
       { id: "p_nei_1", tab: "People", scope: "Neighbours", op: "scores", dimension: "membership:community", title: "Dan (Named Moderator · CC 4.5.4)", score: 0.95, confidence: 0.98, subject: "ed25519:neighbour_dan", attester: "ed25519:viewer_self" },
@@ -486,23 +550,26 @@
       { id: "rec_all_1", tab: "Record", scope: "Everyone", op: "scores", dimension: "sth:federation_checkpoint", title: "Federation transparency checkpoint #1,024", score: 1.0, confidence: 1.0, subject: "ed25519:ciris_root", attester: "ed25519:ciris_root" },
     ];
 
-    // ── Circle-Specific TwoPath Ceremonies (`Decisions` Tab) ──
     const CEREMONIES_BY_CIRCLE = {
-      JustMe: { title: "Add tablet key to self-roster", policy: "self_roster_add (24h window · 1 lone floor)", need: 2 },
+      JustMe: { title: "Add S23 Phone key to self-roster", policy: "self_roster_add (24h W_self window · quorum or lone path)", need: 2 },
       Family: { title: "Renew Family Helper AI steward bond", policy: "custodian_replace (2-of-2 cosigned · 365d review)", need: 2 },
       Neighbours: { title: "Invite Priya to Neighbours circle", policy: "community_invite (>2/3 + invitee acceptance · 72h)", need: 3 },
       CommunitiesAndBusinesses: { title: "Approve Q4 Solar Co-op budget", policy: "default_standing (>2/3 enact · >=1/3 brake · 72h)", need: 4 },
       Everyone: { title: "Confirm v4 genesis hardware amend", policy: "default_irreversible (>2/3 after 7d window only)", need: 5 },
     };
 
+    const urlParams = new URLSearchParams(window.location.search);
+
     let state = {
+      // Check URL param `?mode=setup` to boot directly into First-Run Wizard on a fresh node (`T0`)
+      setupMode: urlParams.get("mode") === "setup",
       circleId: "JustMe",
       tab: "Files",
-      instrumentId: null,
+      instrumentId: urlParams.get("instrument") || null,
       hasAgent: true,
       halted: false,
       blurEnabled: true,
-      expandedIds: {}, // key -> bool for any `⋯` toggle
+      expandedIds: {},
       ceremonyVotes: {
         JustMe: { app: 1, obj: 0 },
         Family: { app: 1, obj: 0 },
@@ -511,7 +578,110 @@
         Everyone: { app: 4, obj: 0 },
       },
       retirementStage: 1,
+
+      // ── First-Run Wizard State (`CSD-080`..`CSD-085`, `CSD-093`, `CSD-115`, `CSD-118`) ──
+      wizard: {
+        step: "YOU",                  // YOU | JOIN_FEDERATION | AI | COMPLETE
+        identityPath: null,           // null | 'NEW' | 'ADD_THIS_DEVICE' (unbiased at launch!)
+        runWithAi: true,              // true (3 steps) | false (2 steps, CSD-083)
+        fedidLabel: "",               // rejects 'ciris-client-user'
+        deviceName: "Founder Laptop",
+        hardwareCustody: true,
+        username: "admin",
+        password: "",
+        ageBand: null,                // null | 'ADULT' | 'MINOR' | 'DECLINED'
+        traceConsent: null,           // null | true | false
+        traceAnalyze: false,
+        announceOwnership: false,
+        llmProvider: "local_ollama",
+        llmStatus: "not run",         // not run | testing | ok | failed
+        stewardTemplate: "companion_default",
+        addDeviceName: "S23 Phone",
+        addDeviceContact: "",
+        addDeviceMatchCode: null,
+        addDeviceStatus: "idle",      // idle | requested | approved | applied | denied | expired | failed
+        addDeviceHeldByRoster: true,
+        claimPin0600: "849201",       // read from 0600 claim_pin file
+        ownershipState: "unclaimed",  // unclaimed | claiming | claimed | error
+      },
+
+      // ── Full Multi-Device & Self-Key Roster State (`CSD-037`, `CSD-094`, `CSD-095`) ──
+      multiDevice: {
+        selfKeyId: "ed25519:alice.ciris#root",
+        activeOccurrenceId: "occ-a1", // Switchable between 'occ-a1', 'occ-a2', 'occ-a3'
+        showRevoked: false,
+        revokeForcePendingId: null,   // 2-stage force_self confirmation (`CSD-037`)
+        incompleteRevokeNote: null,
+        approvalWindowOpen: true,
+        approvalWindowRemSecs: 600,   // 10m window (`CSD-094`)
+        lastHeldBannerProposalId: null,
+        lastReceiptNote: null,
+        devices: [
+          {
+            occurrenceId: "occ-a1",
+            keyId: "ed25519:a1_founder_laptop",
+            label: "Founder Laptop (A1)",
+            deviceClass: "laptop",
+            reachable: true,
+            hardwareCustody: "tpm",
+            dekRecipient: true,
+            revoked: false,
+          },
+          {
+            occurrenceId: "occ-a2",
+            keyId: "ed25519:a2_pixel_phone",
+            label: "Pixel Phone (A2)",
+            deviceClass: "phone",
+            reachable: false,
+            hardwareCustody: "secure_enclave",
+            dekRecipient: true,
+            revoked: false,
+          },
+        ],
+        pendingDeviceRequests: [
+          {
+            requestId: "req-s23",
+            occurrenceId: "occ-a3",
+            keyId: "ed25519:a3_s23_phone",
+            label: "S23 Phone (A3)",
+            deviceClass: "phone",
+            matchCode: "482 913",
+            status: "pending", // pending | approved | held | denied
+          },
+        ],
+        proposals: [
+          {
+            proposalId: "prop-add-a3",
+            kind: "add",
+            subjectKeyId: "ed25519:a3_s23_phone",
+            subjectOccurrenceId: "occ-a3",
+            subjectLabel: "S23 Phone (A3)",
+            subjectClass: "phone",
+            proposedByOccurrenceId: "occ-a1",
+            proposedByLabel: "Founder Laptop (A1)",
+            approvals: ["occ-a1"],
+            objectors: [],
+            windowRemSecs: 86400,
+            earliestLoneAt: "2026-10-21T17:45:00Z (24h W_self)",
+            settled: null, // null | 'LANDED' | 'REFUSED' | 'CANCELLED'
+          },
+        ],
+      },
     };
+
+    function activeEnrolledDevices() {
+      return state.multiDevice.devices.filter(d => !d.revoked);
+    }
+
+    function answerableProposalCount() {
+      const me = state.multiDevice.activeOccurrenceId;
+      return state.multiDevice.proposals.filter(p =>
+        !p.settled &&
+        p.proposedByOccurrenceId !== me &&
+        !p.approvals.includes(me) &&
+        !p.objectors.includes(me)
+      ).length;
+    }
 
     function toggleExpand(key) {
       state.expandedIds[key] = !state.expandedIds[key];
@@ -523,19 +693,37 @@
     }
 
     function selectCircle(id) {
+      state.setupMode = false;
       state.circleId = id;
       state.instrumentId = null;
       renderAll();
     }
 
     function selectTab(tab) {
+      state.setupMode = false;
       state.tab = tab;
       state.instrumentId = null;
       renderAll();
     }
 
     function selectInstrument(id) {
+      state.setupMode = false;
       state.instrumentId = id;
+      closeSheet();
+      renderAll();
+    }
+
+    function startFirstRunWizard(resetFresh) {
+      if (resetFresh) {
+        state.wizard.step = "YOU";
+        state.wizard.identityPath = null;
+        state.wizard.ageBand = null;
+        state.wizard.traceConsent = null;
+        state.wizard.addDeviceStatus = "idle";
+        state.wizard.addDeviceMatchCode = null;
+        state.wizard.ownershipState = "unclaimed";
+      }
+      state.setupMode = true;
       closeSheet();
       renderAll();
     }
@@ -549,8 +737,9 @@
       document.getElementById("sheetHost").innerHTML = "";
     }
 
-    // ── `◆ My things` Sheet ──
+    // ── `◆ My things` Sheet (with live badge on `Devices & keys` per `CSD-095`) ──
     function openMyThingsSheet() {
+      const pendingCount = answerableProposalCount();
       const host = document.getElementById("sheetHost");
       host.innerHTML = `
         <div class="sheet-backdrop" onclick="if(event.target===this)closeSheet()">
@@ -563,18 +752,998 @@
               ${INSTRUMENTS.map(inst => `
                 <div class="item-row" style="cursor:pointer;" data-csd-tag="inst_${inst.id}" onclick="selectInstrument('${inst.id}')">
                   <div>
-                    <div class="item-title">${inst.label}</div>
+                    <div class="item-title">
+                      ${inst.label}
+                      ${inst.id === 'DevicesAndKeys' && pendingCount > 0 ? `
+                        <span class="chip warn" data-csd-tag="badge_nav_instrument_devices_keys" style="margin-left:6px;">
+                          ${pendingCount} waiting
+                        </span>
+                      ` : ''}
+                    </div>
                     <div style="font-size:12px; color:var(--ink-mute);">${inst.sub}</div>
                   </div>
                   <span class="btn-ghost">&rsaquo;</span>
                 </div>
               `).join("")}
             </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--ink-mute); padding:4px 2px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--ink-mute); padding:6px 2px;">
               <span>Attached node has AI agent (<code>has_agent</code>)</span>
               <input type="checkbox" ${state.hasAgent ? 'checked' : ''} onchange="state.hasAgent=this.checked; closeSheet(); renderAll();" />
             </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--ink-mute); padding:6px 2px; border-top:1px solid var(--hairline); margin-top:4px;">
+              <span>Fresh node First-Run Wizard (<code>CSD-080..085, 093</code>)</span>
+              <button class="btn" data-csd-tag="btn_launch_first_run_wizard" onclick="startFirstRunWizard(true)">
+                Run First-Run Wizard&hellip;
+              </button>
+            </div>
           </div>
+        </div>
+      `;
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // 1. FIRST-RUN WIZARD (`CSD-080`..`CSD-085`, `CSD-093`, `CSD-115`, `CSD-118`)
+    // ══════════════════════════════════════════════════════════════════════════
+
+    function isValidFedIdLabel(label) {
+      const t = (label || "").trim();
+      return t.length > 0 && t.toLowerCase() !== "ciris-client-user";
+    }
+
+    function canWizardAdvanceFromYou() {
+      const w = state.wizard;
+      if (!w.identityPath) return false;
+      if (w.identityPath === "NEW") {
+        return isValidFedIdLabel(w.fedidLabel) &&
+               w.deviceName.trim().length > 0 &&
+               w.ageBand !== null &&
+               w.ageBand !== "MINOR";
+      }
+      if (w.identityPath === "ADD_THIS_DEVICE") {
+        return ["requested", "approved", "applied"].includes(w.addDeviceStatus);
+      }
+      return false;
+    }
+
+    function wizardSelectIdentityPath(path) {
+      const w = state.wizard;
+      if (["requested", "approved", "retrying"].includes(w.addDeviceStatus)) return;
+      w.identityPath = path;
+      renderAll();
+    }
+
+    function wizardScanQrFill() {
+      // `btn_add_device_scan` fills contact URI and never auto-sends (`CSD-093`)
+      state.wizard.addDeviceContact = "ciris://ed25519:alice.ciris#root@192.168.1.42:4243";
+      renderAll();
+    }
+
+    function wizardSendAddDeviceRequest() {
+      const w = state.wizard;
+      if (!w.addDeviceName.trim() || !w.addDeviceContact.trim()) return;
+      w.addDeviceStatus = "requested";
+      w.addDeviceMatchCode = "482 913";
+      renderAll();
+    }
+
+    function openCancelAddDeviceConfirm() {
+      const host = document.getElementById("sheetHost");
+      host.innerHTML = `
+        <div class="sheet-backdrop" onclick="if(event.target===this)closeSheet()">
+          <div class="sheet" data-csd-tag="confirm_add_device_cancel">
+            <div class="sheet-header">
+              <span class="sheet-title">Cancel adding this device?</span>
+              <button class="btn-ghost" onclick="closeSheet()">&#10005;</button>
+            </div>
+            <div class="card" style="padding:8px 14px;">
+              <div class="kv-row"><span>1. Action</span><strong>DELETE /v1/setup/add-device</strong></div>
+              <div class="kv-row"><span>2. Match code</span><span class="mono-hint">${state.wizard.addDeviceMatchCode || '482 913'} invalidated</span></div>
+              <div class="kv-row"><span>3. Effect</span><span>Unlocks the identity choice so you can start over</span></div>
+            </div>
+            <div style="display:flex; gap:8px; margin-top:12px;">
+              <button class="btn btn-danger" data-csd-tag="btn_confirm_add_device_cancel_yes" onclick="wizardConfirmCancelAddDevice()">
+                Cancel request
+              </button>
+              <button class="btn" onclick="closeSheet()">Keep waiting</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function wizardConfirmCancelAddDevice() {
+      state.wizard.addDeviceStatus = "idle";
+      state.wizard.addDeviceMatchCode = null;
+      closeSheet();
+      renderAll();
+    }
+
+    function wizardNextStep() {
+      const w = state.wizard;
+      if (w.step === "YOU") {
+        if (!canWizardAdvanceFromYou()) return;
+        w.step = "JOIN_FEDERATION";
+      } else if (w.step === "JOIN_FEDERATION") {
+        if (w.traceConsent === null) return;
+        w.step = w.runWithAi ? "AI" : "COMPLETE";
+      } else if (w.step === "AI") {
+        w.step = "COMPLETE";
+      }
+      renderAll();
+    }
+
+    function wizardPrevStep() {
+      const w = state.wizard;
+      if (w.step === "COMPLETE") {
+        w.step = w.runWithAi ? "AI" : "JOIN_FEDERATION";
+      } else if (w.step === "AI") {
+        w.step = "JOIN_FEDERATION";
+      } else if (w.step === "JOIN_FEDERATION") {
+        w.step = "YOU";
+      }
+      renderAll();
+    }
+
+    function wizardClaimOwnershipNow() {
+      const w = state.wizard;
+      w.ownershipState = "claiming";
+      renderAll();
+      setTimeout(() => {
+        if (w.claimPin0600 && w.claimPin0600.trim().length >= 4) {
+          w.ownershipState = "claimed";
+        } else {
+          w.ownershipState = "error";
+        }
+        renderAll();
+      }, 60);
+    }
+
+    function wizardFinishSetup() {
+      const w = state.wizard;
+      if (w.identityPath === "ADD_THIS_DEVICE" && w.addDeviceStatus !== "approved") {
+        // E9 < E10: cannot call /v1/setup/complete before approval lands (`CSD-093`)
+        return;
+      }
+      state.hasAgent = w.runWithAi;
+      state.setupMode = false;
+      state.instrumentId = "DevicesAndKeys";
+      renderAll();
+    }
+
+    function renderFirstRunWizard() {
+      const w = state.wizard;
+      const steps = w.runWithAi ? ["YOU", "JOIN_FEDERATION", "AI"] : ["YOU", "JOIN_FEDERATION"];
+      const lockedPath = ["requested", "approved", "retrying"].includes(w.addDeviceStatus);
+
+      let stepHeaderHtml = `
+        <div class="card" data-csd-tag="csd_082_setup_wizard">
+          <div class="card-header">
+            <div class="card-header-title">
+              <span>First-Run Setup Wizard</span>
+              <span class="chip brand">${w.runWithAi ? 'CSD-082 · With AI (3 steps)' : 'CSD-083 · Node-only (2 steps)'}</span>
+            </div>
+            <div style="display:flex; gap:6px; align-items:center;">
+              <span class="chip" data-csd-tag="step_indicator_you" style="${w.step === 'YOU' ? 'background:var(--obsidian);color:#fff;' : ''}">1. YOU</span>
+              <span class="chip" data-csd-tag="step_indicator_join_federation" style="${w.step === 'JOIN_FEDERATION' ? 'background:var(--obsidian);color:#fff;' : ''}">2. JOIN</span>
+              ${w.runWithAi ? `
+                <span class="chip" data-csd-tag="step_indicator_ai" style="${w.step === 'AI' ? 'background:var(--obsidian);color:#fff;' : ''}">3. AI</span>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+
+      let bodyHtml = "";
+
+      if (w.step === "YOU") {
+        bodyHtml = `
+          <div class="card" data-csd-tag="setup_step_you">
+            <div class="card-header">
+              <div class="card-header-title">
+                <span>Step 1 &middot; Who is setting up this device?</span>
+                ${w.identityPath === null ? '<span class="chip warn">Choose one</span>' : `<span class="chip ok">${w.identityPath}</span>`}
+              </div>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-bottom:12px;" data-csd-tag="setup_identity_path">
+              <button class="choice-btn ${w.identityPath === 'NEW' ? 'selected' : ''}"
+                      data-csd-tag="btn_setup_new_identity"
+                      ${lockedPath ? 'disabled' : ''}
+                      onclick="wizardSelectIdentityPath('NEW')">
+                <div style="font-weight:600; font-size:13px;">Set up a new CIRIS ID</div>
+                <div style="font-size:12px; color:var(--ink-mute);">Create a fresh root keypair on this device</div>
+              </button>
+              <button class="choice-btn ${w.identityPath === 'ADD_THIS_DEVICE' ? 'selected' : ''}"
+                      data-csd-tag="btn_setup_add_this_device"
+                      ${lockedPath ? 'disabled' : ''}
+                      onclick="wizardSelectIdentityPath('ADD_THIS_DEVICE')">
+                <div style="font-weight:600; font-size:13px;">Add this device to an existing CIRIS ID</div>
+                <div style="font-size:12px; color:var(--ink-mute);">Pair with your phone or laptop (CSD-093)</div>
+              </button>
+            </div>
+
+            ${lockedPath ? `
+              <div class="state-banner brand" data-csd-tag="txt_setup_identity_path_locked">
+                <span>Identity choice locked while device join request is active.</span>
+                <button class="btn" data-csd-tag="btn_add_device_cancel" onclick="openCancelAddDeviceConfirm()">Cancel request</button>
+              </div>
+            ` : ''}
+
+            <div class="kv-row" style="padding:10px 0;">
+              <span>Node mode (<code>CSD-082</code> vs <code>CSD-083</code>)</span>
+              <div style="display:flex; gap:6px;">
+                <button class="btn ${w.runWithAi ? 'btn-brand' : ''}" data-csd-tag="opt_run_with_ai" onclick="state.wizard.runWithAi=true; renderAll();">
+                  Run with AI (3 steps)
+                </button>
+                <button class="btn ${!w.runWithAi ? 'btn-brand' : ''}" data-csd-tag="opt_run_without_ai" onclick="state.wizard.runWithAi=false; renderAll();">
+                  Run without AI (:4243 only)
+                </button>
+              </div>
+            </div>
+
+            ${w.identityPath === "NEW" ? `
+              <div style="border-top:1px solid var(--hairline); padding-top:10px; margin-top:6px;">
+                <div class="kv-row">
+                  <span>CIRIS ID handle (<code>input_fedid_label</code>)</span>
+                  <input class="field-input" style="max-width:240px;"
+                         data-csd-tag="input_fedid_label"
+                         placeholder="e.g. alice.ciris"
+                         value="${w.fedidLabel}"
+                         oninput="state.wizard.fedidLabel=this.value; renderAll();" />
+                </div>
+                ${w.fedidLabel.trim().toLowerCase() === 'ciris-client-user' ? `
+                  <div style="font-size:12px; color:var(--danger); padding:4px 0;">
+                    Generic label <code>ciris-client-user</code> is rejected; choose your own handle.
+                  </div>
+                ` : ''}
+                <div class="kv-row">
+                  <span>This device's name (<code>input_device_name</code>)</span>
+                  <input class="field-input" style="max-width:240px;"
+                         data-csd-tag="input_device_name"
+                         value="${w.deviceName}"
+                         oninput="state.wizard.deviceName=this.value; renderAll();" />
+                </div>
+                <div class="kv-row">
+                  <span>Seal key in hardware enclave (<code>toggle_secure_2fa</code>)</span>
+                  <input type="checkbox" data-csd-tag="toggle_secure_2fa" ${w.hardwareCustody ? 'checked' : ''} onchange="state.wizard.hardwareCustody=this.checked; renderAll();" />
+                </div>
+                <div style="padding:8px 0;">
+                  <div style="font-size:12px; color:var(--ink-mute); margin-bottom:6px;">
+                    Age band (<code>CC 3.2</code> &middot; neither preselected):
+                  </div>
+                  <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                    <button class="btn ${w.ageBand === 'ADULT' ? 'btn-brand' : ''}" data-csd-tag="age_band_adult" onclick="state.wizard.ageBand='ADULT'; renderAll();">
+                      18 or older (Adult)
+                    </button>
+                    <button class="btn ${w.ageBand === 'MINOR' ? 'btn-brand' : ''}" data-csd-tag="age_band_minor" onclick="state.wizard.ageBand='MINOR'; renderAll();">
+                      Under 18 (Minor)
+                    </button>
+                    <button class="btn ${w.ageBand === 'DECLINED' ? 'btn-brand' : ''}" data-csd-tag="age_band_declined" onclick="state.wizard.ageBand='DECLINED'; renderAll();">
+                      Decline to state (protective under-18 default; writes nothing to record)
+                    </button>
+                  </div>
+                  ${w.ageBand === 'MINOR' ? `
+                    <div class="state-banner brand" style="margin-top:8px;" data-csd-tag="txt_minor_guardian_required">
+                      <span>Under-18 setup pauses self-claim and mints a verified Guardian / Steward bond request (CC 3.2, CSD-119).</span>
+                    </div>
+                  ` : ''}
+                </div>
+              </div>
+            ` : ''}
+
+            ${w.identityPath === "ADD_THIS_DEVICE" ? `
+              <div style="border-top:1px solid var(--hairline); padding-top:10px; margin-top:6px;" data-csd-tag="csd_093_add_this_device">
+                <div class="kv-row">
+                  <span>Label for this new device</span>
+                  <input class="field-input" style="max-width:240px;"
+                         data-csd-tag="input_add_device_name"
+                         value="${w.addDeviceName}"
+                         oninput="state.wizard.addDeviceName=this.value; renderAll();" />
+                </div>
+                <div class="kv-row">
+                  <span>Existing CIRIS ID contact / QR</span>
+                  <div style="display:flex; gap:6px; width:65%;">
+                    <input class="field-input"
+                           data-csd-tag="input_add_device_contact"
+                           placeholder="ciris://ed25519:...@host:4243"
+                           value="${w.addDeviceContact}"
+                           oninput="state.wizard.addDeviceContact=this.value; renderAll();" />
+                    <button class="btn" data-csd-tag="btn_add_device_scan" onclick="wizardScanQrFill()">Scan QR</button>
+                  </div>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0;">
+                  <span class="mono-hint" data-csd-tag="text_add_device_status">Status: ${w.addDeviceStatus}</span>
+                  <div style="display:flex; gap:6px;">
+                    <button class="btn btn-brand"
+                            data-csd-tag="btn_add_device_send"
+                            ${!w.addDeviceName.trim() || !w.addDeviceContact.trim() || lockedPath ? 'disabled' : ''}
+                            onclick="wizardSendAddDeviceRequest()">
+                      Send join request
+                    </button>
+                    ${w.addDeviceStatus === "requested" ? `
+                      <button class="btn" data-csd-tag="btn_sim_approver_accept" onclick="state.wizard.addDeviceStatus='approved'; renderAll();">
+                        Simulate existing device approval
+                      </button>
+                    ` : ''}
+                  </div>
+                </div>
+                ${w.addDeviceMatchCode ? `
+                  <div class="match-code-box" data-csd-tag="text_add_device_match_code">${w.addDeviceMatchCode}</div>
+                  <div style="font-size:12px; color:var(--ink-mute); padding-bottom:8px;" data-csd-tag="text_add_device_held_note">
+                    Confirm this 6-digit code on your existing device (<code>My things &rsaquo; Devices &amp; keys</code>). If your CIRIS ID already has 2+ devices, a second signature lands immediately or a single signature waits out the 24h <code>W_self</code> window (<code>CSD-095</code>).
+                  </div>
+                ` : ''}
+              </div>
+            ` : ''}
+
+            <div style="display:flex; justify-content:flex-end; padding:10px 0;">
+              <button class="btn btn-brand"
+                      data-csd-tag="btn_next"
+                      ${!canWizardAdvanceFromYou() ? 'disabled' : ''}
+                      onclick="wizardNextStep()">
+                Next: Join &amp; Consent &rarr;
+              </button>
+            </div>
+          </div>
+        `;
+      } else if (w.step === "JOIN_FEDERATION") {
+        bodyHtml = `
+          <div class="card" data-csd-tag="setup_step_join_federation">
+            <div class="card-header">
+              <div class="card-header-title">
+                <span>Step 2 &middot; Federation &amp; Consent Disclosure</span>
+                <span class="chip brand">GET /v1/setup/consent-disclosure</span>
+              </div>
+            </div>
+            <div style="font-size:12px; color:var(--ink-mute); margin-bottom:8px;">
+              Nothing leaves <strong>Just me</strong> without an explicit scope choice. Diagnostic trace sharing is optional and unbiased:
+            </div>
+            <div style="display:flex; gap:8px; margin-bottom:10px;">
+              <button class="btn ${w.traceConsent === true ? 'btn-brand' : ''}" data-csd-tag="trace_consent_yes" onclick="state.wizard.traceConsent=true; renderAll();">
+                Share anonymized traces
+              </button>
+              <button class="btn ${w.traceConsent === false ? 'btn-brand' : ''}" data-csd-tag="trace_consent_no" onclick="state.wizard.traceConsent=false; state.wizard.traceAnalyze=false; renderAll();">
+                Keep traces local only
+              </button>
+            </div>
+            ${w.traceConsent === true ? `
+              <div class="kv-row">
+                <span>Allow aggregated pattern analysis (<code>toggle_trace_analyze</code>)</span>
+                <input type="checkbox" data-csd-tag="toggle_trace_analyze" ${w.traceAnalyze ? 'checked' : ''} onchange="state.wizard.traceAnalyze=this.checked; renderAll();" />
+              </div>
+            ` : ''}
+            ${w.ageBand === 'MINOR' || w.ageBand === 'DECLINED' ? `
+              <div class="kv-row" data-csd-tag="txt_announce_not_offered">
+                <span>Public directory reachability</span>
+                <span class="chip ok">Private by protective default</span>
+              </div>
+            ` : `
+              <div class="kv-row">
+                <span>Make this device reachable in federation directory (<code>toggle_announce_ownership</code>)</span>
+                <input type="checkbox" data-csd-tag="toggle_announce_ownership" ${w.announceOwnership ? 'checked' : ''} onchange="state.wizard.announceOwnership=this.checked; renderAll();" />
+              </div>
+            `}
+            <div class="kv-row">
+              <span>Operator Never-Allowed Bounds (<code>CSD-118</code>)</span>
+              <span class="chip danger">prohibited:* enforced</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:10px 0;">
+              <button class="btn" data-csd-tag="btn_back" onclick="wizardPrevStep()">&larr; Back</button>
+              <button class="btn btn-brand" data-csd-tag="btn_next" ${w.traceConsent === null ? 'disabled' : ''} onclick="wizardNextStep()">
+                ${w.runWithAi ? 'Next: AI &amp; Stewardship &rarr;' : 'Next: Claim Node &rarr;'}
+              </button>
+            </div>
+          </div>
+        `;
+      } else if (w.step === "AI") {
+        bodyHtml = `
+          <div class="card" data-csd-tag="setup_step_ai">
+            <div class="card-header">
+              <div class="card-header-title">
+                <span>Step 3 &middot; Conscience-Bearing AI &amp; Steward Bond (CSD-115)</span>
+                <span class="chip ok" data-csd-tag="txt_llm_state">LLM: ${w.llmStatus}</span>
+              </div>
+            </div>
+            <div class="kv-row">
+              <span>Inference provider (keyless local options first)</span>
+              <select class="field-input" style="max-width:220px;" data-csd-tag="input_llm_provider" onchange="state.wizard.llmProvider=this.value; renderAll();">
+                <option value="local_ollama" ${w.llmProvider==='local_ollama'?'selected':''}>Local Ollama (keyless)</option>
+                <option value="ciris_portal" ${w.llmProvider==='ciris_portal'?'selected':''}>CIRIS Steward Portal</option>
+                <option value="byok_openai" ${w.llmProvider==='byok_openai'?'selected':''}>Bring Your Own API Key</option>
+              </select>
+            </div>
+            <div class="kv-row">
+              <span>Connection check</span>
+              <button class="btn" data-csd-tag="btn_test_connection" onclick="state.wizard.llmStatus='ok'; renderAll();">Test connection</button>
+            </div>
+            <div class="kv-row">
+              <span>Steward–Agent Bond (<code>CSD-115</code> &middot; Depth 1 &middot; 365d review)</span>
+              <span class="chip brand" data-csd-tag="opt_template_companion_default">Companion Steward</span>
+            </div>
+            <div class="kv-row">
+              <span>Always-on Conscience &amp; Halt Gate (<code>tool_disclosure_always_on</code>)</span>
+              <span class="chip ok" data-csd-tag="tool_disclosure_always_on">H3ERE + 423 Halt Gate</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:10px 0;">
+              <button class="btn" data-csd-tag="btn_back" onclick="wizardPrevStep()">&larr; Back</button>
+              <button class="btn btn-brand" data-csd-tag="btn_next" onclick="wizardNextStep()">Next: Finish &amp; Claim &rarr;</button>
+            </div>
+          </div>
+        `;
+      } else if (w.step === "COMPLETE") {
+        if (w.identityPath === "ADD_THIS_DEVICE") {
+          const approved = w.addDeviceStatus === "approved";
+          bodyHtml = `
+            <div class="card" data-csd-tag="setup_step_complete_add_device">
+              <div class="card-header">
+                <div class="card-header-title">
+                  <span>Complete Multi-Device Enrollment (CSD-093)</span>
+                  <span class="chip ${approved ? 'ok' : 'warn'}">${w.addDeviceStatus}</span>
+                </div>
+              </div>
+              ${!approved ? `
+                <div class="state-banner brand" data-csd-tag="setup_add_device_waiting">
+                  <span>Waiting for approval of match code <strong>${w.addDeviceMatchCode || '482 913'}</strong> on your existing device (<code>409 add_device.not_approved</code> blocks premature completion).</span>
+                </div>
+                <div style="display:flex; gap:8px; padding:8px 0;">
+                  <button class="btn" data-csd-tag="btn_add_device_finish_retry" onclick="state.wizard.addDeviceStatus='approved'; renderAll();">
+                    Check approval again (Simulate Approved)
+                  </button>
+                </div>
+              ` : `
+                <div class="state-banner" data-csd-tag="setup_ownership_claimed">
+                  <span><strong>Device approved!</strong> Enrolled into <code>${ state.multiDevice.selfKeyId }</code> via <code>POST /v1/setup/add-device/complete</code> &rarr; <code>/v1/setup/claimed-session</code>.</span>
+                  <span class="chip ok">Enrolled</span>
+                </div>
+              `}
+              <div style="display:flex; justify-content:space-between; padding:10px 0;">
+                <button class="btn" data-csd-tag="btn_back" onclick="wizardPrevStep()">&larr; Back</button>
+                <button class="btn btn-brand" data-csd-tag="btn_finish_setup" ${!approved ? 'disabled' : ''} onclick="wizardFinishSetup()">
+                  Enter Circles &rarr;
+                </button>
+              </div>
+            </div>
+          `;
+        } else {
+          bodyHtml = `
+            <div class="card" data-csd-tag="csd_085_claim_node">
+              <div class="card-header">
+                <div class="card-header-title">
+                  <span>Claim Node Ownership (CSD-085)</span>
+                  <span class="chip ${w.ownershipState === 'claimed' ? 'ok' : 'brand'}">${w.ownershipState}</span>
+                </div>
+              </div>
+              <div class="kv-row">
+                <span>0600 <code>claim_pin</code> file (never logged to stdout)</span>
+                <input class="field-input" style="max-width:180px; font-family:var(--mono);"
+                       data-csd-tag="input_claim_pin"
+                       value="${w.claimPin0600}"
+                       oninput="state.wizard.claimPin0600=this.value; renderAll();" />
+              </div>
+              ${w.ownershipState === "unclaimed" ? `
+                <div style="padding:8px 0;">
+                  <button class="btn btn-brand" data-csd-tag="btn_claim_node_pin" onclick="wizardClaimOwnershipNow()">
+                    Claim node with 0600 PIN (POST /v1/setup/claim-remote)
+                  </button>
+                </div>
+              ` : ''}
+              ${w.ownershipState === "claiming" ? `
+                <div class="state-banner" data-csd-tag="setup_ownership_claiming">
+                  <span>Verifying 0600 <code>claim_pin</code> and binding owner key&hellip;</span>
+                </div>
+              ` : ''}
+              ${w.ownershipState === "claimed" ? `
+                <div class="state-banner" data-csd-tag="setup_ownership_claimed">
+                  <span><strong>This node is yours.</strong> Role: <code>SYSTEM_ADMIN</code> &middot; Owner: <code>${w.fedidLabel || 'alice.ciris'}</code></span>
+                  <span class="chip ok">Claimed</span>
+                </div>
+              ` : ''}
+              ${w.ownershipState === "error" ? `
+                <div class="state-banner danger" data-csd-tag="setup_ownership_error">
+                  <span>PIN mismatch (<code>403 invalid_claim_pin</code>). Check <code>~/.ciris/claim_pin</code> (mode 0600).</span>
+                  <button class="btn" data-csd-tag="btn_setup_finish_unclaimed" onclick="wizardFinishSetup()">Continue unclaimed</button>
+                </div>
+              ` : ''}
+              <div style="display:flex; justify-content:space-between; padding:10px 0;">
+                <button class="btn" data-csd-tag="btn_back" onclick="wizardPrevStep()">&larr; Back</button>
+                <button class="btn btn-brand" data-csd-tag="btn_finish_setup" onclick="wizardFinishSetup()">
+                  Finish Setup &amp; Open Circles &rarr;
+                </button>
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      return stepHeaderHtml + bodyHtml;
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // 2. FULL MULTI-DEVICE & SELF-KEY ROSTER (`CSD-037`, `CSD-094`, `CSD-095`)
+    // ══════════════════════════════════════════════════════════════════════════
+
+    function switchActiveDevicePerspective(occId) {
+      state.multiDevice.activeOccurrenceId = occId;
+      state.multiDevice.lastReceiptNote = null;
+      renderAll();
+    }
+
+    function toggleDeviceReachable(occId) {
+      const dev = state.multiDevice.devices.find(d => d.occurrenceId === occId);
+      if (dev) dev.reachable = !dev.reachable;
+      renderAll();
+    }
+
+    // `CSD-037`: Evict device with 3-fact ConfirmSheet + CC 4.5.12.1 honesty note + 2-stage force_self
+    function openEvictDeviceSheet(occId) {
+      const dev = state.multiDevice.devices.find(d => d.occurrenceId === occId);
+      if (!dev) return;
+      const isSelf = occId === state.multiDevice.activeOccurrenceId;
+      const enrolledCount = activeEnrolledDevices().length;
+      const requiresQuorum = enrolledCount >= 2 && !isSelf;
+
+      const host = document.getElementById("sheetHost");
+      host.innerHTML = `
+        <div class="sheet-backdrop" onclick="if(event.target===this)closeSheet()">
+          <div class="sheet" data-csd-tag="confirm_evict_device_${occId}">
+            <div class="sheet-header">
+              <span class="sheet-title">Evict ${dev.label}?</span>
+              <button class="btn-ghost" onclick="closeSheet()">&#10005;</button>
+            </div>
+            <div class="card" style="padding:8px 14px;">
+              <div class="kv-row"><span>1. Device</span><strong>${dev.label} (<code>${dev.keyId}</code>)</strong></div>
+              <div class="kv-row"><span>2. Future access</span><span>Cannot act as you or receive new Self-DEK content</span></div>
+              <div class="kv-row"><span>3. Path</span><span>${isSelf ? 'Self-release (requires 2-step force_self)' : (requiresQuorum ? 'Creates Self-Key Roster eviction proposal (CSD-095)' : 'Immediate revocation')}</span></div>
+            </div>
+            <div class="state-banner danger" style="margin:10px 0;" data-csd-tag="txt_dek_honesty_note">
+              <span><strong>Constitutional Honesty Note (CC 4.5.12.1 / 3.3.6.1):</strong> It can no longer act as you or receive anything new. Anything already shared with that device stays readable to it &mdash; CIRIS does not re-encrypt past content.</span>
+            </div>
+            ${isSelf && state.multiDevice.revokeForcePendingId !== occId ? `
+              <div class="state-banner brand" data-csd-tag="txt_release_self_requires_force">
+                <span>This is the device you are currently using (<code>self.release_self_requires_force</code>). Confirming once unlocks the final <code>force_self: true</code> release button.</span>
+              </div>
+              <div style="display:flex; gap:8px; margin-top:12px;">
+                <button class="btn btn-danger" data-csd-tag="btn_evict_arm_force_self" onclick="state.multiDevice.revokeForcePendingId='${occId}'; openEvictDeviceSheet('${occId}');">
+                  Step 1: Arm self-eviction
+                </button>
+                <button class="btn" onclick="closeSheet()">Cancel</button>
+              </div>
+            ` : `
+              <div style="display:flex; gap:8px; margin-top:12px;">
+                <button class="btn btn-danger" data-csd-tag="btn_confirm_evict_${occId}" onclick="executeEvictDevice('${occId}')">
+                  ${isSelf ? 'Step 2: Evict this device (force_self: true)' : (requiresQuorum ? 'Propose eviction on Self-Key Roster' : 'Evict device now')}
+                </button>
+                <button class="btn" onclick="state.multiDevice.revokeForcePendingId=null; closeSheet();">Cancel</button>
+              </div>
+            `}
+          </div>
+        </div>
+      `;
+    }
+
+    function executeEvictDevice(occId) {
+      const dev = state.multiDevice.devices.find(d => d.occurrenceId === occId);
+      if (!dev) return;
+      const me = state.multiDevice.activeOccurrenceId;
+      const myDev = state.multiDevice.devices.find(d => d.occurrenceId === me) || state.multiDevice.devices[0];
+      const enrolledCount = activeEnrolledDevices().length;
+
+      if (enrolledCount >= 3 && occId !== me) {
+        // Multi-device quorum / 24h W_self eviction proposal (`CSD-095`)
+        const propId = "prop-evict-" + occId;
+        state.multiDevice.proposals.unshift({
+          proposalId: propId,
+          kind: "evict",
+          subjectKeyId: dev.keyId,
+          subjectOccurrenceId: dev.occurrenceId,
+          subjectLabel: dev.label,
+          subjectClass: dev.deviceClass,
+          proposedByOccurrenceId: me,
+          proposedByLabel: myDev.label,
+          approvals: [me],
+          objectors: [],
+          windowRemSecs: 86400,
+          earliestLoneAt: "2026-10-21T18:00:00Z (24h W_self)",
+          settled: null,
+        });
+      } else {
+        dev.revoked = true;
+        dev.dekRecipient = false;
+      }
+      state.multiDevice.revokeForcePendingId = null;
+      closeSheet();
+      renderAll();
+    }
+
+    // `CSD-094`: Approve or Deny a pending device join request behind a 3-fact ConfirmSheet
+    function openApproveDeviceConfirm(reqId, approve) {
+      const req = state.multiDevice.pendingDeviceRequests.find(r => r.requestId === reqId);
+      if (!req) return;
+      const enrolledCount = activeEnrolledDevices().length;
+      const willHold = approve && enrolledCount >= 2;
+
+      const host = document.getElementById("sheetHost");
+      host.innerHTML = `
+        <div class="sheet-backdrop" onclick="if(event.target===this)closeSheet()">
+          <div class="sheet" data-csd-tag="confirm_device_request_${reqId}">
+            <div class="sheet-header">
+              <span class="sheet-title">${approve ? 'Approve' : 'Deny'} ${req.label}?</span>
+              <button class="btn-ghost" onclick="closeSheet()">&#10005;</button>
+            </div>
+            <div class="card" style="padding:8px 14px;">
+              <div class="kv-row"><span>1. Device &amp; class</span><strong>${req.label} (<code>${req.deviceClass}</code>)</strong></div>
+              <div class="kv-row"><span>2. 6-digit match code</span><strong class="mono-hint">${req.matchCode}</strong></div>
+              <div class="kv-row"><span>3. Outcome</span><span>${!approve ? 'Refuses request immediately' : (willHold ? '202 Held: opens Self-Key Roster proposal (24h W_self or 2nd device signature)' : '200 Approved: enrolls device immediately (single-device roster)')}</span></div>
+            </div>
+            <div style="display:flex; gap:8px; margin-top:12px;">
+              <button class="btn ${approve ? 'btn-brand' : 'btn-danger'}"
+                      data-csd-tag="btn_confirm_device_req_yes"
+                      onclick="executeDeviceRequestDecision('${reqId}', ${approve})">
+                ${approve ? 'Confirm approval' : 'Confirm denial'}
+              </button>
+              <button class="btn" onclick="closeSheet()">Cancel</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function executeDeviceRequestDecision(reqId, approve) {
+      const req = state.multiDevice.pendingDeviceRequests.find(r => r.requestId === reqId);
+      if (!req) return;
+      const enrolledCount = activeEnrolledDevices().length;
+      const me = state.multiDevice.activeOccurrenceId;
+      const myDev = state.multiDevice.devices.find(d => d.occurrenceId === me) || state.multiDevice.devices[0];
+
+      if (!approve) {
+        req.status = "denied";
+      } else if (enrolledCount <= 1) {
+        // `roster_size == 1` -> `200 {approved: true}` immediate landing (`CSD-094`)
+        req.status = "approved";
+        if (!state.multiDevice.devices.some(d => d.occurrenceId === req.occurrenceId)) {
+          state.multiDevice.devices.push({
+            occurrenceId: req.occurrenceId,
+            keyId: req.keyId,
+            label: req.label,
+            deviceClass: req.deviceClass,
+            reachable: false,
+            hardwareCustody: "secure_enclave",
+            dekRecipient: true,
+            revoked: false,
+          });
+        }
+      } else {
+        // `roster_size >= 2` -> `202 {approved: false, held: true, proposal_id}` (`CSD-094` + `CSD-095`)
+        req.status = "held";
+        const propId = "prop-add-" + req.occurrenceId;
+        state.multiDevice.lastHeldBannerProposalId = propId;
+        if (!state.multiDevice.proposals.some(p => p.proposalId === propId)) {
+          state.multiDevice.proposals.unshift({
+            proposalId: propId,
+            kind: "add",
+            subjectKeyId: req.keyId,
+            subjectOccurrenceId: req.occurrenceId,
+            subjectLabel: req.label,
+            subjectClass: req.deviceClass,
+            proposedByOccurrenceId: me,
+            proposedByLabel: myDev.label,
+            approvals: [me],
+            objectors: [],
+            windowRemSecs: 86400,
+            earliestLoneAt: "2026-10-21T17:45:00Z (24h W_self)",
+            settled: null,
+          });
+        }
+      }
+      closeSheet();
+      renderAll();
+    }
+
+    // `CSD-095`: Agree (`+1`) or Object (`-1`) to a Self-Key Roster proposal behind 3-fact `ConfirmSheet`
+    function openRosterAnswerConfirm(propId, assent) {
+      const p = state.multiDevice.proposals.find(x => x.proposalId === propId);
+      if (!p) return;
+      const changeText = (p.kind === "add" ? "Add " : "Evict ") + p.subjectLabel;
+      const effectText = assent
+        ? (p.approvals.length + 1 >= 2
+            ? "Reaches quorum (2 signatures) and lands immediately"
+            : "Records your +1 scores signature toward quorum")
+        : "Records your -1 scores objection, blocking the 24h single-device window and refusing the change";
+
+      const host = document.getElementById("sheetHost");
+      host.innerHTML = `
+        <div class="sheet-backdrop" onclick="if(event.target===this)closeSheet()">
+          <div class="sheet" data-csd-tag="confirm_roster_answer">
+            <div class="sheet-header">
+              <span class="sheet-title">${assent ? 'Agree' : 'Object'} to ${changeText}?</span>
+              <button class="btn-ghost" onclick="closeSheet()">&#10005;</button>
+            </div>
+            <div class="card" style="padding:8px 14px;">
+              <div class="kv-row"><span>1. Change</span><strong>${changeText}</strong></div>
+              <div class="kv-row"><span>2. Proposed by</span><strong>${p.proposedByLabel}</strong></div>
+              <div class="kv-row"><span>3. What your answer does</span><span>${effectText}</span></div>
+            </div>
+            ${p.kind === 'evict' && assent ? `
+              <div style="font-size:12px; color:var(--danger); margin-bottom:10px;">
+                CC 4.5.12.1: Already-shared content stays readable to the evicted device; CIRIS does not re-encrypt past content.
+              </div>
+            ` : ''}
+            <div style="display:flex; gap:8px; margin-top:12px;">
+              <button class="btn ${assent ? 'btn-brand' : 'btn-danger'}"
+                      data-csd-tag="btn_confirm_roster_answer_yes"
+                      onclick="executeRosterAnswer('${propId}', ${assent})">
+                ${assent ? 'Sign agreement (+1)' : 'Sign objection (-1)'}
+              </button>
+              <button class="btn" data-csd-tag="btn_confirm_roster_answer_cancel" onclick="closeSheet()">Cancel</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function executeRosterAnswer(propId, assent) {
+      const p = state.multiDevice.proposals.find(x => x.proposalId === propId);
+      if (!p) return;
+      const me = state.multiDevice.activeOccurrenceId;
+
+      if (assent) {
+        if (!p.approvals.includes(me)) p.approvals.push(me);
+        if (p.approvals.length >= 2) {
+          p.settled = "LANDED";
+          if (p.kind === "add") {
+            if (!state.multiDevice.devices.some(d => d.occurrenceId === p.subjectOccurrenceId)) {
+              state.multiDevice.devices.push({
+                occurrenceId: p.subjectOccurrenceId,
+                keyId: p.subjectKeyId,
+                label: p.subjectLabel,
+                deviceClass: p.subjectClass || "phone",
+                reachable: false,
+                hardwareCustody: "secure_enclave",
+                dekRecipient: true,
+                revoked: false,
+              });
+            }
+            const req = state.multiDevice.pendingDeviceRequests.find(r => r.occurrenceId === p.subjectOccurrenceId);
+            if (req) req.status = "approved";
+          } else if (p.kind === "evict") {
+            const dev = state.multiDevice.devices.find(d => d.occurrenceId === p.subjectOccurrenceId);
+            if (dev) {
+              dev.revoked = true;
+              dev.dekRecipient = false;
+            }
+          }
+        }
+        state.multiDevice.lastReceiptNote = `Signed scores +1 on self_roster:${p.kind} (${p.proposalId}) by ${me} at federation scope -> ${p.settled || 'PENDING'}`;
+      } else {
+        if (!p.objectors.includes(me)) p.objectors.push(me);
+        p.settled = "REFUSED";
+        state.multiDevice.lastReceiptNote = `Signed scores -1 objection on self_roster:${p.kind} (${p.proposalId}) by ${me} -> REFUSED (24h lone window blocked)`;
+      }
+      closeSheet();
+      renderAll();
+    }
+
+    function renderDevicesAndKeysSurface() {
+      const md = state.multiDevice;
+      const enrolled = activeEnrolledDevices();
+      const visibleDevices = md.showRevoked ? md.devices : enrolled;
+      const openProposals = md.proposals.filter(p => !p.settled);
+      const settledProposals = md.proposals.filter(p => !!p.settled);
+
+      return `
+        <!-- Perspective Switcher so reviewer/harness can test A1 (Proposer) vs A2 (Second Device Voter) -->
+        <div class="quiet-lens" data-csd-tag="multi_device_perspective_bar">
+          <span>Viewing as device: <strong>${md.activeOccurrenceId.toUpperCase()}</strong> &middot; Roster size: <strong>${enrolled.length}</strong></span>
+          <div style="display:flex; gap:4px;">
+            ${md.devices.filter(d => !d.revoked).map(d => `
+              <button class="btn ${md.activeOccurrenceId === d.occurrenceId ? 'btn-brand' : ''}"
+                      style="padding:3px 9px; font-size:11px;"
+                      data-csd-tag="btn_view_as_${d.occurrenceId}"
+                      onclick="switchActiveDevicePerspective('${d.occurrenceId}')">
+                ${d.label.split(' ')[0]} (${d.occurrenceId.replace('occ-', '').toUpperCase()})
+              </button>
+            `).join("")}
+          </div>
+        </div>
+
+        <!-- CARD 1: CSD-095 Changes to Your Devices — Self-Key Roster -->
+        <div class="card" data-csd-tag="card_self_roster">
+          <div class="card-header">
+            <div class="card-header-title">
+              <span>Changes to your devices &mdash; Self-key roster (CSD-095)</span>
+              ${openProposals.length > 0
+                ? `<span class="chip warn">${openProposals.length} waiting</span>`
+                : `<span class="chip ok">All settled</span>`}
+            </div>
+            <button class="btn-ghost" data-csd-tag="btn_self_roster_refresh" title="Refresh proposals" onclick="renderAll()">&#8635;</button>
+          </div>
+
+          ${md.lastReceiptNote ? `
+            <div class="state-banner brand" data-csd-tag="text_self_roster_receipt">
+              <span class="mono-hint">${md.lastReceiptNote}</span>
+            </div>
+          ` : ''}
+
+          ${openProposals.length === 0 ? `
+            <div class="item-row" data-csd-tag="text_self_roster_empty">
+              <span style="font-size:13px; color:var(--ink-mute);">No pending additions or evictions on your self-key roster.</span>
+            </div>
+          ` : openProposals.map(p => {
+            const isOwn = p.proposedByOccurrenceId === md.activeOccurrenceId;
+            const need = enrolled.length >= 3 ? 2 : 2;
+            const sigText = `Signatures: ${p.approvals.length} of ${need}${enrolled.length >= 3 ? ` (quorum of ${enrolled.length})` : ''}`;
+            const pathText = enrolled.length === 2 && p.kind === "add"
+              ? `2-device roster: lands immediately on 2nd signature, or after 24h W_self (${p.earliestLoneAt}) if unopposed`
+              : `Quorum path: 2 signatures land immediately · Lone path: 1 signature after ${p.earliestLoneAt} if 0 objections`;
+            return `
+              <div class="item-row" style="flex-direction:column; align-items:stretch; gap:8px;" data-csd-tag="row_self_roster_${p.proposalId}">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <strong data-csd-tag="text_self_roster_kind_${p.proposalId}">
+                      ${p.kind === 'add' ? 'Add device' : 'Evict device'}: ${p.subjectLabel}
+                    </strong>
+                    <div style="font-size:12px; color:var(--ink-mute);">
+                      Proposed by ${p.proposedByLabel} &middot; <span class="mono-hint">${p.subjectKeyId}</span>
+                    </div>
+                  </div>
+                  <span class="chip warn" data-csd-tag="text_self_roster_signatures_${p.proposalId}">${sigText}</span>
+                </div>
+                <div style="font-size:12px; color:var(--ink-mute);" data-csd-tag="text_self_roster_path_${p.proposalId}">
+                  ${pathText}
+                </div>
+                ${p.objectors.length > 0 ? `
+                  <div style="font-size:12px; color:var(--danger);" data-csd-tag="text_self_roster_objectors_${p.proposalId}">
+                    Objectors: ${p.objectors.join(", ")}
+                  </div>
+                ` : ''}
+                <div style="display:flex; justify-content:space-between; align-items:center; padding-top:4px;">
+                  ${isOwn ? `
+                    <span style="font-size:12px; color:var(--ink-mute);" data-csd-tag="text_self_roster_own_${p.proposalId}">
+                      This device proposed this change, so another of your devices answers it. (Switch to A2 above to answer!)
+                    </span>
+                  ` : `
+                    <div style="display:flex; gap:8px;">
+                      <button class="btn btn-brand"
+                              data-csd-tag="btn_self_roster_assent_${p.proposalId}"
+                              onclick="openRosterAnswerConfirm('${p.proposalId}', true)">
+                        Agree (+1)
+                      </button>
+                      <button class="btn btn-danger"
+                              data-csd-tag="btn_self_roster_object_${p.proposalId}"
+                              onclick="openRosterAnswerConfirm('${p.proposalId}', false)">
+                        Object (-1)
+                      </button>
+                    </div>
+                  `}
+                </div>
+              </div>
+            `;
+          }).join("")}
+
+          ${settledProposals.length > 0 ? `
+            <div style="border-top:1px solid var(--hairline); padding:10px 0 6px;">
+              <div style="font-size:12px; font-weight:600; color:var(--ink-mute); margin-bottom:6px;">No longer waiting</div>
+              ${settledProposals.map(p => `
+                <div class="kv-row" data-csd-tag="row_self_roster_history_${p.proposalId}">
+                  <span>${p.kind === 'add' ? 'Add' : 'Evict'} ${p.subjectLabel}</span>
+                  <span class="chip ${p.settled === 'LANDED' ? 'ok' : 'danger'}" data-csd-tag="chip_self_roster_settled_${p.proposalId}">
+                    ${p.settled}
+                  </span>
+                </div>
+              `).join("")}
+            </div>
+          ` : ''}
+        </div>
+
+        <!-- CARD 2: CSD-037 My Identity — Enrolled Devices Roster -->
+        <div class="card" data-csd-tag="csd_037_my_identity">
+          <div class="card-header">
+            <div class="card-header-title">
+              <span>My identity &amp; enrolled devices (CSD-037)</span>
+              <span class="chip ok" data-csd-tag="identity_self_key_id">${md.selfKeyId}</span>
+            </div>
+            <button class="btn-ghost" onclick="toggleExpand('csd037_more')">&ctdot;</button>
+          </div>
+
+          <div data-csd-tag="identity_device_list">
+            ${visibleDevices.map(d => `
+              <div class="item-row" data-csd-tag="identity_row_${d.occurrenceId}">
+                <div>
+                  <div class="item-title">
+                    ${d.label}
+                    ${d.occurrenceId === md.activeOccurrenceId ? '<span class="chip brand" style="margin-left:6px;">This device</span>' : ''}
+                    ${d.revoked ? '<span class="chip danger" style="margin-left:6px;">Evicted</span>' : ''}
+                  </div>
+                  <div style="font-size:12px; color:var(--ink-mute);">
+                    <code>${d.deviceClass}</code> &middot; Custody: <code>${d.hardwareCustody}</code>
+                    ${d.dekRecipient ? ' &middot; Self-DEK recipient' : ''}
+                  </div>
+                </div>
+                <div class="item-right">
+                  ${!d.revoked ? `
+                    <button class="btn" style="padding:3px 9px; font-size:11px;"
+                            data-csd-tag="btn_reachability_${d.occurrenceId}"
+                            onclick="toggleDeviceReachable('${d.occurrenceId}')">
+                      ${d.reachable ? 'Reachable' : 'Private'}
+                    </button>
+                    <button class="btn-ghost"
+                            data-csd-tag="btn_evict_${d.occurrenceId}"
+                            title="Evict device"
+                            onclick="openEvictDeviceSheet('${d.occurrenceId}')">
+                      Evict
+                    </button>
+                  ` : ''}
+                </div>
+              </div>
+            `).join("")}
+          </div>
+
+          ${state.expandedIds['csd037_more'] ? `
+            <div class="expand-body">
+              <div class="kv-row">
+                <span>Show evicted devices (<code>include_revoked=1</code>)</span>
+                <input type="checkbox" data-csd-tag="toggle_show_revoked" ${md.showRevoked ? 'checked' : ''} onchange="state.multiDevice.showRevoked=this.checked; renderAll();" />
+              </div>
+              <div class="kv-row">
+                <span>Forward secrecy honesty note (<code>CC 4.5.12.1</code>)</span>
+                <span>Evicted devices receive no new DEKs; past content remains readable</span>
+              </div>
+            </div>
+          ` : ''}
+        </div>
+
+        <!-- CARD 3: CSD-094 Approve a New Device -->
+        <div class="card" data-csd-tag="card_approve_device">
+          <div class="card-header">
+            <div class="card-header-title">
+              <span>Approve a new device (CSD-094)</span>
+              <span class="chip ${md.approvalWindowOpen ? 'ok' : ''}" data-csd-tag="text_approve_device_window">
+                ${md.approvalWindowOpen ? '10m window open' : 'Window closed'}
+              </span>
+            </div>
+            <button class="btn" style="padding:4px 10px; font-size:12px;"
+                    data-csd-tag="btn_approve_device_open"
+                    onclick="state.multiDevice.approvalWindowOpen=!state.multiDevice.approvalWindowOpen; renderAll();">
+              ${md.approvalWindowOpen ? 'Close window' : 'Open 10m window'}
+            </button>
+          </div>
+
+          ${md.lastHeldBannerProposalId ? `
+            <div class="state-banner brand" data-csd-tag="text_approve_device_held_window">
+              <span><strong>202 Held for Self-Key Roster:</strong> Because your CIRIS ID has ${enrolled.length} devices, approving created proposal <code>${md.lastHeldBannerProposalId}</code> above (24h <code>W_self</code> window or 2nd device signature).</span>
+            </div>
+          ` : ''}
+
+          ${md.pendingDeviceRequests.map(req => `
+            <div class="item-row" data-csd-tag="row_approve_device_${req.requestId}">
+              <div>
+                <div class="item-title">
+                  ${req.label}
+                  <span class="chip">${req.deviceClass}</span>
+                </div>
+                <div style="font-size:12px; color:var(--ink-mute);">
+                  6-digit match code: <strong class="mono-hint" data-csd-tag="text_approve_device_code_${req.requestId}">${req.matchCode}</strong>
+                  &middot; Status: <strong>${req.status}</strong>
+                </div>
+              </div>
+              <div class="item-right">
+                ${req.status === 'pending' ? `
+                  <button class="btn btn-brand"
+                          data-csd-tag="btn_approve_device_yes_${req.requestId}"
+                          onclick="openApproveDeviceConfirm('${req.requestId}', true)">
+                    Approve
+                  </button>
+                  <button class="btn"
+                          data-csd-tag="btn_approve_device_no_${req.requestId}"
+                          onclick="openApproveDeviceConfirm('${req.requestId}', false)">
+                    Deny
+                  </button>
+                ` : `
+                  <button class="btn-ghost" onclick="req.status='pending'; renderAll();">Reset</button>
+                `}
+              </div>
+            </div>
+          `).join("")}
         </div>
       `;
     }
@@ -725,7 +1894,7 @@
       renderAll();
     }
 
-    // ── `⋯` CSD/4 Inspector Sheet ──
+    // ── `⋯` CSD/4 Inspector & First-Run / Multi-Device Quick Switcher Sheet ──
     function openInspectorSheet() {
       const tagged = Array.from(document.querySelectorAll("[data-csd-tag]"));
       const host = document.getElementById("sheetHost");
@@ -733,10 +1902,20 @@
         <div class="sheet-backdrop" onclick="if(event.target===this)closeSheet()">
           <div class="sheet" data-csd-tag="sheet_csd4_inspector">
             <div class="sheet-header">
-              <span class="sheet-title">CSD/4 Automation Tag Tree (<code>/tree</code>)</span>
+              <span class="sheet-title">Node Posture, First-Run &amp; CSD/4 Tree (<code>/tree</code>)</span>
               <button class="btn-ghost" onclick="closeSheet()">&#10005;</button>
             </div>
-            <div class="card" style="padding:10px 14px; font-family:var(--mono); font-size:11px; max-height:320px; overflow-y:auto;">
+            <div class="card" style="padding:10px 14px; margin-bottom:12px;">
+              <div class="kv-row">
+                <span>Fresh Node First-Run Wizard (<code>T0 / T3 / T7</code>)</span>
+                <button class="btn btn-brand" onclick="startFirstRunWizard(true)">Launch First-Run Wizard</button>
+              </div>
+              <div class="kv-row">
+                <span>Multi-Device &amp; Self-Key Roster (<code>CSD-037, 094, 095</code>)</span>
+                <button class="btn" onclick="selectInstrument('DevicesAndKeys')">Open Devices &amp; keys</button>
+              </div>
+            </div>
+            <div class="card" style="padding:10px 14px; font-family:var(--mono); font-size:11px; max-height:280px; overflow-y:auto;">
               ${tagged.map(el => `
                 <div class="kv-row">
                   <strong>${el.getAttribute("data-csd-tag")}</strong>
@@ -798,20 +1977,14 @@
       if (inst.requiresAgent && !state.hasAgent) {
         return `
           <div class="state-banner" data-csd-tag="state_no_agent">
-            <span>No AI agent is attached to this node.</span>
-            <span class="chip">Bare node</span>
+            <span>No AI agent is attached to this node (<code>CSD-083</code> node-only mode).</span>
+            <span class="chip">Bare node (:4243)</span>
           </div>
         `;
       }
 
       if (inst.id === "DevicesAndKeys") {
-        const myKeys = CLAIMS.filter(c => c.tab === "People" && c.scope === "JustMe");
-        return `
-          <div class="card" data-csd-tag="csd_devices_keys_card">
-            ${myKeys.map(renderItemRow).join("")}
-          </div>
-          ${renderCeremonyCard("JustMe")}
-        `;
+        return renderDevicesAndKeysSurface();
       }
 
       if (inst.id === "EverythingIShared") {
@@ -871,9 +2044,20 @@
         return `
           ${renderExpandableCard("csd_node_standing", "Trust root standing", "Rooted", "ok", `
             <div class="kv-row"><span>Local node</span><span class="mono-hint">127.0.0.1:4243 (identified)</span></div>
-            <div class="kv-row"><span>Agent runtime</span><span class="mono-hint">127.0.0.1:8080 (22/22 services)</span></div>
+            <div class="kv-row"><span>Agent runtime</span><span class="mono-hint">${state.hasAgent ? '127.0.0.1:8080 (22/22 services)' : 'Not attached (CSD-083 node-only)'}</span></div>
             <div class="kv-row"><span>Crypto</span><span class="mono-hint">Ed25519 + ML-DSA-65 / X25519 + ML-KEM-768</span></div>
           `)}
+          <div class="card" data-csd-tag="csd_080_first_run_launcher">
+            <div class="card-header">
+              <div class="card-header-title">
+                <span>First-Run Setup &amp; Node Claim Wizard (CSD-080..085, 093)</span>
+                <span class="chip brand">${state.wizard.ownershipState}</span>
+              </div>
+              <button class="btn" data-csd-tag="btn_open_setup_wizard" onclick="startFirstRunWizard(false)">
+                Open Setup Wizard&hellip;
+              </button>
+            </div>
+          </div>
           ${renderExpandableCard("csd_118_never_allowed", "Never-allowed list & operator declaration (CSD-118)", "T0 · Enforced", "brand", `
             <div class="kv-row"><span>prohibited:*</span><span>No hidden scoring, no silent forward, no unconsented training</span></div>
             <div class="kv-row"><span>CSD/4 tests</span><span class="mono-hint">first_run [root.none, node.unclaimed] &middot; declared [root.none, node.claimed]</span></div>
@@ -963,10 +2147,24 @@
     // ── Main Render ──
     function renderAll() {
       const circle = getCircle(state.circleId);
+      const pendingRosterCount = answerableProposalCount();
+
+      // Update Top Bar Badge (`CSD-095`)
+      const badgeEl = document.getElementById("top_devices_badge");
+      if (badgeEl) {
+        if (pendingRosterCount > 0) {
+          badgeEl.style.display = "inline-flex";
+          badgeEl.textContent = pendingRosterCount;
+        } else {
+          badgeEl.style.display = "none";
+        }
+      }
 
       // Header Title
       const headerTitle = document.getElementById("headerTitle");
-      if (state.instrumentId) {
+      if (state.setupMode) {
+        headerTitle.innerHTML = `<span style="color:var(--brand);">First-Run Setup</span>`;
+      } else if (state.instrumentId) {
         const inst = INSTRUMENTS.find(i => i.id === state.instrumentId);
         headerTitle.innerHTML = `<span style="color:var(--ink-mute); font-weight:400;">My things /</span> <span>${inst.label}</span>`;
       } else {
@@ -979,7 +2177,7 @@
 
       // Tabs Bar
       const tabsBar = document.getElementById("tabsBar");
-      if (state.instrumentId) {
+      if (state.setupMode || state.instrumentId) {
         tabsBar.style.display = "none";
       } else {
         tabsBar.style.display = "flex";
@@ -992,7 +2190,7 @@
 
       // Bottom Circle Switcher
       document.getElementById("circleNav").innerHTML = CIRCLES.map(c => `
-        <button class="circle-btn ${!state.instrumentId && state.circleId === c.id ? 'active' : ''}"
+        <button class="circle-btn ${!state.setupMode && !state.instrumentId && state.circleId === c.id ? 'active' : ''}"
                 data-csd-tag="nav_circle_${c.id}"
                 onclick="selectCircle('${c.id}')">
           <span class="circle-dot" style="background:${c.color}"></span>
@@ -1015,6 +2213,13 @@
             </div>
           ` : ''}
         `;
+      }
+
+      // If First-Run Setup Mode is active, render the First-Run Wizard (`CSD-080`..`CSD-085`, `CSD-093`)
+      if (state.setupMode) {
+        html += renderFirstRunWizard();
+        document.getElementById("surfaceRoot").innerHTML = html;
+        return;
       }
 
       // If an instrument under `My things` is active, render it

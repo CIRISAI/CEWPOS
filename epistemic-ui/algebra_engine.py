@@ -954,6 +954,155 @@ def build_all_11_promise_cards() -> Dict[str, Any]:
     }
 
 
+# ============================================================================
+# 5. FIRST-RUN WIZARD & MULTI-DEVICE SELF-KEY ROSTER ALGEBRA
+#    (CSD-080..085, CSD-093, CSD-094, CSD-095, CSD-037)
+# ============================================================================
+
+@dataclass
+class FirstRunWizardState:
+    step: str = "YOU"  # YOU | JOIN_FEDERATION | AI | COMPLETE
+    identity_path: Optional[str] = None  # None | "NEW" | "ADD_THIS_DEVICE"
+    run_with_ai: bool = True
+    fedid_label: str = ""
+    device_name: str = "Founder Laptop"
+    hardware_custody: bool = True
+    age_band: Optional[str] = None  # None | "ADULT" | "MINOR" | "DECLINED"
+    trace_consent: Optional[bool] = None  # None | True | False
+    trace_analyze: bool = False
+    announce_ownership: bool = False
+    add_device_contact: str = ""
+    add_device_match_code: Optional[str] = None
+    add_device_phase: str = "idle"  # idle | requested | approved | applied | denied | expired | failed
+    add_device_held_by_roster: bool = False
+    ownership_status: str = "unclaimed"  # unclaimed | claiming | claimed | error
+    pin_source_0600: bool = True
+
+    def visible_steps(self) -> List[str]:
+        if self.run_with_ai:
+            return ["YOU", "JOIN_FEDERATION", "AI"]
+        return ["YOU", "JOIN_FEDERATION"]
+
+    @staticmethod
+    def is_valid_fedid_label(label: str) -> bool:
+        trimmed = label.strip()
+        return bool(trimmed) and trimmed.lower() != "ciris-client-user"
+
+    def locks_identity_path(self) -> bool:
+        return self.add_device_phase in ("requested", "approved", "retrying")
+
+    def can_advance_from_you(self) -> bool:
+        if self.identity_path is None:
+            return False
+        if self.identity_path == "NEW":
+            return (
+                self.is_valid_fedid_label(self.fedid_label)
+                and bool(self.device_name.strip())
+                and self.age_band is not None
+                and self.age_band != "MINOR"
+            )
+        if self.identity_path == "ADD_THIS_DEVICE":
+            return self.add_device_phase in ("requested", "approved", "applied")
+        return False
+
+    def can_complete_setup(self) -> bool:
+        if self.identity_path == "ADD_THIS_DEVICE":
+            return self.add_device_phase == "approved"
+        return self.identity_path == "NEW"
+
+
+@dataclass
+class SelfDeviceOccurrence:
+    occurrence_id: str
+    key_id: str
+    label: str
+    device_class: str
+    reachable: bool
+    hardware_custody: bool
+    dek_recipient: bool = True
+    revoked: bool = False
+    current_device: bool = False
+
+
+@dataclass
+class SelfRosterProposal:
+    proposal_id: str
+    kind: str  # "add" | "evict"
+    subject_key_id: str
+    subject_label: str
+    proposed_by_occurrence_id: str
+    proposed_by_label: str
+    roster_size: int
+    approvals: List[str] = field(default_factory=list)
+    objectors: List[str] = field(default_factory=list)
+    window_rem_secs: int = 86400
+    settled: Optional[str] = None  # None | "LANDED" | "REFUSED" | "CANCELLED"
+
+    def verdict(self) -> Dict[str, Any]:
+        fam = "self_roster_add" if self.kind == "add" else "self_roster_evict"
+        return evaluate_governance_policy(
+            fam,
+            self.roster_size,
+            len(self.approvals),
+            len(self.objectors),
+            self.window_rem_secs,
+        )
+
+    def is_own_proposal(self, active_occurrence_id: str) -> bool:
+        return self.proposed_by_occurrence_id == active_occurrence_id
+
+    def is_answerable_by(self, active_occurrence_id: str) -> bool:
+        return (
+            self.settled is None
+            and not self.is_own_proposal(active_occurrence_id)
+            and active_occurrence_id not in self.approvals
+            and active_occurrence_id not in self.objectors
+        )
+
+    def build_answer_confirm_sheet(self, assent: bool) -> Dict[str, Any]:
+        change_label = f"{'Add' if self.kind == 'add' else 'Evict'} {self.subject_label}"
+        if assent:
+            effect = (
+                "Reaches quorum (2 signatures) and lands immediately"
+                if len(self.approvals) + 1 >= 2
+                else "Records your +1 signature toward quorum"
+            )
+        else:
+            effect = "Blocks the 24h single-device window and refuses this proposal"
+        return {
+            "title": f"{'Agree' if assent else 'Object'} to {change_label.lower()}?",
+            "facts": [
+                ("Change", change_label),
+                ("Proposed by", self.proposed_by_label),
+                ("What your answer does", effect),
+            ],
+            "danger_note": (
+                "An objection is a signed -1 scores row at federation scope."
+                if not assent
+                else (
+                    "Already-shared content stays readable to the evicted device — CIRIS does not re-encrypt past content (CC 4.5.12.1)."
+                    if self.kind == "evict"
+                    else None
+                )
+            ),
+            "confirm_label": "Sign agreement (+1)" if assent else "Sign objection (-1)",
+            "cancel_label": "Cancel",
+        }
+
+
+def evaluate_device_approval(roster_size: int, occurrence_id: str, proposal_id: str) -> Dict[str, Any]:
+    """CSD-094 + CSD-095: N=1 lands immediately (200); N>=2 enters 202 Held on self-key roster."""
+    if roster_size <= 1:
+        return {"status": 200, "approved": True, "held": False, "occurrence_id": occurrence_id}
+    return {
+        "status": 202,
+        "approved": False,
+        "held": True,
+        "proposal_id": proposal_id,
+        "window_secs": 86400,
+    }
+
+
 def verify_all_invariants() -> None:
     """Run all formal verification checks and emit JSON artifacts."""
     # 1. Closed 1+4 Operator Gate
@@ -991,6 +1140,46 @@ def verify_all_invariants() -> None:
     assert evaluate_governance_policy("self_roster_add", 3, 1, 0, 0)["verdict"] == "LandsReverse"
     assert evaluate_governance_policy("default_irreversible", 6, 6, 0, 3600)["verdict"] == "Pending"
     assert evaluate_governance_policy("default_irreversible", 6, 5, 0, 0)["verdict"] == "LandsForward"
+
+    # 4b. First-Run Wizard & Self-Key Roster Multi-Device Invariants (CSD-082..085, CSD-093..095, CSD-037)
+    wiz = FirstRunWizardState()
+    assert wiz.identity_path is None
+    assert wiz.trace_consent is None
+    assert not wiz.can_advance_from_you()
+    assert wiz.visible_steps() == ["YOU", "JOIN_FEDERATION", "AI"]
+    wiz.run_with_ai = False
+    assert wiz.visible_steps() == ["YOU", "JOIN_FEDERATION"]
+    wiz.identity_path = "NEW"
+    wiz.fedid_label = "ciris-client-user"
+    wiz.age_band = "ADULT"
+    assert not wiz.can_advance_from_you()
+    wiz.fedid_label = "alice.ciris"
+    assert wiz.can_advance_from_you()
+    wiz.identity_path = "ADD_THIS_DEVICE"
+    wiz.add_device_phase = "requested"
+    assert wiz.locks_identity_path()
+    assert not wiz.can_complete_setup()
+    wiz.add_device_phase = "approved"
+    assert wiz.can_complete_setup()
+
+    assert evaluate_device_approval(1, "occ-a2", "prop-1")["status"] == 200
+    assert evaluate_device_approval(2, "occ-a3", "prop-2")["status"] == 202
+    assert evaluate_device_approval(2, "occ-a3", "prop-2")["held"] is True
+
+    roster_prop = SelfRosterProposal(
+        proposal_id="prop-2",
+        kind="add",
+        subject_key_id="ed25519:s23_phone",
+        subject_label="S23 Phone",
+        proposed_by_occurrence_id="occ-a1",
+        proposed_by_label="Founder Laptop (A1)",
+        roster_size=2,
+        approvals=["occ-a1"],
+    )
+    assert roster_prop.is_own_proposal("occ-a1")
+    assert not roster_prop.is_answerable_by("occ-a1")
+    assert roster_prop.is_answerable_by("occ-a2")
+    assert len(roster_prop.build_answer_confirm_sheet(True)["facts"]) == 3
 
     # 5. Epistemic Scene + CSD/4 Tree Projection
     sample_form = read_form(

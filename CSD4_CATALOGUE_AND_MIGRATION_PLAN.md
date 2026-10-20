@@ -41,7 +41,7 @@ flowchart LR
 |---|---|---|---|
 | CIRISServer Embedded Node Health | `http://127.0.0.1:4243/health` | ONLINE (`200`) | standing=identified, key_id=ciris-agent-bootstrap-j7uo5vwfei, version=0.5.223 |
 | CIRISAgent API Root | `http://127.0.0.1:8080/` | ONLINE (`200`) | 207 bytes |
-| CEWPOS Epistemic UI Surface | `http://127.0.0.1:8787/index.html` | ONLINE (`200`) | 5 Circles=True, 7 Tabs=True, ProgressiveDisclosure(☰/⋯)=True |
+| CEWPOS Epistemic UI Surface | `http://127.0.0.1:8787/index.html` | ONLINE (`200`) | 5 Circles=True, 7 Tabs=True, FirstRunWizard(CSD-080..085,093)=True, SelfKeyRoster(CSD-037,094,095)=True, ProgressiveDisclosure(☰/⋯)=True |
 | CEWPOS Promise Cards Bundle (CSD-111..128) | `http://127.0.0.1:8787/out/all_promise_cards.json` | ONLINE (`200`) | 18 reserved CSD cards projected (CSD-111..CSD-128) |
 
 ---

@@ -1382,6 +1382,312 @@ impl SurfaceState {
     }
 }
 
+// ============================================================================
+// 5. FIRST-RUN WIZARD & MULTI-DEVICE SELF-KEY ROSTER ALGEBRA
+//    (CSD-080..085, CSD-093, CSD-094, CSD-095, CSD-037)
+// ============================================================================
+
+/// The unbiased first choice on a fresh node (`CSD-093` §1).
+/// Neither option may be preselected (`None` disables `btn_next`).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum SetupIdentityPath {
+    /// `btn_setup_new_identity` — "Set up a new CIRIS ID" (`CSD-082` / `CSD-083`).
+    NewIdentity,
+    /// `btn_setup_add_this_device` — "Add this device to an existing CIRIS ID" (`CSD-093`).
+    AddThisDevice,
+}
+
+/// Self-declared age band on `NewIdentity` Step 1 (`CSD-082`, `CC 3.2`).
+/// Neither option is preselected; `Declined` defaults to protective under-18 stewardship
+/// and writes nothing to the assurance record.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum AgeBandChoice {
+    Adult,
+    Minor,
+    Declined,
+}
+
+/// Wizard step progression (`CSD-082` 3-step With-AI vs `CSD-083` 2-step Run-Without-AI).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum WizardStep {
+    You,
+    JoinFederation,
+    Ai,
+    Complete,
+}
+
+/// Lifecycle phase of `CSD-093` "Add this device to an existing CIRIS ID".
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum AddDevicePhase {
+    Idle,
+    Requested,
+    Approved,
+    Applied,
+    Denied,
+    Expired,
+    Failed,
+    Interrupted,
+    Retrying,
+}
+
+impl AddDevicePhase {
+    /// Once `POST /v1/setup/add-device` succeeds (`Requested` / `Approved` / `Retrying`),
+    /// the identity path choice is locked (`txt_setup_identity_path_locked`) until
+    /// explicitly cancelled via `DELETE /v1/setup/add-device`.
+    pub fn locks_identity_path(self) -> bool {
+        matches!(
+            self,
+            AddDevicePhase::Requested | AddDevicePhase::Approved | AddDevicePhase::Retrying
+        )
+    }
+
+    /// Finishing setup on the `AddThisDevice` path is only permitted after `Approved` (`E9 ≺ E10`).
+    pub fn can_complete_setup(self) -> bool {
+        self == AddDevicePhase::Approved
+    }
+}
+
+/// Node ownership claim status at the end of `NewIdentity` setup (`CSD-085`).
+#[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum OwnershipClaimStatus {
+    Unclaimed { pin_source_0600: bool },
+    Claiming,
+    Claimed { owner_key_id: String, role: String },
+    Error { reason: String },
+}
+
+/// Complete typed state of the First-Run Wizard (`CSD-080`..`CSD-085`, `CSD-093`).
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct FirstRunWizardState {
+    pub step: WizardStep,
+    /// `None` at launch so neither `NewIdentity` nor `AddThisDevice` is preselected (`CSD-093`).
+    pub identity_path: Option<SetupIdentityPath>,
+    pub run_with_ai: bool,
+    pub fedid_label: String,
+    pub device_name: String,
+    pub hardware_custody: bool,
+    pub age_band: Option<AgeBandChoice>,
+    /// `None` at launch so neither `trace_consent_yes` nor `trace_consent_no` is preselected.
+    pub trace_consent: Option<bool>,
+    pub trace_analyze: bool,
+    pub announce_ownership: bool,
+    pub add_device_contact: String,
+    pub add_device_match_code: Option<String>,
+    pub add_device_phase: AddDevicePhase,
+    pub add_device_held_by_roster: bool,
+    pub ownership_status: OwnershipClaimStatus,
+}
+
+impl Default for FirstRunWizardState {
+    fn default() -> Self {
+        Self {
+            step: WizardStep::You,
+            identity_path: None,
+            run_with_ai: true,
+            fedid_label: String::new(),
+            device_name: "Founder Laptop".to_string(),
+            hardware_custody: true,
+            age_band: None,
+            trace_consent: None,
+            trace_analyze: false,
+            announce_ownership: false,
+            add_device_contact: String::new(),
+            add_device_match_code: None,
+            add_device_phase: AddDevicePhase::Idle,
+            add_device_held_by_roster: false,
+            ownership_status: OwnershipClaimStatus::Unclaimed {
+                pin_source_0600: true,
+            },
+        }
+    }
+}
+
+impl FirstRunWizardState {
+    /// Visible step indicators (`YOU · JOIN_FEDERATION · AI` vs `YOU · JOIN_FEDERATION` when `run_with_ai == false`).
+    pub fn visible_steps(&self) -> Vec<WizardStep> {
+        if self.run_with_ai {
+            vec![WizardStep::You, WizardStep::JoinFederation, WizardStep::Ai]
+        } else {
+            vec![WizardStep::You, WizardStep::JoinFederation]
+        }
+    }
+
+    /// Reject generic placeholder Fed-ID labels (`CSD-082`: `"ciris-client-user"` is rejected).
+    pub fn is_valid_fedid_label(label: &str) -> bool {
+        let trimmed = label.trim();
+        !trimmed.is_empty() && !trimmed.eq_ignore_ascii_case("ciris-client-user")
+    }
+
+    /// Whether Step 1 (`YOU`) can advance (`btn_next` enabled).
+    pub fn can_advance_from_you(&self) -> bool {
+        match self.identity_path {
+            None => false,
+            Some(SetupIdentityPath::NewIdentity) => {
+                Self::is_valid_fedid_label(&self.fedid_label)
+                    && !self.device_name.trim().is_empty()
+                    && self.age_band.is_some()
+                    && self.age_band != Some(AgeBandChoice::Minor)
+            }
+            Some(SetupIdentityPath::AddThisDevice) => {
+                matches!(
+                    self.add_device_phase,
+                    AddDevicePhase::Requested | AddDevicePhase::Approved | AddDevicePhase::Applied
+                )
+            }
+        }
+    }
+}
+
+/// Enrolled device occurrence in the self-key roster (`CSD-037`).
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct SelfDeviceOccurrence {
+    pub occurrence_id: String,
+    pub key_id: String,
+    pub label: String,
+    pub device_class: String,
+    pub reachable: bool,
+    pub hardware_custody: bool,
+    pub dek_recipient: bool,
+    pub revoked: bool,
+    pub current_device: bool,
+}
+
+/// Outcome of approving a device request (`CSD-094` + `CSD-095` integration).
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub enum DeviceApprovalOutcome {
+    /// `roster_size == 1`: lands immediately (`200 {approved: true}`).
+    ApprovedImmediate { occurrence_id: String },
+    /// `roster_size >= 2`: held for self-key roster (`202 {approved: false, held: true, proposal_id}`).
+    HeldForSelfRoster {
+        proposal_id: String,
+        window_secs: u64,
+    },
+}
+
+/// Proposal kind on the self-key roster (`CSD-095`).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum SelfRosterProposalKind {
+    Add,
+    Evict,
+}
+
+/// Settled terminal state in the `"No longer waiting"` history list (`CSD-095`).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum SelfRosterSettledState {
+    Landed,
+    Refused,
+    Cancelled,
+}
+
+/// Active or settled proposal in `CSD-095` ("Changes to Your Devices — Self-Key Roster").
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct SelfRosterProposal {
+    pub proposal_id: String,
+    pub kind: SelfRosterProposalKind,
+    pub subject_key_id: String,
+    pub subject_label: String,
+    pub proposed_by_occurrence_id: String,
+    pub proposed_by_label: String,
+    pub roster_size: u32,
+    pub approvals: Vec<String>,
+    pub objectors: Vec<String>,
+    pub window_rem_secs: u64,
+    pub settled: Option<SelfRosterSettledState>,
+}
+
+impl SelfRosterProposal {
+    /// Evaluate the formal `TwoPath` verdict for this self-roster proposal (`SelfRoster.tla`).
+    pub fn verdict(&self) -> TwoPathVerdict {
+        let fam = match self.kind {
+            SelfRosterProposalKind::Add => GovernancePolicyFamily::SelfRosterAdd,
+            SelfRosterProposalKind::Evict => GovernancePolicyFamily::SelfRosterEvict,
+        };
+        fam.spec().evaluate(
+            self.roster_size,
+            self.approvals.len() as u32,
+            self.objectors.len() as u32,
+            self.window_rem_secs,
+        )
+    }
+
+    /// Own-Proposal Rule (`CSD-095`): a device that proposed the change cannot answer its own proposal.
+    pub fn is_own_proposal(&self, active_occurrence_id: &str) -> bool {
+        self.proposed_by_occurrence_id == active_occurrence_id
+    }
+
+    /// Whether the active device can still cast an Agree (`+1`) or Object (`-1`) answer.
+    pub fn is_answerable_by(&self, active_occurrence_id: &str) -> bool {
+        self.settled.is_none()
+            && !self.is_own_proposal(active_occurrence_id)
+            && !self.approvals.iter().any(|k| k == active_occurrence_id)
+            && !self.objectors.iter().any(|k| k == active_occurrence_id)
+    }
+
+    /// Build the 3-fact `ConfirmSheet` for Agree (`assent = true`) or Object (`assent = false`) (`CSD-095`).
+    pub fn build_answer_confirm_sheet(&self, assent: bool) -> ConfirmFacts3 {
+        let change_label = match self.kind {
+            SelfRosterProposalKind::Add => format!("Add {}", self.subject_label),
+            SelfRosterProposalKind::Evict => format!("Evict {}", self.subject_label),
+        };
+        let effect = if assent {
+            if self.approvals.len() as u32 + 1 >= 2 {
+                "Reaches quorum (2 signatures) and lands immediately".to_string()
+            } else {
+                "Records your +1 signature toward quorum".to_string()
+            }
+        } else {
+            "Blocks the 24h single-device window and refuses this proposal".to_string()
+        };
+        ConfirmFacts3 {
+            title: if assent {
+                format!("Agree to {}?", change_label.to_lowercase())
+            } else {
+                format!("Object to {}?", change_label.to_lowercase())
+            },
+            facts: [
+                ("Change".to_string(), change_label),
+                ("Proposed by".to_string(), self.proposed_by_label.clone()),
+                ("What your answer does".to_string(), effect),
+            ],
+            danger_note: if !assent {
+                Some("An objection is a signed -1 scores row at federation scope.".to_string())
+            } else if self.kind == SelfRosterProposalKind::Evict {
+                Some(
+                    "Already-shared content stays readable to the evicted device — CIRIS does not re-encrypt past content (CC 4.5.12.1)."
+                        .to_string(),
+                )
+            } else {
+                None
+            },
+            confirm_label: if assent {
+                "Sign agreement (+1)".to_string()
+            } else {
+                "Sign objection (-1)".to_string()
+            },
+            cancel_label: "Cancel".to_string(),
+        }
+    }
+}
+
+/// Evaluate whether approving a new device on `CSD-094` lands immediately (`N = 1`)
+/// or enters `202 Held` on the self-key roster (`N >= 2`, `CSD-095`).
+pub fn evaluate_device_approval(
+    roster_size: u32,
+    occurrence_id: &str,
+    proposal_id: &str,
+) -> DeviceApprovalOutcome {
+    if roster_size <= 1 {
+        DeviceApprovalOutcome::ApprovedImmediate {
+            occurrence_id: occurrence_id.to_string(),
+        }
+    } else {
+        DeviceApprovalOutcome::HeldForSelfRoster {
+            proposal_id: proposal_id.to_string(),
+            window_secs: 86_400,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1569,5 +1875,78 @@ mod tests {
                 rule: "cw_class:spoiler".to_string(),
             }
         );
+    }
+
+    #[test]
+    fn first_run_wizard_unbiased_and_path_locks_hold() {
+        let mut wiz = FirstRunWizardState::default();
+        // Neither identity path nor trace consent is preselected at launch.
+        assert_eq!(wiz.identity_path, None);
+        assert_eq!(wiz.trace_consent, None);
+        assert!(!wiz.can_advance_from_you());
+        assert_eq!(wiz.visible_steps().len(), 3);
+
+        // Switching to Run-Without-AI removes the AI step indicator (2 steps).
+        wiz.run_with_ai = false;
+        assert_eq!(
+            wiz.visible_steps(),
+            vec![WizardStep::You, WizardStep::JoinFederation]
+        );
+
+        // Generic `ciris-client-user` label is rejected.
+        wiz.identity_path = Some(SetupIdentityPath::NewIdentity);
+        wiz.fedid_label = "ciris-client-user".to_string();
+        wiz.age_band = Some(AgeBandChoice::Adult);
+        assert!(!wiz.can_advance_from_you());
+
+        wiz.fedid_label = "alice.ciris".to_string();
+        assert!(wiz.can_advance_from_you());
+
+        // AddThisDevice path locks identity_path once Requested and requires Approved to finish.
+        wiz.identity_path = Some(SetupIdentityPath::AddThisDevice);
+        wiz.add_device_phase = AddDevicePhase::Requested;
+        assert!(wiz.add_device_phase.locks_identity_path());
+        assert!(!wiz.add_device_phase.can_complete_setup());
+        wiz.add_device_phase = AddDevicePhase::Approved;
+        assert!(wiz.add_device_phase.can_complete_setup());
+    }
+
+    #[test]
+    fn self_key_roster_proposals_and_own_proposal_guard_hold() {
+        // N=1 approval lands immediately; N>=2 enters 202 Held on self-key roster.
+        assert_eq!(
+            evaluate_device_approval(1, "occ-2", "prop-1"),
+            DeviceApprovalOutcome::ApprovedImmediate {
+                occurrence_id: "occ-2".to_string()
+            }
+        );
+        assert_eq!(
+            evaluate_device_approval(2, "occ-3", "prop-2"),
+            DeviceApprovalOutcome::HeldForSelfRoster {
+                proposal_id: "prop-2".to_string(),
+                window_secs: 86_400
+            }
+        );
+
+        let prop = SelfRosterProposal {
+            proposal_id: "prop-2".to_string(),
+            kind: SelfRosterProposalKind::Add,
+            subject_key_id: "ed25519:s23_phone".to_string(),
+            subject_label: "S23 Phone".to_string(),
+            proposed_by_occurrence_id: "occ-a1".to_string(),
+            proposed_by_label: "Founder Laptop (A1)".to_string(),
+            roster_size: 2,
+            approvals: vec!["occ-a1".to_string()],
+            objectors: vec![],
+            window_rem_secs: 86_400,
+            settled: None,
+        };
+        // Proposer device A1 cannot answer its own proposal; second device A2 can.
+        assert!(prop.is_own_proposal("occ-a1"));
+        assert!(!prop.is_answerable_by("occ-a1"));
+        assert!(prop.is_answerable_by("occ-a2"));
+
+        let sheet = prop.build_answer_confirm_sheet(true);
+        assert_eq!(sheet.facts.len(), 3);
     }
 }

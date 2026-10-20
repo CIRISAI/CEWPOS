@@ -911,8 +911,34 @@ def probe_live_endpoints() -> list[LiveEndpointProbe]:
                 elif "index.html" in url:
                     has_circles = all(c in body for c in ("Just me", "Family", "Neighbours", "Communities", "Everyone"))
                     has_tabs = all(t in body for t in ("Files", "Chats", "People", "Safety", "Rules", "Decisions", "Record"))
-                    has_hints = ("☰" in body and "⋯" in body)
-                    summary = f"5 Circles={has_circles}, 7 Tabs={has_tabs}, ProgressiveDisclosure(☰/⋯)={has_hints}"
+                    has_hints = ("☰" in body or "&#9776;" in body) and ("⋯" in body or "&ctdot;" in body)
+                    wizard_tags = (
+                        "btn_setup_new_identity",
+                        "btn_setup_add_this_device",
+                        "opt_run_with_ai",
+                        "opt_run_without_ai",
+                        "input_add_device_name",
+                        "input_add_device_contact",
+                        "text_add_device_match_code",
+                        "confirm_add_device_cancel",
+                        "csd_085_claim_node",
+                    )
+                    roster_tags = (
+                        "card_self_roster",
+                        "csd_037_my_identity",
+                        "card_approve_device",
+                        "confirm_roster_answer",
+                        "txt_dek_honesty_note",
+                        "text_approve_device_held_window",
+                    )
+                    has_wizard = all(tag in body for tag in wizard_tags)
+                    has_roster = all(tag in body for tag in roster_tags)
+                    summary = (
+                        f"5 Circles={has_circles}, 7 Tabs={has_tabs}, "
+                        f"FirstRunWizard(CSD-080..085,093)={has_wizard}, "
+                        f"SelfKeyRoster(CSD-037,094,095)={has_roster}, "
+                        f"ProgressiveDisclosure(☰/⋯)={has_hints}"
+                    )
                 elif "all_promise_cards.json" in url:
                     cards = json.loads(body)
                     keys = sorted(cards.keys())

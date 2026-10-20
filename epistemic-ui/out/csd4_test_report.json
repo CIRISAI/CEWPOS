@@ -7511,7 +7511,7 @@
       "url": "http://127.0.0.1:8787/index.html",
       "reachable": true,
       "status_code": 200,
-      "summary": "5 Circles=True, 7 Tabs=True, ProgressiveDisclosure(\u2630/\u22ef)=True"
+      "summary": "5 Circles=True, 7 Tabs=True, FirstRunWizard(CSD-080..085,093)=True, SelfKeyRoster(CSD-037,094,095)=True, ProgressiveDisclosure(\u2630/\u22ef)=True"
     },
     {
       "name": "CEWPOS Promise Cards Bundle (CSD-111..128)",
