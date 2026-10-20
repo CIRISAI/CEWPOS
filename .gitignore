@@ -14,3 +14,4 @@
 *.db-shm
 *.state
 **/.DS_Store
+__pycache__/
