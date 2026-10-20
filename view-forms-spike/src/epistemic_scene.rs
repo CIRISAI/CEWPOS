@@ -129,11 +129,29 @@ pub struct SignerChip {
     pub state: CeremonySignerState,
 }
 
+/// Progressive-disclosure trigger kind: keeps the resting surface calm by hiding
+/// secondary protocol/quorum/lineage detail behind `☰` (Receipt) or `⋯` (Ellipsis).
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub enum DisclosureHint {
+    /// `☰` Hamburger trigger (`btn_receipt_<id>`) — opens the 5-fact `ReceiptSheet` (`CSD-006`).
+    ReceiptHamburger { tag: String },
+    /// `⋯` Ellipsis trigger (`btn_<prefix>_ellipsis`) — expands secondary detail on demand.
+    EllipsisExpand {
+        tag: String,
+        collapsed_by_default: bool,
+        summary_chip: String,
+    },
+}
+
 /// P9: `TwoPathCeremonyBlock` — Universal governance ceremony primitive covering all 10
 /// `manifests/governance_policy.json` families (`two_path`, `mirror`, `cosigned`).
+///
+/// Resting state shows a 1-line summary + verdict chip + `⋯` ellipsis trigger;
+/// quorum math and signer chips are tucked inside the expansion body.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TwoPathCeremonyNode {
     pub tag_prefix: String,
+    pub disclosure: DisclosureHint,
     pub policy_family: GovernancePolicyFamily,
     pub proposal: String,
     pub proposed_by: String,
@@ -172,9 +190,13 @@ pub struct ChainLinkNode {
 }
 
 /// P11: `LineageChainBlock` — Ordered attenuation chain, stewardship bond, or 7-step retirement ladder.
+///
+/// Resting state shows a 1-line summary + active step chip + `⋯` ellipsis trigger;
+/// individual chain links are tucked inside the expansion body.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct LineageChainNode {
     pub tag_prefix: String,
+    pub disclosure: DisclosureHint,
     pub kind: ChainKind,
     pub title: String,
     pub links: Vec<ChainLinkNode>,
@@ -201,9 +223,13 @@ pub struct ResourceCost {
 
 /// P12a: `ConscienceStepBlock` — Agent H3ERE reasoning trace, resource telemetry, `WBD` deferral,
 /// `G17` refusal, and mandatory `G14` limits disclosure (`00_guarantees.md`).
+///
+/// Resting state shows the task summary + verdict chip + `⋯` ellipsis trigger;
+/// principles, resource telemetry, and `G14` limits expand on demand.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ConscienceStepNode {
     pub tag_prefix: String,
+    pub disclosure: DisclosureHint,
     pub task_summary: String,
     pub adapter_version: String,
     pub principles: Vec<PrincipleCheck>,
@@ -214,9 +240,12 @@ pub struct ConscienceStepNode {
 }
 
 /// P12b: `PolicyLensBar` (`circles.html` Scene 12–13) — Subjective filter/blur lens bar.
+///
+/// Resting state is a quiet 1-line lens summary (`my rules · 1 helper`) + `⋯` ellipsis trigger.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct PolicyLensNode {
     pub tag: String,
+    pub disclosure: DisclosureHint,
     pub active_rules: Vec<String>,
     pub helper_keys: Vec<String>,
     pub sort_label: String,
@@ -548,9 +577,18 @@ pub fn project_epistemic_scene(
         });
     }
 
-    // 4. PolicyLensBar (`P12b`, `circles.html` Scene 12–13).
+    // 4. PolicyLensBar (`P12b`, `circles.html` Scene 12–13): collapsed to 1 quiet summary line + `⋯` ellipsis.
     nodes.push(EpistemicNode::PolicyLens(PolicyLensNode {
         tag: "csd_policy_lens_bar".to_string(),
+        disclosure: DisclosureHint::EllipsisExpand {
+            tag: "btn_lens_ellipsis".to_string(),
+            collapsed_by_default: true,
+            summary_chip: format!(
+                "{} · {} helpers",
+                ctx.active_lens_rules.join(","),
+                ctx.helper_keys.len()
+            ),
+        },
         active_rules: ctx.active_lens_rules.clone(),
         helper_keys: ctx.helper_keys.clone(),
         sort_label: "newest_first".to_string(),
@@ -672,6 +710,11 @@ pub fn project_promise_card(csd_id: &str, ctx: &ViewerContext) -> Vec<EpistemicN
         "CSD-111" => vec![
             EpistemicNode::ConscienceStep(ConscienceStepNode {
                 tag_prefix: "csd_111_shutdown_dialogue".to_string(),
+                disclosure: DisclosureHint::EllipsisExpand {
+                    tag: "btn_csd_111_conscience_ellipsis".to_string(),
+                    collapsed_by_default: true,
+                    summary_chip: "5m negotiation window".to_string(),
+                },
                 task_summary: "Steward Shutdown Proposal — 5m Negotiation Window (CC 7.5.1)"
                     .to_string(),
                 adapter_version: "ciris-agent:v1.0-rc9".to_string(),
@@ -696,6 +739,11 @@ pub fn project_promise_card(csd_id: &str, ctx: &ViewerContext) -> Vec<EpistemicN
             }),
             EpistemicNode::TwoPathCeremony(TwoPathCeremonyNode {
                 tag_prefix: "csd_111_decision".to_string(),
+                disclosure: DisclosureHint::EllipsisExpand {
+                    tag: "btn_csd_111_decision_ellipsis".to_string(),
+                    collapsed_by_default: true,
+                    summary_chip: "1 of 2 cosigned".to_string(),
+                },
                 policy_family: GovernancePolicyFamily::CustodianReplace,
                 proposal: "Record Steward + WA Shutdown Disposition".to_string(),
                 proposed_by: ctx.viewer_key_id.clone(),
@@ -721,6 +769,11 @@ pub fn project_promise_card(csd_id: &str, ctx: &ViewerContext) -> Vec<EpistemicN
         // CSD-112 (Promises 5d, 5e): WA-gated identity record edit & behavioural drift threshold review.
         "CSD-112" => vec![EpistemicNode::TwoPathCeremony(TwoPathCeremonyNode {
             tag_prefix: "csd_112_identity_drift".to_string(),
+            disclosure: DisclosureHint::EllipsisExpand {
+                tag: "btn_csd_112_ellipsis".to_string(),
+                collapsed_by_default: true,
+                summary_chip: "2 of 2 cosigned".to_string(),
+            },
             policy_family: GovernancePolicyFamily::CustodianReplace,
             proposal: "WA-Cosigned Identity Edit & Drift Review (variance=0.14 < 0.20 cap)"
                 .to_string(),
@@ -770,6 +823,11 @@ pub fn project_promise_card(csd_id: &str, ctx: &ViewerContext) -> Vec<EpistemicN
                 .collect();
             vec![EpistemicNode::LineageChain(LineageChainNode {
                 tag_prefix: "csd_113_retirement".to_string(),
+                disclosure: DisclosureHint::EllipsisExpand {
+                    tag: "btn_csd_113_ellipsis".to_string(),
+                    collapsed_by_default: true,
+                    summary_chip: format!("Step {}/7 · {:?}", current as u8, current),
+                },
                 kind: ChainKind::RetirementLadder,
                 title: "7-State Agent Retirement Standard Floor (CC 7.5)".to_string(),
                 links,
@@ -779,6 +837,11 @@ pub fn project_promise_card(csd_id: &str, ctx: &ViewerContext) -> Vec<EpistemicN
         // CSD-114 (Promise 5g): Upgrade offer with version, changelog, risk, peer outcomes & recorded refusal.
         "CSD-114" => vec![EpistemicNode::ConscienceStep(ConscienceStepNode {
             tag_prefix: "csd_114_upgrade_offer".to_string(),
+            disclosure: DisclosureHint::EllipsisExpand {
+                tag: "btn_csd_114_ellipsis".to_string(),
+                collapsed_by_default: true,
+                summary_chip: "Risk: Low · 12/12 peers".to_string(),
+            },
             task_summary: "Upgrade Offer v1.0-rc9 (Risk: Low, 12/12 Canary Peers Healthy)"
                 .to_string(),
             adapter_version: "ciris-agent:v1.0-rc9".to_string(),
@@ -804,6 +867,11 @@ pub fn project_promise_card(csd_id: &str, ctx: &ViewerContext) -> Vec<EpistemicN
         // CSD-115 (Promises 3a, 3e, 6e): Steward bond row (depth 1, 365d review, listed powers) + data-door guarantee.
         "CSD-115" => vec![EpistemicNode::LineageChain(LineageChainNode {
             tag_prefix: "csd_115_steward_bond".to_string(),
+            disclosure: DisclosureHint::EllipsisExpand {
+                tag: "btn_csd_115_ellipsis".to_string(),
+                collapsed_by_default: true,
+                summary_chip: "Bonded · 365d review".to_string(),
+            },
             kind: ChainKind::StewardBond,
             title: "Steward–Agent Bond (Depth 1, 365-Day Review, Inv_BondDepthOne)".to_string(),
             links: vec![ChainLinkNode {
@@ -917,6 +985,11 @@ pub fn project_promise_card(csd_id: &str, ctx: &ViewerContext) -> Vec<EpistemicN
         // CSD-119 (Promise 3c): Guardian bond + child's confidential help/contest channel.
         "CSD-119" => vec![EpistemicNode::LineageChain(LineageChainNode {
             tag_prefix: "csd_119_guardian_bond".to_string(),
+            disclosure: DisclosureHint::EllipsisExpand {
+                tag: "btn_csd_119_ellipsis".to_string(),
+                collapsed_by_default: true,
+                summary_chip: "Verified · Confidential help".to_string(),
+            },
             kind: ChainKind::GuardianBond,
             title: "Guardian Bond & Confidential Child Help/Contest Channel (Q3/Q4/Q5)".to_string(),
             links: vec![ChainLinkNode {
@@ -934,6 +1007,11 @@ pub fn project_promise_card(csd_id: &str, ctx: &ViewerContext) -> Vec<EpistemicN
         // CSD-127 (Promises 6e, 4c): First-contact gate + 1-step trust-root exit + local-only badge.
         "CSD-127" => vec![EpistemicNode::LineageChain(LineageChainNode {
             tag_prefix: "csd_127_root_exit".to_string(),
+            disclosure: DisclosureHint::EllipsisExpand {
+                tag: "btn_csd_127_ellipsis".to_string(),
+                collapsed_by_default: true,
+                summary_chip: format!("{:?} · 1-step exit", ctx.planes.root_standing),
+            },
             kind: ChainKind::TrustRootHead,
             title: "First-Contact Gate & 1-Step Trust-Root Exit (Inv_ExitOneStep)".to_string(),
             links: vec![ChainLinkNode {
