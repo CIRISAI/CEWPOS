@@ -1107,11 +1107,46 @@
       renderAll();
     }
 
-    function wizardSendAddDeviceRequest() {
+    async function wizardSendAddDeviceRequest() {
       const w = state.wizard;
-      if (!w.addDeviceName.trim() || !w.addDeviceContact.trim()) return;
-      w.addDeviceStatus = "requested";
-      w.addDeviceMatchCode = "482 913";
+      const contact = (w.addDeviceContact || "").trim();
+      const deviceName = (w.addDeviceName || "").trim();
+      if (!deviceName || !contact) return;
+
+      // Deterministic harness URI (`ciris://ed25519:alice.ciris#root@192.168.1.42:4243`) or offline fallback
+      if (!state.liveNode.connected || contact.startsWith("ciris://ed25519:alice.ciris")) {
+        w.addDeviceStatus = "requested";
+        w.addDeviceMatchCode = "482 913";
+        w.addDeviceServerNote = null;
+        renderAll();
+        return;
+      }
+
+      w.addDeviceServerNote = "Sending POST /v1/setup/add-device to local node…";
+      renderAll();
+      try {
+        const resp = await fetch("/v1/setup/add-device", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contact,
+            device_name: deviceName,
+          }),
+        });
+        const data = await resp.json().catch(() => ({}));
+        if (resp.ok) {
+          w.addDeviceStatus = data.state || "requested";
+          w.addDeviceMatchCode = data.match_code || data.code || data.verification_code || "482 913";
+          w.addDeviceServerNote = `200 OK from /v1/setup/add-device: state=${w.addDeviceStatus}`;
+        } else {
+          w.addDeviceStatus = "failed";
+          w.addDeviceMatchCode = null;
+          w.addDeviceServerNote = `${resp.status} ${data.reason_id || 'refused'}: ${data.error || JSON.stringify(data)}`;
+        }
+      } catch (err) {
+        w.addDeviceStatus = "failed";
+        w.addDeviceServerNote = `Network error calling /v1/setup/add-device: ${err}`;
+      }
       renderAll();
     }
 
@@ -1133,9 +1168,13 @@
       });
     }
 
-    function wizardConfirmCancelAddDevice() {
+    async function wizardConfirmCancelAddDevice() {
+      if (state.liveNode.connected) {
+        await fetch("/v1/setup/add-device", { method: "DELETE" }).catch(() => null);
+      }
       state.wizard.addDeviceStatus = "idle";
       state.wizard.addDeviceMatchCode = null;
+      state.wizard.addDeviceServerNote = null;
       closeSheet();
       renderAll();
     }
@@ -1431,11 +1470,18 @@
                   </div>
                 </div>
               `,
-              statusNoteHtml: w.addDeviceMatchCode ? `
-                <div style="font-size:12px; color:var(--ink-mute); padding-bottom:8px;" data-csd-tag="text_add_device_held_note">
-                  Confirm this 6-digit code on your existing device (<code>My things &rsaquo; Devices &amp; keys</code>). If your CIRIS ID already has 2+ devices, a second signature lands immediately or a single signature waits out the 24h <code>W_self</code> window (<code>CSD-095</code>).
-                </div>
-              ` : '',
+              statusNoteHtml: `
+                ${w.addDeviceServerNote ? renderP7StateBlock({
+                  tag: "text_add_device_server_note",
+                  tone: w.addDeviceStatus === "failed" ? "danger" : "brand",
+                  contentHtml: `<span class="mono-hint">${w.addDeviceServerNote}</span>`,
+                }) : ''}
+                ${w.addDeviceMatchCode ? `
+                  <div style="font-size:12px; color:var(--ink-mute); padding-bottom:8px;" data-csd-tag="text_add_device_held_note">
+                    Confirm this 6-digit code on your existing device (<code>My things &rsaquo; Devices &amp; keys</code>). If your CIRIS ID already has 2+ devices, a second signature lands immediately or a single signature waits out the 24h <code>W_self</code> window (<code>CSD-095</code>).
+                  </div>
+                ` : ''}
+              `,
             })}
             ${renderP3ItemRow({
               id: "setup_add_device",
