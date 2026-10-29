@@ -246,5 +246,134 @@
       "FieldRow",
       "ConfirmSheet"
     ]
+  },
+  "CSD-080": {
+    "promises": [
+      "1c"
+    ],
+    "title": "Node Connection & First-Run Gate (/health + /v1/setup/status)",
+    "placement": "First-Run Wizard \u203a Connection Gate",
+    "primitives": [
+      "CardShell",
+      "FieldRow",
+      "StateBlock",
+      "Chip"
+    ]
+  },
+  "CSD-082": {
+    "promises": [
+      "1a",
+      "1c",
+      "9a",
+      "9c"
+    ],
+    "title": "First-Run Setup Wizard (With AI: 1. YOU \u00b7 2. JOIN_FEDERATION \u00b7 3. AI \u00b7 4. CLAIM)",
+    "placement": "First-Run Wizard (?mode=setup)",
+    "primitives": [
+      "CardShell",
+      "FieldRow",
+      "ItemRow",
+      "ReceiptSheet",
+      "ScopePill",
+      "Chip",
+      "StateBlock",
+      "ConfirmSheet",
+      "QrCeremony",
+      "LineageChainBlock",
+      "ConscienceStepBlock"
+    ]
+  },
+  "CSD-083": {
+    "promises": [
+      "1c"
+    ],
+    "title": "First-Run Setup Without AI (2-Step Bare Node Mode: 1. YOU \u00b7 2. JOIN_FEDERATION \u00b7 3. CLAIM)",
+    "placement": "First-Run Wizard (?mode=setup, run_with_ai=false)",
+    "primitives": [
+      "CardShell",
+      "FieldRow",
+      "ItemRow",
+      "ScopePill",
+      "Chip",
+      "StateBlock"
+    ]
+  },
+  "CSD-085": {
+    "promises": [
+      "1a",
+      "6e"
+    ],
+    "title": "Claim Node Ownership via One-Time 0600 claim_pin & NodeCode (POST /v1/setup/claim-remote)",
+    "placement": "First-Run Wizard \u203a Complete & Claim",
+    "primitives": [
+      "CardShell",
+      "FieldRow",
+      "ItemRow",
+      "ReceiptSheet",
+      "ConfirmSheet",
+      "QrCeremony"
+    ]
+  },
+  "CSD-093": {
+    "promises": [
+      "2e",
+      "6a"
+    ],
+    "title": "Add This Device to an Existing CIRIS ID & Lone-Device Recovery",
+    "placement": "First-Run Wizard \u203a Add This Device",
+    "primitives": [
+      "CardShell",
+      "FieldRow",
+      "ItemRow",
+      "StateBlock",
+      "ConfirmSheet",
+      "TwoPathCeremonyBlock",
+      "QrCeremony"
+    ]
+  },
+  "CSD-094": {
+    "promises": [
+      "2e"
+    ],
+    "title": "Approve a New Device (10m Window, 6-Digit Match Code, 200 Immediate vs 202 Held)",
+    "placement": "My things \u203a Devices & keys",
+    "primitives": [
+      "CardShell",
+      "ItemRow",
+      "Chip",
+      "StateBlock",
+      "ConfirmSheet"
+    ]
+  },
+  "CSD-095": {
+    "promises": [
+      "2e",
+      "6a"
+    ],
+    "title": "Changes to Your Devices \u2014 Self-Key Roster (Quorum & 24h W_self Window)",
+    "placement": "My things \u203a Devices & keys",
+    "primitives": [
+      "CardShell",
+      "ItemRow",
+      "ReceiptSheet",
+      "ConfirmSheet",
+      "TwoPathCeremonyBlock"
+    ]
+  },
+  "CSD-037": {
+    "promises": [
+      "2e"
+    ],
+    "title": "My Identity & Enrolled Devices Roster (Forward-Secrecy Honesty Note CC 4.5.12.1)",
+    "placement": "My things \u203a Devices & keys",
+    "primitives": [
+      "CardShell",
+      "FieldRow",
+      "ItemRow",
+      "ReceiptSheet",
+      "ScopePill",
+      "Chip",
+      "ConfirmSheet"
+    ]
   }
 }

@@ -951,6 +951,74 @@ def build_all_11_promise_cards() -> Dict[str, Any]:
             "placement": "Neighbours / Communities › Safety (extends CSD-065)",
             "primitives": ["CardShell", "FieldRow", "ConfirmSheet"],
         },
+        "CSD-080": {
+            "promises": ["1c"],
+            "title": "Node Connection & First-Run Gate (/health + /v1/setup/status)",
+            "placement": "First-Run Wizard › Connection Gate",
+            "primitives": ["CardShell", "FieldRow", "StateBlock", "Chip"],
+        },
+        "CSD-082": {
+            "promises": ["1a", "1c", "9a", "9c"],
+            "title": "First-Run Setup Wizard (With AI: 1. YOU · 2. JOIN_FEDERATION · 3. AI · 4. CLAIM)",
+            "placement": "First-Run Wizard (?mode=setup)",
+            "primitives": [
+                "CardShell",
+                "FieldRow",
+                "ItemRow",
+                "ReceiptSheet",
+                "ScopePill",
+                "Chip",
+                "StateBlock",
+                "ConfirmSheet",
+                "QrCeremony",
+                "LineageChainBlock",
+                "ConscienceStepBlock",
+            ],
+        },
+        "CSD-083": {
+            "promises": ["1c"],
+            "title": "First-Run Setup Without AI (2-Step Bare Node Mode: 1. YOU · 2. JOIN_FEDERATION · 3. CLAIM)",
+            "placement": "First-Run Wizard (?mode=setup, run_with_ai=false)",
+            "primitives": ["CardShell", "FieldRow", "ItemRow", "ScopePill", "Chip", "StateBlock"],
+        },
+        "CSD-085": {
+            "promises": ["1a", "6e"],
+            "title": "Claim Node Ownership via One-Time 0600 claim_pin & NodeCode (POST /v1/setup/claim-remote)",
+            "placement": "First-Run Wizard › Complete & Claim",
+            "primitives": ["CardShell", "FieldRow", "ItemRow", "ReceiptSheet", "ConfirmSheet", "QrCeremony"],
+        },
+        "CSD-093": {
+            "promises": ["2e", "6a"],
+            "title": "Add This Device to an Existing CIRIS ID & Lone-Device Recovery",
+            "placement": "First-Run Wizard › Add This Device",
+            "primitives": [
+                "CardShell",
+                "FieldRow",
+                "ItemRow",
+                "StateBlock",
+                "ConfirmSheet",
+                "TwoPathCeremonyBlock",
+                "QrCeremony",
+            ],
+        },
+        "CSD-094": {
+            "promises": ["2e"],
+            "title": "Approve a New Device (10m Window, 6-Digit Match Code, 200 Immediate vs 202 Held)",
+            "placement": "My things › Devices & keys",
+            "primitives": ["CardShell", "ItemRow", "Chip", "StateBlock", "ConfirmSheet"],
+        },
+        "CSD-095": {
+            "promises": ["2e", "6a"],
+            "title": "Changes to Your Devices — Self-Key Roster (Quorum & 24h W_self Window)",
+            "placement": "My things › Devices & keys",
+            "primitives": ["CardShell", "ItemRow", "ReceiptSheet", "ConfirmSheet", "TwoPathCeremonyBlock"],
+        },
+        "CSD-037": {
+            "promises": ["2e"],
+            "title": "My Identity & Enrolled Devices Roster (Forward-Secrecy Honesty Note CC 4.5.12.1)",
+            "placement": "My things › Devices & keys",
+            "primitives": ["CardShell", "FieldRow", "ItemRow", "ReceiptSheet", "ScopePill", "Chip", "ConfirmSheet"],
+        },
     }
 
 
@@ -1103,6 +1171,234 @@ def evaluate_device_approval(roster_size: int, occurrence_id: str, proposal_id: 
     }
 
 
+def project_first_run_wizard_scene(wiz: FirstRunWizardState) -> Dict[str, Any]:
+    """Project the First-Run Setup Wizard (`CSD-080`..`CSD-085`, `CSD-093`, `CSD-115`, `CSD-118`)
+    exclusively from the 12 UX Primitives (`P1`–`P12`)."""
+    nodes: List[Dict[str, Any]] = [
+        {
+            "primitive": "ShellHeader",
+            "circle": "JustMe",
+            "tab": "Rules",
+            "active_instrument": "ThisNode",
+            "shows_circle_governance_subtitle": False,
+            "halt_status": "Clear",
+            "my_things_tag": "btn_my_things",
+            "stop_everything_tag": "btn_stop_everything",
+        },
+        {
+            "primitive": "Card",
+            "tag": "csd_082_setup_wizard",
+            "title": (
+                "First-Run Setup Wizard · CSD-082 With AI (3 steps)"
+                if wiz.run_with_ai
+                else "First-Run Setup Wizard · CSD-083 Node-Only (2 steps)"
+            ),
+            "accent": "Brand",
+            "fields": [
+                {
+                    "tag": f"step_indicator_{s.lower()}",
+                    "label": f"Step {idx + 1} · {s}",
+                    "value": "Active" if wiz.step == s else "Step",
+                    "protocol_wire_name": f"setup.step.{s.lower()}",
+                    "basis": asdict(VerificationBasis.wire(wiz.step)),
+                }
+                for idx, s in enumerate(wiz.visible_steps())
+            ],
+            "items": [],
+        },
+    ]
+
+    if wiz.step == "YOU":
+        if wiz.locks_identity_path():
+            nodes.append(
+                {
+                    "primitive": "StateBanner",
+                    "tag": "txt_setup_identity_path_locked",
+                    "state": "Unreviewed",
+                    "tone": "Brand",
+                    "summary": "Identity choice locked while device join request is active.",
+                }
+            )
+        nodes.append(
+            {
+                "primitive": "Card",
+                "tag": "setup_step_you",
+                "title": "Step 1 · Who is setting up this device? (CSD-082 / CSD-093)",
+                "accent": "Brand",
+                "fields": [
+                    {
+                        "tag": "input_fedid_label",
+                        "label": "CIRIS ID Handle",
+                        "value": wiz.fedid_label or "(unset)",
+                        "protocol_wire_name": "POST /v1/self/identity",
+                        "basis": asdict(VerificationBasis.wire(wiz.fedid_label)),
+                    },
+                    {
+                        "tag": "input_device_name",
+                        "label": "This Device's Name",
+                        "value": wiz.device_name,
+                        "protocol_wire_name": "self.occurrence_id",
+                        "basis": asdict(VerificationBasis.wire(wiz.device_name)),
+                    },
+                    {
+                        "tag": "toggle_secure_2fa",
+                        "label": "Hardware Enclave Custody",
+                        "value": str(wiz.hardware_custody),
+                        "protocol_wire_name": "key.custody.hardware",
+                        "basis": asdict(VerificationBasis.by_rule("Hybrid Ed25519 + ML-DSA-65", "CC 3.3.6")),
+                    },
+                ],
+                "items": [
+                    {
+                        "id": "setup_new_identity",
+                        "tag": "btn_setup_new_identity",
+                        "title": "Set up a new CIRIS ID",
+                        "subtitle": "Mint a fresh hybrid Ed25519 + ML-DSA-65 root keypair (CSD-082)",
+                        "scope_pill": {
+                            "tag": "pill_scope_setup_new",
+                            "circle": "JustMe",
+                            "color_hex": "#22C0E8",
+                            "label": "Just me",
+                            "local_only_badge": True,
+                        },
+                        "chips": [
+                            {
+                                "tag": "chip_choice_new_identity",
+                                "kind": "Choice",
+                                "label": "Selected" if wiz.identity_path == "NEW" else "Choose",
+                                "tone": "Brand",
+                            }
+                        ],
+                        "has_hamburger": True,
+                        "hamburger_tag": "btn_receipt_setup_new_identity",
+                    },
+                    {
+                        "id": "setup_add_this_device",
+                        "tag": "btn_setup_add_this_device",
+                        "title": "Add this device to an existing CIRIS ID",
+                        "subtitle": "Pair with your existing phone or laptop via 6-digit match code (CSD-093)",
+                        "scope_pill": {
+                            "tag": "pill_scope_setup_add_device",
+                            "circle": "JustMe",
+                            "color_hex": "#22C0E8",
+                            "label": "Just me",
+                            "local_only_badge": True,
+                        },
+                        "chips": [
+                            {
+                                "tag": "chip_choice_add_device",
+                                "kind": "Choice",
+                                "label": "Selected" if wiz.identity_path == "ADD_THIS_DEVICE" else "Choose",
+                                "tone": "Brand",
+                            }
+                        ],
+                        "has_hamburger": True,
+                        "hamburger_tag": "btn_receipt_setup_add_device",
+                    },
+                ],
+            }
+        )
+        if wiz.identity_path == "ADD_THIS_DEVICE":
+            nodes.append(
+                {
+                    "primitive": "QrCeremony",
+                    "tag": "btn_add_device_scan",
+                    "payload_uri": wiz.add_device_contact or "ciris://ed25519:alice.ciris#root@127.0.0.1:4243",
+                    "paste_fallback_enabled": True,
+                }
+            )
+            if wiz.add_device_held_by_roster:
+                nodes.append(
+                    {
+                        "primitive": "TwoPathCeremony",
+                        "tag_prefix": "text_add_device_held_note",
+                        "policy_family": "self_roster_add",
+                        "proposal": f"Enroll {wiz.device_name} into existing CIRIS ID",
+                        "verdict": evaluate_governance_policy("self_roster_add", 2, 1, 0, 86400),
+                    }
+                )
+    elif wiz.step == "JOIN_FEDERATION":
+        nodes.append(
+            {
+                "primitive": "Card",
+                "tag": "setup_step_join_federation",
+                "title": "Step 2 · Federation & Consent Disclosure (GET /v1/setup/consent-disclosure)",
+                "accent": "Brand",
+                "fields": [
+                    {
+                        "tag": "trace_consent_yes",
+                        "label": "Grant 1: Send traces (consent:replication:v1)",
+                        "value": str(wiz.trace_consent),
+                        "protocol_wire_name": "consent:replication:v1",
+                        "basis": asdict(VerificationBasis.wire(str(wiz.trace_consent))),
+                    },
+                    {
+                        "tag": "toggle_trace_analyze",
+                        "label": "Grant 2: Be scored (consent:state:granted:v1 · analyze=True)",
+                        "value": str(wiz.trace_analyze),
+                        "protocol_wire_name": "consent:state:granted:v1",
+                        "basis": asdict(VerificationBasis.wire(str(wiz.trace_analyze))),
+                    },
+                ],
+                "items": [],
+            }
+        )
+    elif wiz.step == "AI":
+        nodes.append(
+            {
+                "primitive": "LineageChain",
+                "tag_prefix": "csd_115_setup_bond",
+                "kind": "StewardBond",
+                "title": "Steward–Agent Founding Bond (CSD-115 · Inv_BondDepthOne)",
+                "links": [
+                    {
+                        "step_index": 1,
+                        "label": "Companion Steward -> Local Agent",
+                        "detail": "Powers: agency:operate, agency:defer_wa · 365d review",
+                        "active": True,
+                    }
+                ],
+            }
+        )
+        nodes.append(
+            {
+                "primitive": "ConscienceStep",
+                "tag_prefix": "setup_step_ai",
+                "task_summary": "Always-On Conscience & Tool Disclosure (tool_disclosure_always_on)",
+                "g14_limits_notice": "G14 Limits: Conscience gates govern this agent's actions; external API providers remain governed by their own transport boundaries.",
+            }
+        )
+    elif wiz.step == "COMPLETE":
+        nodes.append(
+            {
+                "primitive": "QrCeremony",
+                "tag": "qr_node_code_claim",
+                "payload_uri": "CIRIS-V1-NODE-CODE",
+                "paste_fallback_enabled": True,
+            }
+        )
+        nodes.append(
+            {
+                "primitive": "Card",
+                "tag": "csd_085_claim_node",
+                "title": "Step 4 · Claim Node Ownership (CSD-085 · POST /v1/setup/claim-remote)",
+                "accent": "Ok",
+                "fields": [
+                    {
+                        "tag": "input_claim_pin",
+                        "label": "One-Time 0600 claim_pin",
+                        "value": wiz.ownership_status,
+                        "protocol_wire_name": "POST /v1/setup/claim-remote",
+                        "basis": asdict(VerificationBasis.wire(wiz.ownership_status)),
+                    }
+                ],
+                "items": [],
+            }
+        )
+
+    return {"topology": "T0", "nodes": nodes}
+
+
 def verify_all_invariants() -> None:
     """Run all formal verification checks and emit JSON artifacts."""
     # 1. Closed 1+4 Operator Gate
@@ -1180,6 +1476,11 @@ def verify_all_invariants() -> None:
     assert not roster_prop.is_answerable_by("occ-a1")
     assert roster_prop.is_answerable_by("occ-a2")
     assert len(roster_prop.build_answer_confirm_sheet(True)["facts"]) == 3
+
+    for step_name in ("YOU", "JOIN_FEDERATION", "AI", "COMPLETE"):
+        wiz_s = FirstRunWizardState(step=step_name, identity_path="ADD_THIS_DEVICE", add_device_held_by_roster=True)
+        wiz_scene = project_first_run_wizard_scene(wiz_s)
+        assert len(wiz_scene["nodes"]) >= 3, f"Expected >= 3 primitive nodes for wizard step {step_name}"
 
     # 5. Epistemic Scene + CSD/4 Tree Projection
     sample_form = read_form(

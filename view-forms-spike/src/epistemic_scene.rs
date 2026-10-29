@@ -5,10 +5,11 @@
 //! and the `CSD/3 → CSD/4` automation tag tree.
 
 use crate::algebra::{
-    evaluate_policy_lens, ActionIntent, AgentGateVerdict, CircleScope, CircleTab, ConfirmFacts3,
-    GovernancePolicyFamily, HaltVerdict, InstrumentId, PolicyLensVerdict, Receipt5,
-    RetirementStage, RootVerdict, RowStanding, SurfaceState, Tone, TopologyId, TwoPathVerdict,
-    VerificationBasis, ViewerContext,
+    evaluate_policy_lens, ActionIntent, AddDevicePhase, AgeBandChoice, AgentGateVerdict,
+    CircleScope, CircleTab, ConfirmFacts3, FirstRunWizardState, GovernancePolicyFamily,
+    HaltVerdict, InstrumentId, OwnershipClaimStatus, PolicyLensVerdict, Receipt5,
+    RetirementStage, RootVerdict, RowStanding, SetupIdentityPath, SurfaceState, Tone, TopologyId,
+    TwoPathVerdict, VerificationBasis, ViewerContext, WizardStep,
 };
 use crate::scene::Scene;
 use crate::view_form::view_form;
@@ -1041,7 +1042,459 @@ pub fn project_promise_card(csd_id: &str, ctx: &ViewerContext) -> Vec<EpistemicN
             ),
         }],
 
+        // CSD-082 / CSD-083 / CSD-085 / CSD-093: First-Run Wizard & Add-This-Device composed from P1..P12.
+        "CSD-082" | "CSD-083" | "CSD-085" | "CSD-093" => {
+            let wiz = FirstRunWizardState::default();
+            project_first_run_wizard_scene(&wiz, ctx).nodes
+        }
+
+        // CSD-095: Self-Key Roster (held additions and quorum evictions) composed from P1, P3, P4, P8, P9.
+        "CSD-095" => vec![EpistemicNode::TwoPathCeremony(TwoPathCeremonyNode {
+            tag_prefix: "card_self_roster".to_string(),
+            disclosure: DisclosureHint::EllipsisExpand {
+                tag: "btn_self_roster_ellipsis".to_string(),
+                collapsed_by_default: true,
+                summary_chip: "1 of 2 signed · 24h W_self".to_string(),
+            },
+            policy_family: GovernancePolicyFamily::SelfRosterAdd,
+            proposal: "Add S23 Phone (occ-a3) to Self-Key Roster".to_string(),
+            proposed_by: "occ-a1 (Founder Laptop)".to_string(),
+            signers: vec![
+                SignerChip {
+                    key_id: "occ-a1".to_string(),
+                    state: CeremonySignerState::Proposed,
+                },
+                SignerChip {
+                    key_id: "occ-a2".to_string(),
+                    state: CeremonySignerState::NotYet,
+                },
+            ],
+            verdict: GovernancePolicyFamily::SelfRosterAdd
+                .spec()
+                .evaluate(2, 1, 0, 86_400),
+            own_proposal: true,
+            can_assent: false,
+            can_object: false,
+        })],
+
         _ => Vec::new(),
+    }
+}
+
+/// Project the First-Run Setup Wizard (`CSD-080`..`CSD-085`, `CSD-093`, `CSD-115`, `CSD-118`)
+/// purely from the 12 UX Primitives (`P1`–`P12`):
+/// - `P1: CardShell` (`EpistemicNode::Card`) for non-nesting step containers (`csd_082_setup_wizard`, `setup_step_you`, `setup_step_join_federation`, `setup_step_ai`, `csd_085_claim_node`).
+/// - `P2: FieldRow` (`FieldNode`) for typed scalar inputs (`input_fedid_label`, `input_device_name`, `toggle_secure_2fa`, `input_claim_pin`).
+/// - `P3: ItemRow` (`ItemNode`) + `P5: ScopePill` (`ScopePillNode`) + `P6: Chip` (`ChipNode`) + `P4: ReceiptSheet` (`Receipt5` via `☰`) for signed identity, consent, bond, and claim rows.
+/// - `P7: StateBlock` (`EpistemicNode::StateBanner`) for path-lock (`txt_setup_identity_path_locked`), minor guardian bond (`txt_minor_guardian_required`), add-device waiting (`setup_add_device_waiting`), and claim status (`setup_ownership_claimed` / `error`).
+/// - `P8: ConfirmSheet` (`EpistemicNode::ConfirmModal`) for 3-fact cancellation (`confirm_add_device_cancel`) and outward consent/claim confirmation.
+/// - `P9: TwoPathCeremonyBlock` (`EpistemicNode::TwoPathCeremony`) for `CSD-093`/`CSD-095` multi-device roster hold (`SelfRosterAdd`).
+/// - `P10: QrCeremony` (`EpistemicNode::QrCeremony`) for `btn_add_device_scan` (`CSD-093`) and `NodeCode` (`CSD-085`).
+/// - `P11: LineageChainBlock` (`EpistemicNode::LineageChain`) for `CSD-115` `StewardBond` (Step 3 `AI`) and `CSD-119` `GuardianBond`.
+/// - `P12a: ConscienceStepBlock` (`EpistemicNode::ConscienceStep`) for Step 3 `AI` H3ERE conscience, `CSD-118` `prohibited:*` bounds, and `G14` limits.
+pub fn project_first_run_wizard_scene(
+    wiz: &FirstRunWizardState,
+    ctx: &ViewerContext,
+) -> EpistemicScene {
+    let mut nodes = Vec::new();
+
+    // 1. Permanent Top-Bar Shell Header (`btn_my_things` + `btn_stop_everything`).
+    nodes.push(EpistemicNode::ShellHeader(ShellHeaderNode {
+        circle: CircleScope::JustMe,
+        tab: CircleTab::Rules,
+        active_instrument: Some(InstrumentId::ThisNode),
+        shows_circle_governance_subtitle: false,
+        halt_status: ctx.planes.halt_status.clone(),
+        my_things_tag: "btn_my_things".to_string(),
+        stop_everything_tag: "btn_stop_everything".to_string(),
+    }));
+
+    // 2. Wizard Step Header Card (`P1: CardShell` + `P6: Chip` step indicators + `P2: FieldRow` mode).
+    let step_fields = vec![
+        FieldNode {
+            tag: "step_indicator_you".to_string(),
+            label: "Step 1 · YOU".to_string(),
+            value: if wiz.step == WizardStep::You {
+                "Active".to_string()
+            } else {
+                "Completed".to_string()
+            },
+            protocol_wire_name: Some("setup.step.you".to_string()),
+            gloss: Some("Identity choice (New CIRIS ID vs Add This Device)".to_string()),
+            basis: VerificationBasis::Wire {
+                value: format!("{:?}", wiz.identity_path),
+                gloss: None,
+            },
+        },
+        FieldNode {
+            tag: "step_indicator_join_federation".to_string(),
+            label: "Step 2 · JOIN_FEDERATION".to_string(),
+            value: if wiz.step == WizardStep::JoinFederation {
+                "Active".to_string()
+            } else {
+                "Pending".to_string()
+            },
+            protocol_wire_name: Some("setup.step.join_federation".to_string()),
+            gloss: Some("GET /v1/setup/consent-disclosure (Send traces vs Be scored)".to_string()),
+            basis: VerificationBasis::Wire {
+                value: format!("consent={:?}", wiz.trace_consent),
+                gloss: None,
+            },
+        },
+    ];
+    let mut header_fields = step_fields;
+    if wiz.run_with_ai {
+        header_fields.push(FieldNode {
+            tag: "step_indicator_ai".to_string(),
+            label: "Step 3 · AI".to_string(),
+            value: if wiz.step == WizardStep::Ai {
+                "Active".to_string()
+            } else {
+                "Pending".to_string()
+            },
+            protocol_wire_name: Some("setup.step.ai".to_string()),
+            gloss: Some("Conscience-bearing AI & Steward Bond (CSD-115)".to_string()),
+            basis: VerificationBasis::ByRule {
+                value: "CSD-082 3-step mode".to_string(),
+                cc_ref: "CC 4.4.3".to_string(),
+            },
+        });
+    }
+
+    nodes.push(EpistemicNode::Card {
+        tag: "csd_082_setup_wizard".to_string(),
+        title: if wiz.run_with_ai {
+            "First-Run Setup Wizard · CSD-082 With AI (3 steps)".to_string()
+        } else {
+            "First-Run Setup Wizard · CSD-083 Node-Only (2 steps)".to_string()
+        },
+        accent: Some(Tone::Brand),
+        fields: header_fields,
+        items: Vec::new(),
+    });
+
+    // 3. Step-specific UX Primitive projection (`P1`–`P12`).
+    match wiz.step {
+        WizardStep::You => {
+            if wiz.add_device_phase.locks_identity_path() {
+                let state = SurfaceState::Unreviewed {
+                    summary: "Identity path locked while device join request is active (txt_setup_identity_path_locked)."
+                        .to_string(),
+                };
+                let tone = state.tone();
+                nodes.push(EpistemicNode::StateBanner {
+                    tag: "txt_setup_identity_path_locked".to_string(),
+                    state,
+                    tone,
+                    data_doors_open_banner: None,
+                });
+            }
+
+            let fields = vec![
+                FieldNode {
+                    tag: "input_fedid_label".to_string(),
+                    label: "CIRIS ID Handle".to_string(),
+                    value: if wiz.fedid_label.is_empty() {
+                        "(unset — neither path preselected)".to_string()
+                    } else {
+                        wiz.fedid_label.clone()
+                    },
+                    protocol_wire_name: Some("POST /v1/self/identity".to_string()),
+                    gloss: Some("Rejects generic ciris-client-user placeholder".to_string()),
+                    basis: VerificationBasis::Wire {
+                        value: wiz.fedid_label.clone(),
+                        gloss: None,
+                    },
+                },
+                FieldNode {
+                    tag: "input_device_name".to_string(),
+                    label: "This Device's Name".to_string(),
+                    value: wiz.device_name.clone(),
+                    protocol_wire_name: Some("self.occurrence_id".to_string()),
+                    gloss: None,
+                    basis: VerificationBasis::Wire {
+                        value: wiz.device_name.clone(),
+                        gloss: None,
+                    },
+                },
+                FieldNode {
+                    tag: "toggle_secure_2fa".to_string(),
+                    label: "Hardware Enclave Key Custody".to_string(),
+                    value: wiz.hardware_custody.to_string(),
+                    protocol_wire_name: Some("key.custody.hardware".to_string()),
+                    gloss: Some("Ed25519 + ML-DSA-65 hybrid keypair".to_string()),
+                    basis: VerificationBasis::ByRule {
+                        value: "Hybrid PQC required".to_string(),
+                        cc_ref: "CC 3.3.6".to_string(),
+                    },
+                },
+            ];
+
+            let items = vec![
+                ItemNode {
+                    id: "setup_new_identity".to_string(),
+                    tag: "btn_setup_new_identity".to_string(),
+                    title: "Set up a new CIRIS ID".to_string(),
+                    subtitle: "Mint a fresh hybrid Ed25519 + ML-DSA-65 root keypair (CSD-082)".to_string(),
+                    scope_pill: ScopePillNode::from_circle(
+                        "pill_scope_setup_new",
+                        CircleScope::JustMe,
+                        true,
+                    ),
+                    chips: vec![ChipNode {
+                        tag: "chip_choice_new_identity".to_string(),
+                        kind: ChipKind::Choice,
+                        label: if wiz.identity_path == Some(SetupIdentityPath::NewIdentity) {
+                            "Selected".to_string()
+                        } else {
+                            "Choose".to_string()
+                        },
+                        tone: Tone::Brand,
+                        selected: wiz.identity_path == Some(SetupIdentityPath::NewIdentity),
+                    }],
+                    lens_verdict: PolicyLensVerdict::Clear,
+                    receipt: None,
+                    primary_action: None,
+                },
+                ItemNode {
+                    id: "setup_add_this_device".to_string(),
+                    tag: "btn_setup_add_this_device".to_string(),
+                    title: "Add this device to an existing CIRIS ID".to_string(),
+                    subtitle: "Pair with your existing phone or laptop via 6-digit match code (CSD-093)"
+                        .to_string(),
+                    scope_pill: ScopePillNode::from_circle(
+                        "pill_scope_setup_add_device",
+                        CircleScope::JustMe,
+                        true,
+                    ),
+                    chips: vec![ChipNode {
+                        tag: "chip_choice_add_device".to_string(),
+                        kind: ChipKind::Choice,
+                        label: if wiz.identity_path == Some(SetupIdentityPath::AddThisDevice) {
+                            "Selected".to_string()
+                        } else {
+                            "Choose".to_string()
+                        },
+                        tone: Tone::Brand,
+                        selected: wiz.identity_path == Some(SetupIdentityPath::AddThisDevice),
+                    }],
+                    lens_verdict: PolicyLensVerdict::Clear,
+                    receipt: None,
+                    primary_action: None,
+                },
+            ];
+
+            nodes.push(EpistemicNode::Card {
+                tag: "setup_step_you".to_string(),
+                title: "Step 1 · Who is setting up this device? (CSD-082 / CSD-093)".to_string(),
+                accent: Some(Tone::Brand),
+                fields,
+                items,
+            });
+
+            if wiz.age_band == Some(AgeBandChoice::Minor) {
+                nodes.push(EpistemicNode::LineageChain(LineageChainNode {
+                    tag_prefix: "txt_minor_guardian_required".to_string(),
+                    disclosure: DisclosureHint::EllipsisExpand {
+                        tag: "btn_minor_guardian_ellipsis".to_string(),
+                        collapsed_by_default: true,
+                        summary_chip: "Guardian bond required (CC 3.2)".to_string(),
+                    },
+                    kind: ChainKind::GuardianBond,
+                    title: "Under-18 Protective Guardian / Steward Bond (CSD-119)".to_string(),
+                    links: vec![ChainLinkNode {
+                        step_index: 1,
+                        label: "Self-claim paused · Awaiting verified Guardian bond".to_string(),
+                        detail: "Confidential help & contest channel active (Q3/Q4/Q5)".to_string(),
+                        sealed: false,
+                        active: true,
+                        withdraw_action: None,
+                    }],
+                }));
+            }
+
+            if wiz.identity_path == Some(SetupIdentityPath::AddThisDevice) {
+                nodes.push(EpistemicNode::QrCeremony(QrCeremonyNode {
+                    tag: "btn_add_device_scan".to_string(),
+                    payload_uri: if wiz.add_device_contact.is_empty() {
+                        "ciris://ed25519:alice.ciris#root@127.0.0.1:4243".to_string()
+                    } else {
+                        wiz.add_device_contact.clone()
+                    },
+                    paste_fallback_enabled: true,
+                }));
+
+                if wiz.add_device_held_by_roster {
+                    nodes.push(EpistemicNode::TwoPathCeremony(TwoPathCeremonyNode {
+                        tag_prefix: "text_add_device_held_note".to_string(),
+                        disclosure: DisclosureHint::EllipsisExpand {
+                            tag: "btn_add_device_held_ellipsis".to_string(),
+                            collapsed_by_default: true,
+                            summary_chip: "202 Held · Self-Key Roster (CSD-095)".to_string(),
+                        },
+                        policy_family: GovernancePolicyFamily::SelfRosterAdd,
+                        proposal: format!("Enroll {} into existing CIRIS ID", wiz.device_name),
+                        proposed_by: "Existing Device A1".to_string(),
+                        signers: vec![
+                            SignerChip {
+                                key_id: "occ-a1".to_string(),
+                                state: CeremonySignerState::Signed,
+                            },
+                            SignerChip {
+                                key_id: "occ-a2".to_string(),
+                                state: CeremonySignerState::NotYet,
+                            },
+                        ],
+                        verdict: GovernancePolicyFamily::SelfRosterAdd
+                            .spec()
+                            .evaluate(2, 1, 0, 86_400),
+                        own_proposal: false,
+                        can_assent: true,
+                        can_object: true,
+                    }));
+                }
+            }
+        }
+
+        WizardStep::JoinFederation => {
+            let fields = vec![
+                FieldNode {
+                    tag: "trace_consent_yes".to_string(),
+                    label: "Grant 1: Send traces (consent:replication:v1)".to_string(),
+                    value: format!("selected={:?}", wiz.trace_consent),
+                    protocol_wire_name: Some("consent:replication:v1".to_string()),
+                    gloss: Some("The peer may HOLD your traces".to_string()),
+                    basis: VerificationBasis::Wire {
+                        value: format!("{:?}", wiz.trace_consent),
+                        gloss: None,
+                    },
+                },
+                FieldNode {
+                    tag: "toggle_trace_analyze".to_string(),
+                    label: "Grant 2: Be scored (consent:state:granted:v1 · analyze=True)".to_string(),
+                    value: wiz.trace_analyze.to_string(),
+                    protocol_wire_name: Some("consent:state:granted:v1".to_string()),
+                    gloss: Some("Independent edge: granting one does not grant the other".to_string()),
+                    basis: VerificationBasis::Wire {
+                        value: wiz.trace_analyze.to_string(),
+                        gloss: None,
+                    },
+                },
+                FieldNode {
+                    tag: "csd_118_never_allowed_setup".to_string(),
+                    label: "Operator Never-Allowed Bounds (CSD-118)".to_string(),
+                    value: "prohibited:* enforced (No silent forward, no unconsented scoring)".to_string(),
+                    protocol_wire_name: Some("prohibited:*".to_string()),
+                    gloss: None,
+                    basis: VerificationBasis::ByRule {
+                        value: "NEVER_ALLOWED".to_string(),
+                        cc_ref: "CC 7.4".to_string(),
+                    },
+                },
+            ];
+            nodes.push(EpistemicNode::Card {
+                tag: "setup_step_join_federation".to_string(),
+                title: "Step 2 · Federation & Consent Disclosure (GET /v1/setup/consent-disclosure)"
+                    .to_string(),
+                accent: Some(Tone::Brand),
+                fields,
+                items: Vec::new(),
+            });
+        }
+
+        WizardStep::Ai => {
+            nodes.push(EpistemicNode::LineageChain(LineageChainNode {
+                tag_prefix: "csd_115_setup_bond".to_string(),
+                disclosure: DisclosureHint::EllipsisExpand {
+                    tag: "btn_setup_bond_ellipsis".to_string(),
+                    collapsed_by_default: true,
+                    summary_chip: "Depth 1 · 365d review".to_string(),
+                },
+                kind: ChainKind::StewardBond,
+                title: "Steward–Agent Founding Bond (CSD-115 · Inv_BondDepthOne)".to_string(),
+                links: vec![ChainLinkNode {
+                    step_index: 1,
+                    label: "Companion Steward -> Local Agent".to_string(),
+                    detail: "Powers: agency:operate, agency:defer_wa · 1-step revoke active".to_string(),
+                    sealed: false,
+                    active: true,
+                    withdraw_action: None,
+                }],
+            }));
+            nodes.push(EpistemicNode::ConscienceStep(ConscienceStepNode {
+                tag_prefix: "setup_step_ai".to_string(),
+                disclosure: DisclosureHint::EllipsisExpand {
+                    tag: "btn_setup_ai_conscience_ellipsis".to_string(),
+                    collapsed_by_default: true,
+                    summary_chip: "H3ERE + 423 Halt Gate".to_string(),
+                },
+                task_summary: "Always-On Conscience & Tool Disclosure (tool_disclosure_always_on)"
+                    .to_string(),
+                adapter_version: "ciris-agent:2.17.0".to_string(),
+                principles: vec![
+                    PrincipleCheck {
+                        rank: 1,
+                        code: "M-1".to_string(),
+                        title: "Meta-Goal M-1 & Most-Vulnerable Tie-Break".to_string(),
+                        passed: true,
+                        note: "Lexical priority enforced before every tool call".to_string(),
+                    },
+                    PrincipleCheck {
+                        rank: 2,
+                        code: "G17".to_string(),
+                        title: "Hard Refusal on NEVER_ALLOWED (prohibited:*)".to_string(),
+                        passed: true,
+                        note: "CSD-118 apophatic bounds active".to_string(),
+                    },
+                ],
+                cost: ResourceCost {
+                    tokens: 0,
+                    energy_kwh: 0.0,
+                    carbon_g: 0.0,
+                    water_ml: 0.0,
+                },
+                gate_verdict: AgentGateVerdict::Acting,
+                g14_limits_notice:
+                    "G14 Limits: Conscience gates govern this agent's actions; external API providers remain governed by their own transport boundaries."
+                        .to_string(),
+            }));
+        }
+
+        WizardStep::Complete => {
+            nodes.push(EpistemicNode::QrCeremony(QrCeremonyNode {
+                tag: "qr_node_code_claim".to_string(),
+                payload_uri: "CIRIS-V1-NODE-CODE".to_string(),
+                paste_fallback_enabled: true,
+            }));
+            nodes.push(EpistemicNode::Card {
+                tag: "csd_085_claim_node".to_string(),
+                title: "Step 4 · Claim Node Ownership (CSD-085 · POST /v1/setup/claim-remote)"
+                    .to_string(),
+                accent: Some(Tone::Ok),
+                fields: vec![FieldNode {
+                    tag: "input_claim_pin".to_string(),
+                    label: "One-Time 0600 claim_pin".to_string(),
+                    value: match &wiz.ownership_status {
+                        OwnershipClaimStatus::Claimed { owner_key_id, role } => {
+                            format!("Claimed by {owner_key_id} ({role}) — PIN consumed & deleted")
+                        }
+                        _ => "0600 <CIRIS_HOME>/claim_pin (never printed to stdout)".to_string(),
+                    },
+                    protocol_wire_name: Some("POST /v1/setup/claim-remote".to_string()),
+                    gloss: Some("cohort_scope: self".to_string()),
+                    basis: VerificationBasis::Wire {
+                        value: format!("{:?}", wiz.ownership_status),
+                        gloss: None,
+                    },
+                }],
+                items: Vec::new(),
+            });
+        }
+    }
+
+    EpistemicScene {
+        topology: TopologyId::T0,
+        nodes,
     }
 }
 

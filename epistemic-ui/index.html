@@ -798,7 +798,280 @@
     }
 
     // ══════════════════════════════════════════════════════════════════════════
+    // 0. THE 12 REUSABLE UX PRIMITIVES (`P1`–`P12` from `epistemic_scene.rs`)
+    // ══════════════════════════════════════════════════════════════════════════
+
+    // `P5: ScopePill` — sole place a Circle's color dot, name, and `local_only_badge` (`CSD-127`) are rendered
+    function renderP5ScopePill(scopeId, tag, localOnlyBadge) {
+      const sc = getCircle(scopeId);
+      return `
+        <span class="scope-pill" ${tag ? `data-csd-tag="${tag}"` : ''}>
+          <span class="circle-dot" style="background:${sc.color}"></span>
+          <span>${sc.label}</span>
+          ${localOnlyBadge ? '<span class="chip" style="padding:1px 5px;font-size:10px;margin-left:2px;">Local only</span>' : ''}
+        </span>
+      `;
+    }
+
+    // `P6: Chip` — `Choice | Badge | Filter | Sort`
+    function renderP6Chip({ tag, label, tone = "", kind = "Badge", selected = false, disabled = false, onclick = "", style = "" }) {
+      const tagAttr = tag ? `data-csd-tag="${tag}"` : "";
+      const styleAttr = style ? `style="${style}"` : "";
+      if (kind === "Choice") {
+        return `
+          <button class="btn ${selected ? 'btn-brand' : ''} ${tone}"
+                  ${tagAttr} ${styleAttr}
+                  ${disabled ? 'disabled' : ''}
+                  ${onclick ? `onclick="${onclick}"` : ''}>
+            ${label}
+          </button>
+        `;
+      }
+      return `<span class="chip ${tone}" ${tagAttr} ${styleAttr}>${label}</span>`;
+    }
+
+    // `P7: StateBlock` — 7-way epistemic surface state (`Populated | Loading | Empty | Error | FileGone | HiddenByRules | Unreviewed`)
+    function renderP7StateBlock({ tag, tone = "", contentHtml, rightHtml = "" }) {
+      return `
+        <div class="state-banner ${tone}" ${tag ? `data-csd-tag="${tag}"` : ''}>
+          <span>${contentHtml}</span>
+          ${rightHtml}
+        </div>
+      `;
+    }
+
+    // `P2: FieldRow` — scalar state variable key-value row with `protocol_wire_name` and `VerificationBasis`
+    function renderP2FieldRow({ tag, labelHtml, valueHtml, wireName = "", verification = "" }) {
+      const basisBadge = verification
+        ? ` <span class="chip ${verification === 'Wire' ? 'ok' : verification.startsWith('ByRule') ? 'brand' : ''}" style="font-size:10px;padding:1px 6px;">${verification}</span>`
+        : "";
+      const wireHint = wireName ? ` <code style="font-size:11px;color:var(--ink-mute);">(${wireName})</code>` : "";
+      return `
+        <div class="kv-row" ${tag ? `data-csd-tag="${tag}"` : ''}>
+          <span>${labelHtml}${wireHint}</span>
+          <span style="display:flex;align-items:center;gap:6px;">${valueHtml}${basisBadge}</span>
+        </div>
+      `;
+    }
+
+    // `P3: ItemRow` — collection row enforcing the 3-fact inline scannability cap + Hamburger Epistemic Invariant (`CSD-006`)
+    function renderP3ItemRow({ tag, id, titleHtml, subtitleHtml = "", scopeId = "JustMe", localOnlyBadge = false, hasReceipt = true, rightExtraHtml = "" }) {
+      const rowTag = tag || `csd_item_${id}`;
+      return `
+        <div class="item-row" data-csd-tag="${rowTag}">
+          <div>
+            <div class="item-title">${titleHtml}</div>
+            ${subtitleHtml ? `<div style="font-size:12px; color:var(--ink-mute);">${subtitleHtml}</div>` : ''}
+          </div>
+          <div class="item-right">
+            ${rightExtraHtml}
+            ${renderP5ScopePill(scopeId, `csd_scope_${id}`, localOnlyBadge)}
+            ${hasReceipt ? `
+              <button class="btn-ghost" data-csd-tag="btn_receipt_${id}" title="5-fact CEG receipt &amp; actions (P4)" onclick="openReceiptSheet('${id}')">
+                &#9776;
+              </button>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    // `P1: CardShell` — non-nesting card shell with title, chip, `P2` fields, `P3` items, and `⋯` (`EllipsisExpand`) progressive disclosure
+    function renderP1CardShell({ tag, titleHtml, chipLabel = "", chipTone = "", headerRightHtml = "", bodyHtml = "", ellipsisKey = "", ellipsisHtml = "" }) {
+      const isOpen = ellipsisKey ? !!state.expandedIds[ellipsisKey] : false;
+      return `
+        <div class="card" ${tag ? `data-csd-tag="${tag}"` : ''}>
+          <div class="card-header">
+            <div class="card-header-title">
+              <span>${titleHtml}</span>
+              ${chipLabel ? renderP6Chip({ label: chipLabel, tone: chipTone }) : ''}
+            </div>
+            <div style="display:flex;gap:6px;align-items:center;">
+              ${headerRightHtml}
+              ${ellipsisKey && ellipsisHtml ? `
+                <button class="btn-ghost" data-csd-tag="btn_${ellipsisKey}_ellipsis" title="More details (&ctdot;)" onclick="toggleExpand('${ellipsisKey}')">&ctdot;</button>
+              ` : ''}
+            </div>
+          </div>
+          ${bodyHtml}
+          ${ellipsisKey && ellipsisHtml && isOpen ? `<div class="expand-body">${ellipsisHtml}</div>` : ''}
+        </div>
+      `;
+    }
+
+    // `P8: ConfirmSheet` — 3-fact confirmation gate (`ConfirmFacts3`)
+    function openP8ConfirmSheet({ tag, title, fact1Label, fact1Val, fact2Label, fact2Val, fact3Label, fact3Val, noteHtml = "", confirmTag, confirmLabel, confirmTone = "btn-brand", onConfirmJs, cancelLabel = "Cancel" }) {
+      const host = document.getElementById("sheetHost");
+      host.innerHTML = `
+        <div class="sheet-backdrop" onclick="if(event.target===this)closeSheet()">
+          <div class="sheet" data-csd-tag="${tag}">
+            <div class="sheet-header">
+              <span class="sheet-title">${title}</span>
+              <button class="btn-ghost" onclick="closeSheet()">&#10005;</button>
+            </div>
+            <div class="card" style="padding:8px 14px;">
+              <div class="kv-row"><span>1. ${fact1Label}</span><strong>${fact1Val}</strong></div>
+              <div class="kv-row"><span>2. ${fact2Label}</span><strong>${fact2Val}</strong></div>
+              <div class="kv-row"><span>3. ${fact3Label}</span><span>${fact3Val}</span></div>
+            </div>
+            ${noteHtml}
+            <div style="display:flex; gap:8px; margin-top:12px;">
+              <button class="btn ${confirmTone}" ${confirmTag ? `data-csd-tag="${confirmTag}"` : ''} onclick="${onConfirmJs}">
+                ${confirmLabel}
+              </button>
+              <button class="btn" data-csd-tag="btn_confirm_cancel" onclick="closeSheet()">${cancelLabel}</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // `P9: TwoPathCeremonyBlock` — universal governance ceremony primitive (1-line summary + `⋯` expansion)
+    function renderP9TwoPathCeremony({ tag, title, chipLabel, chipTone = "brand", summaryHtml = "", ellipsisKey, quorumRule, approvals, required, objections = 0, windowLabel = "24h W_self (86,400s)", actionsHtml = "" }) {
+      const expandContent = `
+        ${renderP2FieldRow({ labelHtml: "Ceremony policy", valueHtml: `<code>${quorumRule}</code>`, verification: "ByRule CC 4.5.12" })}
+        ${renderP2FieldRow({ labelHtml: "Quorum tally", valueHtml: `${approvals} of ${required} signatures &middot; ${objections} objections`, verification: "Wire" })}
+        ${renderP2FieldRow({ labelHtml: "Lone-signer silence window", valueHtml: windowLabel, verification: "ByRule" })}
+        ${actionsHtml}
+      `;
+      return renderP1CardShell({
+        tag,
+        titleHtml: title,
+        chipLabel,
+        chipTone,
+        bodyHtml: summaryHtml ? `<div style="font-size:12px;color:var(--ink-mute);padding:4px 0 8px;">${summaryHtml}</div>` : "",
+        ellipsisKey,
+        ellipsisHtml: expandContent,
+      });
+    }
+
+    // `P10: QrCeremony` — QR code display + scan/paste fallback + 6-digit verification match code
+    function renderP10QrCeremony({ tag, titleHtml, payloadInputHtml, scanButtonTag, onScanJs, matchCode = null, statusNoteHtml = "", actionsHtml = "" }) {
+      return `
+        <div style="border-top:1px solid var(--hairline); padding-top:10px; margin-top:6px;" data-csd-tag="${tag}">
+          <div class="kv-row">
+            <span>${titleHtml}</span>
+            <div style="display:flex; gap:6px; width:65%;">
+              ${payloadInputHtml}
+              <button class="btn" data-csd-tag="${scanButtonTag}" onclick="${onScanJs}">Scan QR</button>
+            </div>
+          </div>
+          ${actionsHtml}
+          ${matchCode ? `
+            <div class="match-code-box" data-csd-tag="text_add_device_match_code">${matchCode}</div>
+          ` : ''}
+          ${statusNoteHtml}
+        </div>
+      `;
+    }
+
+    // `P11: LineageChainBlock` — ordered chain (`StewardBond CSD-115`, `GuardianBond CSD-119`, `TrustRootHead CSD-105`, `RetirementLadder CSD-113`)
+    function renderP11LineageChain({ tag, title, chipLabel, chipTone = "brand", chipTag = "", links = [], ellipsisKey }) {
+      const expandHtml = links.map(l =>
+        renderP2FieldRow({ labelHtml: `${l.index}. ${l.label}`, valueHtml: `<span class="mono-hint">${l.status}</span>`, verification: l.verification || "Wire" })
+      ).join("");
+      return renderP1CardShell({
+        tag,
+        titleHtml: title,
+        headerRightHtml: chipLabel ? renderP6Chip({ tag: chipTag, label: chipLabel, tone: chipTone }) : "",
+        ellipsisKey,
+        ellipsisHtml: expandHtml,
+      });
+    }
+
+    // `P12: ConscienceStepBlock` — H3ERE conscience evaluation + `CSD-118` `prohibited:*` bounds + mandatory `G14` constitutional limit co-display
+    function renderP12ConscienceStep({ tag, title, chipLabel, chipTone = "ok", chipTag = "", checks = [], g14Notice, ellipsisKey }) {
+      const expandHtml = `
+        ${checks.map(c => renderP2FieldRow({ labelHtml: `<code>${c.invariant}</code>`, valueHtml: `<span class="chip ${c.tone || 'ok'}">${c.outcome}</span>`, verification: "ByRule G17" })).join("")}
+        ${renderP2FieldRow({ labelHtml: "Constitutional limit (<code>G14</code>)", valueHtml: `<span>${g14Notice}</span>`, verification: "ByRule G14" })}
+      `;
+      return renderP1CardShell({
+        tag,
+        titleHtml: title,
+        headerRightHtml: chipLabel ? renderP6Chip({ tag: chipTag, label: chipLabel, tone: chipTone }) : "",
+        ellipsisKey,
+        ellipsisHtml: expandHtml,
+      });
+    }
+
+    // Synthetic 5-fact CEG Receipt lookup for First-Run Wizard signed envelopes (`P3` -> `P4`)
+    function getSetupReceiptClaim(claimId) {
+      const w = state.wizard;
+      const handle = w.fedidLabel.trim() || "alice.ciris";
+      const map = {
+        setup_new_identity: {
+          id: "setup_new_identity",
+          title: `Mint self-key root (${handle})`,
+          subject: `ed25519:${handle}#root`,
+          attester: `ed25519:${handle}#device-1`,
+          scope: "JustMe",
+          dimension: "self_roster:genesis_root",
+          op: "scores",
+          score: 1.0,
+          confidence: 1.0,
+        },
+        setup_add_device: {
+          id: "setup_add_device",
+          title: `Join existing CIRIS ID (${w.addDeviceName})`,
+          subject: state.multiDevice.selfKeyId,
+          attester: `ed25519:pending_${w.addDeviceName.toLowerCase().replace(/\s+/g, '_')}`,
+          scope: "Everyone",
+          dimension: "self_roster:add",
+          op: "scores",
+          score: 1.0,
+          confidence: 1.0,
+        },
+        setup_consent_replication: {
+          id: "setup_consent_replication",
+          title: w.traceConsent ? "Consent: Share anonymized traces" : "Consent: Local-only traces",
+          subject: `ed25519:${handle}#root`,
+          attester: `ed25519:${handle}#root`,
+          scope: w.traceConsent ? "Everyone" : "JustMe",
+          dimension: "consent:trace_replication",
+          op: "scores",
+          score: w.traceConsent ? 1.0 : 0.0,
+          confidence: 1.0,
+        },
+        setup_consent_analyze: {
+          id: "setup_consent_analyze",
+          title: "Consent: Aggregated pattern analysis",
+          subject: `ed25519:${handle}#root`,
+          attester: `ed25519:${handle}#root`,
+          scope: "Everyone",
+          dimension: "consent:trace_analyze",
+          op: "scores",
+          score: w.traceAnalyze ? 1.0 : 0.0,
+          confidence: 1.0,
+        },
+        setup_steward_bond: {
+          id: "setup_steward_bond",
+          title: "Steward–Agent Bond (Depth 1 · 365d review)",
+          subject: `ed25519:${state.liveNode.keyId}#agent`,
+          attester: `ed25519:${handle}#root`,
+          scope: "JustMe",
+          dimension: "bond:steward:v1",
+          op: "delegates_to",
+          score: 1.0,
+          confidence: 1.0,
+        },
+        setup_owner_claim: {
+          id: "setup_owner_claim",
+          title: `Owner Binding Attestation (${state.liveNode.keyId})`,
+          subject: `ed25519:${state.liveNode.keyId}`,
+          attester: state.liveNode.ownerKeyId || `ed25519:${handle}#root`,
+          scope: "JustMe",
+          dimension: "ownership:claim_remote:0600_pin",
+          op: "scores",
+          score: 1.0,
+          confidence: 1.0,
+        },
+      };
+      return map[claimId] || null;
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
     // 1. FIRST-RUN WIZARD (`CSD-080`..`CSD-085`, `CSD-093`, `CSD-115`, `CSD-118`)
+    //    Projected exclusively from the 12 UX Primitives (`P1`–`P12`)
     // ══════════════════════════════════════════════════════════════════════════
 
     function isValidFedIdLabel(label) {
@@ -829,7 +1102,7 @@
     }
 
     function wizardScanQrFill() {
-      // `btn_add_device_scan` fills contact URI and never auto-sends (`CSD-093`)
+      // `btn_add_device_scan` (`P10: QrCeremony`) fills contact URI and never auto-sends (`CSD-093`)
       state.wizard.addDeviceContact = "ciris://ed25519:alice.ciris#root@192.168.1.42:4243";
       renderAll();
     }
@@ -843,28 +1116,21 @@
     }
 
     function openCancelAddDeviceConfirm() {
-      const host = document.getElementById("sheetHost");
-      host.innerHTML = `
-        <div class="sheet-backdrop" onclick="if(event.target===this)closeSheet()">
-          <div class="sheet" data-csd-tag="confirm_add_device_cancel">
-            <div class="sheet-header">
-              <span class="sheet-title">Cancel adding this device?</span>
-              <button class="btn-ghost" onclick="closeSheet()">&#10005;</button>
-            </div>
-            <div class="card" style="padding:8px 14px;">
-              <div class="kv-row"><span>1. Action</span><strong>DELETE /v1/setup/add-device</strong></div>
-              <div class="kv-row"><span>2. Match code</span><span class="mono-hint">${state.wizard.addDeviceMatchCode || '482 913'} invalidated</span></div>
-              <div class="kv-row"><span>3. Effect</span><span>Unlocks the identity choice so you can start over</span></div>
-            </div>
-            <div style="display:flex; gap:8px; margin-top:12px;">
-              <button class="btn btn-danger" data-csd-tag="btn_confirm_add_device_cancel_yes" onclick="wizardConfirmCancelAddDevice()">
-                Cancel request
-              </button>
-              <button class="btn" onclick="closeSheet()">Keep waiting</button>
-            </div>
-          </div>
-        </div>
-      `;
+      openP8ConfirmSheet({
+        tag: "confirm_add_device_cancel",
+        title: "Cancel adding this device?",
+        fact1Label: "Action",
+        fact1Val: "DELETE /v1/setup/add-device",
+        fact2Label: "Match code",
+        fact2Val: `<span class="mono-hint">${state.wizard.addDeviceMatchCode || '482 913'} invalidated</span>`,
+        fact3Label: "Effect",
+        fact3Val: "Unlocks the identity choice so you can start over",
+        confirmTag: "btn_confirm_add_device_cancel_yes",
+        confirmLabel: "Cancel request",
+        confirmTone: "btn-danger",
+        onConfirmJs: "wizardConfirmCancelAddDevice()",
+        cancelLabel: "Keep waiting",
+      });
     }
 
     function wizardConfirmCancelAddDevice() {
@@ -920,7 +1186,9 @@
           const st = await stResp.json();
           if (st.data) {
             state.liveNode.isFirstRun = !!st.data.is_first_run;
-            if (!st.data.is_first_run && state.wizard.ownershipState === "unclaimed") {
+            if (st.data.is_first_run && !urlParams.get("instrument") && !urlParams.get("circle")) {
+              state.setupMode = true;
+            } else if (!st.data.is_first_run && state.wizard.ownershipState === "unclaimed") {
               state.wizard.ownershipState = "claimed";
             }
           }
@@ -1017,145 +1285,135 @@
 
     function renderFirstRunWizard() {
       const w = state.wizard;
-      const steps = w.runWithAi ? ["YOU", "JOIN_FEDERATION", "AI"] : ["YOU", "JOIN_FEDERATION"];
       const lockedPath = ["requested", "approved", "retrying"].includes(w.addDeviceStatus);
 
-      let stepHeaderHtml = `
-        <div class="card" data-csd-tag="csd_082_setup_wizard">
-          <div class="card-header">
-            <div class="card-header-title">
-              <span>First-Run Setup Wizard</span>
-              <span class="chip brand">${w.runWithAi ? 'CSD-082 · With AI (3 steps)' : 'CSD-083 · Node-only (2 steps)'}</span>
-            </div>
-            <div style="display:flex; gap:6px; align-items:center;">
-              <span class="chip" data-csd-tag="step_indicator_you" style="${w.step === 'YOU' ? 'background:var(--obsidian);color:#fff;' : ''}">1. YOU</span>
-              <span class="chip" data-csd-tag="step_indicator_join_federation" style="${w.step === 'JOIN_FEDERATION' ? 'background:var(--obsidian);color:#fff;' : ''}">2. JOIN</span>
-              ${w.runWithAi ? `
-                <span class="chip" data-csd-tag="step_indicator_ai" style="${w.step === 'AI' ? 'background:var(--obsidian);color:#fff;' : ''}">3. AI</span>
-              ` : ''}
-            </div>
-          </div>
-        </div>
+      // `P1: CardShell` + `P6: Chip` step indicators + `⋯` live node telemetry disclosure
+      const stepIndicatorsHtml = `
+        ${renderP6Chip({ tag: "step_indicator_you", label: "1. YOU", style: w.step === "YOU" ? "background:var(--obsidian);color:#fff;" : "" })}
+        ${renderP6Chip({ tag: "step_indicator_join_federation", label: "2. JOIN", style: w.step === "JOIN_FEDERATION" ? "background:var(--obsidian);color:#fff;" : "" })}
+        ${w.runWithAi ? renderP6Chip({ tag: "step_indicator_ai", label: "3. AI", style: w.step === "AI" ? "background:var(--obsidian);color:#fff;" : "" }) : ""}
       `;
+      const wizardHeaderEllipsisHtml = `
+        ${renderP2FieldRow({ labelHtml: "Attached CIRISServer node", valueHtml: `<code>127.0.0.1:4243</code> &middot; v${state.liveNode.version} (${state.liveNode.keyId})`, wireName: "GET /health", verification: "Wire" })}
+        ${renderP2FieldRow({ labelHtml: "First-run status", valueHtml: `<code>is_first_run: ${state.liveNode.isFirstRun !== null ? state.liveNode.isFirstRun : true}</code>`, wireName: "GET /v1/setup/status", verification: "Wire" })}
+        ${renderP2FieldRow({ labelHtml: "Node claim code", valueHtml: `<code>${state.liveNode.nodeCode || 'CIRIS-LOCAL-4243'}</code>`, wireName: "GET /v1/federation/node-code", verification: "Wire" })}
+      `;
+      const stepHeaderHtml = renderP1CardShell({
+        tag: "csd_082_setup_wizard",
+        titleHtml: "First-Run Setup Wizard",
+        chipLabel: w.runWithAi ? "CSD-082 · With AI (3 steps)" : "CSD-083 · Node-only (2 steps)",
+        chipTone: "brand",
+        headerRightHtml: stepIndicatorsHtml,
+        ellipsisKey: "wiz_node_posture",
+        ellipsisHtml: wizardHeaderEllipsisHtml,
+      });
 
       let bodyHtml = "";
 
       if (w.step === "YOU") {
-        bodyHtml = `
-          <div class="card" data-csd-tag="setup_step_you">
-            <div class="card-header">
-              <div class="card-header-title">
-                <span>Step 1 &middot; Who is setting up this device?</span>
-                ${w.identityPath === null ? '<span class="chip warn">Choose one</span>' : `<span class="chip ok">${w.identityPath}</span>`}
-              </div>
+        // Step 1 (`YOU`): `P1: CardShell` + `P6: Chip (Choice)` + `P2: FieldRow` + `P3: ItemRow` (`☰` -> `P4`) + `P10: QrCeremony` + `P9: TwoPathCeremonyBlock`
+        const identityChoicesHtml = `
+          <div style="display:flex; gap:10px; margin-bottom:12px;" data-csd-tag="setup_identity_path">
+            <button class="choice-btn ${w.identityPath === 'NEW' ? 'selected' : ''}"
+                    data-csd-tag="btn_setup_new_identity"
+                    ${lockedPath ? 'disabled' : ''}
+                    onclick="wizardSelectIdentityPath('NEW')">
+              <div style="font-weight:600; font-size:13px;">Set up a new CIRIS ID</div>
+              <div style="font-size:12px; color:var(--ink-mute);">Create a fresh root keypair on this device</div>
+            </button>
+            <button class="choice-btn ${w.identityPath === 'ADD_THIS_DEVICE' ? 'selected' : ''}"
+                    data-csd-tag="btn_setup_add_this_device"
+                    ${lockedPath ? 'disabled' : ''}
+                    onclick="wizardSelectIdentityPath('ADD_THIS_DEVICE')">
+              <div style="font-weight:600; font-size:13px;">Add this device to an existing CIRIS ID</div>
+              <div style="font-size:12px; color:var(--ink-mute);">Pair with your phone or laptop (CSD-093)</div>
+            </button>
+          </div>
+        `;
+
+        const lockedBannerHtml = lockedPath
+          ? renderP7StateBlock({
+              tag: "txt_setup_identity_path_locked",
+              tone: "brand",
+              contentHtml: "Identity choice locked while device join request is active.",
+              rightHtml: `<button class="btn" data-csd-tag="btn_add_device_cancel" onclick="openCancelAddDeviceConfirm()">Cancel request</button>`,
+            })
+          : "";
+
+        const nodeModeRowHtml = renderP2FieldRow({
+          labelHtml: "Node mode (<code>CSD-082</code> vs <code>CSD-083</code>)",
+          valueHtml: `
+            <div style="display:flex; gap:6px;">
+              ${renderP6Chip({ tag: "opt_run_with_ai", kind: "Choice", selected: w.runWithAi, label: "Run with AI (3 steps)", onclick: "state.wizard.runWithAi=true; renderAll();" })}
+              ${renderP6Chip({ tag: "opt_run_without_ai", kind: "Choice", selected: !w.runWithAi, label: "Run without AI (:4243 only)", onclick: "state.wizard.runWithAi=false; renderAll();" })}
             </div>
+          `,
+        });
 
-            <div style="display:flex; gap:10px; margin-bottom:12px;" data-csd-tag="setup_identity_path">
-              <button class="choice-btn ${w.identityPath === 'NEW' ? 'selected' : ''}"
-                      data-csd-tag="btn_setup_new_identity"
-                      ${lockedPath ? 'disabled' : ''}
-                      onclick="wizardSelectIdentityPath('NEW')">
-                <div style="font-weight:600; font-size:13px;">Set up a new CIRIS ID</div>
-                <div style="font-size:12px; color:var(--ink-mute);">Create a fresh root keypair on this device</div>
-              </button>
-              <button class="choice-btn ${w.identityPath === 'ADD_THIS_DEVICE' ? 'selected' : ''}"
-                      data-csd-tag="btn_setup_add_this_device"
-                      ${lockedPath ? 'disabled' : ''}
-                      onclick="wizardSelectIdentityPath('ADD_THIS_DEVICE')">
-                <div style="font-weight:600; font-size:13px;">Add this device to an existing CIRIS ID</div>
-                <div style="font-size:12px; color:var(--ink-mute);">Pair with your phone or laptop (CSD-093)</div>
-              </button>
+        let branchHtml = "";
+        if (w.identityPath === "NEW") {
+          branchHtml = `
+            <div style="border-top:1px solid var(--hairline); padding-top:10px; margin-top:6px;">
+              ${renderP2FieldRow({
+                labelHtml: "CIRIS ID handle",
+                wireName: "input_fedid_label",
+                valueHtml: `<input class="field-input" style="max-width:240px;" data-csd-tag="input_fedid_label" placeholder="e.g. alice.ciris" value="${w.fedidLabel}" oninput="state.wizard.fedidLabel=this.value; renderAll();" />`,
+              })}
+              ${w.fedidLabel.trim().toLowerCase() === 'ciris-client-user' ? `
+                <div style="font-size:12px; color:var(--danger); padding:4px 0;">
+                  Generic label <code>ciris-client-user</code> is rejected; choose your own handle.
+                </div>
+              ` : ''}
+              ${renderP2FieldRow({
+                labelHtml: "This device's name",
+                wireName: "input_device_name",
+                valueHtml: `<input class="field-input" style="max-width:240px;" data-csd-tag="input_device_name" value="${w.deviceName}" oninput="state.wizard.deviceName=this.value; renderAll();" />`,
+              })}
+              ${renderP2FieldRow({
+                labelHtml: "Seal key in hardware enclave",
+                wireName: "toggle_secure_2fa",
+                verification: "Wire",
+                valueHtml: `<input type="checkbox" data-csd-tag="toggle_secure_2fa" ${w.hardwareCustody ? 'checked' : ''} onchange="state.wizard.hardwareCustody=this.checked; renderAll();" />`,
+              })}
+              <div style="padding:8px 0;">
+                <div style="font-size:12px; color:var(--ink-mute); margin-bottom:6px;">
+                  Age band (<code>CC 3.2</code> &middot; neither preselected):
+                </div>
+                <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                  ${renderP6Chip({ tag: "age_band_adult", kind: "Choice", selected: w.ageBand === "ADULT", label: "18 or older (Adult)", onclick: "state.wizard.ageBand='ADULT'; renderAll();" })}
+                  ${renderP6Chip({ tag: "age_band_minor", kind: "Choice", selected: w.ageBand === "MINOR", label: "Under 18 (Minor)", onclick: "state.wizard.ageBand='MINOR'; renderAll();" })}
+                  ${renderP6Chip({ tag: "age_band_declined", kind: "Choice", selected: w.ageBand === "DECLINED", label: "Decline to state (protective under-18 default; writes nothing to record)", onclick: "state.wizard.ageBand='DECLINED'; renderAll();" })}
+                </div>
+                ${w.ageBand === 'MINOR' ? renderP7StateBlock({
+                  tag: "txt_minor_guardian_required",
+                  tone: "brand",
+                  contentHtml: "Under-18 setup pauses self-claim and mints a verified Guardian / Steward bond request (CC 3.2, CSD-119).",
+                }) : ''}
+              </div>
+              ${renderP3ItemRow({
+                id: "setup_new_identity",
+                titleHtml: `Genesis self-key root: <code>${w.fedidLabel.trim() || 'alice.ciris'}</code>`,
+                subtitleHtml: `Ed25519 + ML-DSA-65 &middot; Custody: <code>${w.hardwareCustody ? 'secure_enclave' : 'software'}</code>`,
+                scopeId: "JustMe",
+                localOnlyBadge: true,
+              })}
             </div>
-
-            ${lockedPath ? `
-              <div class="state-banner brand" data-csd-tag="txt_setup_identity_path_locked">
-                <span>Identity choice locked while device join request is active.</span>
-                <button class="btn" data-csd-tag="btn_add_device_cancel" onclick="openCancelAddDeviceConfirm()">Cancel request</button>
-              </div>
-            ` : ''}
-
-            <div class="kv-row" style="padding:10px 0;">
-              <span>Node mode (<code>CSD-082</code> vs <code>CSD-083</code>)</span>
-              <div style="display:flex; gap:6px;">
-                <button class="btn ${w.runWithAi ? 'btn-brand' : ''}" data-csd-tag="opt_run_with_ai" onclick="state.wizard.runWithAi=true; renderAll();">
-                  Run with AI (3 steps)
-                </button>
-                <button class="btn ${!w.runWithAi ? 'btn-brand' : ''}" data-csd-tag="opt_run_without_ai" onclick="state.wizard.runWithAi=false; renderAll();">
-                  Run without AI (:4243 only)
-                </button>
-              </div>
-            </div>
-
-            ${w.identityPath === "NEW" ? `
-              <div style="border-top:1px solid var(--hairline); padding-top:10px; margin-top:6px;">
-                <div class="kv-row">
-                  <span>CIRIS ID handle (<code>input_fedid_label</code>)</span>
-                  <input class="field-input" style="max-width:240px;"
-                         data-csd-tag="input_fedid_label"
-                         placeholder="e.g. alice.ciris"
-                         value="${w.fedidLabel}"
-                         oninput="state.wizard.fedidLabel=this.value; renderAll();" />
-                </div>
-                ${w.fedidLabel.trim().toLowerCase() === 'ciris-client-user' ? `
-                  <div style="font-size:12px; color:var(--danger); padding:4px 0;">
-                    Generic label <code>ciris-client-user</code> is rejected; choose your own handle.
-                  </div>
-                ` : ''}
-                <div class="kv-row">
-                  <span>This device's name (<code>input_device_name</code>)</span>
-                  <input class="field-input" style="max-width:240px;"
-                         data-csd-tag="input_device_name"
-                         value="${w.deviceName}"
-                         oninput="state.wizard.deviceName=this.value; renderAll();" />
-                </div>
-                <div class="kv-row">
-                  <span>Seal key in hardware enclave (<code>toggle_secure_2fa</code>)</span>
-                  <input type="checkbox" data-csd-tag="toggle_secure_2fa" ${w.hardwareCustody ? 'checked' : ''} onchange="state.wizard.hardwareCustody=this.checked; renderAll();" />
-                </div>
-                <div style="padding:8px 0;">
-                  <div style="font-size:12px; color:var(--ink-mute); margin-bottom:6px;">
-                    Age band (<code>CC 3.2</code> &middot; neither preselected):
-                  </div>
-                  <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                    <button class="btn ${w.ageBand === 'ADULT' ? 'btn-brand' : ''}" data-csd-tag="age_band_adult" onclick="state.wizard.ageBand='ADULT'; renderAll();">
-                      18 or older (Adult)
-                    </button>
-                    <button class="btn ${w.ageBand === 'MINOR' ? 'btn-brand' : ''}" data-csd-tag="age_band_minor" onclick="state.wizard.ageBand='MINOR'; renderAll();">
-                      Under 18 (Minor)
-                    </button>
-                    <button class="btn ${w.ageBand === 'DECLINED' ? 'btn-brand' : ''}" data-csd-tag="age_band_declined" onclick="state.wizard.ageBand='DECLINED'; renderAll();">
-                      Decline to state (protective under-18 default; writes nothing to record)
-                    </button>
-                  </div>
-                  ${w.ageBand === 'MINOR' ? `
-                    <div class="state-banner brand" style="margin-top:8px;" data-csd-tag="txt_minor_guardian_required">
-                      <span>Under-18 setup pauses self-claim and mints a verified Guardian / Steward bond request (CC 3.2, CSD-119).</span>
-                    </div>
-                  ` : ''}
-                </div>
-              </div>
-            ` : ''}
-
-            ${w.identityPath === "ADD_THIS_DEVICE" ? `
-              <div style="border-top:1px solid var(--hairline); padding-top:10px; margin-top:6px;" data-csd-tag="csd_093_add_this_device">
-                <div class="kv-row">
-                  <span>Label for this new device</span>
-                  <input class="field-input" style="max-width:240px;"
-                         data-csd-tag="input_add_device_name"
-                         value="${w.addDeviceName}"
-                         oninput="state.wizard.addDeviceName=this.value; renderAll();" />
-                </div>
-                <div class="kv-row">
-                  <span>Existing CIRIS ID contact / QR</span>
-                  <div style="display:flex; gap:6px; width:65%;">
-                    <input class="field-input"
-                           data-csd-tag="input_add_device_contact"
-                           placeholder="ciris://ed25519:...@host:4243"
-                           value="${w.addDeviceContact}"
-                           oninput="state.wizard.addDeviceContact=this.value; renderAll();" />
-                    <button class="btn" data-csd-tag="btn_add_device_scan" onclick="wizardScanQrFill()">Scan QR</button>
-                  </div>
-                </div>
+          `;
+        } else if (w.identityPath === "ADD_THIS_DEVICE") {
+          branchHtml = `
+            ${renderP2FieldRow({
+              labelHtml: "Label for this new device",
+              wireName: "device_name",
+              valueHtml: `<input class="field-input" style="max-width:240px;" data-csd-tag="input_add_device_name" value="${w.addDeviceName}" oninput="state.wizard.addDeviceName=this.value; renderAll();" />`,
+            })}
+            ${renderP10QrCeremony({
+              tag: "csd_093_add_this_device",
+              titleHtml: "Existing CIRIS ID contact / QR (<code>P10: QrCeremony</code>)",
+              payloadInputHtml: `<input class="field-input" data-csd-tag="input_add_device_contact" placeholder="ciris://ed25519:...@host:4243" value="${w.addDeviceContact}" oninput="state.wizard.addDeviceContact=this.value; renderAll();" />`,
+              scanButtonTag: "btn_add_device_scan",
+              onScanJs: "wizardScanQrFill()",
+              matchCode: w.addDeviceMatchCode,
+              actionsHtml: `
                 <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0;">
                   <span class="mono-hint" data-csd-tag="text_add_device_status">Status: ${w.addDeviceStatus}</span>
                   <div style="display:flex; gap:6px;">
@@ -1172,191 +1430,310 @@
                     ` : ''}
                   </div>
                 </div>
-                ${w.addDeviceMatchCode ? `
-                  <div class="match-code-box" data-csd-tag="text_add_device_match_code">${w.addDeviceMatchCode}</div>
-                  <div style="font-size:12px; color:var(--ink-mute); padding-bottom:8px;" data-csd-tag="text_add_device_held_note">
-                    Confirm this 6-digit code on your existing device (<code>My things &rsaquo; Devices &amp; keys</code>). If your CIRIS ID already has 2+ devices, a second signature lands immediately or a single signature waits out the 24h <code>W_self</code> window (<code>CSD-095</code>).
-                  </div>
-                ` : ''}
-              </div>
-            ` : ''}
+              `,
+              statusNoteHtml: w.addDeviceMatchCode ? `
+                <div style="font-size:12px; color:var(--ink-mute); padding-bottom:8px;" data-csd-tag="text_add_device_held_note">
+                  Confirm this 6-digit code on your existing device (<code>My things &rsaquo; Devices &amp; keys</code>). If your CIRIS ID already has 2+ devices, a second signature lands immediately or a single signature waits out the 24h <code>W_self</code> window (<code>CSD-095</code>).
+                </div>
+              ` : '',
+            })}
+            ${renderP3ItemRow({
+              id: "setup_add_device",
+              titleHtml: `Pending self-roster enrollment: <code>${w.addDeviceName}</code>`,
+              subtitleHtml: `op:scores &middot; self_roster:add &middot; status: <code>${w.addDeviceStatus}</code>`,
+              scopeId: "Everyone",
+            })}
+          `;
+        }
 
-            <div style="display:flex; justify-content:flex-end; padding:10px 0;">
-              <button class="btn btn-brand"
-                      data-csd-tag="btn_next"
-                      ${!canWizardAdvanceFromYou() ? 'disabled' : ''}
-                      onclick="wizardNextStep()">
-                Next: Join &amp; Consent &rarr;
-              </button>
-            </div>
+        const step1FooterHtml = `
+          <div style="display:flex; justify-content:flex-end; padding:10px 0;">
+            <button class="btn btn-brand"
+                    data-csd-tag="btn_next"
+                    ${!canWizardAdvanceFromYou() ? 'disabled' : ''}
+                    onclick="wizardNextStep()">
+              Next: Join &amp; Consent &rarr;
+            </button>
           </div>
         `;
+
+        bodyHtml = renderP1CardShell({
+          tag: "setup_step_you",
+          titleHtml: "Step 1 &middot; Who is setting up this device?",
+          chipLabel: w.identityPath === null ? "Choose one" : w.identityPath,
+          chipTone: w.identityPath === null ? "warn" : "ok",
+          bodyHtml: identityChoicesHtml + lockedBannerHtml + nodeModeRowHtml + branchHtml + step1FooterHtml,
+          ellipsisKey: "wiz_step1_more",
+          ellipsisHtml: `
+            ${renderP2FieldRow({ labelHtml: "Default circle at birth", valueHtml: renderP5ScopePill("JustMe", "", true), verification: "ByRule Inv_SmallestCircle" })}
+            ${renderP2FieldRow({ labelHtml: "Key algorithm", valueHtml: "<code>Ed25519 + ML-DSA-65 / X25519 + ML-KEM-768</code>", verification: "Wire" })}
+          `,
+        });
+
+        // When `ADD_THIS_DEVICE` is active, also project `P9: TwoPathCeremonyBlock` (`SelfRosterAdd`)
+        if (w.identityPath === "ADD_THIS_DEVICE") {
+          bodyHtml += renderP9TwoPathCeremony({
+            tag: "wiz_p9_self_roster_add",
+            title: "Self-Key Roster Ceremony (P9 · CSD-093 / CSD-095)",
+            chipLabel: w.addDeviceStatus === "approved" ? "Approved (2/2)" : "Waiting on existing device",
+            chipTone: w.addDeviceStatus === "approved" ? "ok" : "warn",
+            summaryHtml: "2-device roster: lands immediately on 2nd device signature, or after 24h <code>W_self</code> silence window if unopposed.",
+            ellipsisKey: "wiz_p9_detail",
+            quorumRule: "self_roster_add (quorum >= 2 or 24h W_self lone path)",
+            approvals: w.addDeviceStatus === "approved" ? 2 : 1,
+            required: 2,
+            objections: 0,
+          });
+        }
       } else if (w.step === "JOIN_FEDERATION") {
-        bodyHtml = `
-          <div class="card" data-csd-tag="setup_step_join_federation">
-            <div class="card-header">
-              <div class="card-header-title">
-                <span>Step 2 &middot; Federation &amp; Consent Disclosure</span>
-                <span class="chip brand">GET /v1/setup/consent-disclosure</span>
-              </div>
-            </div>
-            <div style="font-size:12px; color:var(--ink-mute); margin-bottom:8px;">
-              Nothing leaves <strong>Just me</strong> without an explicit scope choice. Diagnostic trace sharing is optional and unbiased:
-            </div>
-            <div style="display:flex; gap:8px; margin-bottom:10px;">
-              <button class="btn ${w.traceConsent === true ? 'btn-brand' : ''}" data-csd-tag="trace_consent_yes" onclick="state.wizard.traceConsent=true; renderAll();">
-                Share anonymized traces
-              </button>
-              <button class="btn ${w.traceConsent === false ? 'btn-brand' : ''}" data-csd-tag="trace_consent_no" onclick="state.wizard.traceConsent=false; state.wizard.traceAnalyze=false; renderAll();">
-                Keep traces local only
-              </button>
-            </div>
-            ${w.traceConsent === true ? `
-              <div class="kv-row">
-                <span>Allow aggregated pattern analysis (<code>toggle_trace_analyze</code>)</span>
-                <input type="checkbox" data-csd-tag="toggle_trace_analyze" ${w.traceAnalyze ? 'checked' : ''} onchange="state.wizard.traceAnalyze=this.checked; renderAll();" />
-              </div>
-            ` : ''}
-            ${w.ageBand === 'MINOR' || w.ageBand === 'DECLINED' ? `
-              <div class="kv-row" data-csd-tag="txt_announce_not_offered">
-                <span>Public directory reachability</span>
-                <span class="chip ok">Private by protective default</span>
-              </div>
-            ` : `
-              <div class="kv-row">
-                <span>Make this device reachable in federation directory (<code>toggle_announce_ownership</code>)</span>
-                <input type="checkbox" data-csd-tag="toggle_announce_ownership" ${w.announceOwnership ? 'checked' : ''} onchange="state.wizard.announceOwnership=this.checked; renderAll();" />
-              </div>
-            `}
-            <div class="kv-row">
-              <span>Operator Never-Allowed Bounds (<code>CSD-118</code>)</span>
-              <span class="chip danger">prohibited:* enforced</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; padding:10px 0;">
-              <button class="btn" data-csd-tag="btn_back" onclick="wizardPrevStep()">&larr; Back</button>
-              <button class="btn btn-brand" data-csd-tag="btn_next" ${w.traceConsent === null ? 'disabled' : ''} onclick="wizardNextStep()">
-                ${w.runWithAi ? 'Next: AI &amp; Stewardship &rarr;' : 'Next: Claim Node &rarr;'}
-              </button>
-            </div>
+        // Step 2 (`JOIN_FEDERATION`): `P1: CardShell` + `P6: Chip (Choice)` + `P3: ItemRow` (`☰` -> `P4`) + `P2: FieldRow` + `P12: ConscienceStepBlock` (`CSD-118`)
+        const consentBodyHtml = `
+          <div style="font-size:12px; color:var(--ink-mute); margin-bottom:8px;">
+            Nothing leaves <strong>Just me</strong> without an explicit scope choice. Diagnostic trace sharing is optional and unbiased:
+          </div>
+          <div style="display:flex; gap:8px; margin-bottom:10px;">
+            ${renderP6Chip({ tag: "trace_consent_yes", kind: "Choice", selected: w.traceConsent === true, label: "Share anonymized traces", onclick: "state.wizard.traceConsent=true; renderAll();" })}
+            ${renderP6Chip({ tag: "trace_consent_no", kind: "Choice", selected: w.traceConsent === false, label: "Keep traces local only", onclick: "state.wizard.traceConsent=false; state.wizard.traceAnalyze=false; renderAll();" })}
+          </div>
+          ${w.traceConsent !== null ? renderP3ItemRow({
+            id: "setup_consent_replication",
+            titleHtml: w.traceConsent ? "Replication consent: Anonymized traces shared" : "Replication consent: Local-only (no outbound traces)",
+            subtitleHtml: "op:scores &middot; consent:trace_replication",
+            scopeId: w.traceConsent ? "Everyone" : "JustMe",
+            localOnlyBadge: !w.traceConsent,
+          }) : ''}
+          ${w.traceConsent === true ? `
+            ${renderP2FieldRow({
+              labelHtml: "Allow aggregated pattern analysis",
+              wireName: "toggle_trace_analyze",
+              verification: "Wire",
+              valueHtml: `<input type="checkbox" data-csd-tag="toggle_trace_analyze" ${w.traceAnalyze ? 'checked' : ''} onchange="state.wizard.traceAnalyze=this.checked; renderAll();" />`,
+            })}
+            ${renderP3ItemRow({
+              id: "setup_consent_analyze",
+              titleHtml: `Pattern analysis consent: ${w.traceAnalyze ? 'Enabled' : 'Disabled'}`,
+              subtitleHtml: "op:scores &middot; consent:trace_analyze",
+              scopeId: w.traceAnalyze ? "Everyone" : "JustMe",
+            })}
+          ` : ''}
+          ${w.ageBand === 'MINOR' || w.ageBand === 'DECLINED' ? renderP2FieldRow({
+            tag: "txt_announce_not_offered",
+            labelHtml: "Public directory reachability",
+            valueHtml: renderP6Chip({ label: "Private by protective default", tone: "ok" }),
+            verification: "ByRule CC 3.2",
+          }) : renderP2FieldRow({
+            labelHtml: "Make this device reachable in federation directory",
+            wireName: "toggle_announce_ownership",
+            valueHtml: `<input type="checkbox" data-csd-tag="toggle_announce_ownership" ${w.announceOwnership ? 'checked' : ''} onchange="state.wizard.announceOwnership=this.checked; renderAll();" />`,
+          })}
+          ${renderP2FieldRow({
+            labelHtml: "Operator Never-Allowed Bounds (<code>CSD-118</code>)",
+            valueHtml: renderP6Chip({ label: "prohibited:* enforced", tone: "danger" }),
+            verification: "ByRule G17",
+          })}
+          <div style="display:flex; justify-content:space-between; padding:10px 0;">
+            <button class="btn" data-csd-tag="btn_back" onclick="wizardPrevStep()">&larr; Back</button>
+            <button class="btn btn-brand" data-csd-tag="btn_next" ${w.traceConsent === null ? 'disabled' : ''} onclick="wizardNextStep()">
+              ${w.runWithAi ? 'Next: AI &amp; Stewardship &rarr;' : 'Next: Claim Node &rarr;'}
+            </button>
           </div>
         `;
+
+        bodyHtml = renderP1CardShell({
+          tag: "setup_step_join_federation",
+          titleHtml: "Step 2 &middot; Federation &amp; Consent Disclosure",
+          chipLabel: "GET /v1/setup/consent-disclosure",
+          chipTone: "brand",
+          bodyHtml: consentBodyHtml,
+          ellipsisKey: "wiz_step2_more",
+          ellipsisHtml: `
+            ${renderP2FieldRow({ labelHtml: "9-Axis Contextual Integrity gate", valueHtml: "Required before any mesh crossing", verification: "ByRule CC 2.4" })}
+            ${renderP2FieldRow({ labelHtml: "1-step withdrawal right", valueHtml: "Every consent envelope can be withdrawn in 1 step", verification: "ByRule Inv_ExitOneStep" })}
+          `,
+        });
+
+        bodyHtml += renderP12ConscienceStep({
+          tag: "wiz_p12_never_allowed",
+          title: "Never-Allowed Constitutional Bounds (P12 · CSD-118)",
+          chipLabel: "Hard Refusal G17",
+          chipTone: "danger",
+          ellipsisKey: "wiz_p12_step2",
+          checks: [
+            { invariant: "prohibited:deception_fraud", outcome: "NEVER_ALLOWED", tone: "danger" },
+            { invariant: "prohibited:manipulation_coercion", outcome: "NEVER_ALLOWED", tone: "danger" },
+            { invariant: "prohibited:unconsented_training", outcome: "NEVER_ALLOWED", tone: "danger" },
+          ],
+          g14Notice: "Cryptographic envelopes verify who signed a consent claim, not whether a remote peer honors deletion after replication.",
+        });
       } else if (w.step === "AI") {
-        bodyHtml = `
-          <div class="card" data-csd-tag="setup_step_ai">
-            <div class="card-header">
-              <div class="card-header-title">
-                <span>Step 3 &middot; Conscience-Bearing AI &amp; Steward Bond (CSD-115)</span>
-                <span class="chip ok" data-csd-tag="txt_llm_state">LLM: ${w.llmStatus}</span>
-              </div>
-            </div>
-            <div class="kv-row">
-              <span>Inference provider (keyless local options first)</span>
+        // Step 3 (`AI`): `P1: CardShell` + `P2: FieldRow` + `P3: ItemRow` (`☰` -> `P4`) + `P11: LineageChainBlock` (`CSD-115`) + `P12: ConscienceStepBlock` (`H3ERE`)
+        const step3BodyHtml = `
+          ${renderP2FieldRow({
+            labelHtml: "Inference provider (keyless local options first)",
+            wireName: "input_llm_provider",
+            valueHtml: `
               <select class="field-input" style="max-width:220px;" data-csd-tag="input_llm_provider" onchange="state.wizard.llmProvider=this.value; renderAll();">
                 <option value="local_ollama" ${w.llmProvider==='local_ollama'?'selected':''}>Local Ollama (keyless)</option>
                 <option value="ciris_portal" ${w.llmProvider==='ciris_portal'?'selected':''}>CIRIS Steward Portal</option>
                 <option value="byok_openai" ${w.llmProvider==='byok_openai'?'selected':''}>Bring Your Own API Key</option>
               </select>
-            </div>
-            <div class="kv-row">
-              <span>Connection check</span>
-              <button class="btn" data-csd-tag="btn_test_connection" onclick="state.wizard.llmStatus='ok'; renderAll();">Test connection</button>
-            </div>
-            <div class="kv-row">
-              <span>Steward–Agent Bond (<code>CSD-115</code> &middot; Depth 1 &middot; 365d review)</span>
-              <span class="chip brand" data-csd-tag="opt_template_companion_default">Companion Steward</span>
-            </div>
-            <div class="kv-row">
-              <span>Always-on Conscience &amp; Halt Gate (<code>tool_disclosure_always_on</code>)</span>
-              <span class="chip ok" data-csd-tag="tool_disclosure_always_on">H3ERE + 423 Halt Gate</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; padding:10px 0;">
-              <button class="btn" data-csd-tag="btn_back" onclick="wizardPrevStep()">&larr; Back</button>
-              <button class="btn btn-brand" data-csd-tag="btn_next" onclick="wizardNextStep()">Next: Finish &amp; Claim &rarr;</button>
-            </div>
+            `,
+          })}
+          ${renderP2FieldRow({
+            labelHtml: "Connection check",
+            valueHtml: `<button class="btn" data-csd-tag="btn_test_connection" onclick="state.wizard.llmStatus='ok'; renderAll();">Test connection</button>`,
+          })}
+          ${renderP3ItemRow({
+            id: "setup_steward_bond",
+            titleHtml: "Steward–Agent Bond (<code>CSD-115</code> &middot; Depth 1 &middot; 365d review)",
+            subtitleHtml: "op:delegates_to &middot; agency:operate, agency:defer_wa",
+            scopeId: "JustMe",
+            localOnlyBadge: true,
+            rightExtraHtml: renderP6Chip({ tag: "opt_template_companion_default", label: "Companion Steward", tone: "brand" }),
+          })}
+          ${renderP2FieldRow({
+            labelHtml: "Always-on Conscience &amp; Halt Gate",
+            wireName: "tool_disclosure_always_on",
+            valueHtml: renderP6Chip({ tag: "tool_disclosure_always_on", label: "H3ERE + 423 Halt Gate", tone: "ok" }),
+          })}
+          <div style="display:flex; justify-content:space-between; padding:10px 0;">
+            <button class="btn" data-csd-tag="btn_back" onclick="wizardPrevStep()">&larr; Back</button>
+            <button class="btn btn-brand" data-csd-tag="btn_next" onclick="wizardNextStep()">Next: Finish &amp; Claim &rarr;</button>
           </div>
         `;
+
+        bodyHtml = renderP1CardShell({
+          tag: "setup_step_ai",
+          titleHtml: "Step 3 &middot; Conscience-Bearing AI &amp; Steward Bond (CSD-115)",
+          headerRightHtml: renderP6Chip({ tag: "txt_llm_state", label: `LLM: ${w.llmStatus}`, tone: "ok" }),
+          bodyHtml: step3BodyHtml,
+        });
+
+        bodyHtml += renderP11LineageChain({
+          tag: "wiz_p11_steward_bond",
+          title: "Steward–Agent Lineage Chain (P11 · CSD-115)",
+          chipLabel: "Depth 1 · Inv_BondDepthOne",
+          chipTone: "ok",
+          ellipsisKey: "wiz_p11_bond_detail",
+          links: [
+            { index: 1, label: `Human Steward (${w.fedidLabel.trim() || 'alice.ciris'})`, status: "Root Authority · 365d review", verification: "Wire" },
+            { index: 2, label: `Bonded Agent (${state.liveNode.keyId})`, status: "agency:operate, agency:defer_wa (No sub-delegation)", verification: "ByRule Inv_BondDepthOne" },
+          ],
+        });
+
+        bodyHtml += renderP12ConscienceStep({
+          tag: "wiz_p12_h3ere",
+          title: "H3ERE Conscience Pipeline & Halt Gate (P12)",
+          chipLabel: "22 Services · 6 Buses",
+          chipTone: "brand",
+          ellipsisKey: "wiz_p12_h3ere_detail",
+          checks: [
+            { invariant: "Inv_NoSilentDrop", outcome: "Every deferral & refusal signed on record", tone: "ok" },
+            { invariant: "Inv_X1_LatchDoesNotBlockServing", outcome: "423 Halt pauses AI; data doors stay open", tone: "ok" },
+          ],
+          g14Notice: "Software conscience gates autonomous tool execution; physical host power and OS kernel remain under operator custody.",
+        });
       } else if (w.step === "COMPLETE") {
+        // Step 4 (`COMPLETE`):
+        // - `ADD_THIS_DEVICE`: `P1: CardShell` + `P7: StateBlock` + `P9: TwoPathCeremonyBlock` + `P3: ItemRow` (`☰` -> `P4`)
+        // - `NEW` (`CSD-085`): `P1: CardShell` + `P2: FieldRow` (`0600 claim_pin`) + `P7: StateBlock` + `P3: ItemRow` (`☰` -> `P4`)
         if (w.identityPath === "ADD_THIS_DEVICE") {
           const approved = w.addDeviceStatus === "approved";
-          bodyHtml = `
-            <div class="card" data-csd-tag="setup_step_complete_add_device">
-              <div class="card-header">
-                <div class="card-header-title">
-                  <span>Complete Multi-Device Enrollment (CSD-093)</span>
-                  <span class="chip ${approved ? 'ok' : 'warn'}">${w.addDeviceStatus}</span>
-                </div>
-              </div>
-              ${!approved ? `
-                <div class="state-banner brand" data-csd-tag="setup_add_device_waiting">
-                  <span>Waiting for approval of match code <strong>${w.addDeviceMatchCode || '482 913'}</strong> on your existing device (<code>409 add_device.not_approved</code> blocks premature completion).</span>
-                </div>
-                <div style="display:flex; gap:8px; padding:8px 0;">
-                  <button class="btn" data-csd-tag="btn_add_device_finish_retry" onclick="state.wizard.addDeviceStatus='approved'; renderAll();">
-                    Check approval again (Simulate Approved)
-                  </button>
-                </div>
-              ` : `
-                <div class="state-banner" data-csd-tag="setup_ownership_claimed">
-                  <span><strong>Device approved!</strong> Enrolled into <code>${ state.multiDevice.selfKeyId }</code> via <code>POST /v1/setup/add-device/complete</code> &rarr; <code>/v1/setup/claimed-session</code>.</span>
-                  <span class="chip ok">Enrolled</span>
-                </div>
-              `}
-              <div style="display:flex; justify-content:space-between; padding:10px 0;">
-                <button class="btn" data-csd-tag="btn_back" onclick="wizardPrevStep()">&larr; Back</button>
-                <button class="btn btn-brand" data-csd-tag="btn_finish_setup" ${!approved ? 'disabled' : ''} onclick="wizardFinishSetup()">
-                  Enter Circles &rarr;
+          const addCompleteBodyHtml = `
+            ${!approved ? `
+              ${renderP7StateBlock({
+                tag: "setup_add_device_waiting",
+                tone: "brand",
+                contentHtml: `Waiting for approval of match code <strong>${w.addDeviceMatchCode || '482 913'}</strong> on your existing device (<code>409 add_device.not_approved</code> blocks premature completion).`,
+              })}
+              <div style="display:flex; gap:8px; padding:8px 0;">
+                <button class="btn" data-csd-tag="btn_add_device_finish_retry" onclick="state.wizard.addDeviceStatus='approved'; renderAll();">
+                  Check approval again (Simulate Approved)
                 </button>
               </div>
+            ` : renderP7StateBlock({
+              tag: "setup_ownership_claimed",
+              contentHtml: `<strong>Device approved!</strong> Enrolled into <code>${state.multiDevice.selfKeyId}</code> via <code>POST /v1/setup/add-device/complete</code> &rarr; <code>/v1/setup/claimed-session</code>.`,
+              rightHtml: renderP6Chip({ label: "Enrolled", tone: "ok" }),
+            })}
+            ${renderP3ItemRow({
+              id: "setup_add_device",
+              titleHtml: `Self-key roster membership: <code>${w.addDeviceName}</code>`,
+              subtitleHtml: `POST /v1/setup/add-device/complete &middot; status: <code>${w.addDeviceStatus}</code>`,
+              scopeId: "Everyone",
+            })}
+            <div style="display:flex; justify-content:space-between; padding:10px 0;">
+              <button class="btn" data-csd-tag="btn_back" onclick="wizardPrevStep()">&larr; Back</button>
+              <button class="btn btn-brand" data-csd-tag="btn_finish_setup" ${!approved ? 'disabled' : ''} onclick="wizardFinishSetup()">
+                Enter Circles &rarr;
+              </button>
             </div>
           `;
+          bodyHtml = renderP1CardShell({
+            tag: "setup_step_complete_add_device",
+            titleHtml: "Complete Multi-Device Enrollment (CSD-093)",
+            chipLabel: w.addDeviceStatus,
+            chipTone: approved ? "ok" : "warn",
+            bodyHtml: addCompleteBodyHtml,
+          });
         } else {
-          bodyHtml = `
-            <div class="card" data-csd-tag="csd_085_claim_node">
-              <div class="card-header">
-                <div class="card-header-title">
-                  <span>Claim Node Ownership (CSD-085)</span>
-                  <span class="chip ${w.ownershipState === 'claimed' ? 'ok' : 'brand'}">${w.ownershipState}</span>
-                </div>
-              </div>
-              <div class="kv-row">
-                <span>0600 <code>claim_pin</code> file (never logged to stdout)</span>
-                <input class="field-input" style="max-width:180px; font-family:var(--mono);"
-                       data-csd-tag="input_claim_pin"
-                       value="${w.claimPin0600}"
-                       oninput="state.wizard.claimPin0600=this.value; renderAll();" />
-              </div>
-              ${w.ownershipState === "unclaimed" ? `
-                <div style="padding:8px 0;">
-                  <button class="btn btn-brand" data-csd-tag="btn_claim_node_pin" onclick="wizardClaimOwnershipNow()">
-                    Claim node with 0600 PIN (POST /v1/setup/claim-remote)
-                  </button>
-                </div>
-              ` : ''}
-              ${w.ownershipState === "claiming" ? `
-                <div class="state-banner" data-csd-tag="setup_ownership_claiming">
-                  <span>Verifying 0600 <code>claim_pin</code> and binding owner key&hellip;</span>
-                </div>
-              ` : ''}
-              ${w.ownershipState === "claimed" ? `
-                <div class="state-banner" data-csd-tag="setup_ownership_claimed">
-                  <span><strong>This node is yours.</strong> Role: <code>SYSTEM_ADMIN</code> &middot; Owner: <code>${w.fedidLabel || 'alice.ciris'}</code></span>
-                  <span class="chip ok">Claimed</span>
-                </div>
-              ` : ''}
-              ${w.ownershipState === "error" ? `
-                <div class="state-banner danger" data-csd-tag="setup_ownership_error">
-                  <span>PIN mismatch (<code>403 invalid_claim_pin</code>). Check <code>~/.ciris/claim_pin</code> (mode 0600).</span>
-                  <button class="btn" data-csd-tag="btn_setup_finish_unclaimed" onclick="wizardFinishSetup()">Continue unclaimed</button>
-                </div>
-              ` : ''}
-              <div style="display:flex; justify-content:space-between; padding:10px 0;">
-                <button class="btn" data-csd-tag="btn_back" onclick="wizardPrevStep()">&larr; Back</button>
-                <button class="btn btn-brand" data-csd-tag="btn_finish_setup" onclick="wizardFinishSetup()">
-                  Finish Setup &amp; Open Circles &rarr;
+          const claimBodyHtml = `
+            ${renderP2FieldRow({
+              labelHtml: "0600 <code>claim_pin</code> file (never logged to stdout)",
+              wireName: "claim_pin",
+              verification: "Wire",
+              valueHtml: `<input class="field-input" style="max-width:180px; font-family:var(--mono);" data-csd-tag="input_claim_pin" value="${w.claimPin0600}" oninput="state.wizard.claimPin0600=this.value; renderAll();" />`,
+            })}
+            ${w.ownershipState === "unclaimed" ? `
+              <div style="padding:8px 0;">
+                <button class="btn btn-brand" data-csd-tag="btn_claim_node_pin" onclick="wizardClaimOwnershipNow()">
+                  Claim node with 0600 PIN (POST /v1/setup/claim-remote)
                 </button>
               </div>
+            ` : ''}
+            ${w.ownershipState === "claiming" ? renderP7StateBlock({
+              tag: "setup_ownership_claiming",
+              contentHtml: "Verifying 0600 <code>claim_pin</code> and binding owner key&hellip;",
+            }) : ''}
+            ${w.ownershipState === "claimed" ? `
+              ${renderP7StateBlock({
+                tag: "setup_ownership_claimed",
+                contentHtml: `<strong>This node is yours.</strong> Role: <code>SYSTEM_ADMIN</code> &middot; Owner: <code>${w.fedidLabel || 'alice.ciris'}</code>`,
+                rightHtml: renderP6Chip({ label: "Claimed", tone: "ok" }),
+              })}
+              ${renderP3ItemRow({
+                id: "setup_owner_claim",
+                titleHtml: `Owner Binding Attestation: <code>${state.liveNode.attestationId || 'att-owner-0600-pin'}</code>`,
+                subtitleHtml: `POST /v1/setup/claim-remote &middot; WA: <code>${state.liveNode.ownerWaId || 'wa-2026-owner'}</code>`,
+                scopeId: "JustMe",
+                localOnlyBadge: true,
+              })}
+            ` : ''}
+            ${w.ownershipState === "error" ? renderP7StateBlock({
+              tag: "setup_ownership_error",
+              tone: "danger",
+              contentHtml: "PIN mismatch (<code>403 invalid_claim_pin</code>). Check <code>~/.ciris/claim_pin</code> (mode 0600).",
+              rightHtml: `<button class="btn" data-csd-tag="btn_setup_finish_unclaimed" onclick="wizardFinishSetup()">Continue unclaimed</button>`,
+            }) : ''}
+            <div style="display:flex; justify-content:space-between; padding:10px 0;">
+              <button class="btn" data-csd-tag="btn_back" onclick="wizardPrevStep()">&larr; Back</button>
+              <button class="btn btn-brand" data-csd-tag="btn_finish_setup" onclick="wizardFinishSetup()">
+                Finish Setup &amp; Open Circles &rarr;
+              </button>
             </div>
           `;
+          bodyHtml = renderP1CardShell({
+            tag: "csd_085_claim_node",
+            titleHtml: "Claim Node Ownership (CSD-085)",
+            chipLabel: w.ownershipState,
+            chipTone: w.ownershipState === "claimed" ? "ok" : "brand",
+            bodyHtml: claimBodyHtml,
+            ellipsisKey: "wiz_claim_more",
+            ellipsisHtml: `
+              ${renderP2FieldRow({ labelHtml: "PIN file mode", valueHtml: `<code>${state.liveNode.claimPinMode}</code> (owner-read only)`, verification: "Wire" })}
+              ${renderP2FieldRow({ labelHtml: "Cohort scope", valueHtml: "<code>cohort_scope: self</code>", verification: "Wire" })}
+            `,
+          });
         }
       }
 
@@ -1853,10 +2230,11 @@
       `;
     }
 
-    // ── `☰` Receipt Sheet (`CSD-006`: 5 Universal Envelope Facts + Actions) ──
+    // ── `☰` Receipt Sheet (`P4: ReceiptSheet` / `CSD-006`: 5 Universal Envelope Facts + Actions) ──
     function openReceiptSheet(claimId) {
-      const c = CLAIMS.find(x => x.id === claimId);
+      const c = CLAIMS.find(x => x.id === claimId) || getSetupReceiptClaim(claimId);
       if (!c) return;
+      const isSetupClaim = !CLAIMS.some(x => x.id === claimId);
       const sc = getCircle(c.scope);
       const host = document.getElementById("sheetHost");
       host.innerHTML = `
