@@ -1,5 +1,5 @@
 {
-  "catalogue_version": 3,
+  "catalogue_version": 5,
   "topology": "T14",
   "step_id": "rel[6]:community_trust_bound",
   "step_index": 13,

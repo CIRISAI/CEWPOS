@@ -1,5 +1,5 @@
 {
-  "catalogue_version": 3,
+  "catalogue_version": 5,
   "topology": "T1",
   "step_id": "rel[6]:withdraw",
   "step_index": 12,

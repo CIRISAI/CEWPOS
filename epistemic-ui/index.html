@@ -605,6 +605,22 @@
         ownershipState: "unclaimed",  // unclaimed | claiming | claimed | error
       },
 
+      // ── Live CIRISServer v0.5.241 Bridge State ──
+      liveNode: {
+        connected: false,
+        version: "0.5.241",
+        keyId: "qa-fresh-node",
+        standing: "identified",
+        nodeCode: null,
+        isFirstRun: null,
+        claimPinMode: "0o600",
+        accessToken: null,
+        ownerKeyId: null,
+        ownerWaId: null,
+        attestationId: null,
+        consentDisclosureTitle: null,
+      },
+
       // ── Full Multi-Device & Self-Key Roster State (`CSD-037`, `CSD-094`, `CSD-095`) ──
       multiDevice: {
         selfKeyId: "ed25519:alice.ciris#root",
@@ -884,10 +900,99 @@
       renderAll();
     }
 
-    function wizardClaimOwnershipNow() {
+    async function syncLiveNode() {
+      try {
+        const hResp = await fetch("/health");
+        if (!hResp.ok) return;
+        const hData = await hResp.json();
+        state.liveNode.connected = true;
+        state.liveNode.version = hData.version || "0.5.241";
+        state.liveNode.keyId = (hData.node && hData.node.key_id) || "qa-fresh-node";
+        state.liveNode.standing = (hData.node && hData.node.standing) || "identified";
+
+        const [stResp, ncResp, cdResp, lnResp] = await Promise.all([
+          fetch("/v1/setup/status").catch(() => null),
+          fetch("/v1/federation/node-code").catch(() => null),
+          fetch("/v1/setup/consent-disclosure").catch(() => null),
+          fetch("/cewpos/local-node").catch(() => null),
+        ]);
+        if (stResp && stResp.ok) {
+          const st = await stResp.json();
+          if (st.data) {
+            state.liveNode.isFirstRun = !!st.data.is_first_run;
+            if (!st.data.is_first_run && state.wizard.ownershipState === "unclaimed") {
+              state.wizard.ownershipState = "claimed";
+            }
+          }
+        }
+        if (ncResp && ncResp.ok) {
+          const nc = await ncResp.json();
+          state.liveNode.nodeCode = nc.code || null;
+        }
+        if (cdResp && cdResp.ok) {
+          const cd = await cdResp.json();
+          if (cd.data && cd.data.primary_action) {
+            state.liveNode.consentDisclosureTitle = cd.data.primary_action.text;
+          }
+        }
+        if (lnResp && lnResp.ok) {
+          const ln = await lnResp.json();
+          if (ln.claim_pin) {
+            state.wizard.claimPin0600 = ln.claim_pin;
+            state.liveNode.claimPinMode = ln.claim_pin_mode || "0o600";
+          }
+        }
+        renderAll();
+      } catch (_err) {
+        // Offline / deterministic fallback
+      }
+    }
+
+    async function wizardClaimOwnershipNow() {
       const w = state.wizard;
       w.ownershipState = "claiming";
       renderAll();
+
+      if (state.liveNode.connected && state.liveNode.nodeCode) {
+        try {
+          const idResp = await fetch("/v1/self/identity", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({}),
+          });
+          if (idResp.ok) {
+            const idData = await idResp.json();
+            state.liveNode.ownerKeyId = idData.key_id;
+          }
+          const clResp = await fetch("/v1/setup/claim-remote", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              node_code: state.liveNode.nodeCode,
+              claim_pin: (w.claimPin0600 || "").trim(),
+              cohort_scope: "self",
+            }),
+          });
+          if (clResp.ok) {
+            const clData = await clResp.json();
+            state.liveNode.accessToken = clData.access_token;
+            state.liveNode.ownerKeyId = clData.identity_key_id;
+            state.liveNode.ownerWaId = clData.wa_id;
+            state.liveNode.attestationId = clData.owner_binding_attestation_id;
+            state.multiDevice.selfKeyId = clData.identity_key_id || state.multiDevice.selfKeyId;
+            w.ownershipState = "claimed";
+            renderAll();
+            return;
+          } else {
+            w.ownershipState = "error";
+            renderAll();
+            return;
+          }
+        } catch (_e) {
+          // Fall back to deterministic check below
+        }
+      }
+
       setTimeout(() => {
         if (w.claimPin0600 && w.claimPin0600.trim().length >= 4) {
           w.ownershipState = "claimed";
@@ -2042,9 +2147,9 @@
 
       if (inst.id === "ThisNode") {
         return `
-          ${renderExpandableCard("csd_node_standing", "Trust root standing", "Rooted", "ok", `
-            <div class="kv-row"><span>Local node</span><span class="mono-hint">127.0.0.1:4243 (identified)</span></div>
-            <div class="kv-row"><span>Agent runtime</span><span class="mono-hint">${state.hasAgent ? '127.0.0.1:8080 (22/22 services)' : 'Not attached (CSD-083 node-only)'}</span></div>
+          ${renderExpandableCard("csd_node_standing", "Trust root standing", `Rooted · v${state.liveNode.version}`, "ok", `
+            <div class="kv-row"><span>Local node</span><span class="mono-hint">127.0.0.1:4243 (${state.liveNode.standing} · ${state.liveNode.keyId})</span></div>
+            <div class="kv-row"><span>Agent runtime</span><span class="mono-hint">${state.hasAgent ? '127.0.0.1:8080 (22/22 services · ciris-agent 2.17.0)' : 'Not attached (CSD-083 node-only)'}</span></div>
             <div class="kv-row"><span>Crypto</span><span class="mono-hint">Ed25519 + ML-DSA-65 / X25519 + ML-KEM-768</span></div>
           `)}
           <div class="card" data-csd-tag="csd_080_first_run_launcher">
@@ -2062,7 +2167,7 @@
             <div class="kv-row"><span>prohibited:*</span><span>No hidden scoring, no silent forward, no unconsented training</span></div>
             <div class="kv-row"><span>CSD/4 tests</span><span class="mono-hint">first_run [root.none, node.unclaimed] &middot; declared [root.none, node.claimed]</span></div>
           `)}
-          ${renderExpandableCard("csd_csd4_catalogue_status", "CSD/4 catalogue & trace checkpoints (CSD-001..129)", "101/101 Green · T0–T19", "ok", `
+          ${renderExpandableCard("csd_csd4_catalogue_status", "CSD/4 catalogue v5 &amp; trace checkpoints (CSD-001..129)", "101/101 Green · T0–T19 · 120 atoms", "ok", `
             <div class="kv-row"><span>Cohort 1 (Pinned requirements.yaml)</span><span class="mono-hint">20/20 cards green (0 pending)</span></div>
             <div class="kv-row"><span>Cohort 2 (Testable flows)</span><span class="mono-hint">6/6 cards green (T1, T2, T8, T18)</span></div>
             <div class="kv-row"><span>Cohort 3 (Forced &amp; Reserved #179/#206)</span><span class="mono-hint">31/31 cards green (T0..T19)</span></div>
@@ -2291,6 +2396,7 @@
     }
 
     renderAll();
+    syncLiveNode();
   </script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 {
-  "catalogue_version": 3,
+  "catalogue_version": 5,
   "topology": "T4",
   "step_id": "rel[7]:age_assurance",
   "step_index": 14,

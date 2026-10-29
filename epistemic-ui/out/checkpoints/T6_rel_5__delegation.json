@@ -1,5 +1,5 @@
 {
-  "catalogue_version": 3,
+  "catalogue_version": 5,
   "topology": "T6",
   "step_id": "rel[5]:delegation",
   "step_index": 12,

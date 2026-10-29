@@ -1,5 +1,5 @@
 {
-  "catalogue_version": 3,
+  "catalogue_version": 5,
   "topology": "T19",
   "step_id": "rel[9]:deadmit",
   "step_index": 16,

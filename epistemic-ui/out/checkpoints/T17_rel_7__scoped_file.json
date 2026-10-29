@@ -1,5 +1,5 @@
 {
-  "catalogue_version": 3,
+  "catalogue_version": 5,
   "topology": "T17",
   "step_id": "rel[7]:scoped_file",
   "step_index": 14,

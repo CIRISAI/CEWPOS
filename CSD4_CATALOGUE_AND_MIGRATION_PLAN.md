@@ -1,14 +1,14 @@
-# CEWPOS Full CSD Catalogue Evaluation, `CSD/4` Test Automation & Complete `CSD/3 → CSD/4` Migration
+# CEWPOS Full CSD Catalogue Evaluation, `CSD/4` v5 Test Automation & Live `CIRISServer v0.5.241` QA
 
-> **Generated & Verified by:** [`epistemic-ui/csd4_harness.py`](epistemic-ui/csd4_harness.py) against the pinned `CSD/4` v3 topology catalogue ([`epistemic-ui/csd4/PIN.md`](epistemic-ui/csd4/PIN.md), `CIRISServer#802` @ `003871fd`, `CIRISClient#219` @ `212bf534`, `CIRISConstitution` `rc9` @ `01b47e75`).
+> **Generated & Verified by:** [`epistemic-ui/csd4_harness.py`](epistemic-ui/csd4_harness.py) against the pinned `CSD/4` v5 topology catalogue ([`epistemic-ui/csd4/PIN.md`](epistemic-ui/csd4/PIN.md), `CIRISServer v0.5.241` @ `0180f91871fa5fd566396171739a1c42fb80c8c3`, `CIRISConstitution` @ `9f6ff75a7b3c7e2bc8be0d699fe9ee4f4f749f7b`, `120` vocabulary atoms).
 
 ---
 
-## 1. Executive Summary — Full-Catalogue `CSD/4` Migration Completed (`101/101` Active Cards Green)
+## 1. Executive Summary — Full-Catalogue `CSD/4` v5 Migration & Live `v0.5.241` QA (`101/101` Active Cards Green)
 
-Across `CIRISClient`, `CIRISConstitution` (`rc9`), `CIRISRegistry` (`#206`), and `CIRISServer` (`#802`), the full CIRIS Surface Descriptor (CSD) namespace spans **103 card identifiers (`CSD-001` through `CSD-129`)** (`101` active/reserved + `2` retired).
+Across `CIRISClient` (`0.5.234`), `CIRISAgent` (`2.17.0`), `CIRISConstitution`, `CIRISRegistry` (`#206`), and `CIRISServer` (`v0.5.241`), the full CIRIS Surface Descriptor (CSD) namespace spans **103 card identifiers (`CSD-001` through `CSD-129`)** (`101` active/reserved + `2` retired).
 
-All **4 migration cohorts (`101/101` active cards)** have now been migrated to machine-checked `CSD/4` cards in [`epistemic-ui/csd4/cards/`](epistemic-ui/csd4/cards/) and verified against all **20 topologies (`T0`–`T19`)** in `traces.json`:
+All **4 migration cohorts (`101/101` active cards)** have been migrated to machine-checked `CSD/4` v5 cards in [`epistemic-ui/csd4/cards/`](epistemic-ui/csd4/cards/) and verified against all **20 topologies (`T0`–`T19`, `120` atoms)** in `traces.json`:
 
 | Cohort / Segment | Count | Card Identifiers | `check_csd4` & Trace Instant Status |
 |---|---:|---|---|
@@ -21,28 +21,44 @@ All **4 migration cohorts (`101/101` active cards)** have now been migrated to m
 
 ---
 
-## 2. Automated CEWPOS Testing Architecture per `CSD/4`
+## 2. Automated CEWPOS Testing Architecture (`CSD/4` v5) & Live Fresh-Node QA (`CIRISServer v0.5.241`)
 
 ```mermaid
 flowchart LR
-    CC["CIRISConstitution rc9<br/>STATE_TABLE.tsv (155 states)<br/>topology_vocabulary.json (110 atoms)"]
-    SRV["CIRISServer #802<br/>harness.native.model<br/>T0..T19 traces.json"]
+    CC["CIRISConstitution<br/>STATE_TABLE.tsv<br/>topology_vocabulary.json (120 atoms)"]
+    SRV["CIRISServer v0.5.241<br/>harness.native.model<br/>T0..T19 traces.json (v5)"]
     PIN["CEWPOS epistemic-ui/csd4/<br/>PIN.md + requirements.yaml<br/>+ requirements_full.yaml"]
     CARDS["101 Migrated CSD/4 Cards<br/>epistemic-ui/csd4/cards/CSD-*.md<br/>(Cohorts 1–4)"]
     RUN["csd4_harness.py run-traces<br/>134 Test Instants Resolved<br/>74 Checkpoints Materialized"]
-    LIVE["Live Occurrence & UI Probes<br/>CIRISServer :4243 + Agent :8080<br/>+ Epistemic UI :8787"]
+    LIVE["Live Fresh-Node QA<br/>CIRISServer v0.5.241 :4243<br/>+ CEWPOS UI Proxy :8787"]
 
     CC --> SRV --> PIN --> CARDS --> RUN --> LIVE
 ```
 
-### Live Local Occurrence & Epistemic UI Probe Results
+### 2.1 Live Local Occurrence & Epistemic UI Probe Results
 
 | Target Surface / Service | Endpoint URL | Status | Verified Summary |
 |---|---|---|---|
-| CIRISServer Embedded Node Health | `http://127.0.0.1:4243/health` | ONLINE (`200`) | standing=identified, key_id=ciris-agent-bootstrap-j7uo5vwfei, version=0.5.223 |
-| CIRISAgent API Root | `http://127.0.0.1:8080/` | ONLINE (`200`) | 207 bytes |
+| CIRISServer Embedded Node Health | `http://127.0.0.1:4243/health` | ONLINE (`200`) | standing=identified, key_id=qa-fresh-node-pgcw4v72jz, version=0.5.241 |
+| CIRISAgent API Root | `http://127.0.0.1:8080/` | OFFLINE | <urlopen error [Errno 111] Connection refused> |
 | CEWPOS Epistemic UI Surface | `http://127.0.0.1:8787/index.html` | ONLINE (`200`) | 5 Circles=True, 7 Tabs=True, FirstRunWizard(CSD-080..085,093)=True, SelfKeyRoster(CSD-037,094,095)=True, ProgressiveDisclosure(☰/⋯)=True |
 | CEWPOS Promise Cards Bundle (CSD-111..128) | `http://127.0.0.1:8787/out/all_promise_cards.json` | ONLINE (`200`) | 18 reserved CSD cards projected (CSD-111..CSD-128) |
+
+### 2.2 End-to-End Live QA on Freshly Configured `CIRISServer v0.5.241` Node (`11/11` Steps Passed)
+
+| Step | CSD(s) | Verification Step | Live Endpoint Call | Result | Verified Wire Payload / Invariant |
+|---:|---|---|---|---|---|
+| `01` | `CSD-080` | Fresh Node Health & Conformance (v0.5.241) | `GET /health` | ✅ PASS (`200`) | version=0.5.241, key_id=qa-fresh-node-pgcw4v72jz, standing=identified, profiles=['CCP', 'CCC', 'CCS'] |
+| `02` | `CSD-082, CSD-118` | First-Run Consent Disclosure & NodeCode | `GET /v1/setup/consent-disclosure + /v1/federation/node-code` | ✅ PASS (`200`) | grants=['replication', 'analyze'], location_max_h3=7, node_code=CIRIS-V1-AH22-AMEI-RMMW-4POV... |
+| `03` | `CSD-093` | Add-This-Device Initial Handshake State | `GET /v1/setup/add-device` | ✅ PASS (`200`) | state=idle |
+| `04` | `CSD-085, CSD-118` | First-Run Unclaimed Status & 0600 claim_pin File | `GET /v1/setup/status` | ✅ PASS (`200`) | is_first_run=True, claim_pin_mode=0o600, pin_len=9 (M6WP-ZW38) |
+| `05` | `CSD-082, CSD-037` | Mint Hybrid PQC User Identity (Ed25519 + ML-DSA-65) | `POST /v1/self/identity` | ✅ PASS (`200`) | key_id=qa-fresh-node-user-dolb65mhei, hardware=SoftwareOnly, fedcode=CIRIS-V3-AMA5-LA3K-J4HP-... |
+| `06` | `CSD-085` | Claim Node Ownership & Consume One-Time 0600 PIN | `POST /v1/setup/claim-remote` | ✅ PASS (`200`) | role=SYSTEM_ADMIN, wa_id=wa-root-qa-fresh-node-user-dolb65mhei, attestation=debf8637-b727-4552-9b67-4e493884cbe6, pin_consumed_deleted=True |
+| `07` | `CSD-085, CSD-118` | Post-Claim Node Status & Owned-Nodes Binding | `GET /v1/setup/status + /v1/setup/owned-nodes` | ✅ PASS (`200`) | is_first_run=False, owner=qa-fresh-node-user-dolb65mhei, nodes=[{'key_id': 'qa-fresh-node-pgcw4v72jz', 'is_self': True}] |
+| `08` | `CSD-037` | Enrolled Devices Roster (My Identity) | `GET /v1/self/occurrences?identity_key_id=qa-fresh-node-user-dolb65mhei` | ✅ PASS (`200`) | identity_key_id=qa-fresh-node-user-dolb65mhei, audience=owner, occurrences=0 |
+| `09` | `CSD-094` | Open 10-Minute Device Approval Window & Poll Requests | `POST /v1/self/device-requests/open + GET /v1/self/device-requests` | ✅ PASS (`200`) | open=True, window_secs=600, window_secs_left=599, requests=[] |
+| `10` | `CSD-095` | Self-Key Roster Proposals & 24h W_self Window | `GET /v1/self/roster/proposals` | ✅ PASS (`200`) | roster=['qa-fresh-node-user-dolb65mhei'], proposals=[], w_self_secs=86400 (24h) |
+| `11` | `CSD-105, CSD-129` | Authenticated Node State, Entrenched Trust Root & CEWPOS :8787 Proxy | `GET /v1/node/state + /v1/trust-root + :8787/health` | ✅ PASS (`200`) | node.band=green, trust_root=entrenched, cewpos_proxy_version=0.5.241 |
 
 ---
 

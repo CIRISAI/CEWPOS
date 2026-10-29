@@ -1,5 +1,5 @@
 {
-  "catalogue_version": 3,
+  "catalogue_version": 5,
   "topology": "T8",
   "step_id": "rel[4]:halt",
   "step_index": 11,

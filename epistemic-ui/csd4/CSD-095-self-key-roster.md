@@ -14,7 +14,7 @@ owner: CIRISClient
 
 ```yaml csd:tests
 CSD-095:
-  catalogue_version: 3
+  catalogue_version: 5
   topology: T10
   tests:
     add_held:

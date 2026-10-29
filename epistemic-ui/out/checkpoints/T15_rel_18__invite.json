@@ -1,5 +1,5 @@
 {
-  "catalogue_version": 3,
+  "catalogue_version": 5,
   "topology": "T15",
   "step_id": "rel[18]:invite",
   "step_index": 30,

@@ -1,5 +1,5 @@
 {
-  "catalogue_version": 3,
+  "catalogue_version": 5,
   "topology": "T16",
   "step_id": "rel[2]:agent_act",
   "step_index": 8,

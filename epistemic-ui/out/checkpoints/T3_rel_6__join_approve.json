@@ -1,5 +1,5 @@
 {
-  "catalogue_version": 3,
+  "catalogue_version": 5,
   "topology": "T3",
   "step_id": "rel[6]:join_approve",
   "step_index": 14,

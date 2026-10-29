@@ -1,5 +1,5 @@
 {
-  "catalogue_version": 3,
+  "catalogue_version": 5,
   "topology": "T2",
   "step_id": "rel[4]:contact",
   "step_index": 12,

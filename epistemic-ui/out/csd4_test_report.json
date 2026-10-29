@@ -1,6 +1,6 @@
 {
-  "catalogue_version": 3,
-  "total_atoms": 110,
+  "catalogue_version": 5,
+  "total_atoms": 120,
   "total_topologies": 20,
   "topologies_exercised": [
     "T0",
@@ -7497,14 +7497,14 @@
       "url": "http://127.0.0.1:4243/health",
       "reachable": true,
       "status_code": 200,
-      "summary": "standing=identified, key_id=ciris-agent-bootstrap-j7uo5vwfei, version=0.5.223"
+      "summary": "standing=identified, key_id=qa-fresh-node-pgcw4v72jz, version=0.5.241"
     },
     {
       "name": "CIRISAgent API Root",
       "url": "http://127.0.0.1:8080/",
-      "reachable": true,
-      "status_code": 200,
-      "summary": "207 bytes"
+      "reachable": false,
+      "status_code": 0,
+      "summary": "<urlopen error [Errno 111] Connection refused>"
     },
     {
       "name": "CEWPOS Epistemic UI Surface",
@@ -7519,6 +7519,107 @@
       "reachable": true,
       "status_code": 200,
       "summary": "18 reserved CSD cards projected (CSD-111..CSD-128)"
+    }
+  ],
+  "live_qa_steps": [
+    {
+      "step_num": 1,
+      "csd_ids": "CSD-080",
+      "name": "Fresh Node Health & Conformance (v0.5.241)",
+      "method_path": "GET /health",
+      "status_code": 200,
+      "passed": true,
+      "verified_detail": "version=0.5.241, key_id=qa-fresh-node-pgcw4v72jz, standing=identified, profiles=['CCP', 'CCC', 'CCS']"
+    },
+    {
+      "step_num": 2,
+      "csd_ids": "CSD-082, CSD-118",
+      "name": "First-Run Consent Disclosure & NodeCode",
+      "method_path": "GET /v1/setup/consent-disclosure + /v1/federation/node-code",
+      "status_code": 200,
+      "passed": true,
+      "verified_detail": "grants=['replication', 'analyze'], location_max_h3=7, node_code=CIRIS-V1-AH22-AMEI-RMMW-4POV..."
+    },
+    {
+      "step_num": 3,
+      "csd_ids": "CSD-093",
+      "name": "Add-This-Device Initial Handshake State",
+      "method_path": "GET /v1/setup/add-device",
+      "status_code": 200,
+      "passed": true,
+      "verified_detail": "state=idle"
+    },
+    {
+      "step_num": 4,
+      "csd_ids": "CSD-085, CSD-118",
+      "name": "First-Run Unclaimed Status & 0600 claim_pin File",
+      "method_path": "GET /v1/setup/status",
+      "status_code": 200,
+      "passed": true,
+      "verified_detail": "is_first_run=True, claim_pin_mode=0o600, pin_len=9 (M6WP-ZW38)"
+    },
+    {
+      "step_num": 5,
+      "csd_ids": "CSD-082, CSD-037",
+      "name": "Mint Hybrid PQC User Identity (Ed25519 + ML-DSA-65)",
+      "method_path": "POST /v1/self/identity",
+      "status_code": 200,
+      "passed": true,
+      "verified_detail": "key_id=qa-fresh-node-user-dolb65mhei, hardware=SoftwareOnly, fedcode=CIRIS-V3-AMA5-LA3K-J4HP-..."
+    },
+    {
+      "step_num": 6,
+      "csd_ids": "CSD-085",
+      "name": "Claim Node Ownership & Consume One-Time 0600 PIN",
+      "method_path": "POST /v1/setup/claim-remote",
+      "status_code": 200,
+      "passed": true,
+      "verified_detail": "role=SYSTEM_ADMIN, wa_id=wa-root-qa-fresh-node-user-dolb65mhei, attestation=debf8637-b727-4552-9b67-4e493884cbe6, pin_consumed_deleted=True"
+    },
+    {
+      "step_num": 7,
+      "csd_ids": "CSD-085, CSD-118",
+      "name": "Post-Claim Node Status & Owned-Nodes Binding",
+      "method_path": "GET /v1/setup/status + /v1/setup/owned-nodes",
+      "status_code": 200,
+      "passed": true,
+      "verified_detail": "is_first_run=False, owner=qa-fresh-node-user-dolb65mhei, nodes=[{'key_id': 'qa-fresh-node-pgcw4v72jz', 'is_self': True}]"
+    },
+    {
+      "step_num": 8,
+      "csd_ids": "CSD-037",
+      "name": "Enrolled Devices Roster (My Identity)",
+      "method_path": "GET /v1/self/occurrences?identity_key_id=qa-fresh-node-user-dolb65mhei",
+      "status_code": 200,
+      "passed": true,
+      "verified_detail": "identity_key_id=qa-fresh-node-user-dolb65mhei, audience=owner, occurrences=0"
+    },
+    {
+      "step_num": 9,
+      "csd_ids": "CSD-094",
+      "name": "Open 10-Minute Device Approval Window & Poll Requests",
+      "method_path": "POST /v1/self/device-requests/open + GET /v1/self/device-requests",
+      "status_code": 200,
+      "passed": true,
+      "verified_detail": "open=True, window_secs=600, window_secs_left=599, requests=[]"
+    },
+    {
+      "step_num": 10,
+      "csd_ids": "CSD-095",
+      "name": "Self-Key Roster Proposals & 24h W_self Window",
+      "method_path": "GET /v1/self/roster/proposals",
+      "status_code": 200,
+      "passed": true,
+      "verified_detail": "roster=['qa-fresh-node-user-dolb65mhei'], proposals=[], w_self_secs=86400 (24h)"
+    },
+    {
+      "step_num": 11,
+      "csd_ids": "CSD-105, CSD-129",
+      "name": "Authenticated Node State, Entrenched Trust Root & CEWPOS :8787 Proxy",
+      "method_path": "GET /v1/node/state + /v1/trust-root + :8787/health",
+      "status_code": 200,
+      "passed": true,
+      "verified_detail": "node.band=green, trust_root=entrenched, cewpos_proxy_version=0.5.241"
     }
   ]
 }
