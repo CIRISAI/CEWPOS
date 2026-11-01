@@ -3080,7 +3080,7 @@
               </div>
             </div>
 
-            <!-- 2. Spatial 3D CIRISHolon View-Form (`view_form(&Form)`) -->
+            <!-- 2. Spatial 3D CIRISHolon View-Form (view_form(&Form)) -->
             <details open style="margin:10px 0; font-size:12px; color:var(--ink-mute);">
               <summary style="cursor:pointer; user-select:none;">&ctdot; Spatial 3D Holon view-form (<code>view_form(&amp;Form)</code>)</summary>
               <canvas id="spatialCanvas" width="480" height="140" data-csd-tag="csd_spatial_canvas"></canvas>
@@ -3100,7 +3100,7 @@
               ` : ''}
             </div>
 
-            <!-- 4. Uniform 9 AttOps (`RC9` Occupancy Matrix + Inline `whyDisabled`) -->
+            <!-- 4. Uniform 9 AttOps (RC9 Occupancy Matrix + Inline whyDisabled) -->
             <div class="card" style="padding:8px 14px; margin-top:8px;" data-csd-tag="receipt_9_att_ops_${c.id}">
               <div style="font-size:11px;font-weight:600;color:var(--ink-mute);margin-bottom:6px;">
                 UNIFORM 9 CEG ATTESTATION OPS (<code>AttOp</code>)
@@ -3121,7 +3121,7 @@
               ` : ''}
             </div>
 
-            <!-- 5. Referent / Blob / File Custody Acts (`v0.5.243` `/v1/files/{id}/custody|rename|move`) -->
+            <!-- 5. Referent / Blob / File Custody Acts (v0.5.243 /v1/files/{id}/custody|rename|move) -->
             ${isBlobOrFile ? `
               <div class="card" style="padding:8px 14px; margin-top:8px;" data-csd-tag="receipt_blob_acts_${c.id}">
                 <div style="font-size:11px;font-weight:600;color:var(--ink-mute);margin-bottom:6px;">
@@ -3141,7 +3141,7 @@
               </div>
             ` : ''}
 
-            <!-- 6. Community Moderation & Content Flagging (`v0.5.243` `/v1/safety/moderation|flag`) -->
+            <!-- 6. Community Moderation & Content Flagging (v0.5.243 /v1/safety/moderation|flag) -->
             ${isCommunityOrNeighbour ? `
               <div class="card" style="padding:8px 14px; margin-top:8px;" data-csd-tag="receipt_moderation_acts_${c.id}">
                 <div style="font-size:11px;font-weight:600;color:var(--ink-mute);margin-bottom:6px;">
