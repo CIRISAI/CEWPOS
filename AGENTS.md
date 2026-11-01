@@ -12,12 +12,23 @@ This file is the canonical engineering guide for coding agents and contributors 
   - Do **not** render user-facing epistemic states as floating molecular spheres (`Z=8 Oxygen`, `STO-3G` atoms) and do **not** render them as traditional 2D HTML web forms.
   - Instead, every surface in the full-screen Bevy scene is projected as a **3D Spatial Slab** floating in architectural perspective space (`perspective: 1600px`, `transform-style: preserve-3d`), featuring crisp editorial typography (`IBM Plex Sans` / `Newsreader` / `IBM Plex Mono`), tactile 3D selection tiles (`transform: translate3d(0, -3px, 22px)` when selected), and live 3D selection splines drawn on the full-screen `#bevySceneCanvas` connecting each **Question Context Slab** (`[data-bevy-question="1"]`) to its **Selection Slabs** (`[data-bevy-choice="1"]`).
 
-### 1.2 Context is the Question; Choices are 3D Selections (`P9: TwoPathCeremonyBlock` / `DeferralVote`)
-- Every decision, deferral, or setup step in CEWPOS is a **signed epistemic vote** rendered through **Primitive `P9` (`TwoPathCeremonyBlock` / `DeferralVote`)**:
-  - **The Context is posed as a clear Question** at the top of the 3D slab (`.p9-question-hero` with `[data-bevy-question="1"]`, protocol dimension eyebrow, plain-language question title, consequence subtitle, scope pill `P5`, and quorum badge `P6`).
-  - **The Choices are posed as modern 3D Selection Tiles** below the question (`.p9-selection-grid` -> `.p9-selection-tile` with `[data-bevy-choice="1"]`, check indicator, clear title, consequence subtitle, and `☰` CEG hamburger trigger).
-- **The First-Run Setup Wizard (`CSD-080`–`CSD-085`, `CSD-093`) is a sequence of 4 single-person (`1-of-1`) `P9` DeferralVotes:**
-  1. **Step 1 (`YOU` — `setup:identity_path`)**: *"How do you want to establish your root identity on this device?"* (`Set up a new CIRIS ID` vs. `Add this device to an existing CIRIS ID`).
+### 1.2 Primitive P9 is ChoiceBlock: Context, Options, and Consequences
+- **The Primitive is not "deferral" — it is Choice (`P9: ChoiceBlock`)**:
+  - Every decision, setup step, consent gate, moderation action, deferral, or governance vote in CEWPOS is a unified **`P9` ChoiceBlock** consisting of:
+    1. **Context**: Poses the situation, question, or inquiry clearly (`.p9-question-hero` with `[data-bevy-question="1"]`, protocol dimension eyebrow, plain-language question title, explanatory subtitle, and scope pill `P5`).
+    2. **Options**: The available choices posed as tactile 3D Selection Tiles (`.p9-selection-grid` -> `.p9-selection-tile` with `[data-bevy-choice="1"]`, selection state indicator, clear option title, and optional `☰` CEG receipt trigger).
+    3. **Consequences (What would change based on each option)**: Explicit, plain-language explanation rendered directly inside each option tile indicating the precise state mutation, cryptographic attestation, or policy impact before selection.
+- **Context Determines the Role of the Choice**:
+  - **First-Run Wizard Step**: Setup paths where context is device initialization (`setup:identity_path`, `mode:operational_posture`, `consent:trace_replication`, `steward:bond:v1`, `setup:claim_remote`).
+  - **Consent Gate**: Boundary decisions where context is telemetry sharing or federation reachability.
+  - **Agent Deferral**: Where context is an AI steward deferring a high-stakes decision to human wisdom (Wise Authority ruling).
+  - **Moderation Decision**: Where context is a flagged item or safety boundary (`blur`, `warn`, `remove`, `reveal`).
+  - **Circle Governance Vote**: Where context is a multi-party quorum motion across the 5 Circles.
+- **The First-Run Setup Wizard (`CSD-080`–`CSD-085`, `CSD-093`) is a sequence of 4 single-person `P9` ChoiceBlocks:**
+  1. **Step 1 (`YOU` — `setup:identity_path` & `mode:operational_posture`)**:
+     - *"How do you want to establish your root identity on this device?"* (`Set up a new CIRIS ID` vs. `Add this device to an existing CIRIS ID`).
+     - *"What operational mode should this node initialize in?"* (`Run with AI Steward` [CSD-082] vs. `Run without AI (Bare Node)` [CSD-083]).
+     - Modern spatial inputs for Handle and Device Name; 3D selection tiles for Key Custody and Age Band (`CC 3.2`).
   2. **Step 2 (`JOIN_FEDERATION` — `consent:trace_replication`)**: *"Do you want to share anonymized diagnostic traces with the CIRIS federation?"* (`Share anonymized traces` vs. `Keep traces local only`).
   3. **Step 3 (`AI` — `steward:bond:v1`)**: *"Which inference engine should your bonded AI steward use?"* (`Local Ollama (Keyless)` vs. `CIRIS Steward Portal` vs. `Bring Your Own API Key`).
   4. **Step 4 (`COMPLETE` — `setup:claim_remote`)**: *"Are you ready to seal your 0600 claim_pin and claim ownership of this node?"* (`Claim node with 0600 PIN` vs. `Leave Unclaimed`).
@@ -43,7 +54,7 @@ Every epistemic web state across all **5 Circles × 7 Tabs × 6 Instruments × 1
 | **`P6`** | `Chip` | `UxPrimitive::Chip` | Status or interactive choice badge (`Status | Choice`). |
 | **`P7`** | `StateBlock` | `UxPrimitive::StateBlock` | Mandatory surface state banner (`Populated | Loading | Empty | Error | FileGone | HiddenByRules | Unreviewed | Halt423`). |
 | **`P8`** | `ConfirmSheet` | `UxPrimitive::ConfirmSheet` | 3-fact outward-action confirmation gate (*1. What moves · 2. Where it goes · 3. Can I undo it?* + `G14` replication notice). |
-| **`P9`** | `TwoPathCeremonyBlock` (`DeferralVote`) | `UxPrimitive::TwoPathCeremonyBlock` + `DeferralVoteNode` | Unified **Question Context + 3D Selection Tiles** primitive for all `1-of-1` deferrals (First-Run Wizard, OwnerRequests, WA rulings) and `m-of-n` two-path ceremonies. |
+| **`P9`** | `ChoiceBlock` (`TwoPathCeremonyBlock`) | `UxPrimitive::TwoPathCeremonyBlock` + `DeferralVoteNode` | Universal **Context + Options + Consequences** primitive. Context dictates whether it is a wizard step, node mode, consent gate, agent deferral, moderation action, or circle vote. |
 | **`P10`** | `QrCeremony` | `UxPrimitive::QrCeremony` | Multi-device pairing & key-exchange slab (`ciris://ed25519:...@host:4243` + 6-digit SAS match code). |
 | **`P11`** | `LineageChainBlock` | `UxPrimitive::LineageChainBlock` | Cryptographic delegation & bond chain (`Human Steward -> Bonded Agent`, `Inv_BondDepthOne`, or `Genesis -> Supersedes -> Active Head`). |
 | **`P12`** | `ConscienceStepBlock` (+ `PolicyLensBar`) | `UxPrimitive::ConscienceStepBlock` / `PolicyLensBar` | H3ERE conscience invariant evaluations, `CSD-118` Never-Allowed hard refusals (`G17`), `G14` non-verifiable boundary notice, and quiet policy lens bar. |

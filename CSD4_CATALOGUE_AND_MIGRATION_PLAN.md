@@ -39,7 +39,7 @@ flowchart LR
 
 | Target Surface / Service | Endpoint URL | Status | Verified Summary |
 |---|---|---|---|
-| CIRISServer Embedded Node Health | `http://127.0.0.1:4243/health` | ONLINE (`200`) | standing=identified, key_id=qa-243-node-wiacpzc2bm, version=0.5.243 |
+| CIRISServer Embedded Node Health | `http://127.0.0.1:4243/health` | ONLINE (`200`) | standing=identified, key_id=qa-243-node-sf7zgc3kqh, version=0.5.243 |
 | CIRISAgent API Root | `http://127.0.0.1:8080/` | OFFLINE | <urlopen error [Errno 111] Connection refused> |
 | CEWPOS Epistemic UI Surface | `http://127.0.0.1:8787/index.html` | ONLINE (`200`) | 5 Circles=True, 7 Tabs=True, FirstRunWizard(CSD-080..085,093)=True, SelfKeyRoster(CSD-037,094,095)=True, ProgressiveDisclosure(☰/⋯)=True |
 | CEWPOS Promise Cards Bundle (CSD-111..128) | `http://127.0.0.1:8787/out/all_promise_cards.json` | ONLINE (`200`) | 26 reserved CSD cards projected (CSD-037..CSD-128) |
@@ -48,16 +48,16 @@ flowchart LR
 
 | Step | CSD(s) | Verification Step | Live Endpoint Call | Result | Verified Wire Payload / Invariant |
 |---:|---|---|---|---|---|
-| `01` | `CSD-080` | Fresh Node Health & Conformance (v0.5.243) | `GET /health` | ✅ PASS (`200`) | version=0.5.243, key_id=qa-243-node-wiacpzc2bm, standing=identified, profiles=['CCP', 'CCC', 'CCS'] |
-| `02` | `CSD-082, CSD-118` | First-Run Consent Disclosure & NodeCode | `GET /v1/setup/consent-disclosure + /v1/federation/node-code` | ✅ PASS (`200`) | grants=['replication', 'analyze'], location_max_h3=7, node_code=CIRIS-V1-AERU-AYLZ-KGBV-GWWC... |
+| `01` | `CSD-080` | Fresh Node Health & Conformance (v0.5.243) | `GET /health` | ✅ PASS (`200`) | version=0.5.243, key_id=qa-243-node-sf7zgc3kqh, standing=identified, profiles=['CCP', 'CCC', 'CCS'] |
+| `02` | `CSD-082, CSD-118` | First-Run Consent Disclosure & NodeCode | `GET /v1/setup/consent-disclosure + /v1/federation/node-code` | ✅ PASS (`200`) | grants=['replication', 'analyze'], location_max_h3=7, node_code=CIRIS-V1-AEOS-M23X-T6BR-OGV7... |
 | `03` | `CSD-093` | Add-This-Device Initial Handshake State | `GET /v1/setup/add-device` | ✅ PASS (`200`) | state=idle |
-| `04` | `CSD-085, CSD-118` | First-Run Unclaimed Status & 0600 claim_pin File | `GET /v1/setup/status (cached from initial boot)` | ✅ PASS (`200`) | is_first_run=True, claim_pin_mode=0o600, pin=NRY3-VN74 |
-| `05` | `CSD-082, CSD-037` | Mint Hybrid PQC User Identity (Ed25519 + ML-DSA-65) | `POST /v1/self/identity` | ✅ PASS (`200`) | key_id=qa-243-node-user-bgmvmlxohq, fedcode=CIRIS-V3-AMAT-JLJD-LBWZ-... |
-| `06` | `CSD-085` | Claim Node Ownership & Consume One-Time 0600 PIN | `POST /v1/setup/claim-remote` | ✅ PASS (`200`) | role=SYSTEM_ADMIN, wa_id=wa-root-qa-243-node-user-bgmvmlxohq, attestation=4b71fa41-7b83-43c4-9bca-3517aed7d32e, pin_consumed_deleted=True |
-| `07` | `CSD-085, CSD-118` | Post-Claim Node Status & Owned-Nodes Binding | `GET /v1/setup/status + /v1/setup/owned-nodes` | ✅ PASS (`200`) | is_first_run=False, owner=qa-243-node-user-bgmvmlxohq, nodes=[{'key_id': 'qa-243-node-wiacpzc2bm', 'is_self': True, 'announced': False, 'roster_member': True}] |
-| `08` | `CSD-037` | Enrolled Devices Roster (My Identity) | `GET /v1/self/occurrences?identity_key_id=qa-243-node-user-bgmvmlxohq` | ✅ PASS (`200`) | identity_key_id=qa-243-node-user-bgmvmlxohq, audience=owner, occurrences=1 |
+| `04` | `CSD-085, CSD-118` | First-Run Unclaimed Status & 0600 claim_pin File | `GET /v1/setup/status` | ✅ PASS (`200`) | is_first_run=True, claim_pin_mode=0o600, pin_len=9 (Z478-9SXR) |
+| `05` | `CSD-082, CSD-037` | Mint Hybrid PQC User Identity (Ed25519 + ML-DSA-65) | `POST /v1/self/identity` | ✅ PASS (`200`) | key_id=qa-243-node-user-mcs7viaw3n, hardware=SoftwareOnly, fedcode=CIRIS-V3-AMA2-XLOC-65M2-... |
+| `06` | `CSD-085` | Claim Node Ownership & Consume One-Time 0600 PIN | `POST /v1/setup/claim-remote` | ✅ PASS (`200`) | role=SYSTEM_ADMIN, wa_id=wa-root-qa-243-node-user-mcs7viaw3n, attestation=b1074cf0-098e-4b06-8f99-8969a6e31f1a, pin_consumed_deleted=True |
+| `07` | `CSD-085, CSD-118` | Post-Claim Node Status & Owned-Nodes Binding | `GET /v1/setup/status + /v1/setup/owned-nodes` | ✅ PASS (`200`) | is_first_run=False, owner=qa-243-node-user-mcs7viaw3n, nodes=[{'key_id': 'qa-243-node-sf7zgc3kqh', 'is_self': True, 'announced': False, 'roster_member': False}] |
+| `08` | `CSD-037` | Enrolled Devices Roster (My Identity) | `GET /v1/self/occurrences?identity_key_id=qa-243-node-user-mcs7viaw3n` | ✅ PASS (`200`) | identity_key_id=qa-243-node-user-mcs7viaw3n, audience=owner, occurrences=0 |
 | `09` | `CSD-094` | Open 10-Minute Device Approval Window & Poll Requests | `POST /v1/self/device-requests/open + GET /v1/self/device-requests` | ✅ PASS (`200`) | open=True, window_secs=600, window_secs_left=599, requests=[] |
-| `10` | `CSD-095` | Self-Key Roster Proposals & 24h W_self Window | `GET /v1/self/roster/proposals` | ✅ PASS (`200`) | roster=['qa-243-node-user-bgmvmlxohq'], proposals=[], w_self_secs=86400 (24h) |
+| `10` | `CSD-095` | Self-Key Roster Proposals & 24h W_self Window | `GET /v1/self/roster/proposals` | ✅ PASS (`200`) | roster=['qa-243-node-user-mcs7viaw3n'], proposals=[], w_self_secs=86400 (24h) |
 | `11` | `CSD-105, CSD-129` | Authenticated Node State, Entrenched Trust Root & CEWPOS :8787 Proxy | `GET /v1/node/state + /v1/trust-root + :8787/health` | ✅ PASS (`200`) | node.band=green, trust_root=entrenched, cewpos_proxy_version=0.5.243 |
 
 ---
