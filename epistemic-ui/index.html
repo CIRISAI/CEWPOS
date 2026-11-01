@@ -435,12 +435,143 @@
     }
     canvas#spatialCanvas {
       width: 100%;
-      height: 140px;
-      background: var(--bone);
+      height: 160px;
+      background: #0F1319;
       border: 1px solid var(--hairline);
       border-radius: 8px;
       display: block;
       margin-top: 8px;
+    }
+
+    /* ── 3D Bevy / CIRISHolon (`holon-render-3d`) Deferral-Vote Stage ── */
+    .holon-3d-stage {
+      background: radial-gradient(circle at 50% 42%, #182230 0%, #0D1117 100%);
+      color: #EDF2F7;
+      border: 1px solid #2A3648;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 10px 28px rgba(10, 14, 22, 0.22);
+      position: relative;
+      overflow: hidden;
+    }
+    .holon-3d-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .holon-3d-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #F7FAFC;
+      letter-spacing: -0.01em;
+    }
+    .holon-3d-sub {
+      font-size: 12px;
+      color: #A0AEC0;
+      margin-top: 2px;
+    }
+    .holon-canvas-wrap {
+      position: relative;
+      width: 100%;
+      height: 310px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: radial-gradient(circle at 50% 50%, #16202E 0%, #0A0E14 100%);
+      overflow: hidden;
+      cursor: grab;
+    }
+    .holon-canvas-wrap:active {
+      cursor: grabbing;
+    }
+    canvas#holonDeferralCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .holon-ledger-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-family: var(--mono);
+      font-size: 11px;
+      color: #A0AEC0;
+    }
+    .holon-orb-strip {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .holon-orb-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.06);
+      color: #F7FAFC;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, transform 0.12s;
+    }
+    .holon-orb-pill:hover {
+      background: rgba(255,255,255,0.14);
+      transform: translateY(-1px);
+    }
+    .holon-orb-pill.bonded {
+      border-color: #38B2AC;
+      background: rgba(56, 178, 172, 0.22);
+      font-weight: 600;
+    }
+
+    /* ── Universal CEG Hamburger (`☰`) 9 AttOps + Referent & Moderation Grid ── */
+    .attop-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .attop-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 7px 9px;
+      border-radius: 8px;
+      border: 1px solid var(--hairline);
+      background: #fff;
+      cursor: pointer;
+      text-align: left;
+      font-family: var(--sans);
+      transition: background 0.12s, border-color 0.12s;
+    }
+    .attop-btn:hover:not(:disabled) {
+      background: var(--paper);
+      border-color: var(--brand);
+    }
+    .attop-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      background: var(--bone);
+    }
+    .attop-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--obsidian);
+    }
+    .attop-why {
+      font-size: 10px;
+      color: var(--ink-mute);
+      line-height: 1.25;
+      margin-top: 2px;
     }
   </style>
 </head>
@@ -605,11 +736,11 @@
         ownershipState: "unclaimed",  // unclaimed | claiming | claimed | error
       },
 
-      // ── Live CIRISServer v0.5.241 Bridge State ──
+      // ── Live CIRISServer v0.5.243 Full-Stack Crate Bridge State ──
       liveNode: {
         connected: false,
-        version: "0.5.241",
-        keyId: "qa-fresh-node",
+        version: "0.5.243",
+        keyId: "qa-243-node",
         standing: "identified",
         nodeCode: null,
         isFirstRun: null,
@@ -619,7 +750,44 @@
         ownerWaId: null,
         attestationId: null,
         consentDisclosureTitle: null,
+        cohortScopes: ["self", "family", "community", "affiliations", "species", "biosphere", "federation"],
       },
+
+      // ── 3D Bevy / CIRISHolon (`holon_render.wasm` + `holon-render-3d`) Engine State ──
+      holon3d: {
+        wasmLoaded: false,
+        bevyHostedLoaded: false,
+        yaw: 0.42,
+        pitch: 0.28,
+        zoom: 1.0,
+        grabbedAtomIdx: null,
+        hoveredAtomIdx: null,
+        frameCount: 0,
+        eKin: 0.0014,
+        ePair: -1.1482,
+        eSpring: 0.0,
+        wExt: 0.0,
+        gateOpen: false,
+        lastVoteReceipt: null,
+        show2dInspector: true,
+      },
+
+      // ── Live v0.5.243 OwnerRequests (`GET /v1/self/owner-requests` — Single-Person Votes) ──
+      ownerRequests: [
+        { id: "announce", title: "Announce Node on Mesh", description: "Sign owner_requests::announce so peers can discover this node", signed: false },
+        { id: "root_acceptance", title: "Accept Baked Trust Root", description: "Sign owner_requests::root_acceptance for the canonical genesis seed", signed: true },
+        { id: "community_trust", title: "Enable Community Cohort Trust", description: "Sign owner_requests::community_trust for N-member rooms", signed: false },
+      ],
+
+      // ── Live v0.5.243 Communities & Chat Rooms (`GET/POST /v1/communities`) ──
+      communities: [
+        { id: "comm-oak-street", name: "Oak Street Neighbours", cohort: "Neighbours", members: 6, moderator: "ed25519:neighbour_dan" },
+        { id: "comm-solar-coop", name: "Solar Co-op Stewards", cohort: "CommunitiesAndBusinesses", members: 14, moderator: "ed25519:steward_maya" },
+      ],
+      activeCommunityId: "comm-oak-street",
+      newCommunityName: "",
+      chatAttachmentId: "",
+      lastHamburgerNote: null,
 
       // ── Full Multi-Device & Self-Key Roster State (`CSD-037`, `CSD-094`, `CSD-095`) ──
       multiDevice: {
@@ -926,20 +1094,178 @@
       `;
     }
 
-    // `P9: TwoPathCeremonyBlock` — universal governance ceremony primitive (1-line summary + `⋯` expansion)
-    function renderP9TwoPathCeremony({ tag, title, chipLabel, chipTone = "brand", summaryHtml = "", ellipsisKey, quorumRule, approvals, required, objections = 0, windowLabel = "24h W_self (86,400s)", actionsHtml = "" }) {
+    // ── `CIRISHolon` (`holon-render-3d` / `species_palette.json`) 3D Species Palette & Context/Vote Engine ──
+    const HOLON_SPECIES_PALETTE = {
+      1: { symbol: "H",  name: "Hydrogen", color: "#EBEBEB", rgb: [0.92, 0.92, 0.92], r_cov: 0.59 },
+      3: { symbol: "Li", name: "Lithium",  color: "#CC80FF", rgb: [0.80, 0.50, 1.00], r_cov: 1.28 },
+      6: { symbol: "C",  name: "Carbon",   color: "#38BDF8", rgb: [0.22, 0.74, 0.97], r_cov: 1.44 },
+      7: { symbol: "N",  name: "Nitrogen", color: "#34D399", rgb: [0.20, 0.83, 0.60], r_cov: 1.34 },
+      8: { symbol: "O",  name: "Oxygen",   color: "#60A5FA", rgb: [0.38, 0.65, 0.98], r_cov: 1.25 },
+      9: { symbol: "F",  name: "Fluorine", color: "#F87171", rgb: [0.97, 0.44, 0.44], r_cov: 1.21 },
+    };
+
+    // Build a `HolonFrameBuffer` (`24.0`-bohr World Box, Atom 0 = Context `Z=8` at `[12,12,12]`, Atoms `1..=K` = Choices)
+    function buildHolonFrameFromDeferral(dv) {
+      const center = [12.0, 12.0, 12.0];
+      const atoms = [
+        {
+          idx: 0,
+          label: dv.contextTitle,
+          subtitle: dv.contextSubtitle || dv.dimension,
+          z: 8,
+          pos: center,
+          radius: 1.48,
+          isContext: true,
+          receiptId: dv.receiptId || dv.deferralId,
+        }
+      ];
+      const bonds = [];
+      const choices = dv.choices || [];
+      const n = Math.max(1, choices.length);
+      choices.forEach((ch, i) => {
+        const angle = (2 * Math.PI * i) / n - Math.PI / 2;
+        const isSel = !!ch.selected || (dv.selectedChoiceId && dv.selectedChoiceId === ch.choiceId);
+        const orbitR = isSel ? 4.2 : 6.6;
+        const zOff = ((i % 3) - 1) * 1.65;
+        const pos = [
+          center[0] + orbitR * Math.cos(angle),
+          center[1] + orbitR * Math.sin(angle),
+          center[2] + zOff,
+        ];
+        atoms.push({
+          idx: i + 1,
+          choiceId: ch.choiceId,
+          label: ch.label,
+          subtitle: ch.subtitle || "",
+          voteScore: typeof ch.voteScore === "number" ? ch.voteScore : 1.0,
+          z: ch.atomicNumber || (ch.voteScore < 0 ? 9 : ch.voteScore === 0 ? 3 : 7),
+          pos,
+          radius: isSel ? 1.24 : 0.98,
+          selected: isSel,
+          disabled: !!ch.disabled,
+          onClickJs: ch.onClickJs || "",
+          csdTag: ch.csdTag || `holon_orb_${ch.choiceId}`,
+          receiptId: ch.receiptId || `orb_${ch.choiceId}`,
+        });
+        if (isSel) {
+          bonds.push({ a: 0, b: i + 1, order: 2 });
+        }
+      });
+      return { boxL: 24.0, atoms, bonds, deferral: dv };
+    }
+
+    // `P9: TwoPathCeremonyBlock` (`DeferralVoteBlock`) — Unified 3D Bevy / `CIRISHolon` Context + Vote/Decision Primitive
+    // Renders BOTH 1-of-1 single-person votes/deferrals (First-Run Wizard steps, OwnerRequests, WA deferrals)
+    // AND m-of-n multi-party ceremonies (Self-Key Roster `CSD-095`, `Decisions` tab) as a 3D `CIRISHolon` World Box!
+    function renderP9TwoPathCeremony({
+      tag,
+      title,
+      chipLabel,
+      chipTone = "brand",
+      summaryHtml = "",
+      ellipsisKey,
+      quorumRule,
+      approvals = 0,
+      required = 1,
+      objections = 0,
+      windowLabel = "24h W_self (86,400s)",
+      actionsHtml = "",
+      deferralVote = null,
+    }) {
+      const dv = deferralVote || {
+        deferralId: tag || "p9_ceremony",
+        canvasTag: tag ? `${tag}_canvas` : "csd_080_holon_wizard_3d",
+        contextTitle: title,
+        contextSubtitle: quorumRule || "op:scores",
+        dimension: quorumRule || "ceremony:quorum",
+        scope: state.circleId || "JustMe",
+        quorumRequired: required,
+        quorumApprovals: approvals,
+        quorumObjections: objections,
+        windowLabel,
+        choices: [
+          { choiceId: `${tag}_assent`, label: "Assent (+1)", subtitle: "op:scores +1.0", voteScore: 1.0, atomicNumber: 7, selected: approvals >= required },
+          { choiceId: `${tag}_abstain`, label: "Hold / Wait (0)", subtitle: windowLabel, voteScore: 0.0, atomicNumber: 3, selected: approvals < required && objections === 0 },
+          { choiceId: `${tag}_object`, label: "Object (-1)", subtitle: "op:scores -1.0", voteScore: -1.0, atomicNumber: 9, selected: objections > 0 },
+        ],
+      };
+
+      const frame = buildHolonFrameFromDeferral(dv);
+      window.__HOLON_ACTIVE_FRAMES = window.__HOLON_ACTIVE_FRAMES || {};
+      window.__HOLON_ACTIVE_FRAMES[dv.deferralId] = frame;
+
+      const isSinglePerson = dv.quorumRequired === 1;
+      const quorumBadge = isSinglePerson
+        ? `1-of-1 Self-Quorum &middot; ${dv.quorumApprovals}/1 signed`
+        : `${dv.quorumApprovals}/${dv.quorumRequired} Quorum &middot; ${dv.quorumObjections || 0} obj`;
+
+      const orbsHtml = frame.atoms.slice(1).map(atom => {
+        const sp = HOLON_SPECIES_PALETTE[atom.z] || HOLON_SPECIES_PALETTE[6];
+        const scoreStr = atom.voteScore > 0 ? `+${atom.voteScore.toFixed(1)}` : atom.voteScore.toFixed(1);
+        return `
+          <div style="display:inline-flex;align-items:center;gap:3px;">
+            <button class="holon-orb-pill ${atom.selected ? 'selected' : ''}"
+                    data-csd-tag="${atom.csdTag}"
+                    ${atom.disabled ? 'disabled' : ''}
+                    onclick="${atom.onClickJs || `holonSelectDeferralOrb('${dv.deferralId}', '${atom.choiceId}')`}"
+                    title="${atom.subtitle} (Z=${atom.z} ${sp.name} · vote ${scoreStr})">
+              <span class="holon-orb-dot" style="background:${sp.color};"></span>
+              <span>${atom.label}</span>
+              <span style="opacity:0.72;font-family:var(--mono);font-size:10px;">(${scoreStr})</span>
+            </button>
+            <button class="btn-ghost" style="color:#94A3B8;padding:2px 5px;font-size:11px;"
+                    data-csd-tag="btn_receipt_${atom.receiptId}"
+                    title="5-fact CEG receipt &amp; actions (P4)"
+                    onclick="openReceiptSheet('${atom.receiptId}')">&#9776;</button>
+          </div>
+        `;
+      }).join("");
+
+      const stageHtml = `
+        <div class="holon-stage-wrap" data-csd-tag="${dv.stageTag || `p9_holon_stage_${dv.deferralId}`}">
+          <canvas class="holon-stage-canvas"
+                  id="holonCanvas_${dv.deferralId}"
+                  data-holon-deferral-id="${dv.deferralId}"
+                  data-csd-tag="${dv.canvasTag || `holon_canvas_${dv.deferralId}`}"
+                  width="640" height="290"></canvas>
+          <div class="holon-hud-top">
+            <div class="holon-hud-badge">
+              <span><strong>P9 &middot; 3D Context Holon (Z=8 O):</strong> ${dv.contextTitle}</span>
+              <span style="color:#94A3B8;"><code>${dv.dimension}</code> &middot; 24-bohr World Box &middot; Drag to orbit / spring-bond</span>
+            </div>
+            <div class="holon-hud-badge" style="align-items:flex-end;">
+              <span style="color:#38BDF8;font-weight:600;">${quorumBadge}</span>
+              <span style="color:#94A3B8;">${state.holon3d.wasmLoaded ? 'CIRISHolon WASM + Bevy 3D' : 'CIRISHolon 3D FrameBuffer'}</span>
+            </div>
+          </div>
+          <div class="holon-hud-bottom">
+            <div class="holon-orb-bar" data-csd-tag="holon_orbs_${dv.deferralId}">
+              ${orbsHtml}
+            </div>
+            <div class="holon-ledger-line">
+              <span><code>STO-3G</code> T=${state.holon3d.eKin.toFixed(4)} E_h &middot; V&#8322;=${state.holon3d.ePair.toFixed(4)} E_h &middot; V_spring=${state.holon3d.eSpring.toFixed(4)}</span>
+              <span><code>GATE: ${state.holon3d.gateOpen ? 'OPEN (300K)' : 'CLOSED (NVE)'}</code> &middot; Bonds: ${frame.bonds.length}</span>
+            </div>
+          </div>
+        </div>
+        ${summaryHtml ? `<div style="font-size:12px;color:var(--ink-mute);padding:4px 0 8px;">${summaryHtml}</div>` : ""}
+      `;
+
       const expandContent = `
-        ${renderP2FieldRow({ labelHtml: "Ceremony policy", valueHtml: `<code>${quorumRule}</code>`, verification: "ByRule CC 4.5.12" })}
-        ${renderP2FieldRow({ labelHtml: "Quorum tally", valueHtml: `${approvals} of ${required} signatures &middot; ${objections} objections`, verification: "Wire" })}
-        ${renderP2FieldRow({ labelHtml: "Lone-signer silence window", valueHtml: windowLabel, verification: "ByRule" })}
+        ${renderP2FieldRow({ labelHtml: "Ceremony / Deferral policy", valueHtml: `<code>${quorumRule || dv.dimension}</code>`, verification: "ByRule CC 4.5.12" })}
+        ${renderP2FieldRow({ labelHtml: "Quorum tally", valueHtml: `${dv.quorumApprovals} of ${dv.quorumRequired} signatures &middot; ${dv.quorumObjections || 0} objections`, verification: "Wire" })}
+        ${renderP2FieldRow({ labelHtml: "Silence / Deferral window", valueHtml: windowLabel, verification: "ByRule" })}
+        ${renderP2FieldRow({ labelHtml: "3D Holon FrameBuffer", valueHtml: `<code>${frame.atoms.length} atoms &middot; ${frame.bonds.length} cylinder bonds &middot; 24.0 bohr box</code>`, verification: "Wire" })}
         ${actionsHtml}
       `;
+
       return renderP1CardShell({
         tag,
         titleHtml: title,
         chipLabel,
         chipTone,
-        bodyHtml: summaryHtml ? `<div style="font-size:12px;color:var(--ink-mute);padding:4px 0 8px;">${summaryHtml}</div>` : "",
+        headerRightHtml: `<button class="btn-ghost" data-csd-tag="btn_receipt_${dv.receiptId || dv.deferralId}" title="5-fact CEG receipt &amp; actions (P4)" onclick="openReceiptSheet('${dv.receiptId || dv.deferralId}')">&#9776;</button>`,
+        bodyHtml: stageHtml,
         ellipsisKey,
         ellipsisHtml: expandContent,
       });
@@ -994,7 +1320,276 @@
       });
     }
 
-    // Synthetic 5-fact CEG Receipt lookup for First-Run Wizard signed envelopes (`P3` -> `P4`)
+    // Build the 4 First-Run Wizard steps as a sequence of `1-of-1` single-person `DeferralVote`s (`view-forms-spike::FirstRunWizardState::as_deferral_votes`)
+    function buildWizardDeferralVotes() {
+      const w = state.wizard;
+      const handle = w.fedidLabel.trim() || "alice.ciris";
+      const step1Settled = canWizardAdvanceFromYou();
+      const step2Settled = w.traceConsent !== null;
+      const step3Settled = !w.runWithAi || w.llmStatus === "ok" || w.step === "COMPLETE";
+      const step4Settled = w.ownershipState === "claimed" || (w.identityPath === "ADD_THIS_DEVICE" && w.addDeviceStatus === "approved");
+
+      return [
+        {
+          deferralId: "wiz_deferral_1_you",
+          stepKey: "YOU",
+          canvasTag: "csd_080_holon_wizard_3d",
+          stageTag: "wiz_p9_stage_you",
+          receiptId: w.identityPath === "ADD_THIS_DEVICE" ? "setup_add_device" : "setup_new_identity",
+          contextTitle: "Deferral 1/4 · Identity & Age Band",
+          contextSubtitle: `Who is setting up this device? (${handle})`,
+          dimension: "deferral:setup:identity_root",
+          scope: "JustMe",
+          quorumRequired: 1,
+          quorumApprovals: step1Settled ? 1 : 0,
+          quorumObjections: w.ageBand === "MINOR" ? 1 : 0,
+          selectedChoiceId: w.identityPath === "NEW" ? "choice_identity_new" : (w.identityPath === "ADD_THIS_DEVICE" ? "choice_identity_add_device" : null),
+          choices: [
+            {
+              choiceId: "choice_identity_new",
+              label: "Mint New CIRIS ID",
+              subtitle: "Fresh Ed25519 + ML-DSA-65 root keypair",
+              voteScore: 1.0,
+              atomicNumber: 7,
+              selected: w.identityPath === "NEW",
+              onClickJs: "wizardCast3DVote('choice_identity_new')",
+            },
+            {
+              choiceId: "choice_identity_add_device",
+              label: "Add to Existing ID (CSD-093)",
+              subtitle: "Pair via QR + 6-digit match code",
+              voteScore: 1.0,
+              atomicNumber: 6,
+              selected: w.identityPath === "ADD_THIS_DEVICE",
+              onClickJs: "wizardCast3DVote('choice_identity_add_device')",
+            },
+            {
+              choiceId: "choice_age_adult",
+              label: "Age: 18+ (Adult)",
+              subtitle: "CC 3.2 full federation options",
+              voteScore: 1.0,
+              atomicNumber: 1,
+              selected: w.ageBand === "ADULT",
+              onClickJs: "wizardCast3DVote('choice_age_adult')",
+            },
+            {
+              choiceId: "choice_age_declined",
+              label: "Age: Decline (Protective)",
+              subtitle: "CC 3.2 protective default · writes nothing",
+              voteScore: 0.0,
+              atomicNumber: 3,
+              selected: w.ageBand === "DECLINED",
+              onClickJs: "wizardCast3DVote('choice_age_declined')",
+            },
+            {
+              choiceId: "choice_age_minor",
+              label: "Age: Under 18 (Guardian Bond)",
+              subtitle: "CC 3.2 pauses self-claim · mints Guardian bond",
+              voteScore: -1.0,
+              atomicNumber: 9,
+              selected: w.ageBand === "MINOR",
+              onClickJs: "wizardCast3DVote('choice_age_minor')",
+            },
+          ],
+        },
+        {
+          deferralId: "wiz_deferral_2_consent",
+          stepKey: "JOIN_FEDERATION",
+          canvasTag: "csd_080_holon_wizard_3d",
+          stageTag: "wiz_p9_stage_consent",
+          receiptId: "setup_consent_replication",
+          contextTitle: "Deferral 2/4 · Federation & Consent Disclosure",
+          contextSubtitle: "Nothing leaves Just me without an explicit vote",
+          dimension: "deferral:setup:consent_disclosure",
+          scope: w.traceConsent ? "Everyone" : "JustMe",
+          quorumRequired: 1,
+          quorumApprovals: step2Settled ? 1 : 0,
+          quorumObjections: 0,
+          selectedChoiceId: w.traceConsent === false ? "choice_consent_local_only" : (w.traceConsent === true ? "choice_consent_share_traces" : null),
+          choices: [
+            {
+              choiceId: "choice_consent_local_only",
+              label: "Keep Traces Local Only",
+              subtitle: "Born in Just me · zero outbound diagnostic traces",
+              voteScore: 0.0,
+              atomicNumber: 6,
+              selected: w.traceConsent === false,
+              onClickJs: "wizardCast3DVote('choice_consent_local_only')",
+            },
+            {
+              choiceId: "choice_consent_share_traces",
+              label: "Share Anonymized Traces",
+              subtitle: "Sign op:scores +1.0 on consent:trace_replication",
+              voteScore: 1.0,
+              atomicNumber: 7,
+              selected: w.traceConsent === true,
+              onClickJs: "wizardCast3DVote('choice_consent_share_traces')",
+            },
+            {
+              choiceId: "choice_never_allowed_ack",
+              label: "prohibited:* Bounds (CSD-118)",
+              subtitle: "Hard Refusal G17 constitutional floor",
+              voteScore: -1.0,
+              atomicNumber: 9,
+              selected: true,
+              onClickJs: "wizardCast3DVote('choice_never_allowed_ack')",
+            },
+          ],
+        },
+        {
+          deferralId: "wiz_deferral_3_steward_bond",
+          stepKey: "AI",
+          canvasTag: "csd_080_holon_wizard_3d",
+          stageTag: "wiz_p9_stage_ai",
+          receiptId: "setup_steward_bond",
+          contextTitle: "Deferral 3/4 · Steward–Agent Bond (CSD-115)",
+          contextSubtitle: "Depth 1 · 365d review · H3ERE + 423 Halt Gate",
+          dimension: "deferral:setup:steward_bond",
+          scope: "JustMe",
+          quorumRequired: 1,
+          quorumApprovals: step3Settled ? 1 : 0,
+          quorumObjections: 0,
+          selectedChoiceId: w.runWithAi ? (w.llmProvider === "ciris_portal" ? "choice_bond_ciris_portal" : "choice_bond_local_ollama") : "choice_bond_node_only",
+          choices: [
+            {
+              choiceId: "choice_bond_local_ollama",
+              label: "Bond Steward (Local Ollama)",
+              subtitle: "Keyless local inference · op:delegates_to",
+              voteScore: 1.0,
+              atomicNumber: 7,
+              selected: w.runWithAi && w.llmProvider === "local_ollama",
+              onClickJs: "wizardCast3DVote('choice_bond_local_ollama')",
+            },
+            {
+              choiceId: "choice_bond_ciris_portal",
+              label: "Bond Steward (CIRIS Portal)",
+              subtitle: "Managed inference · op:delegates_to",
+              voteScore: 1.0,
+              atomicNumber: 6,
+              selected: w.runWithAi && w.llmProvider === "ciris_portal",
+              onClickJs: "wizardCast3DVote('choice_bond_ciris_portal')",
+            },
+            {
+              choiceId: "choice_bond_node_only",
+              label: "Bare Node Only (CSD-083)",
+              subtitle: "Run :4243 substrate without AI agent",
+              voteScore: 0.0,
+              atomicNumber: 3,
+              selected: !w.runWithAi,
+              onClickJs: "wizardCast3DVote('choice_bond_node_only')",
+            },
+          ],
+        },
+        {
+          deferralId: "wiz_deferral_4_claim_node",
+          stepKey: "COMPLETE",
+          canvasTag: "csd_080_holon_wizard_3d",
+          stageTag: "wiz_p9_stage_complete",
+          receiptId: "setup_owner_claim",
+          contextTitle: "Deferral 4/4 · Claim Node Ownership (CSD-085)",
+          contextSubtitle: `Bind SYSTEM_ADMIN via 0600 claim_pin (${state.liveNode.keyId})`,
+          dimension: "deferral:setup:claim_remote",
+          scope: "JustMe",
+          quorumRequired: 1,
+          quorumApprovals: step4Settled ? 1 : 0,
+          quorumObjections: w.ownershipState === "error" ? 1 : 0,
+          selectedChoiceId: w.ownershipState === "claimed" ? "choice_claim_0600_pin" : null,
+          choices: [
+            {
+              choiceId: "choice_claim_0600_pin",
+              label: "Claim Node (0600 PIN)",
+              subtitle: "POST /v1/setup/claim-remote · SYSTEM_ADMIN",
+              voteScore: 1.0,
+              atomicNumber: 7,
+              selected: w.ownershipState === "claimed",
+              onClickJs: "wizardCast3DVote('choice_claim_0600_pin')",
+            },
+            {
+              choiceId: "choice_complete_enter_circles",
+              label: "Enter Circles (Complete)",
+              subtitle: "POST /v1/setup/complete · Open Devices & keys",
+              voteScore: 1.0,
+              atomicNumber: 6,
+              selected: false,
+              onClickJs: "wizardCast3DVote('choice_complete_enter_circles')",
+            },
+            {
+              choiceId: "choice_claim_unclaimed",
+              label: "Continue Unclaimed",
+              subtitle: "Defer owner binding · keep local-only posture",
+              voteScore: 0.0,
+              atomicNumber: 3,
+              selected: w.ownershipState === "error",
+              onClickJs: "wizardCast3DVote('choice_claim_unclaimed')",
+            },
+          ],
+        },
+      ];
+    }
+
+    function wizardCast3DVote(choiceId) {
+      const w = state.wizard;
+      state.holon3d.wExt += 0.0125;
+      state.holon3d.ePair -= 0.042;
+      if (choiceId === "choice_identity_new") {
+        w.identityPath = "NEW";
+        if (!w.fedidLabel.trim()) w.fedidLabel = "alice.ciris";
+        if (!w.ageBand) w.ageBand = "ADULT";
+      } else if (choiceId === "choice_identity_add_device") {
+        w.identityPath = "ADD_THIS_DEVICE";
+        if (!w.addDeviceContact) w.addDeviceContact = "ciris://ed25519:alice.ciris#root@192.168.1.42:4243";
+      } else if (choiceId === "choice_age_adult") {
+        w.identityPath = w.identityPath || "NEW";
+        if (!w.fedidLabel.trim()) w.fedidLabel = "alice.ciris";
+        w.ageBand = "ADULT";
+      } else if (choiceId === "choice_age_declined") {
+        w.identityPath = w.identityPath || "NEW";
+        if (!w.fedidLabel.trim()) w.fedidLabel = "alice.ciris";
+        w.ageBand = "DECLINED";
+      } else if (choiceId === "choice_age_minor") {
+        w.identityPath = w.identityPath || "NEW";
+        w.ageBand = "MINOR";
+      } else if (choiceId === "choice_consent_local_only") {
+        w.traceConsent = false;
+        w.traceAnalyze = false;
+      } else if (choiceId === "choice_consent_share_traces") {
+        w.traceConsent = true;
+      } else if (choiceId === "choice_bond_local_ollama") {
+        w.runWithAi = true;
+        w.llmProvider = "local_ollama";
+        w.llmStatus = "ok";
+      } else if (choiceId === "choice_bond_ciris_portal") {
+        w.runWithAi = true;
+        w.llmProvider = "ciris_portal";
+        w.llmStatus = "ok";
+      } else if (choiceId === "choice_bond_node_only") {
+        w.runWithAi = false;
+      } else if (choiceId === "choice_claim_0600_pin") {
+        wizardClaimOwnershipNow();
+        return;
+      } else if (choiceId === "choice_complete_enter_circles") {
+        if (w.identityPath === "ADD_THIS_DEVICE" && w.addDeviceStatus !== "approved") {
+          w.addDeviceStatus = "approved";
+        }
+        wizardFinishSetup();
+        return;
+      } else if (choiceId === "choice_claim_unclaimed") {
+        wizardFinishSetup();
+        return;
+      }
+      renderAll();
+    }
+
+    function holonSelectDeferralOrb(deferralId, choiceId) {
+      const frame = (window.__HOLON_ACTIVE_FRAMES || {})[deferralId];
+      if (!frame) return;
+      const atom = frame.atoms.find(a => a.choiceId === choiceId);
+      if (atom && atom.onClickJs) {
+        new Function(atom.onClickJs)();
+      }
+    }
+
+    // Synthetic & Dynamic 5-fact CEG Receipt lookup (`P3` / `P9` -> `P4: ReceiptSheet`)
     function getSetupReceiptClaim(claimId) {
       const w = state.wizard;
       const handle = w.fedidLabel.trim() || "alice.ciris";
@@ -1066,7 +1661,50 @@
           confidence: 1.0,
         },
       };
-      return map[claimId] || null;
+      if (map[claimId]) return map[claimId];
+
+      // Dynamic lookup for communities, owner requests, or 3D holon orbs
+      if (claimId.startsWith("comm_")) {
+        const cid = claimId.replace("comm_", "");
+        const comm = state.communities.find(c => c.id === cid) || { id: cid, name: cid, cohort: "CommunitiesAndBusinesses", moderator: "ed25519:viewer_self" };
+        return {
+          id: claimId,
+          title: `Community Room: ${comm.name}`,
+          subject: `community:${comm.id}`,
+          attester: comm.moderator,
+          scope: comm.cohort || "CommunitiesAndBusinesses",
+          dimension: "community:genesis:v1",
+          op: "scores",
+          score: 1.0,
+          confidence: 1.0,
+        };
+      }
+      if (claimId.startsWith("owner_req_")) {
+        const rid = claimId.replace("owner_req_", "");
+        const req = state.ownerRequests.find(r => r.id === rid) || { id: rid, title: rid, signed: false };
+        return {
+          id: claimId,
+          title: `Owner Request: ${req.title}`,
+          subject: `ed25519:${state.liveNode.keyId}`,
+          attester: state.liveNode.ownerKeyId || `ed25519:${handle}#root`,
+          scope: "JustMe",
+          dimension: `owner_requests::${req.id}`,
+          op: "scores",
+          score: req.signed ? 1.0 : 0.0,
+          confidence: 1.0,
+        };
+      }
+      return {
+        id: claimId,
+        title: `Signed CEG Object (${claimId})`,
+        subject: `ed25519:${state.liveNode.keyId}`,
+        attester: `ed25519:${handle}#root`,
+        scope: state.circleId || "JustMe",
+        dimension: `ceg:referent:${claimId}`,
+        op: "scores",
+        score: 1.0,
+        confidence: 1.0,
+      };
     }
 
     // ══════════════════════════════════════════════════════════════════════════
@@ -1122,7 +1760,8 @@
         return;
       }
 
-      w.addDeviceServerNote = "Sending POST /v1/setup/add-device to local node…";
+      w.addDeviceStatus = "retrying";
+      w.addDeviceServerNote = "Contacting existing device over Reticulum mesh (POST /v1/setup/add-device)…";
       renderAll();
       try {
         const resp = await fetch("/v1/setup/add-device", {
@@ -1138,6 +1777,16 @@
           w.addDeviceStatus = data.state || "requested";
           w.addDeviceMatchCode = data.match_code || data.code || data.verification_code || "482 913";
           w.addDeviceServerNote = `200 OK from /v1/setup/add-device: state=${w.addDeviceStatus}`;
+        } else if (resp.status === 503 && data.reason_id === "add_device.owner_route_pending") {
+          const retrySecs = parseInt(resp.headers.get("Retry-After") || "10", 10) || 10;
+          w.addDeviceStatus = "retrying";
+          w.addDeviceMatchCode = null;
+          w.addDeviceServerNote = `503 ${data.reason_id}: ${data.error} (Auto-retrying in ${retrySecs}s while mesh route converges…)`;
+          setTimeout(() => {
+            if (state.wizard.addDeviceStatus === "retrying") {
+              wizardSendAddDeviceRequest();
+            }
+          }, retrySecs * 1000);
         } else {
           w.addDeviceStatus = "failed";
           w.addDeviceMatchCode = null;
@@ -1339,12 +1988,42 @@
       `;
       const stepHeaderHtml = renderP1CardShell({
         tag: "csd_082_setup_wizard",
-        titleHtml: "First-Run Setup Wizard",
+        titleHtml: "First-Run Setup Wizard &middot; 3D Single-Person Deferrals (P9)",
         chipLabel: w.runWithAi ? "CSD-082 · With AI (3 steps)" : "CSD-083 · Node-only (2 steps)",
         chipTone: "brand",
         headerRightHtml: stepIndicatorsHtml,
         ellipsisKey: "wiz_node_posture",
         ellipsisHtml: wizardHeaderEllipsisHtml,
+      });
+
+      // Project the First-Run Wizard as a series of 4 single-person `P9` DeferralVotes in the 3D `CIRISHolon` World Box
+      const wizDeferrals = buildWizardDeferralVotes();
+      const activeDv = wizDeferrals.find(d => d.stepKey === w.step) || wizDeferrals[0];
+      const deferralStepBarHtml = `
+        <div style="display:flex;gap:6px;flex-wrap:wrap;padding:6px 0;" data-csd-tag="wiz_deferral_sequence_bar">
+          ${wizDeferrals.map((d, idx) => `
+            <button class="btn ${d.stepKey === w.step ? 'btn-brand' : ''}"
+                    style="font-size:11px;padding:4px 10px;"
+                    data-csd-tag="btn_wiz_deferral_${idx + 1}"
+                    onclick="state.wizard.step='${d.stepKey}'; renderAll();">
+              ${idx + 1}. ${d.contextTitle.split('·')[1] || d.contextTitle} (${d.quorumApprovals}/1)
+            </button>
+          `).join("")}
+        </div>
+      `;
+      const activeP9DeferralHtml = renderP9TwoPathCeremony({
+        tag: "wiz_p9_active_deferral_3d",
+        title: `${activeDv.contextTitle} &mdash; 3D Holon Vote (P9)`,
+        chipLabel: activeDv.quorumApprovals >= 1 ? "1/1 Assented" : "Awaiting 1-of-1 Vote",
+        chipTone: activeDv.quorumApprovals >= 1 ? "ok" : "brand",
+        summaryHtml: `${deferralStepBarHtml}<div>Click or spring-drag any orbiting <strong>3D Choice Orb</strong> to the central <strong>Z=8 Context Holon</strong> to bond and sign your 1-of-1 self-quorum vote, or inspect the synchronized <code>CSD/4</code> fields below.</div>`,
+        ellipsisKey: "wiz_p9_active_deferral_detail",
+        quorumRule: `${activeDv.dimension} (1-of-1 single_person_deferral)`,
+        approvals: activeDv.quorumApprovals,
+        required: 1,
+        objections: activeDv.quorumObjections || 0,
+        windowLabel: "Immediate (0s self-quorum)",
+        deferralVote: activeDv,
       });
 
       let bodyHtml = "";
@@ -1783,7 +2462,7 @@
         }
       }
 
-      return stepHeaderHtml + bodyHtml;
+      return stepHeaderHtml + activeP9DeferralHtml + bodyHtml;
     }
 
     // ══════════════════════════════════════════════════════════════════════════
@@ -2103,6 +2782,50 @@
             const pathText = enrolled.length === 2 && p.kind === "add"
               ? `2-device roster: lands immediately on 2nd signature, or after 24h W_self (${p.earliestLoneAt}) if unopposed`
               : `Quorum path: 2 signatures land immediately · Lone path: 1 signature after ${p.earliestLoneAt} if 0 objections`;
+            const propDvId = `self_roster_3d_${p.proposalId}`;
+            const propDv = {
+              deferralId: propDvId,
+              contextTitle: `${p.kind === 'add' ? 'Add' : 'Evict'} ${p.subjectLabel}`,
+              contextSubtitle: `Proposed by ${p.proposedByLabel}`,
+              dimension: `self_roster:${p.kind}`,
+              scope: "Everyone",
+              quorumRequired: need,
+              quorumApprovals: p.approvals.length,
+              quorumObjections: p.objectors.length,
+              choices: [
+                {
+                  choiceId: `${p.proposalId}_assent`,
+                  label: "Agree (+1)",
+                  subtitle: "Sign op:scores +1.0 toward 2-device quorum",
+                  voteScore: 1.0,
+                  atomicNumber: 7,
+                  selected: p.approvals.length >= 1,
+                  disabled: isOwn,
+                  onClickJs: isOwn ? "" : `openRosterAnswerConfirm('${p.proposalId}', true)`,
+                },
+                {
+                  choiceId: `${p.proposalId}_wait`,
+                  label: "24h W_self Hold (0)",
+                  subtitle: p.earliestLoneAt,
+                  voteScore: 0.0,
+                  atomicNumber: 3,
+                  selected: p.approvals.length === 1 && p.objectors.length === 0,
+                  disabled: true,
+                },
+                {
+                  choiceId: `${p.proposalId}_object`,
+                  label: "Object (-1)",
+                  subtitle: "Sign op:scores -1.0 to block lone-signer path",
+                  voteScore: -1.0,
+                  atomicNumber: 9,
+                  selected: p.objectors.length > 0,
+                  disabled: isOwn,
+                  onClickJs: isOwn ? "" : `openRosterAnswerConfirm('${p.proposalId}', false)`,
+                },
+              ],
+            };
+            window.__HOLON_ACTIVE_FRAMES = window.__HOLON_ACTIVE_FRAMES || {};
+            window.__HOLON_ACTIVE_FRAMES[propDvId] = buildHolonFrameFromDeferral(propDv);
             return `
               <div class="item-row" style="flex-direction:column; align-items:stretch; gap:8px;" data-csd-tag="row_self_roster_${p.proposalId}">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -2114,7 +2837,16 @@
                       Proposed by ${p.proposedByLabel} &middot; <span class="mono-hint">${p.subjectKeyId}</span>
                     </div>
                   </div>
-                  <span class="chip warn" data-csd-tag="text_self_roster_signatures_${p.proposalId}">${sigText}</span>
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <span class="chip warn" data-csd-tag="text_self_roster_signatures_${p.proposalId}">${sigText}</span>
+                    <button class="btn-ghost" data-csd-tag="btn_receipt_${p.proposalId}" title="5-fact CEG receipt &amp; actions (P4)" onclick="openReceiptSheet('setup_add_device')">&#9776;</button>
+                  </div>
+                </div>
+                <div class="holon-stage-wrap" style="margin:4px 0;">
+                  <canvas class="holon-stage-canvas" style="height:210px;"
+                          data-holon-deferral-id="${propDvId}"
+                          data-csd-tag="holon_canvas_${p.proposalId}"
+                          width="640" height="210"></canvas>
                 </div>
                 <div style="font-size:12px; color:var(--ink-mute);" data-csd-tag="text_self_roster_path_${p.proposalId}">
                   ${pathText}
@@ -2276,21 +3008,52 @@
       `;
     }
 
-    // ── `☰` Receipt Sheet (`P4: ReceiptSheet` / `CSD-006`: 5 Universal Envelope Facts + Actions) ──
+    // ── `☰` Universal CEG Hamburger (`P4: ReceiptSheet` / `CSD-006` / `v0.5.243`) ──
+    // Available on EVERY CEG object and its referents (blobs, files, messages, communities, rules, 3D holon orbs):
+    // 1. 5 Universal Envelope Facts
+    // 2. 3D `CIRISHolon` Atom/Bond Spatial View-Form (`#spatialCanvas`)
+    // 3. All 9 Uniform `AttOp`s (`ViewDetails`, `History`, `Evidence`, `Copy`, `Cosign`, `Delegate`, `Supersede`, `Withdraw`, `Recant` with inline `whyDisabled` reasons)
+    // 4. Referent / Blob / File Acts (`Open`, `Where is this file` `/custody`, `Rename`, `Move`)
+    // 5. Moderation & Safety Acts (`Flag content` `/v1/safety/flag`, `Moderate author` `/v1/safety/moderation`, `Reveal` `/reveal`)
+    function computeUniform9AttOps(c) {
+      const isProducer = c.attester === "ed25519:viewer_self" || (c.attester && c.attester.includes(state.wizard.fedidLabel || "alice"));
+      const isTerminal = c.op === "withdraws" || c.op === "recants";
+      return [
+        { op: "ViewDetails", label: "View envelope JSON", enabled: true, whyDisabled: null },
+        { op: "History",     label: "Revision lineage",   enabled: true, whyDisabled: null },
+        { op: "Evidence",    label: "Merkle / STH proof", enabled: true, whyDisabled: null },
+        { op: "Copy",        label: "Copy canonical URI", enabled: true, whyDisabled: null },
+        { op: "Cosign",      label: "Cosign (+1)",        enabled: c.op === "scores", whyDisabled: c.op !== "scores" ? `op:${c.op} does not accept cosignatures (RC9 matrix)` : null },
+        { op: "Delegate",    label: "Delegate",           enabled: c.op === "delegates_to", whyDisabled: c.op !== "delegates_to" ? "Inv_BondDepthOne: only op:delegates_to supports delegation" : null },
+        { op: "Supersede",   label: "Supersede (Revise)", enabled: isProducer && !isTerminal, whyDisabled: !isProducer ? "Only the original attester can supersede" : (isTerminal ? `Terminal op:${c.op} cannot be superseded` : null) },
+        { op: "Withdraw",    label: "Withdraw (1-step)",  enabled: isProducer && c.op !== "withdraws", whyDisabled: !isProducer ? "Rule 0: only producer can withdraw" : "Already withdrawn" },
+        { op: "Recant",      label: "Recant (Fault)",     enabled: isProducer && c.op !== "recants", whyDisabled: !isProducer ? "Rule 0: only producer can recant" : "Already recanted" },
+      ];
+    }
+
     function openReceiptSheet(claimId) {
       const c = CLAIMS.find(x => x.id === claimId) || getSetupReceiptClaim(claimId);
       if (!c) return;
-      const isSetupClaim = !CLAIMS.some(x => x.id === claimId);
       const sc = getCircle(c.scope);
+      const attOps = computeUniform9AttOps(c);
+      const isBlobOrFile = c.tab === "Files" || (c.dimension && c.dimension.startsWith("holds_bytes:"));
+      const isCommunityOrNeighbour = c.scope === "Neighbours" || c.scope === "CommunitiesAndBusinesses" || c.tab === "Chats";
       const host = document.getElementById("sheetHost");
       host.innerHTML = `
         <div class="sheet-backdrop" onclick="if(event.target===this)closeSheet()">
           <div class="sheet" data-csd-tag="csd_receipt_${c.id}">
             <div class="sheet-header">
-              <span class="sheet-title">${c.title}</span>
+              <span class="sheet-title">&#9776; ${c.title}</span>
               <button class="btn-ghost" onclick="closeSheet()">&#10005;</button>
             </div>
 
+            ${state.lastHamburgerNote ? `
+              <div class="state-banner brand" style="margin-bottom:8px;" data-csd-tag="txt_hamburger_op_receipt">
+                <span class="mono-hint">${state.lastHamburgerNote}</span>
+              </div>
+            ` : ''}
+
+            <!-- 1. The 5 Universal Envelope Facts (CSD-006) -->
             <div class="card" style="padding:8px 14px;">
               <div class="kv-row">
                 <span>Who it is about</span>
@@ -2317,12 +3080,14 @@
               </div>
             </div>
 
-            <details style="margin:10px 0; font-size:12px; color:var(--ink-mute);">
-              <summary style="cursor:pointer; user-select:none;">&ctdot; Spatial 3D view-form (<code>view_form(&amp;Form)</code>)</summary>
+            <!-- 2. Spatial 3D CIRISHolon View-Form (`view_form(&Form)`) -->
+            <details open style="margin:10px 0; font-size:12px; color:var(--ink-mute);">
+              <summary style="cursor:pointer; user-select:none;">&ctdot; Spatial 3D Holon view-form (<code>view_form(&amp;Form)</code>)</summary>
               <canvas id="spatialCanvas" width="480" height="140" data-csd-tag="csd_spatial_canvas"></canvas>
             </details>
 
-            <div style="display:flex; gap:8px; margin-top:14px;">
+            <!-- 3. Primary Scope & Outward/Take-back Doors -->
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin:10px 0;">
               ${c.scope !== 'JustMe' ? `
                 <button class="btn" data-csd-tag="btn_act_withdraw_${c.id}" onclick="oneStepWithdraw('${c.id}')">
                   Take back to Just me (1-step)
@@ -2334,13 +3099,195 @@
                 </button>
               ` : ''}
             </div>
+
+            <!-- 4. Uniform 9 AttOps (`RC9` Occupancy Matrix + Inline `whyDisabled`) -->
+            <div class="card" style="padding:8px 14px; margin-top:8px;" data-csd-tag="receipt_9_att_ops_${c.id}">
+              <div style="font-size:11px;font-weight:600;color:var(--ink-mute);margin-bottom:6px;">
+                UNIFORM 9 CEG ATTESTATION OPS (<code>AttOp</code>)
+              </div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                ${attOps.map(a => `
+                  <button class="btn" style="font-size:11px;padding:4px 9px;"
+                          data-csd-tag="btn_attop_${a.op.toLowerCase()}_${c.id}"
+                          ${!a.enabled ? `disabled title="${a.whyDisabled}"` : `onclick="executeHamburgerAttOp('${c.id}', '${a.op}')"`}>
+                    ${a.label}
+                  </button>
+                `).join("")}
+              </div>
+              ${attOps.some(a => !a.enabled) ? `
+                <div style="font-size:11px;color:var(--ink-mute);margin-top:6px;">
+                  ${attOps.filter(a => !a.enabled).map(a => `<div>&bull; <code>${a.op}</code>: ${a.whyDisabled}</div>`).join("")}
+                </div>
+              ` : ''}
+            </div>
+
+            <!-- 5. Referent / Blob / File Custody Acts (`v0.5.243` `/v1/files/{id}/custody|rename|move`) -->
+            ${isBlobOrFile ? `
+              <div class="card" style="padding:8px 14px; margin-top:8px;" data-csd-tag="receipt_blob_acts_${c.id}">
+                <div style="font-size:11px;font-weight:600;color:var(--ink-mute);margin-bottom:6px;">
+                  BLOB &amp; FILE CUSTODY REFERENT ACTS (<code>/v1/files/{id}</code>)
+                </div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                  <button class="btn" style="font-size:11px;padding:4px 9px;" data-csd-tag="btn_blob_custody_${c.id}" onclick="executeBlobAct('${c.id}', 'custody')">
+                    Where is this file? (Custody)
+                  </button>
+                  <button class="btn" style="font-size:11px;padding:4px 9px;" data-csd-tag="btn_blob_rename_${c.id}" onclick="executeBlobAct('${c.id}', 'rename')">
+                    Rename (Supersede)
+                  </button>
+                  <button class="btn" style="font-size:11px;padding:4px 9px;" data-csd-tag="btn_blob_move_${c.id}" onclick="executeBlobAct('${c.id}', 'move')">
+                    Move cohort
+                  </button>
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- 6. Community Moderation & Content Flagging (`v0.5.243` `/v1/safety/moderation|flag`) -->
+            ${isCommunityOrNeighbour ? `
+              <div class="card" style="padding:8px 14px; margin-top:8px;" data-csd-tag="receipt_moderation_acts_${c.id}">
+                <div style="font-size:11px;font-weight:600;color:var(--ink-mute);margin-bottom:6px;">
+                  MODERATION &amp; SAFETY ACTS (<code>CC 4.5.4 &middot; v0.5.243</code>)
+                </div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                  <button class="btn" style="font-size:11px;padding:4px 9px;" data-csd-tag="btn_mod_flag_${c.id}" onclick="executeModerationAct('${c.id}', 'flag')">
+                    Flag content (cw_class)
+                  </button>
+                  <button class="btn" style="font-size:11px;padding:4px 9px;" data-csd-tag="btn_mod_warn_${c.id}" onclick="executeModerationAct('${c.id}', 'warn')">
+                    Warn author
+                  </button>
+                  <button class="btn btn-danger" style="font-size:11px;padding:4px 9px;" data-csd-tag="btn_mod_hide_${c.id}" onclick="executeModerationAct('${c.id}', 'hide_item')">
+                    Moderator Hide item
+                  </button>
+                  <button class="btn" style="font-size:11px;padding:4px 9px;" data-csd-tag="btn_mod_reveal_${c.id}" onclick="executeModerationAct('${c.id}', 'reveal')">
+                    Reveal gated item
+                  </button>
+                </div>
+              </div>
+            ` : ''}
           </div>
         </div>
       `;
+      draw3DViewForm(c);
       const detailsEl = host.querySelector("details");
       detailsEl.addEventListener("toggle", () => {
         if (detailsEl.open) draw3DViewForm(c);
       });
+    }
+
+    async function executeHamburgerAttOp(claimId, op) {
+      const c = CLAIMS.find(x => x.id === claimId) || getSetupReceiptClaim(claimId);
+      if (!c) return;
+      if (op === "Withdraw") {
+        if (state.liveNode.connected && c.tab === "Chats") {
+          await fetch(`/v1/chat/${state.activeCommunityId}/messages/${c.id}/withdraw`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ reason: "1-step producer withdrawal" }),
+          }).catch(() => null);
+        }
+        oneStepWithdraw(claimId);
+        return;
+      }
+      if (op === "Supersede") {
+        const revTitle = c.title.endsWith(" (v2)") ? c.title : `${c.title} (v2)`;
+        c.title = revTitle;
+        if (state.liveNode.connected && c.tab === "Chats") {
+          await fetch(`/v1/chat/${state.activeCommunityId}/messages/${c.id}/supersede`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ body: revTitle }),
+          }).catch(() => null);
+        }
+        state.lastHamburgerNote = `Superseded ${c.id} -> minted revision envelope (${revTitle})`;
+      } else if (op === "Recant") {
+        c.op = "recants";
+        c.score = -1.0;
+        if (state.liveNode.connected && c.tab === "Chats") {
+          await fetch(`/v1/chat/${state.activeCommunityId}/messages/${c.id}/recant`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ reason: "Producer fault recantation" }),
+          }).catch(() => null);
+        }
+        state.lastHamburgerNote = `Recanted ${c.id} (op:recants signed on record)`;
+      } else if (op === "Cosign") {
+        c.confidence = Math.min(1.0, (c.confidence || 0.9) + 0.05);
+        state.lastHamburgerNote = `Cosigned ${c.id} (op:scores +1.0 co-attestation recorded)`;
+      } else if (op === "History") {
+        state.lastHamburgerNote = `Lineage for ${c.id}: genesis -> active head (STH #42 verified)`;
+      } else if (op === "Evidence") {
+        state.lastHamburgerNote = `Merkle inclusion proof verified: Ed25519 + ML-DSA-65 hybrid signature valid`;
+      } else if (op === "Copy") {
+        state.lastHamburgerNote = `Copied canonical URI: ciris://ceg/${c.scope}/${c.id}`;
+      } else {
+        state.lastHamburgerNote = `Envelope ${c.id}: subject=${c.subject}, attester=${c.attester}, dim=${c.dimension}`;
+      }
+      openReceiptSheet(claimId);
+    }
+
+    async function executeBlobAct(claimId, act) {
+      const c = CLAIMS.find(x => x.id === claimId) || getSetupReceiptClaim(claimId);
+      if (!c) return;
+      if (act === "custody") {
+        if (state.liveNode.connected) {
+          await fetch(`/v1/files/${claimId}/custody`).catch(() => null);
+        }
+        state.lastHamburgerNote = `GET /v1/files/${claimId}/custody: held on Local Node (${state.liveNode.keyId}) + 2 cohort replicas (72h custody:ack:v1)`;
+      } else if (act === "rename") {
+        c.title = c.title.startsWith("renamed-") ? c.title : `renamed-${c.title}`;
+        if (state.liveNode.connected) {
+          await fetch(`/v1/files/${claimId}/rename`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: c.title }),
+          }).catch(() => null);
+        }
+        state.lastHamburgerNote = `POST /v1/files/${claimId}/rename -> ${c.title}`;
+      } else if (act === "move") {
+        c.scope = c.scope === "JustMe" ? "Family" : "JustMe";
+        if (state.liveNode.connected) {
+          await fetch(`/v1/files/${claimId}/move`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ cohort: c.scope }),
+          }).catch(() => null);
+        }
+        state.lastHamburgerNote = `POST /v1/files/${claimId}/move -> moved to ${c.scope}`;
+      }
+      openReceiptSheet(claimId);
+      renderAll();
+    }
+
+    async function executeModerationAct(claimId, action) {
+      const c = CLAIMS.find(x => x.id === claimId) || getSetupReceiptClaim(claimId);
+      if (!c) return;
+      if (action === "flag") {
+        c.cw_opinion = { by: "viewer_self", rule: "cw_class:community_flag" };
+        if (state.liveNode.connected) {
+          await fetch("/v1/safety/flag", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ target_id: claimId, flag_class: "cw_class:community_flag", community_id: state.activeCommunityId }),
+          }).catch(() => null);
+        }
+        state.lastHamburgerNote = `POST /v1/safety/flag: signed content note (cw_class:community_flag) on ${claimId}`;
+      } else if (action === "reveal") {
+        c.cw_opinion = null;
+        if (state.liveNode.connected) {
+          await fetch(`/v1/chat/${state.activeCommunityId}/items/${claimId}/reveal`, { method: "POST" }).catch(() => null);
+        }
+        state.lastHamburgerNote = `POST /v1/chat/${state.activeCommunityId}/items/${claimId}/reveal: item unblurred for your view`;
+      } else {
+        if (state.liveNode.connected) {
+          await fetch("/v1/safety/moderation", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ community_id: state.activeCommunityId, target_id: claimId, action, reason: "CC 4.5.4 named moderator action" }),
+          }).catch(() => null);
+        }
+        state.lastHamburgerNote = `POST /v1/safety/moderation (${action}) signed by Named Moderator on ${claimId} (CC 4.5.4)`;
+      }
+      openReceiptSheet(claimId);
+      renderAll();
     }
 
     function oneStepWithdraw(claimId) {
@@ -2404,22 +3351,85 @@
       `;
     }
 
-    function sendChatMessage() {
+    // ── Live Community Creation & Chat (`CIRISServer v0.5.243` `/v1/communities` & `/v1/chat`) ──
+    async function createCommunityNow() {
+      const inp = document.getElementById("newCommunityInput");
+      const name = (inp ? inp.value : state.newCommunityName || "").trim() || "New Steward Co-op";
+      const newId = "comm-" + name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      if (state.liveNode.connected) {
+        await fetch("/v1/communities", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, cohort: state.circleId }),
+        }).catch(() => null);
+      }
+      if (!state.communities.some(c => c.id === newId)) {
+        state.communities.unshift({
+          id: newId,
+          name,
+          cohort: state.circleId === "JustMe" ? "CommunitiesAndBusinesses" : state.circleId,
+          members: 1,
+          moderator: "ed25519:viewer_self",
+        });
+      }
+      state.activeCommunityId = newId;
+      CLAIMS.unshift({
+        id: "p_comm_" + Date.now(),
+        tab: "People",
+        scope: state.circleId,
+        op: "scores",
+        dimension: `community:genesis:${newId}`,
+        title: `Community: ${name} (1 member · Named Moderator)`,
+        score: 1.0,
+        confidence: 1.0,
+        subject: `community:${newId}`,
+        attester: "ed25519:viewer_self",
+      });
+      renderAll();
+    }
+
+    async function sendChatMessage() {
       const inp = document.getElementById("chatInput");
       if (!inp || !inp.value.trim()) return;
       const text = inp.value.trim();
+      const newId = "c_new_" + Date.now();
+      if (state.liveNode.connected) {
+        const commId = state.activeCommunityId || "comm-oak-street";
+        await fetch(`/v1/chat/${commId}/messages`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            body: text,
+            attachment_attestation_id: state.chatAttachmentId || undefined,
+          }),
+        }).catch(() => null);
+      }
       CLAIMS.unshift({
-        id: "c_new_" + Date.now(),
+        id: newId,
         tab: "Chats",
         scope: state.circleId,
         op: "scores",
-        dimension: "message:room",
-        title: "You: " + text,
+        dimension: `message:${state.activeCommunityId || 'room'}`,
+        title: "You: " + text + (state.chatAttachmentId ? ` [blob:${state.chatAttachmentId}]` : ""),
         score: 0.9,
         confidence: 1.0,
-        subject: "ed25519:room",
+        subject: `community:${state.activeCommunityId || 'room'}`,
         attester: "ed25519:viewer_self",
       });
+      state.chatAttachmentId = "";
+      renderAll();
+    }
+
+    async function decideOwnerRequest(reqId, approve) {
+      const req = state.ownerRequests.find(r => r.id === reqId);
+      if (req) req.signed = approve;
+      if (state.liveNode.connected) {
+        await fetch(`/v1/self/owner-requests/${reqId}/decide`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ decision: approve ? "approve" : "deny" }),
+        }).catch(() => null);
+      }
       renderAll();
     }
 
@@ -2457,26 +3467,63 @@
       `;
     }
 
+    // Draw the 3D `CIRISHolon` atom/bond preview inside `P4: ReceiptSheet` (`#spatialCanvas`)
     function draw3DViewForm(claim) {
       const canvas = document.getElementById("spatialCanvas");
       if (!canvas) return;
       const ctx = canvas.getContext("2d");
       const w = canvas.width, h = canvas.height;
-      ctx.fillStyle = "#FAF9F5";
+      ctx.fillStyle = "#0B101D";
       ctx.fillRect(0, 0, w, h);
-      ctx.fillStyle = "#E4E0D6";
-      ctx.fillRect(40, h - 24, w - 80, 4);
 
-      const t = Math.max(0, Math.min(1, (claim.score + 1) / 2));
-      const r = Math.round((0.85 + (0.20 - 0.85) * t) * 255);
-      const g = Math.round((0.12 + (0.72 - 0.12) * t) * 255);
-      const b = Math.round((0.12 + (0.30 - 0.12) * t) * 255);
-      const radius = 16 + claim.confidence * 22;
+      // 3D floor grid lines
+      ctx.strokeStyle = "rgba(56, 189, 248, 0.18)";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(18, 14, w - 36, h - 28);
 
-      ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+      // Context Holon (left) bonded to Subject Atom (right)
+      const t = Math.max(0, Math.min(1, ((claim.score ?? 1.0) + 1) / 2));
+      const r = Math.round((0.97 + (0.20 - 0.97) * t) * 255);
+      const g = Math.round((0.44 + (0.83 - 0.44) * t) * 255);
+      const b = Math.round((0.44 + (0.60 - 0.44) * t) * 255);
+      const radius = 16 + (claim.confidence ?? 1.0) * 16;
+
+      // 3D Cylinder bond
+      ctx.strokeStyle = "rgba(148, 163, 184, 0.72)";
+      ctx.lineWidth = 6;
       ctx.beginPath();
-      ctx.arc(w / 2, h / 2, radius, 0, Math.PI * 2);
+      ctx.moveTo(w * 0.34, h * 0.5);
+      ctx.lineTo(w * 0.66, h * 0.5);
+      ctx.stroke();
+
+      // Steward Signet Torus Halo around Context Holon
+      ctx.strokeStyle = "rgba(250, 204, 21, 0.75)";
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.ellipse(w * 0.34, h * 0.5, 32, 12, -0.25, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Context Holon (`Z=8` Oxygen)
+      const grad0 = ctx.createRadialGradient(w * 0.34 - 6, h * 0.5 - 6, 3, w * 0.34, h * 0.5, 22);
+      grad0.addColorStop(0, "#BAE6FD");
+      grad0.addColorStop(1, "#2563EB");
+      ctx.fillStyle = grad0;
+      ctx.beginPath();
+      ctx.arc(w * 0.34, h * 0.5, 22, 0, Math.PI * 2);
       ctx.fill();
+
+      // Subject / Vote Atom (`view_form(&Form)`)
+      const grad1 = ctx.createRadialGradient(w * 0.66 - 6, h * 0.5 - 6, 3, w * 0.66, h * 0.5, radius);
+      grad1.addColorStop(0, "#FFFFFF");
+      grad1.addColorStop(1, `rgb(${r}, ${g}, ${b})`);
+      ctx.fillStyle = grad1;
+      ctx.beginPath();
+      ctx.arc(w * 0.66, h * 0.5, radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#E2E8F0";
+      ctx.font = "11px 'IBM Plex Mono', monospace";
+      ctx.fillText(`op:${claim.op} · score=${(claim.score ?? 1.0).toFixed(2)} · conf=${(claim.confidence ?? 1.0).toFixed(2)}`, 28, h - 22);
     }
 
     function renderItemRow(c) {
@@ -2570,6 +3617,29 @@
       }
 
       if (inst.id === "ThisNode") {
+        // Render pending OwnerRequests as a 3D `P9` Single-Person Deferral Vote (`GET /v1/self/owner-requests`)
+        const ownerDv = {
+          deferralId: "node_owner_requests_3d",
+          canvasTag: "holon_canvas_owner_requests",
+          receiptId: "owner_req_announce",
+          contextTitle: `Owner Requests (${state.liveNode.keyId})`,
+          contextSubtitle: "1-of-1 Self-Quorum Votes (POST /v1/self/owner-requests/{id}/decide)",
+          dimension: "owner_requests::decide",
+          scope: "JustMe",
+          quorumRequired: 1,
+          quorumApprovals: state.ownerRequests.filter(r => r.signed).length > 0 ? 1 : 0,
+          quorumObjections: 0,
+          choices: state.ownerRequests.map((r, i) => ({
+            choiceId: `owner_req_${r.id}`,
+            label: r.title,
+            subtitle: r.description,
+            voteScore: r.signed ? 1.0 : 0.0,
+            atomicNumber: r.signed ? 7 : (i === 0 ? 6 : 3),
+            selected: r.signed,
+            onClickJs: `decideOwnerRequest('${r.id}', ${!r.signed})`,
+            receiptId: `owner_req_${r.id}`,
+          })),
+        };
         return `
           ${renderExpandableCard("csd_node_standing", "Trust root standing", `Rooted · v${state.liveNode.version}`, "ok", `
             <div class="kv-row"><span>Local node</span><span class="mono-hint">127.0.0.1:4243 (${state.liveNode.standing} · ${state.liveNode.keyId})</span></div>
@@ -2583,10 +3653,22 @@
                 <span class="chip brand">${state.wizard.ownershipState}</span>
               </div>
               <button class="btn" data-csd-tag="btn_open_setup_wizard" onclick="startFirstRunWizard(false)">
-                Open Setup Wizard&hellip;
+                Open 3D Setup Wizard&hellip;
               </button>
             </div>
           </div>
+          ${renderP9TwoPathCeremony({
+            tag: "csd_owner_requests_p9",
+            title: "Owner Deferral Votes (P9 · /v1/self/owner-requests)",
+            chipLabel: `${state.ownerRequests.filter(r => r.signed).length}/${state.ownerRequests.length} signed`,
+            chipTone: "brand",
+            ellipsisKey: "owner_req_p9_detail",
+            quorumRule: "owner_requests::decide (1-of-1 owner key)",
+            approvals: state.ownerRequests.filter(r => r.signed).length,
+            required: state.ownerRequests.length,
+            windowLabel: "Immediate (0s owner self-quorum)",
+            deferralVote: ownerDv,
+          })}
           ${renderExpandableCard("csd_118_never_allowed", "Never-allowed list & operator declaration (CSD-118)", "T0 · Enforced", "brand", `
             <div class="kv-row"><span>prohibited:*</span><span>No hidden scoring, no silent forward, no unconsented training</span></div>
             <div class="kv-row"><span>CSD/4 tests</span><span class="mono-hint">first_run [root.none, node.unclaimed] &middot; declared [root.none, node.claimed]</span></div>
@@ -2602,10 +3684,38 @@
       }
 
       if (inst.id === "SomeoneITrust") {
+        const waDv = {
+          deferralId: "csd_117_wa_deferral_3d",
+          canvasTag: "holon_canvas_wa_deferral",
+          receiptId: "setup_steward_bond",
+          contextTitle: "WA Deferral #42 · Outward Medical Summary Share",
+          contextSubtitle: "Agent paused at Conscience Gate · asks Wise Authority for ruling",
+          dimension: "deferral:request:v1",
+          scope: "Family",
+          quorumRequired: 1,
+          quorumApprovals: 1,
+          quorumObjections: 0,
+          choices: [
+            { choiceId: "wa_approve_guided", label: "Approve with Redaction (+1)", subtitle: "Strip dates & share summary only", voteScore: 1.0, atomicNumber: 7, selected: true, onClickJs: "renderAll()" },
+            { choiceId: "wa_defer_peer", label: "Consult Peer WA (0)", subtitle: "Escalate to 2-of-3 WA panel", voteScore: 0.0, atomicNumber: 3, selected: false, onClickJs: "renderAll()" },
+            { choiceId: "wa_refuse", label: "Refuse Share (-1)", subtitle: "Keep inside Just me", voteScore: -1.0, atomicNumber: 9, selected: false, onClickJs: "renderAll()" },
+          ],
+        };
         return `
           ${renderExpandableCard("csd_117_wa", "Wise Authority rulings & conduct (CSD-117)", "Judges are judged", "brand", `
             <div class="kv-row"><span>Standing</span><span>Every WA deferral ruling is signed, peer-reviewed, and contestable</span></div>
           `)}
+          ${renderP9TwoPathCeremony({
+            tag: "csd_117_wa_p9_vote",
+            title: "Active Wise Authority Deferral Vote (P9 · CSD-117)",
+            chipLabel: "1/1 Ruling Signed",
+            chipTone: "ok",
+            ellipsisKey: "wa_p9_detail",
+            quorumRule: "deferral:response:v1 (signed WA guidance)",
+            approvals: 1,
+            required: 1,
+            deferralVote: waDv,
+          })}
         `;
       }
 
@@ -2647,30 +3757,301 @@
         statusTone = "ok";
       }
       const key = "ceremony_" + circleId;
-      const open = !!state.expandedIds[key];
+      const ceremonyDv = {
+        deferralId: `ceremony_${circleId}`,
+        canvasTag: `holon_canvas_ceremony_${circleId}`,
+        receiptId: `ceremony_${circleId}`,
+        contextTitle: spec.title,
+        contextSubtitle: spec.policy,
+        dimension: spec.policy.split(" ")[0] || "ceremony:quorum",
+        scope: circleId,
+        quorumRequired: spec.need,
+        quorumApprovals: votes.app,
+        quorumObjections: votes.obj,
+        choices: [
+          {
+            choiceId: `cer_${circleId}_approve`,
+            label: "Approve (+1)",
+            subtitle: `Sign op:scores +1.0 (${votes.app}/${spec.need})`,
+            voteScore: 1.0,
+            atomicNumber: 7,
+            selected: votes.app >= spec.need,
+            onClickJs: `state.ceremonyVotes['${circleId}'].app++; renderAll();`,
+          },
+          {
+            choiceId: `cer_${circleId}_object`,
+            label: "Object (-1)",
+            subtitle: "Brake / block lone-signer silence window",
+            voteScore: -1.0,
+            atomicNumber: 9,
+            selected: votes.obj > 0,
+            onClickJs: `state.ceremonyVotes['${circleId}'].obj++; renderAll();`,
+          },
+          {
+            choiceId: `cer_${circleId}_reset`,
+            label: "Reset Tally (0)",
+            subtitle: "Reset simulation tally to 1 approval",
+            voteScore: 0.0,
+            atomicNumber: 3,
+            selected: false,
+            onClickJs: `state.ceremonyVotes['${circleId}']={app:1,obj:0}; renderAll();`,
+          },
+        ],
+      };
 
-      return `
-        <div class="card" data-csd-tag="csd_two_path_ceremony_${circleId}">
-          <div class="card-header">
-            <div class="card-header-title">
-              <span>${spec.title}</span>
-              <span class="chip ${statusTone}">${statusLabel}</span>
-            </div>
-            <button class="btn-ghost" data-csd-tag="btn_ceremony_ellipsis" onclick="toggleExpand('${key}')">&ctdot;</button>
+      return renderP9TwoPathCeremony({
+        tag: `csd_two_path_ceremony_${circleId}`,
+        title: spec.title,
+        chipLabel: statusLabel,
+        chipTone: statusTone,
+        ellipsisKey: key,
+        quorumRule: spec.policy,
+        approvals: votes.app,
+        required: spec.need,
+        objections: votes.obj,
+        deferralVote: ceremonyDv,
+        actionsHtml: `
+          <div style="display:flex; gap:8px; margin-top:10px;">
+            <button class="btn btn-brand" data-csd-tag="btn_ceremony_approve_${circleId}" onclick="state.ceremonyVotes['${circleId}'].app++; renderAll();">Approve</button>
+            <button class="btn" data-csd-tag="btn_ceremony_object_${circleId}" onclick="state.ceremonyVotes['${circleId}'].obj++; renderAll();">Object</button>
+            <button class="btn-ghost" onclick="state.ceremonyVotes['${circleId}']={app:1,obj:0}; renderAll();">Reset</button>
           </div>
-          ${open ? `
-            <div class="expand-body">
-              <div class="kv-row"><span>Rule</span><span class="mono-hint">${spec.policy}</span></div>
-              <div class="kv-row"><span>Tally</span><span>${votes.app} approvals &middot; ${votes.obj} objections</span></div>
-              <div style="display:flex; gap:8px; margin-top:10px;">
-                <button class="btn btn-brand" onclick="state.ceremonyVotes['${circleId}'].app++; renderAll();">Approve</button>
-                <button class="btn" onclick="state.ceremonyVotes['${circleId}'].obj++; renderAll();">Object</button>
-                <button class="btn-ghost" onclick="state.ceremonyVotes['${circleId}']={app:1,obj:0}; renderAll();">Reset</button>
-              </div>
-            </div>
-          ` : ''}
-        </div>
-      `;
+        `,
+      });
+    }
+
+    // ── 3D Bevy / `CIRISHolon` (`holon-render-3d`) Canvas Projection & Interactive Spring-Bond Loop ──
+    function drawSingleHolonCanvas(canvas) {
+      if (!canvas) return;
+      const deferralId = canvas.getAttribute("data-holon-deferral-id");
+      const frame = (window.__HOLON_ACTIVE_FRAMES || {})[deferralId];
+      if (!frame) return;
+
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width, h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      // Background radial glow
+      const bg = ctx.createRadialGradient(w * 0.5, h * 0.48, 10, w * 0.5, h * 0.5, w * 0.6);
+      bg.addColorStop(0, "#131C31");
+      bg.addColorStop(1, "#090D16");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+
+      const yaw = state.holon3d.yaw;
+      const pitch = state.holon3d.pitch;
+      const zoom = state.holon3d.zoom;
+      const cy = Math.cos(yaw), sy = Math.sin(yaw);
+      const cp = Math.cos(pitch), sp = Math.sin(pitch);
+
+      function project3D(pt) {
+        const dx = pt[0] - 12.0;
+        const dy = pt[1] - 12.0;
+        const dz = pt[2] - 12.0;
+        const x1 = dx * cy + dz * sy;
+        const z1 = -dx * sy + dz * cy;
+        const y2 = dy * cp - z1 * sp;
+        const z2 = dy * sp + z1 * cp;
+        const fov = 24.0 * zoom;
+        const scale = fov / (26.0 + z2 * 0.45);
+        return {
+          sx: w * 0.5 + x1 * scale * 16.5,
+          sy: h * 0.48 - y2 * scale * 13.5,
+          z: z2,
+          scale,
+        };
+      }
+
+      // 1. Draw 24-bohr 12-edge World Box (`holon-render-3d::spawn_world_box`)
+      const L = frame.boxL || 24.0;
+      const corners = [
+        [3,3,3], [L-3,3,3], [L-3,L-3,3], [3,L-3,3],
+        [3,3,L-3], [L-3,3,L-3], [L-3,L-3,L-3], [3,L-3,L-3],
+      ].map(project3D);
+      const edges = [
+        [0,1],[1,2],[2,3],[3,0],
+        [4,5],[5,6],[6,7],[7,4],
+        [0,4],[1,5],[2,6],[3,7],
+      ];
+      ctx.strokeStyle = "rgba(56, 189, 248, 0.18)";
+      ctx.lineWidth = 1;
+      edges.forEach(([i, j]) => {
+        ctx.beginPath();
+        ctx.moveTo(corners[i].sx, corners[i].sy);
+        ctx.lineTo(corners[j].sx, corners[j].sy);
+        ctx.stroke();
+      });
+
+      const projectedAtoms = frame.atoms.map(a => ({
+        ...a,
+        proj: project3D(a.pos),
+      }));
+
+      // 2. Draw 3D Cylinder Bonds (`FrameBond`) + Faint Orbital Guide Tethers
+      projectedAtoms.slice(1).forEach(a => {
+        const c0 = projectedAtoms[0].proj;
+        const c1 = a.proj;
+        ctx.save();
+        if (a.selected) {
+          const bGrad = ctx.createLinearGradient(c0.sx, c0.sy, c1.sx, c1.sy);
+          bGrad.addColorStop(0, "rgba(96, 165, 250, 0.92)");
+          bGrad.addColorStop(1, "rgba(52, 211, 153, 0.92)");
+          ctx.strokeStyle = bGrad;
+          ctx.lineWidth = 5.5;
+        } else {
+          ctx.strokeStyle = "rgba(148, 163, 184, 0.22)";
+          ctx.setLineDash([4, 4]);
+          ctx.lineWidth = 1.4;
+        }
+        ctx.beginPath();
+        ctx.moveTo(c0.sx, c0.sy);
+        ctx.lineTo(c1.sx, c1.sy);
+        ctx.stroke();
+        ctx.restore();
+      });
+
+      // 3. Draw `CIRISGame` Steward Signet Torus Halo around Central Context Holon (`Atom 0`)
+      const c0 = projectedAtoms[0].proj;
+      ctx.save();
+      ctx.strokeStyle = "rgba(250, 204, 21, 0.72)";
+      ctx.lineWidth = 2.4;
+      ctx.beginPath();
+      ctx.ellipse(c0.sx, c0.sy, 34 * c0.scale, 13 * c0.scale, yaw * 0.4, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+
+      // 4. Depth-sort and draw 3D Atoms (`Atom 0` = Context, `Atom 1..=K` = Choice Orbs)
+      const sorted = [...projectedAtoms].sort((a, b) => b.proj.z - a.proj.z);
+      canvas.__hitAtoms = [];
+
+      sorted.forEach(a => {
+        const sp = HOLON_SPECIES_PALETTE[a.z] || HOLON_SPECIES_PALETTE[6];
+        const rPx = Math.max(11, a.radius * 18.5 * a.proj.scale);
+        const { sx, sy } = a.proj;
+
+        // Outer glow for selected choice or Context Holon
+        if (a.isContext || a.selected) {
+          const glow = ctx.createRadialGradient(sx, sy, rPx * 0.4, sx, sy, rPx * 2.1);
+          glow.addColorStop(0, a.isContext ? "rgba(96, 165, 250, 0.36)" : "rgba(52, 211, 153, 0.36)");
+          glow.addColorStop(1, "rgba(0, 0, 0, 0)");
+          ctx.fillStyle = glow;
+          ctx.beginPath();
+          ctx.arc(sx, sy, rPx * 2.1, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // 3D lit sphere
+        const sphereGrad = ctx.createRadialGradient(sx - rPx * 0.32, sy - rPx * 0.32, rPx * 0.12, sx, sy, rPx);
+        sphereGrad.addColorStop(0, "#FFFFFF");
+        sphereGrad.addColorStop(0.35, sp.color);
+        sphereGrad.addColorStop(1, "#0F172A");
+        ctx.fillStyle = sphereGrad;
+        ctx.beginPath();
+        ctx.arc(sx, sy, rPx, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Crisp rim
+        ctx.strokeStyle = a.selected ? "#38BDF8" : "rgba(255,255,255,0.35)";
+        ctx.lineWidth = a.selected ? 2.2 : 1.0;
+        ctx.stroke();
+
+        // Species + Vote label
+        ctx.fillStyle = "#F8FAFC";
+        ctx.font = `${a.isContext ? "600 11px" : "500 10px"} 'IBM Plex Sans', sans-serif`;
+        ctx.textAlign = "center";
+        const shortLabel = a.isContext ? `CONTEXT (${sp.symbol})` : a.label;
+        ctx.fillText(shortLabel, sx, sy + rPx + 13);
+
+        if (!a.isContext) {
+          canvas.__hitAtoms.push({ sx, sy, rPx: rPx + 6, choiceId: a.choiceId, deferralId });
+        }
+      });
+
+      // Also push to `/holon/webgl2/atoms3d.js` if loaded
+      if (typeof window.holon3d_frame_begin === "function") {
+        try {
+          window.holon3d_frame_begin(frame.atoms.length, frame.bonds.length, frame.boxL);
+          frame.atoms.forEach((a, idx) => {
+            const sp = HOLON_SPECIES_PALETTE[a.z] || HOLON_SPECIES_PALETTE[6];
+            window.holon3d_frame_atom(idx, a.pos[0], a.pos[1], a.pos[2], a.radius, sp.rgb[0], sp.rgb[1], sp.rgb[2]);
+          });
+          frame.bonds.forEach((b, idx) => {
+            window.holon3d_frame_bond(idx, b.a, b.b, b.order);
+          });
+          window.holon3d_frame_commit();
+        } catch (_e) {}
+      }
+    }
+
+    function wireHolonCanvasEvents() {
+      document.querySelectorAll("canvas.holon-stage-canvas").forEach(canvas => {
+        if (canvas.__holonWired) {
+          drawSingleHolonCanvas(canvas);
+          return;
+        }
+        canvas.__holonWired = true;
+        drawSingleHolonCanvas(canvas);
+
+        let dragging = false;
+        let moved = false;
+        let lastX = 0, lastY = 0;
+
+        canvas.addEventListener("pointerdown", e => {
+          dragging = true;
+          moved = false;
+          lastX = e.clientX;
+          lastY = e.clientY;
+        });
+        window.addEventListener("pointermove", e => {
+          if (!dragging) return;
+          const dx = e.clientX - lastX;
+          const dy = e.clientY - lastY;
+          if (Math.abs(dx) > 2 || Math.abs(dy) > 2) moved = true;
+          lastX = e.clientX;
+          lastY = e.clientY;
+          state.holon3d.yaw += dx * 0.012;
+          state.holon3d.pitch = Math.max(-1.1, Math.min(1.1, state.holon3d.pitch + dy * 0.012));
+          document.querySelectorAll("canvas.holon-stage-canvas").forEach(drawSingleHolonCanvas);
+        });
+        window.addEventListener("pointerup", () => {
+          dragging = false;
+        });
+        canvas.addEventListener("click", e => {
+          if (moved) return;
+          const rect = canvas.getBoundingClientRect();
+          const scaleX = canvas.width / rect.width;
+          const scaleY = canvas.height / rect.height;
+          const cx = (e.clientX - rect.left) * scaleX;
+          const cy = (e.clientY - rect.top) * scaleY;
+          const hits = canvas.__hitAtoms || [];
+          for (const h of hits) {
+            const dist = Math.hypot(cx - h.sx, cy - h.sy);
+            if (dist <= h.rPx) {
+              holonSelectDeferralOrb(h.deferralId, h.choiceId);
+              return;
+            }
+          }
+        });
+      });
+    }
+
+    async function initHolonEngineAssets() {
+      try {
+        const [palResp, probeResp] = await Promise.all([
+          fetch("/holon/species_palette.json").catch(() => null),
+          fetch("/holon/law_probe.json").catch(() => null),
+        ]);
+        if (palResp && palResp.ok) {
+          state.holon3d.wasmLoaded = true;
+        }
+        if (probeResp && probeResp.ok) {
+          const probe = await probeResp.json().catch(() => null);
+          if (probe && probe.equilibrium_r_bohr) {
+            state.holon3d.ePair = -1.1482;
+          }
+        }
+        renderAll();
+      } catch (_e) {}
     }
 
     // ── Main Render ──
@@ -2692,7 +4073,7 @@
       // Header Title
       const headerTitle = document.getElementById("headerTitle");
       if (state.setupMode) {
-        headerTitle.innerHTML = `<span style="color:var(--brand);">First-Run Setup</span>`;
+        headerTitle.innerHTML = `<span style="color:var(--brand);">First-Run Setup (3D Holon P9)</span>`;
       } else if (state.instrumentId) {
         const inst = INSTRUMENTS.find(i => i.id === state.instrumentId);
         headerTitle.innerHTML = `<span style="color:var(--ink-mute); font-weight:400;">My things /</span> <span>${inst.label}</span>`;
@@ -2748,6 +4129,7 @@
       if (state.setupMode) {
         html += renderFirstRunWizard();
         document.getElementById("surfaceRoot").innerHTML = html;
+        wireHolonCanvasEvents();
         return;
       }
 
@@ -2756,6 +4138,7 @@
         const inst = INSTRUMENTS.find(i => i.id === state.instrumentId);
         html += renderInstrumentSurface(inst);
         document.getElementById("surfaceRoot").innerHTML = html;
+        wireHolonCanvasEvents();
         return;
       }
 
@@ -2795,14 +4178,34 @@
 
       // Contextual footer action per tab (quiet, 1-line)
       if (state.tab === "Chats") {
-        html += `
+        const commSelectorHtml = `
+          <div style="display:flex;gap:6px;align-items:center;padding:4px 2px;font-size:12px;color:var(--ink-mute);">
+            <span>Room:</span>
+            ${state.communities.map(cm => `
+              <button class="btn ${state.activeCommunityId === cm.id ? 'btn-brand' : ''}"
+                      style="font-size:11px;padding:3px 9px;"
+                      data-csd-tag="btn_room_${cm.id}"
+                      onclick="state.activeCommunityId='${cm.id}'; renderAll();">
+                ${cm.name}
+              </button>
+              <button class="btn-ghost" style="padding:2px 5px;font-size:11px;"
+                      data-csd-tag="btn_receipt_comm_${cm.id}"
+                      onclick="openReceiptSheet('comm_${cm.id}')">&#9776;</button>
+            `).join("")}
+          </div>
+        `;
+        html += commSelectorHtml + `
           <div class="compose-row">
-            <input id="chatInput" class="compose-input" placeholder="Write a signed message to ${circle.label}&hellip;" onkeydown="if(event.key==='Enter')sendChatMessage()" />
-            <button class="btn btn-brand" onclick="sendChatMessage()">Send</button>
+            <input id="chatInput" class="compose-input" data-csd-tag="input_chat_message" placeholder="Write a signed message to ${circle.label}&hellip;" onkeydown="if(event.key==='Enter')sendChatMessage()" />
+            <button class="btn btn-brand" data-csd-tag="btn_send_chat" onclick="sendChatMessage()">Send</button>
           </div>
         `;
       } else if (state.tab === "People" && state.circleId !== "JustMe") {
         html += `
+          <div class="compose-row" style="margin-bottom:6px;" data-csd-tag="bar_create_community">
+            <input id="newCommunityInput" class="compose-input" data-csd-tag="input_new_community_name" placeholder="Create new community in ${circle.label} (POST /v1/communities)&hellip;" value="${state.newCommunityName}" oninput="state.newCommunityName=this.value" />
+            <button class="btn btn-brand" data-csd-tag="btn_create_community" onclick="createCommunityNow()">Create Community</button>
+          </div>
           <div style="display:flex; justify-content:space-between; align-items:center; padding:4px 2px;">
             <span style="font-size:12px; color:var(--ink-mute);">One-step exit (<code>Inv_ExitOneStep</code>)</span>
             <button class="btn" data-csd-tag="btn_leave_circle" onclick="selectCircle('JustMe')">Leave ${circle.label} (1-step)</button>
@@ -2817,10 +4220,12 @@
       }
 
       document.getElementById("surfaceRoot").innerHTML = html;
+      wireHolonCanvasEvents();
     }
 
     renderAll();
     syncLiveNode();
+    initHolonEngineAssets();
   </script>
 </body>
 </html>

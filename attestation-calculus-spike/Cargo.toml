@@ -32,6 +32,13 @@ real-edge = [
     "tokio/full",
     "serde_json/raw_value",
 ]
+# real-server: consumes ciris-server directly from tag v0.5.243 as a Rust crate
+# (which in turn re-exports ciris_server::ciris_persist v59.1.2 and ciris-edge v43.4.1).
+real-server = [
+    "real-persist",
+    "dep:ciris-server",
+    "tokio/full",
+]
 
 [dependencies]
 ciris-crypto = { git = "https://github.com/CIRISAI/CIRISVerify", tag = "v20.2.0", version = "20", default-features = false, features = ["ed25519", "pqc-ml-dsa", "random"] }
@@ -49,19 +56,15 @@ hex = "0.4"
 base64 = "0.22"
 # real-edge only: used by the edge KeyRecord timestamps in src/transport.rs.
 chrono = { version = "0.4", features = ["serde"], optional = true }
-# The real ciris-persist Engine (real-persist + real-edge). GIT-pinned to
-# v59.0.0 — matching ciris-edge v43.0.0's pin — so it is byte-identical to the
-# ciris-persist that ciris-edge links; a source split would produce two distinct
-# `SignedAttestation` types that cannot be handed across the edge wire.
-ciris-persist = { git = "https://github.com/CIRISAI/CIRISPersist", tag = "v59.0.0", version = "59", features = ["sqlite"], optional = true }
+# The real ciris-persist Engine (real-persist + real-edge + real-server). GIT-pinned to
+# v59.1.2 — matching ciris-server v0.5.243 and ciris-edge v43.4.1 — so it is byte-identical
+# to the ciris-persist that ciris-server and ciris-edge link.
+ciris-persist = { git = "https://github.com/CIRISAI/CIRISPersist", tag = "v59.1.2", version = "59", features = ["sqlite"], optional = true }
 tokio = { version = "1", features = ["rt-multi-thread", "macros"], optional = true }
-# real-edge only: the production federation transport (v43.0.0, sealed transport
-# cut). Its own ciris-persist / ciris-keyring / ciris-crypto git pins
-# (v59.0.0 / v20.2.0) unify with ours. transport-http is the localhost-loopback
-# medium (Reticulum with hybrid X25519 + ML-KEM-768 transit-kex is the
-# production medium, while transport-http needs no extra link setup for the
-# 2-node demo).
-ciris-edge = { git = "https://github.com/CIRISAI/CIRISEdge", tag = "v43.0.0", version = "43", default-features = false, features = ["transport-http"], optional = true }
+# real-edge only: the production federation transport (v43.4.1, matching ciris-server v0.5.243).
+ciris-edge = { git = "https://github.com/CIRISAI/CIRISEdge", tag = "v43.4.1", version = "43", default-features = false, features = ["transport-http"], optional = true }
+# real-server only: consumes ciris-server directly from tag v0.5.243 as a full-stack crate.
+ciris-server = { git = "https://github.com/CIRISAI/CIRISServer", tag = "v0.5.243", default-features = false, optional = true }
 # real-edge only: ciris_keyring::load_local_seed builds edge's classical
 # LocalSigner from a 32-byte seed file. Same git source + tag (v20.2.0) as
 # ciris-edge's (and ciris-persist's) ciris-keyring so cargo unifies to ONE

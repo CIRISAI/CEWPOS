@@ -27,7 +27,10 @@
 //! neutral grey subject sphere labeled with the operator name, so the function
 //! never panics and never returns an "empty" scene.
 
-use crate::scene::{Camera, MeshKind, Scene, SceneNode};
+use crate::algebra::DeferralVote;
+use crate::scene::{
+    Camera, HolonAtom, HolonBond, HolonFrameBuffer, MeshKind, Scene, SceneNode, HOLON_BOX_SIDE,
+};
 use attestation_calculus_spike::forms::{Form, Op};
 
 /// Bone `#FAF9F5` background (linear-ish sRGB), matching the CIRIS palette.
@@ -153,6 +156,161 @@ pub fn view_form(form: &Form) -> Scene {
         camera: Camera { eye: [3.6, 3.0, 5.6], look_at: [0.0, 0.2, 0.0] },
         background: BONE,
     }
+}
+
+/// **Pure, total 3D projection of a [`DeferralVote`]** (whether a 1-of-1 single-person
+/// First-Run Wizard vote, an `OwnerRequest`, or an `m-of-n` self-roster / community vote)
+/// into BOTH:
+/// 1. Our Bevy [`Scene`] IR (`Sphere` orbs, `Torus` steward signet halo, `Cylinder` bond rods), and
+/// 2. `CIRISHolon`'s [`HolonFrameBuffer`] (`holon-render-3d::frame::FrameBuffer` in the
+///    `[0, 24.0]` bohr 12-edge World Box).
+pub fn view_deferral_vote(vote: &DeferralVote) -> (Scene, HolonFrameBuffer) {
+    let center = HOLON_BOX_SIDE * 0.5; // 12.0 bohr
+    let ground = SceneNode::new(
+        MeshKind::Plane,
+        [0.0, -1.6, 0.0],
+        10.0,
+        [0.88, 0.87, 0.84, 1.0],
+    );
+
+    // Central Context Holon (Atom 0: Oxygen Z=8) + CIRISGame Steward Signet Torus Halo
+    let center_atom = HolonAtom {
+        index: 0,
+        x: center,
+        y: center,
+        z: center,
+        radius: 1.65,
+        z_species: 8, // Oxygen (Context Holon)
+        label: vote.title.clone(),
+        subtitle: vote.context_prompt.clone(),
+        vote_score: 0,
+        action_tag: "inspect_deferral_context".to_string(),
+        selected: vote.approvals >= vote.enact_needed,
+        csd_tag: "CSD-080".to_string(),
+    };
+
+    let center_sphere = SceneNode::new(
+        MeshKind::Sphere,
+        [0.0, 0.0, 0.0],
+        1.45,
+        if vote.approvals >= vote.enact_needed {
+            [0.20, 0.72, 0.30, 1.0]
+        } else {
+            [0.22, 0.52, 0.88, 1.0]
+        },
+    )
+    .with_label(vote.deferral_id.clone());
+
+    let signet_halo = SceneNode::new(
+        MeshKind::Torus,
+        [0.0, 0.0, 0.0],
+        1.85,
+        [0.82, 0.68, 0.28, 1.0],
+    )
+    .with_label(format!("signet:{}", vote.dimension));
+
+    let mut nodes = vec![ground, center_sphere, signet_halo];
+    let mut atoms = vec![center_atom];
+    let mut bonds = Vec::new();
+    let mut grabbed: Option<usize> = None;
+    let mut anchor = [center, center, center];
+
+    let n_choices = vote.choices.len().max(1);
+    for (idx, choice) in vote.choices.iter().enumerate() {
+        let atom_index = idx + 1;
+        let angle = (idx as f64) * std::f64::consts::TAU / (n_choices as f64)
+            - std::f64::consts::FRAC_PI_2;
+        // Bonded choices sit at equilibrium bond distance (3.8 bohr); unbonded choices orbit at 6.4 bohr.
+        let orbit_r = if choice.selected { 3.8 } else { 6.4 };
+        let z_offset = ((idx as f64 % 3.0) - 1.0) * 1.4;
+        let ax = center + orbit_r * angle.cos();
+        let ay = center + orbit_r * angle.sin();
+        let az = center + z_offset;
+
+        let atom_radius = if choice.selected { 1.32 } else { 1.08 };
+        atoms.push(HolonAtom {
+            index: atom_index,
+            x: ax,
+            y: ay,
+            z: az,
+            radius: atom_radius,
+            z_species: choice.z_species,
+            label: choice.label.clone(),
+            subtitle: choice.consequence.clone(),
+            vote_score: choice.vote_score,
+            action_tag: choice.action_tag.clone(),
+            selected: choice.selected,
+            csd_tag: choice.csd_tag.clone(),
+        });
+
+        let bevy_pos = [
+            ((ax - center) * 0.45) as f32,
+            ((ay - center) * 0.35) as f32,
+            ((az - center) * 0.45) as f32,
+        ];
+        let orb_color = score_to_color(f64::from(choice.vote_score));
+        nodes.push(
+            SceneNode::new(MeshKind::Sphere, bevy_pos, atom_radius * 0.75, orb_color)
+                .with_label(choice.choice_id.clone()),
+        );
+
+        if choice.selected {
+            bonds.push(HolonBond {
+                i: 0,
+                j: atom_index,
+                depth: 0.92,
+                label: format!("bond:{}", choice.choice_id),
+            });
+            grabbed = Some(atom_index);
+            anchor = [ax, ay, az];
+            let mid_pos = [
+                bevy_pos[0] * 0.5,
+                bevy_pos[1] * 0.5,
+                bevy_pos[2] * 0.5,
+            ];
+            nodes.push(
+                SceneNode::new(MeshKind::Cylinder, mid_pos, 0.85, orb_color)
+                    .with_label(format!("bond:{}", choice.choice_id)),
+            );
+        }
+    }
+
+    let quorum_label = if vote.is_single_person_vote() {
+        format!(
+            "Single-Person Vote (1-of-1 Self-Quorum · Step {}/{})",
+            vote.step_index, vote.total_steps
+        )
+    } else {
+        format!(
+            "Multi-Signer Deferral ({}/{} Assent · {} Objections)",
+            vote.approvals, vote.enact_needed, vote.objections
+        )
+    };
+
+    let frame = HolonFrameBuffer {
+        deferral_id: vote.deferral_id.clone(),
+        world_title: vote.title.clone(),
+        world_prompt: vote.context_prompt.clone(),
+        quorum_label,
+        step_index: vote.step_index,
+        total_steps: vote.total_steps,
+        atoms,
+        bonds,
+        grabbed,
+        anchor,
+        frame: vote.step_index as u64,
+    };
+
+    let scene = Scene {
+        nodes,
+        camera: Camera {
+            eye: [0.0, 2.2, 6.8],
+            look_at: [0.0, 0.0, 0.0],
+        },
+        background: BONE,
+    };
+
+    (scene, frame)
 }
 
 #[cfg(test)]

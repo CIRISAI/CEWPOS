@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""CEWPOS Epistemic UI HTTP Server & Live CIRISServer v0.5.241 Reverse Proxy.
+"""CEWPOS Epistemic UI HTTP Server & Live CIRISServer v0.5.243 Reverse Proxy.
 
 Serves `/home/emoore/CEWPOS/epistemic-ui` on `http://127.0.0.1:8787` and forwards
-`/health` and `/v1/*` requests to the local `CIRISServer` read API (`http://127.0.0.1:4243`)
+`/health`, `/lens/*`, and `/v1/*` requests to the local `CIRISServer` read API (`http://127.0.0.1:4243`)
 so the browser UI can interact with a live local node without cross-origin refusals.
 Also exposes `GET /cewpos/local-node` to surface local first-run metadata (such as
-whether `/tmp/ciris_qa_fresh/claim_pin` exists and its mode) for local QA.
+whether `/tmp/ciris_qa_243/claim_pin` exists and its mode) for local QA.
 """
 from __future__ import annotations
 
@@ -20,10 +20,19 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 NODE_BASE = os.environ.get("CIRIS_NODE_URL", "http://127.0.0.1:4243")
-QA_HOME = Path(os.environ.get("CIRIS_HOME", "/tmp/ciris_qa_fresh"))
+DEFAULT_QA_HOME = "/tmp/ciris_qa_243" if Path("/tmp/ciris_qa_243").exists() else "/tmp/ciris_qa_fresh"
+QA_HOME = Path(os.environ.get("CIRIS_HOME", DEFAULT_QA_HOME))
 
 
 class CewposRequestHandler(http.server.SimpleHTTPRequestHandler):
+    extensions_map = {
+        **http.server.SimpleHTTPRequestHandler.extensions_map,
+        ".wasm": "application/wasm",
+        ".js": "application/javascript",
+        ".mjs": "application/javascript",
+        ".json": "application/json",
+    }
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(HERE), **kwargs)
 
@@ -52,10 +61,12 @@ class CewposRequestHandler(http.server.SimpleHTTPRequestHandler):
 
         req = urllib.request.Request(target_url, data=body, headers=headers, method=method)
         try:
-            with urllib.request.urlopen(req, timeout=10.0) as resp:
+            with urllib.request.urlopen(req, timeout=60.0) as resp:
                 resp_body = resp.read()
                 self.send_response(resp.status)
                 self.send_header("Content-Type", resp.headers.get("Content-Type", "application/json"))
+                if resp.headers.get("Retry-After"):
+                    self.send_header("Retry-After", resp.headers.get("Retry-After"))
                 self.send_header("Content-Length", str(len(resp_body)))
                 self.send_header("Cache-Control", "no-store")
                 self.end_headers()
@@ -64,6 +75,8 @@ class CewposRequestHandler(http.server.SimpleHTTPRequestHandler):
             err_body = exc.read()
             self.send_response(exc.code)
             self.send_header("Content-Type", exc.headers.get("Content-Type", "application/json"))
+            if exc.headers.get("Retry-After"):
+                self.send_header("Retry-After", exc.headers.get("Retry-After"))
             self.send_header("Content-Length", str(len(err_body)))
             self.send_header("Cache-Control", "no-store")
             self.end_headers()
@@ -103,6 +116,18 @@ class CewposRequestHandler(http.server.SimpleHTTPRequestHandler):
     def do_POST(self) -> None:
         if self.path.startswith("/v1/"):
             self._proxy_to_node("POST")
+            return
+        self._send_json(404, {"error": "Not found"})
+
+    def do_PUT(self) -> None:
+        if self.path.startswith("/v1/"):
+            self._proxy_to_node("PUT")
+            return
+        self._send_json(404, {"error": "Not found"})
+
+    def do_DELETE(self) -> None:
+        if self.path.startswith("/v1/"):
+            self._proxy_to_node("DELETE")
             return
         self._send_json(404, {"error": "Not found"})
 

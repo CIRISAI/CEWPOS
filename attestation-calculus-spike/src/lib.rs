@@ -42,3 +42,7 @@ pub mod effect;
 /// `SignedAttestation` A→B over a real transport-http medium, verified on B.
 #[cfg(feature = "real-edge")]
 pub mod transport;
+
+/// (D) Full-stack consumption of `ciris-server` (`tag = "v0.5.243"`) as a crate.
+#[cfg(feature = "real-server")]
+pub use ciris_server;

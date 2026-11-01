@@ -5,14 +5,14 @@
 //! and the `CSD/3 → CSD/4` automation tag tree.
 
 use crate::algebra::{
-    evaluate_policy_lens, ActionIntent, AddDevicePhase, AgeBandChoice, AgentGateVerdict,
-    CircleScope, CircleTab, ConfirmFacts3, FirstRunWizardState, GovernancePolicyFamily,
-    HaltVerdict, InstrumentId, OwnershipClaimStatus, PolicyLensVerdict, Receipt5,
-    RetirementStage, RootVerdict, RowStanding, SetupIdentityPath, SurfaceState, Tone, TopologyId,
-    TwoPathVerdict, VerificationBasis, ViewerContext, WizardStep,
+    evaluate_policy_lens, ActionIntent, AgeBandChoice, AgentGateVerdict, CircleScope, CircleTab,
+    ConfirmFacts3, DeferralVote, FirstRunWizardState, GovernancePolicyFamily, HaltVerdict,
+    InstrumentId, OwnershipClaimStatus, PolicyLensVerdict, Receipt5, RetirementStage, RootVerdict,
+    RowStanding, SetupIdentityPath, SurfaceState, Tone, TopologyId, TwoPathVerdict,
+    VerificationBasis, ViewerContext, WizardStep,
 };
-use crate::scene::Scene;
-use crate::view_form::view_form;
+use crate::scene::{HolonFrameBuffer, Scene};
+use crate::view_form::{view_deferral_vote, view_form};
 use attestation_calculus_spike::forms::Form;
 use serde::{Deserialize, Serialize};
 
@@ -144,12 +144,18 @@ pub enum DisclosureHint {
     },
 }
 
-/// P9: `TwoPathCeremonyBlock` — Universal governance ceremony primitive covering all 10
-/// `manifests/governance_policy.json` families (`two_path`, `mirror`, `cosigned`).
+/// P9: `TwoPathCeremonyBlock` / `DeferralVoteBlock` — The Context + Vote/Decision Primitive
+/// in the 12-primitive set (`P1`–`P12`).
 ///
-/// Resting state shows a 1-line summary + verdict chip + `⋯` ellipsis trigger;
-/// quorum math and signer chips are tucked inside the expansion body.
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+/// Covers BOTH:
+/// - **Single-person (`1-of-1` self-quorum) votes & deferrals** (every step of the First-Run Wizard,
+///   `OwnerRequest`s, personal WA `deferral:request:v1`), and
+/// - **Multi-person / multi-device (`m-of-n`) ceremonies** across all 10
+///   `manifests/governance_policy.json` families (`two_path`, `mirror`, `cosigned`).
+///
+/// Poses its context and selectable choices in 3D Bevy / `CIRISHolon` (`holon-render-3d`) space
+/// via [`HolonFrameBuffer`] (Atom `0` = Context Holon, Atoms `1..=K` = Choice Orbs, `HolonBond` = cast votes).
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct TwoPathCeremonyNode {
     pub tag_prefix: String,
     pub disclosure: DisclosureHint,
@@ -162,6 +168,70 @@ pub struct TwoPathCeremonyNode {
     pub own_proposal: bool,
     pub can_assent: bool,
     pub can_object: bool,
+    /// The unified `DeferralVote` (context prompt + selectable `+1`/`0`/`-1` choices).
+    pub deferral_vote: Option<DeferralVote>,
+    /// The 3D `CIRISHolon` (`holon-render-3d::frame::FrameBuffer`) projection of the context + choices.
+    pub holon_frame: Option<HolonFrameBuffer>,
+}
+
+impl TwoPathCeremonyNode {
+    /// Construct a `P9: TwoPathCeremonyNode` directly from a [`DeferralVote`] (e.g., a First-Run
+    /// Wizard single-person vote step, an `OwnerRequest`, or a self-roster proposal), automatically
+    /// projecting its 3D `HolonFrameBuffer` (`view_deferral_vote`).
+    pub fn from_deferral_vote(
+        tag_prefix: impl Into<String>,
+        policy_family: GovernancePolicyFamily,
+        proposed_by: impl Into<String>,
+        vote: DeferralVote,
+    ) -> Self {
+        let prefix = tag_prefix.into();
+        let proposer = proposed_by.into();
+        let (_, holon_frame) = view_deferral_vote(&vote);
+        let verdict = if vote.objections > 0 {
+            TwoPathVerdict::Cancelled {
+                reason: "Objection / refusal recorded".to_string(),
+            }
+        } else if vote.approvals >= vote.enact_needed {
+            TwoPathVerdict::LandsForward
+        } else {
+            TwoPathVerdict::Pending {
+                approvals: vote.approvals,
+                enact_needed: vote.enact_needed,
+                objections: vote.objections,
+                cancel_needed: 1,
+                floor_needed: vote.enact_needed,
+                window_rem_secs: 86_400,
+            }
+        };
+        Self {
+            tag_prefix: prefix.clone(),
+            disclosure: DisclosureHint::EllipsisExpand {
+                tag: format!("btn_{prefix}_ellipsis"),
+                collapsed_by_default: false,
+                summary_chip: format!(
+                    "{}/{} votes · Step {}/{}",
+                    vote.approvals, vote.enact_needed, vote.step_index, vote.total_steps
+                ),
+            },
+            policy_family,
+            proposal: format!("{} — {}", vote.title, vote.context_prompt),
+            proposed_by: proposer.clone(),
+            signers: vec![SignerChip {
+                key_id: proposer,
+                state: if vote.approvals >= vote.enact_needed {
+                    CeremonySignerState::Signed
+                } else {
+                    CeremonySignerState::Proposed
+                },
+            }],
+            verdict,
+            own_proposal: false,
+            can_assent: true,
+            can_object: true,
+            deferral_vote: Some(vote),
+            holon_frame: Some(holon_frame),
+        }
+    }
 }
 
 /// Lineage / chain link kind for `P11: LineageChainBlock`.
@@ -318,11 +388,15 @@ pub enum EpistemicNode {
     LineageChain(LineageChainNode),
     /// P12a: `ConscienceStepBlock` — Agent H3ERE conscience & resource cost record.
     ConscienceStep(ConscienceStepNode),
-    /// 3D Spatial Canvas (`view-forms-spike::scene::Scene`) for Bevy rendering of score spheres,
-    /// concentric Circles, memory graphs (`CSD-028`), and peer trust graphs (`CSD-046`).
+    /// 3D Spatial Canvas (`view-forms-spike::scene::Scene` + `CIRISHolon` `HolonFrameBuffer`)
+    /// for Bevy 0.19 / `holon-render-3d` rendering of score spheres, deferral/single-person
+    /// votes (including the First-Run Wizard), concentric Circles, memory graphs (`CSD-028`),
+    /// and peer trust graphs (`CSD-046`).
     SpatialCanvas {
         tag: String,
         scene: Scene,
+        holon_frame: Option<HolonFrameBuffer>,
+        deferral_series: Vec<DeferralVote>,
     },
 }
 
@@ -493,11 +567,21 @@ impl EpistemicScene {
                         ),
                     });
                 }
-                EpistemicNode::SpatialCanvas { tag, scene } => {
+                EpistemicNode::SpatialCanvas {
+                    tag,
+                    scene,
+                    holon_frame,
+                    ..
+                } => {
+                    let atom_count = holon_frame.as_ref().map_or(0, |f| f.atoms.len());
                     out.push(Csd4TreeNode {
                         tag: tag.clone(),
                         role: "spatial_canvas".to_string(),
-                        automation_text: format!("3D Scene ({} nodes)", scene.node_count()),
+                        automation_text: format!(
+                            "3D Scene ({} nodes, {} holon atoms)",
+                            scene.node_count(),
+                            atom_count
+                        ),
                     });
                 }
             }
@@ -689,6 +773,8 @@ pub fn project_epistemic_scene(
         nodes.push(EpistemicNode::SpatialCanvas {
             tag: "csd_spatial_canvas".to_string(),
             scene: view_form(first_form),
+            holon_frame: None,
+            deferral_series: Vec::new(),
         });
     }
 
@@ -764,6 +850,8 @@ pub fn project_promise_card(csd_id: &str, ctx: &ViewerContext) -> Vec<EpistemicN
                 own_proposal: true,
                 can_assent: false,
                 can_object: true,
+                deferral_vote: None,
+                holon_frame: None,
             }),
         ],
 
@@ -793,6 +881,8 @@ pub fn project_promise_card(csd_id: &str, ctx: &ViewerContext) -> Vec<EpistemicN
             own_proposal: false,
             can_assent: false,
             can_object: false,
+            deferral_vote: None,
+            holon_frame: None,
         })],
 
         // CSD-113 (Promise 5f): 7-state Retirement Standard floor (`Retirement.tla`).
@@ -1075,6 +1165,8 @@ pub fn project_promise_card(csd_id: &str, ctx: &ViewerContext) -> Vec<EpistemicN
             own_proposal: true,
             can_assent: false,
             can_object: false,
+            deferral_vote: None,
+            holon_frame: None,
         })],
 
         _ => Vec::new(),
@@ -1108,6 +1200,27 @@ pub fn project_first_run_wizard_scene(
         my_things_tag: "btn_my_things".to_string(),
         stop_everything_tag: "btn_stop_everything".to_string(),
     }));
+
+    // 1b. Primary `P9: TwoPathCeremony` (Context + Vote/Decision Primitive in 3D Bevy / `CIRISHolon`):
+    // The First-Run Wizard is structurally identical to a series of deferrals or
+    // single-person (`1-of-1` self-quorum) votes posed via P9 (`TwoPathCeremonyNode`) and `SpatialCanvas`.
+    let deferral_series = wiz.as_deferral_votes();
+    let active_vote = wiz.active_deferral_vote();
+    let (wizard_scene_3d, wizard_holon_frame) = view_deferral_vote(&active_vote);
+    nodes.push(EpistemicNode::TwoPathCeremony(
+        TwoPathCeremonyNode::from_deferral_vote(
+            "p9_wizard_deferral_vote",
+            GovernancePolicyFamily::SelfRosterAdd,
+            &ctx.viewer_key_id,
+            active_vote,
+        ),
+    ));
+    nodes.push(EpistemicNode::SpatialCanvas {
+        tag: "csd_080_holon_wizard_3d".to_string(),
+        scene: wizard_scene_3d,
+        holon_frame: Some(wizard_holon_frame),
+        deferral_series,
+    });
 
     // 2. Wizard Step Header Card (`P1: CardShell` + `P6: Chip` step indicators + `P2: FieldRow` mode).
     let step_fields = vec![
@@ -1351,6 +1464,8 @@ pub fn project_first_run_wizard_scene(
                         own_proposal: false,
                         can_assent: true,
                         can_object: true,
+                        deferral_vote: None,
+                        holon_frame: None,
                     }));
                 }
             }
@@ -1567,5 +1682,41 @@ mod tests {
                 "reserved promise card {csd_id} must project non-empty EpistemicNodes"
             );
         }
+    }
+
+    #[test]
+    fn first_run_wizard_projects_as_series_of_single_person_deferral_votes_in_3d() {
+        let ctx = ViewerContext::default();
+        let mut wiz = FirstRunWizardState::default();
+        let votes = wiz.as_deferral_votes();
+        assert_eq!(votes.len(), 4, "With-AI wizard is a 4-vote single-person deferral chain");
+        assert!(votes.iter().all(|v| v.is_single_person_vote()));
+
+        // Select NewIdentity + Adult on Step 1 -> creates 2 bonds in the 3D HolonFrameBuffer.
+        wiz.identity_path = Some(SetupIdentityPath::NewIdentity);
+        wiz.age_band = Some(AgeBandChoice::Adult);
+        wiz.fedid_label = "alice-steward".to_string();
+
+        let scene = project_first_run_wizard_scene(&wiz, &ctx);
+        let tree = scene.csd4_tree();
+        assert!(tree.iter().any(|n| n.tag == "csd_080_holon_wizard_3d"));
+
+        let spatial = scene
+            .nodes
+            .iter()
+            .find_map(|n| match n {
+                EpistemicNode::SpatialCanvas {
+                    tag,
+                    holon_frame: Some(frame),
+                    deferral_series,
+                    ..
+                } if tag == "csd_080_holon_wizard_3d" => Some((frame, deferral_series)),
+                _ => None,
+            })
+            .expect("3D Holon wizard canvas must be present");
+
+        assert_eq!(spatial.0.atoms[0].z_species, 8, "Atom 0 is the Oxygen Context Holon");
+        assert_eq!(spatial.0.bonds.len(), 2, "Two selected choices bond to Atom 0");
+        assert_eq!(spatial.1.len(), 4);
     }
 }

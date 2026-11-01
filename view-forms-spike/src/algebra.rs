@@ -1069,7 +1069,7 @@ impl GovernancePolicySpec {
             if others == 0 {
                 return 1;
             }
-            return (others / 2) + 1;
+            return ((others + 1) / 2).max(1);
         }
         let ceil_div = (self.cancel_num * base + self.cancel_den - 1) / self.cancel_den;
         ceil_div.max(self.cancel_min).min(base.max(1))
@@ -1536,6 +1536,275 @@ impl FirstRunWizardState {
             }
         }
     }
+
+    /// **Unified Deferral / Single-Person Vote Representation**:
+    /// The First-Run Wizard is structurally identical to a series of deferrals or
+    /// single-person (`1-of-1` self-quorum) votes (`op:scores` / `op:delegates_to` / `owner_requests::sign`).
+    /// Each step poses a context Holon at the center of the 3D World Box and orbits
+    /// its Choice Orbs around it (`Z` species + vote score `+1` / `0` / `-1`).
+    pub fn as_deferral_votes(&self) -> Vec<DeferralVote> {
+        let mut series = Vec::new();
+        let total_steps = self.visible_steps().len() + 1;
+
+        // Vote 1: YOU — Identity Path & Age Stewardship (1-of-1 single-person vote)
+        let you_selected = match self.identity_path {
+            Some(SetupIdentityPath::NewIdentity) => Some("setup_new_identity"),
+            Some(SetupIdentityPath::AddThisDevice) => Some("setup_add_device"),
+            None => None,
+        };
+        let age_selected = match self.age_band {
+            Some(AgeBandChoice::Adult) => Some("age_adult"),
+            Some(AgeBandChoice::Minor) => Some("age_minor"),
+            Some(AgeBandChoice::Declined) => Some("age_declined"),
+            None => None,
+        };
+        series.push(DeferralVote {
+            deferral_id: "deferral:setup:you:v1".to_string(),
+            dimension: "setup:identity_and_stewardship:v1".to_string(),
+            cohort_scope: CircleScope::JustMe,
+            title: "Deferral 1/4 · YOU — Who is stewarding this node?".to_string(),
+            context_prompt: "Single-person vote (1-of-1 self-quorum): Mint a new hardware-sealed CIRIS ID or join an existing CIRIS ID roster, and attest age-assurance stewardship (CC 3.2).".to_string(),
+            roster_size: 1,
+            enact_needed: 1,
+            approvals: u32::from(self.can_advance_from_you()),
+            objections: u32::from(self.age_band == Some(AgeBandChoice::Minor)),
+            step_index: 1,
+            total_steps,
+            choices: vec![
+                DeferralChoice {
+                    choice_id: "setup_new_identity".to_string(),
+                    label: "Mint New CIRIS ID (+1)".to_string(),
+                    consequence: "Creates a new Ed25519 + ML-DSA-65 hybrid identity on this device".to_string(),
+                    vote_score: 1,
+                    z_species: 6, // Carbon (structural bond)
+                    action_tag: "wizard_select_new_id".to_string(),
+                    selected: you_selected == Some("setup_new_identity"),
+                    csd_tag: "CSD-082".to_string(),
+                },
+                DeferralChoice {
+                    choice_id: "setup_add_device".to_string(),
+                    label: "Join Existing CIRIS ID (+1)".to_string(),
+                    consequence: "Submits an add-device request to your existing self-key roster".to_string(),
+                    vote_score: 1,
+                    z_species: 7, // Nitrogen (peer link)
+                    action_tag: "wizard_select_add_device".to_string(),
+                    selected: you_selected == Some("setup_add_device"),
+                    csd_tag: "CSD-093".to_string(),
+                },
+                DeferralChoice {
+                    choice_id: "age_adult".to_string(),
+                    label: "18 or Older (+1)".to_string(),
+                    consequence: "Self-declares adult stewardship in local age-assurance record".to_string(),
+                    vote_score: 1,
+                    z_species: 1, // Hydrogen
+                    action_tag: "wizard_age_adult".to_string(),
+                    selected: age_selected == Some("age_adult"),
+                    csd_tag: "CSD-082".to_string(),
+                },
+                DeferralChoice {
+                    choice_id: "age_declined".to_string(),
+                    label: "Prefer Not to Say (0)".to_string(),
+                    consequence: "Applies protective under-18 defaults; writes nothing to assurance record".to_string(),
+                    vote_score: 0,
+                    z_species: 3, // Lithium
+                    action_tag: "wizard_age_declined".to_string(),
+                    selected: age_selected == Some("age_declined"),
+                    csd_tag: "CSD-082".to_string(),
+                },
+                DeferralChoice {
+                    choice_id: "age_minor".to_string(),
+                    label: "Under 18 — Halt Setup (-1)".to_string(),
+                    consequence: "Refuses standalone setup; requires an adult family steward (CC 3.2)".to_string(),
+                    vote_score: -1,
+                    z_species: 9, // Fluorine (brake)
+                    action_tag: "wizard_age_minor".to_string(),
+                    selected: age_selected == Some("age_minor"),
+                    csd_tag: "CSD-082".to_string(),
+                },
+            ],
+        });
+
+        // Vote 2: JOIN_FEDERATION — Cohort Scope & Trace Replication Consent (1-of-1 single-person vote)
+        series.push(DeferralVote {
+            deferral_id: "deferral:setup:federation:v1".to_string(),
+            dimension: "consent:replication:v1".to_string(),
+            cohort_scope: CircleScope::Everyone,
+            title: "Deferral 2/4 · JOIN_FEDERATION — Share reasoning traces with the mesh?".to_string(),
+            context_prompt: "Single-person vote (1-of-1 self-quorum): Decide whether signed reasoning traces cross from local self-scope into federation cohort scope (`consent:replication:v1`).".to_string(),
+            roster_size: 1,
+            enact_needed: 1,
+            approvals: u32::from(self.trace_consent == Some(true)),
+            objections: u32::from(self.trace_consent == Some(false)),
+            step_index: 2,
+            total_steps,
+            choices: vec![
+                DeferralChoice {
+                    choice_id: "trace_consent_yes".to_string(),
+                    label: "Assent: Share Traces (+1)".to_string(),
+                    consequence: "Emits signed consent:replication:v1 at federation scope".to_string(),
+                    vote_score: 1,
+                    z_species: 6, // Carbon
+                    action_tag: "wizard_trace_yes".to_string(),
+                    selected: self.trace_consent == Some(true),
+                    csd_tag: "CSD-082".to_string(),
+                },
+                DeferralChoice {
+                    choice_id: "trace_consent_no".to_string(),
+                    label: "Refuse: Keep Local Only (-1)".to_string(),
+                    consequence: "Keeps all attestations and traces strictly within self cohort scope".to_string(),
+                    vote_score: -1,
+                    z_species: 9, // Fluorine
+                    action_tag: "wizard_trace_no".to_string(),
+                    selected: self.trace_consent == Some(false),
+                    csd_tag: "CSD-082".to_string(),
+                },
+                DeferralChoice {
+                    choice_id: "announce_ownership".to_string(),
+                    label: "Sign Owner Request: Announce (+1)".to_string(),
+                    consequence: "Signs owner_requests::announce so peers can discover this node".to_string(),
+                    vote_score: 1,
+                    z_species: 7, // Nitrogen
+                    action_tag: "wizard_toggle_announce".to_string(),
+                    selected: self.announce_ownership,
+                    csd_tag: "CSD-085".to_string(),
+                },
+            ],
+        });
+
+        // Vote 3: AI — Steward–Agent Depth-1 Bond & H3ERE Conscience (1-of-1 single-person vote)
+        if self.run_with_ai {
+            series.push(DeferralVote {
+                deferral_id: "deferral:setup:ai:v1".to_string(),
+                dimension: "delegates_to:steward_agent_bond:v1".to_string(),
+                cohort_scope: CircleScope::JustMe,
+                title: "Deferral 3/4 · AI — Confer Depth-1 Steward–Agent Bond?".to_string(),
+                context_prompt: "Single-person vote (1-of-1 self-quorum): Bind the local CIRIS AI steward under H3ERE ethical gates and Wisdom-Based Deferral (WBD returns control to you whenever uncertain).".to_string(),
+                roster_size: 1,
+                enact_needed: 1,
+                approvals: u32::from(self.run_with_ai),
+                objections: 0,
+                step_index: 3,
+                total_steps,
+                choices: vec![
+                    DeferralChoice {
+                        choice_id: "bond_ai_steward".to_string(),
+                        label: "Assent: Bond Steward–AI (+1)".to_string(),
+                        consequence: "Emits depth-1 delegates_to bond; AI defers uncertain thoughts to your 3D deferral queue".to_string(),
+                        vote_score: 1,
+                        z_species: 6, // Carbon
+                        action_tag: "wizard_mode_with_ai".to_string(),
+                        selected: self.run_with_ai,
+                        csd_tag: "CSD-082".to_string(),
+                    },
+                    DeferralChoice {
+                        choice_id: "run_without_ai".to_string(),
+                        label: "Abstain: Node-Only Mode (0)".to_string(),
+                        consequence: "Runs pure CEG storage/relay substrate without local AI agent".to_string(),
+                        vote_score: 0,
+                        z_species: 3, // Lithium
+                        action_tag: "wizard_mode_without_ai".to_string(),
+                        selected: !self.run_with_ai,
+                        csd_tag: "CSD-083".to_string(),
+                    },
+                ],
+            });
+        }
+
+        // Final Vote: COMPLETE — Claim Node Ownership & Sign OwnerRequests (`POST /v1/setup/root`)
+        let claimed = matches!(self.ownership_status, OwnershipClaimStatus::Claimed { .. });
+        series.push(DeferralVote {
+            deferral_id: "deferral:setup:complete:v1".to_string(),
+            dimension: "delegates_to:infra_root:v1".to_string(),
+            cohort_scope: CircleScope::JustMe,
+            title: format!("Deferral {total_steps}/{total_steps} · COMPLETE — Sign & Claim Node Ownership"),
+            context_prompt: "Single-person vote (1-of-1 self-quorum): Hybrid-sign (Ed25519 + ML-DSA-65) the infra:* owner-binding and pending OwnerRequests (`announce`, `root_acceptance`, `community_trust`).".to_string(),
+            roster_size: 1,
+            enact_needed: 1,
+            approvals: u32::from(claimed),
+            objections: 0,
+            step_index: total_steps,
+            total_steps,
+            choices: vec![
+                DeferralChoice {
+                    choice_id: "claim_node_root".to_string(),
+                    label: "Sign & Claim Node Ownership (+1)".to_string(),
+                    consequence: "Commits hybrid-signed delegates_to(user -> node, infra:*) via POST /v1/setup/root".to_string(),
+                    vote_score: 1,
+                    z_species: 6, // Carbon
+                    action_tag: "wizard_claim_ownership".to_string(),
+                    selected: claimed,
+                    csd_tag: "CSD-085".to_string(),
+                },
+                DeferralChoice {
+                    choice_id: "defer_claim_later".to_string(),
+                    label: "Hold in Deferral Queue (0)".to_string(),
+                    consequence: "Keeps OwnerRequests pending in /v1/self/owner-requests until you sign".to_string(),
+                    vote_score: 0,
+                    z_species: 3, // Lithium
+                    action_tag: "wizard_prev".to_string(),
+                    selected: false,
+                    csd_tag: "CSD-085".to_string(),
+                },
+            ],
+        });
+
+        series
+    }
+
+    /// Return the active `DeferralVote` for the current `WizardStep`.
+    pub fn active_deferral_vote(&self) -> DeferralVote {
+        let votes = self.as_deferral_votes();
+        let target_idx = match self.step {
+            WizardStep::You => 0,
+            WizardStep::JoinFederation => 1,
+            WizardStep::Ai => 2.min(votes.len().saturating_sub(1)),
+            WizardStep::Complete => votes.len().saturating_sub(1),
+        };
+        votes[target_idx].clone()
+    }
+}
+
+/// One selectable 3D Choice Orb in a [`DeferralVote`] (`CIRISHolon` atom `1..=K`).
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct DeferralChoice {
+    pub choice_id: String,
+    pub label: String,
+    pub consequence: String,
+    /// `+1` (Assent / Cosign), `0` (Abstain / Defer), `-1` (Object / Refuse).
+    pub vote_score: i8,
+    /// Atomic number `Z` in `CIRISHolon` (`1`=H, `3`=Li, `6`=C, `7`=N, `8`=O, `9`=F).
+    pub z_species: u32,
+    pub action_tag: String,
+    pub selected: bool,
+    pub csd_tag: String,
+}
+
+/// **The Unified Deferral / Vote Primitive**:
+/// Represents BOTH a single-person (`1-of-1` self-quorum) vote (such as every step of the
+/// First-Run Wizard and `ciris_server::owner_requests`) AND an `m-of-n` multi-device/community
+/// quorum deferral (`SelfRosterProposal`, `TwoPath` governance, WA `deferral:request:v1`).
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct DeferralVote {
+    pub deferral_id: String,
+    pub dimension: String,
+    pub cohort_scope: CircleScope,
+    pub title: String,
+    pub context_prompt: String,
+    pub roster_size: u32,
+    pub enact_needed: u32,
+    pub approvals: u32,
+    pub objections: u32,
+    pub step_index: usize,
+    pub total_steps: usize,
+    pub choices: Vec<DeferralChoice>,
+}
+
+impl DeferralVote {
+    /// True when this deferral is a single-person (`1-of-1` self-quorum) vote
+    /// (e.g. First-Run Wizard steps, `OwnerRequest` signing, personal WA deferral).
+    pub fn is_single_person_vote(&self) -> bool {
+        self.roster_size == 1 && self.enact_needed == 1
+    }
 }
 
 /// Enrolled device occurrence in the self-key roster (`CSD-037`).
@@ -1638,33 +1907,74 @@ impl SelfRosterProposal {
         } else {
             "Blocks the 24h single-device window and refuses this proposal".to_string()
         };
-        ConfirmFacts3 {
-            title: if assent {
+        let danger_note = if !assent {
+            Some("An objection is a signed -1 scores row at federation scope.".to_string())
+        } else if self.kind == SelfRosterProposalKind::Evict {
+            Some(
+                "Already-shared content stays readable to the evicted device — CIRIS does not re-encrypt past content (CC 4.5.12.1)."
+                    .to_string(),
+            )
+        } else {
+            None
+        };
+        ConfirmFacts3::new(
+            if assent {
                 format!("Agree to {}?", change_label.to_lowercase())
             } else {
                 format!("Object to {}?", change_label.to_lowercase())
             },
-            facts: [
-                ("Change".to_string(), change_label),
-                ("Proposed by".to_string(), self.proposed_by_label.clone()),
-                ("What your answer does".to_string(), effect),
+            ("Change", change_label),
+            ("Proposed by", self.proposed_by_label.clone()),
+            ("What your answer does", effect),
+            danger_note,
+        )
+    }
+
+    /// Project this `SelfRosterProposal` into the unified [`DeferralVote`] primitive.
+    pub fn as_deferral_vote(&self) -> DeferralVote {
+        let fam = match self.kind {
+            SelfRosterProposalKind::Add => GovernancePolicyFamily::SelfRosterAdd,
+            SelfRosterProposalKind::Evict => GovernancePolicyFamily::SelfRosterEvict,
+        };
+        let enact_needed = fam.spec().enact_votes(self.roster_size);
+        let action_verb = match self.kind {
+            SelfRosterProposalKind::Add => "Add",
+            SelfRosterProposalKind::Evict => "Evict",
+        };
+        DeferralVote {
+            deferral_id: self.proposal_id.clone(),
+            dimension: format!("self_key_roster:{}", action_verb.to_lowercase()),
+            cohort_scope: CircleScope::JustMe,
+            title: format!("{action_verb} {} ({}-of-{} quorum)", self.subject_label, enact_needed, self.roster_size),
+            context_prompt: format!("Proposed by {} · {} remaining in 24h reverse-quorum window.", self.proposed_by_label, self.window_rem_secs),
+            roster_size: self.roster_size,
+            enact_needed,
+            approvals: self.approvals.len() as u32,
+            objections: self.objectors.len() as u32,
+            step_index: 1,
+            total_steps: 1,
+            choices: vec![
+                DeferralChoice {
+                    choice_id: format!("agree_{}", self.proposal_id),
+                    label: "Sign Agreement (+1)".to_string(),
+                    consequence: "Adds your +1 signature toward forward quorum".to_string(),
+                    vote_score: 1,
+                    z_species: 6,
+                    action_tag: format!("roster_agree:{}", self.proposal_id),
+                    selected: !self.approvals.is_empty(),
+                    csd_tag: "CSD-095".to_string(),
+                },
+                DeferralChoice {
+                    choice_id: format!("object_{}", self.proposal_id),
+                    label: "Sign Objection (-1)".to_string(),
+                    consequence: "Pulls the reverse-quorum brake and cancels the 24h window".to_string(),
+                    vote_score: -1,
+                    z_species: 9,
+                    action_tag: format!("roster_object:{}", self.proposal_id),
+                    selected: !self.objectors.is_empty(),
+                    csd_tag: "CSD-095".to_string(),
+                },
             ],
-            danger_note: if !assent {
-                Some("An objection is a signed -1 scores row at federation scope.".to_string())
-            } else if self.kind == SelfRosterProposalKind::Evict {
-                Some(
-                    "Already-shared content stays readable to the evicted device — CIRIS does not re-encrypt past content (CC 4.5.12.1)."
-                        .to_string(),
-                )
-            } else {
-                None
-            },
-            confirm_label: if assent {
-                "Sign agreement (+1)".to_string()
-            } else {
-                "Sign objection (-1)".to_string()
-            },
-            cancel_label: "Cancel".to_string(),
         }
     }
 }

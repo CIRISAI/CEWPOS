@@ -10,6 +10,16 @@ description = "Typed view-form spike: a real CEG `scores` attestation -> pure to
 # --no-default-features to keep it GPU-free and wasm-portable.
 default = ["render"]
 render = ["dep:bevy", "dep:image"]
+# fullstack: consumes ciris-server directly as a crate at tag v0.5.243 (which
+# re-exports ciris_server::ciris_persist v59.1.2 and ciris-edge v43.4.1) and
+# boots the full-stack CEWPOS node via ciris_server::serve_with_adapter.
+fullstack = [
+    "dep:ciris-server",
+    "dep:tokio",
+    "dep:axum",
+    "dep:anyhow",
+    "dep:async-trait",
+]
 
 [lib]
 name = "view_forms_spike"
@@ -21,6 +31,12 @@ path = "src/lib.rs"
 name = "render"
 path = "src/bin/render.rs"
 required-features = ["render"]
+
+# Full-stack CEWPOS node consuming ciris-server (tag v0.5.243) as a crate via Adapter.
+[[bin]]
+name = "cewpos-node"
+path = "src/bin/cewpos_node.rs"
+required-features = ["fullstack"]
 
 [dependencies]
 # The REAL Attestation Calculus: we read a genuine `scores` Form via
@@ -34,6 +50,13 @@ serde_json = "1"
 # wgpu backend + bevy_render + bevy_pbr + GpuReadbackPlugin. image = PNG encode.
 bevy = { version = "0.19", optional = true }
 image = { version = "0.25", optional = true }
+
+# Full-stack ciris-server consumption directly from tag v0.5.243.
+ciris-server = { git = "https://github.com/CIRISAI/CIRISServer", tag = "v0.5.243", default-features = false, optional = true }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync"], optional = true }
+axum = { version = "0.8", optional = true }
+anyhow = { version = "1", optional = true }
+async-trait = { version = "0.1", optional = true }
 
 # wasm stretch: ciris-crypto drags in TWO getrandom versions that refuse to
 # compile on wasm32-unknown-unknown without a browser backend feature:

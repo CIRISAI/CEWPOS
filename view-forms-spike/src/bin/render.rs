@@ -168,6 +168,8 @@ fn setup(
             MeshKind::Cube => meshes.add(Cuboid::new(1.0, 1.0, 1.0)),
             // A flat slab in XZ; scaled thin in Y so `scale` reads as side length.
             MeshKind::Plane => meshes.add(Cuboid::new(1.0, 0.05, 1.0)),
+            MeshKind::Cylinder => meshes.add(Cylinder::new(0.15, 1.0)),
+            MeshKind::Torus => meshes.add(Torus::new(0.35, 0.5)),
         };
         let material = materials.add(StandardMaterial {
             base_color: Color::srgba(node.color[0], node.color[1], node.color[2], node.color[3]),

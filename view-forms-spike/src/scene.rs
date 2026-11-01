@@ -22,13 +22,81 @@ use serde::{Deserialize, Serialize};
 /// `MeshKind` is exhaustively handled by every backend (no `Unknown` escape).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum MeshKind {
-    /// A unit-diameter sphere centered at the node position.
+    /// A unit-diameter sphere centered at the node position (`CIRISHolon` atom orb).
     Sphere,
     /// A unit cube centered at the node position.
     Cube,
     /// A flat square in the XZ plane (a ground/reference surface). Renderers
     /// keep it thin in Y; `scale` controls its side length.
     Plane,
+    /// A cylinder rod (`CIRISHolon` `bonds.rs` `Cylinder::new` interatomic/epistemic bond).
+    Cylinder,
+    /// A torus ring (`CIRISGame` `signets.rs` steward signet halo).
+    Torus,
+}
+
+// ---------------------------------------------------------------------------
+// CIRISHolon (`holon-render-3d`) Route B FrameBuffer Primitives
+// ---------------------------------------------------------------------------
+
+/// Side of the `CIRISHolon` 3D cubic World Box in bohr (`holon-render-3d::world::BOX_SIDE`).
+pub const HOLON_BOX_SIDE: f64 = 24.0;
+
+/// One 3D atom/holon in the `CIRISHolon` `FrameBuffer` (`holon-render-3d::frame::FrameAtom`),
+/// extended with epistemic metadata so the 3D orb poses a context or a selectable choice/vote
+/// directly in the 24-bohr World Box.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct HolonAtom {
+    /// Atom index `0..N` in the frame (`0` is the central Context / Subject Holon; `1..N` are Choice Orbs).
+    pub index: usize,
+    /// Position in bohr within `[0, 24.0]^3`.
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
+    /// Sphere radius in bohr (`FrameAtom::radius`).
+    pub radius: f32,
+    /// Atomic number `Z` (`1`=H choice, `3`=Li lithium, `6`=C carbon, `7`=N nitrogen, `8`=O oxygen center, `9`=F fluorine).
+    pub z_species: u32,
+    /// Short 3D label rendered on/beside the orb.
+    pub label: String,
+    /// Secondary epistemic context or consequence explanation.
+    pub subtitle: String,
+    /// Vote score (`+1` assent, `0` neutral/abstain, `-1` objection/refusal).
+    pub vote_score: i8,
+    /// Action tag invoked when this 3D Choice Orb is grabbed/bonded to the central Context Holon.
+    pub action_tag: String,
+    /// Whether this choice is currently bonded/selected (`FrameBond` active).
+    pub selected: bool,
+    /// CSD-4 invariant tag associated with this 3D primitive.
+    pub csd_tag: String,
+}
+
+/// One 3D cylinder bond in the `CIRISHolon` `FrameBuffer` (`holon-render-3d::frame::FrameBond`).
+/// Connects atom `i` (Context Holon) and atom `j` (Choice Orb) with normalized bond depth `0.0..=1.0`.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct HolonBond {
+    pub i: usize,
+    pub j: usize,
+    /// Normalized bond depth (`0.0..=1.0`), controlling cylinder rod radius (`bonds.rs`).
+    pub depth: f32,
+    pub label: String,
+}
+
+/// Complete 3D frame buffer matching `CIRISHolon`'s `holon-render-3d::frame::FrameBuffer`
+/// (`holon3d_frame_begin` / `holon3d_frame_atom` / `holon3d_frame_bond` / `holon3d_frame_commit`).
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct HolonFrameBuffer {
+    pub deferral_id: String,
+    pub world_title: String,
+    pub world_prompt: String,
+    pub quorum_label: String,
+    pub step_index: usize,
+    pub total_steps: usize,
+    pub atoms: Vec<HolonAtom>,
+    pub bonds: Vec<HolonBond>,
+    pub grabbed: Option<usize>,
+    pub anchor: [f64; 3],
+    pub frame: u64,
 }
 
 /// One renderable thing: a positioned, scaled, colored primitive with an
