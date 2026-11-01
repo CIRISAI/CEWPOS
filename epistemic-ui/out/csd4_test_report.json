@@ -7553,10 +7553,10 @@
       "step_num": 4,
       "csd_ids": "CSD-085, CSD-118",
       "name": "First-Run Unclaimed Status & 0600 claim_pin File",
-      "method_path": "GET /v1/setup/status",
+      "method_path": "GET /v1/setup/status (cached from initial boot)",
       "status_code": 200,
       "passed": true,
-      "verified_detail": "is_first_run=True, claim_pin_mode=0o600, pin_len=9 (NRY3-VN74)"
+      "verified_detail": "is_first_run=True, claim_pin_mode=0o600, pin=NRY3-VN74"
     },
     {
       "step_num": 5,
@@ -7565,7 +7565,7 @@
       "method_path": "POST /v1/self/identity",
       "status_code": 200,
       "passed": true,
-      "verified_detail": "key_id=qa-243-node-user-bgmvmlxohq, hardware=SoftwareOnly, fedcode=CIRIS-V3-AMAT-JLJD-LBWZ-..."
+      "verified_detail": "key_id=qa-243-node-user-bgmvmlxohq, fedcode=CIRIS-V3-AMAT-JLJD-LBWZ-..."
     },
     {
       "step_num": 6,
@@ -7583,7 +7583,7 @@
       "method_path": "GET /v1/setup/status + /v1/setup/owned-nodes",
       "status_code": 200,
       "passed": true,
-      "verified_detail": "is_first_run=False, owner=qa-243-node-user-bgmvmlxohq, nodes=[{'key_id': 'qa-243-node-wiacpzc2bm', 'is_self': True, 'announced': False, 'roster_member': False}]"
+      "verified_detail": "is_first_run=False, owner=qa-243-node-user-bgmvmlxohq, nodes=[{'key_id': 'qa-243-node-wiacpzc2bm', 'is_self': True, 'announced': False, 'roster_member': True}]"
     },
     {
       "step_num": 8,
@@ -7592,7 +7592,7 @@
       "method_path": "GET /v1/self/occurrences?identity_key_id=qa-243-node-user-bgmvmlxohq",
       "status_code": 200,
       "passed": true,
-      "verified_detail": "identity_key_id=qa-243-node-user-bgmvmlxohq, audience=owner, occurrences=0"
+      "verified_detail": "identity_key_id=qa-243-node-user-bgmvmlxohq, audience=owner, occurrences=1"
     },
     {
       "step_num": 9,

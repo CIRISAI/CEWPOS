@@ -24,11 +24,12 @@ and a renderer-neutral typed Scene IR, with Bevy 0.19 as the headless renderer.
 
 | Claim | Status | Evidence |
 |---|---|---|
-| Pure scene IR + `view_form` compile & test with **no GPU** | ✅ | `cargo test --no-default-features` → 11 passed |
+| Pure scene IR + `view_form` + P1–P12 epistemic scene compile & test with **no GPU** | ✅ | `cargo test --no-default-features` → 24 passed |
 | A **real** `scores` Form drives the view (not a mock) | ✅ | `forms::read_form` through the closed-operator gate |
 | `view_form` is **pure, total, deterministic** | ✅ | tests: clamps/NaN-safe, same Form ⇒ identical `Scene` |
 | Typed Scene IR ⇒ Bevy entities ⇒ **headless PNG** | ✅ | `out/attestation-render.png`, 512×512 RGBA, ~164 KB |
 | The view logic is **browser-portable** (wasm32) | ✅ | `cargo build --target wasm32-unknown-unknown --no-default-features --lib` → ok |
+| Full-stack binary consuming `ciris-server v0.5.243` directly as a crate | ✅ | `cargo build --no-default-features --features fullstack --bin cewpos-node` → ok |
 | Full Bevy **wasm app** render-to-PNG in a browser | ⛔ not attempted here | feasibility-proven separately; see *WASM / browser note* |
 
 ## The render

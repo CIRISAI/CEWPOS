@@ -26,33 +26,63 @@
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      background: var(--bone);
+      background: #0F141C;
       color: var(--obsidian);
       font-family: var(--sans);
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
 
-    /* ── Calm Centered Single-Column Shell ── */
+    /* ── Full-Screen Bevy / CIRISHolon Spatial Viewport (100vw × 100vh) ── */
+    #bevyViewport {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      background: radial-gradient(ellipse at 50% 18%, #F6F4EE 0%, #EAE5DA 62%, #DDD6C7 100%);
+    }
+    canvas#bevySceneCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* ── Full-Screen 3D Spatial Scene Root (Perspective Camera + 3D Slabs) ── */
     .shell {
-      max-width: 640px;
+      position: relative;
+      z-index: 10;
+      max-width: 780px;
       margin: 0 auto;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding: 0 16px 92px;
+      padding: 0 20px 104px;
+      perspective: 1400px;
+      transform-style: preserve-3d;
+    }
+    #surfaceRoot {
+      transform-style: preserve-3d;
+      transition: transform 0.12s ease-out;
     }
 
-    /* ── Top Bar: `My things`, Context Title, `Stop`, `⋯` ── */
+    /* ── Top Spatial HUD Bar: `My things`, Context Title, `Stop`, `⋯` ── */
     .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 16px 0 12px;
-      border-bottom: 1px solid var(--hairline);
+      padding: 14px 18px;
+      margin-top: 12px;
+      margin-bottom: 10px;
+      border: 1px solid rgba(20, 20, 19, 0.1);
+      border-radius: 16px;
       position: sticky;
-      top: 0;
-      background: var(--bone);
+      top: 12px;
+      background: rgba(250, 249, 245, 0.86);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 10px 30px rgba(20, 20, 19, 0.06), 0 1px 0 rgba(255, 255, 255, 0.8) inset;
       z-index: 20;
     }
     .topbar-center {
@@ -171,28 +201,139 @@
       font-size: 12px;
     }
 
-    /* ── P1: CardShell ── */
+    /* ── P1: CardShell (3D Spatial Slab in Full-Screen Bevy Scene) ── */
     .card {
-      background: #fff;
-      border: 1px solid var(--hairline);
-      border-radius: 12px;
-      padding: 4px 16px;
-      margin-bottom: 12px;
+      background: rgba(255, 255, 255, 0.90);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(20, 20, 19, 0.10);
+      border-radius: 16px;
+      padding: 8px 20px 14px;
+      margin-bottom: 16px;
+      box-shadow: 0 18px 42px rgba(20, 20, 19, 0.06), 0 1px 0 rgba(255, 255, 255, 0.92) inset;
+      transform-style: preserve-3d;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
     }
     .card-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 0;
+      padding: 14px 0 10px;
     }
     .card-header-title {
-      font-size: 14px;
-      font-weight: 500;
+      font-size: 15px;
+      font-weight: 600;
       color: var(--obsidian);
       display: flex;
       align-items: center;
       gap: 8px;
       flex-wrap: wrap;
+      letter-spacing: -0.01em;
+    }
+
+    /* ── P9: 3D Context Question & Selection Tiles in Full-Screen Bevy Scene ── */
+    .p9-question-hero {
+      padding: 6px 0 14px;
+      border-bottom: 1px solid var(--hairline);
+      margin-bottom: 14px;
+    }
+    .p9-question-eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--brand);
+      font-weight: 600;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .p9-question-title {
+      font-size: 21px;
+      font-weight: 650;
+      color: var(--obsidian);
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+    }
+    .p9-question-sub {
+      font-size: 13.5px;
+      color: var(--ink-mute);
+      margin-top: 4px;
+    }
+    .p9-selection-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+      margin: 12px 0;
+      transform-style: preserve-3d;
+    }
+    .p9-selection-tile {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: left;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1.5px solid var(--hairline);
+      background: rgba(250, 249, 245, 0.92);
+      cursor: pointer;
+      font-family: var(--sans);
+      transform: translate3d(0, 0, 4px);
+      transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.16s, background 0.16s, box-shadow 0.18s;
+      box-shadow: 0 6px 16px rgba(20, 20, 19, 0.04);
+    }
+    .p9-selection-tile:hover:not(:disabled) {
+      transform: translate3d(0, -2px, 14px);
+      border-color: rgba(31, 94, 122, 0.45);
+      background: #fff;
+      box-shadow: 0 12px 26px rgba(20, 20, 19, 0.08);
+    }
+    .p9-selection-tile.selected {
+      transform: translate3d(0, -3px, 22px);
+      border-color: var(--brand);
+      background: #fff;
+      box-shadow: 0 16px 34px rgba(31, 94, 122, 0.14), 0 0 0 1px var(--brand);
+    }
+    .p9-selection-tile:disabled {
+      opacity: 0.48;
+      cursor: not-allowed;
+    }
+    .p9-tile-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .p9-tile-check {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1.5px solid var(--hairline);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: #fff;
+      background: #fff;
+      flex-shrink: 0;
+    }
+    .p9-selection-tile.selected .p9-tile-check {
+      background: var(--brand);
+      border-color: var(--brand);
+    }
+    .p9-tile-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--obsidian);
+      line-height: 1.3;
+    }
+    .p9-tile-sub {
+      font-size: 12px;
+      color: var(--ink-mute);
+      line-height: 1.4;
+      margin-top: 4px;
     }
 
     /* ── P3: ItemRow — Strictly 3 Scannable Inline Elements (`Title`, `ScopePill`/`Chip`, `☰`/`⋯`) ── */
@@ -576,6 +717,11 @@
   </style>
 </head>
 <body>
+
+  <!-- Full-Screen Bevy / CIRISHolon 3D Spatial Viewport (100vw × 100vh) -->
+  <div id="bevyViewport" data-csd-tag="csd_080_holon_wizard_3d">
+    <canvas id="bevySceneCanvas"></canvas>
+  </div>
 
   <div class="shell">
     <!-- Top Bar -->
@@ -1154,15 +1300,17 @@
       return { boxL: 24.0, atoms, bonds, deferral: dv };
     }
 
-    // `P9: TwoPathCeremonyBlock` (`DeferralVoteBlock`) — Unified 3D Bevy / `CIRISHolon` Context + Vote/Decision Primitive
+    // `P9: TwoPathCeremonyBlock` (`DeferralVoteBlock`) — Unified 3D Spatial Question + Selection Primitive
     // Renders BOTH 1-of-1 single-person votes/deferrals (First-Run Wizard steps, OwnerRequests, WA deferrals)
-    // AND m-of-n multi-party ceremonies (Self-Key Roster `CSD-095`, `Decisions` tab) as a 3D `CIRISHolon` World Box!
+    // AND m-of-n multi-party ceremonies (Self-Key Roster `CSD-095`, `Decisions` tab) as a 3D Question & Selection Slab
+    // directly inside the full-screen Bevy 3D viewport!
     function renderP9TwoPathCeremony({
       tag,
       title,
       chipLabel,
       chipTone = "brand",
       summaryHtml = "",
+      bodyExtraHtml = "",
       ellipsisKey,
       quorumRule,
       approvals = 0,
@@ -1174,88 +1322,71 @@
     }) {
       const dv = deferralVote || {
         deferralId: tag || "p9_ceremony",
-        canvasTag: tag ? `${tag}_canvas` : "csd_080_holon_wizard_3d",
         contextTitle: title,
-        contextSubtitle: quorumRule || "op:scores",
+        contextSubtitle: quorumRule || "Select your decision below",
         dimension: quorumRule || "ceremony:quorum",
         scope: state.circleId || "JustMe",
         quorumRequired: required,
         quorumApprovals: approvals,
         quorumObjections: objections,
         windowLabel,
-        choices: [
-          { choiceId: `${tag}_assent`, label: "Assent (+1)", subtitle: "op:scores +1.0", voteScore: 1.0, atomicNumber: 7, selected: approvals >= required },
-          { choiceId: `${tag}_abstain`, label: "Hold / Wait (0)", subtitle: windowLabel, voteScore: 0.0, atomicNumber: 3, selected: approvals < required && objections === 0 },
-          { choiceId: `${tag}_object`, label: "Object (-1)", subtitle: "op:scores -1.0", voteScore: -1.0, atomicNumber: 9, selected: objections > 0 },
-        ],
+        choices: [],
       };
-
-      const frame = buildHolonFrameFromDeferral(dv);
-      window.__HOLON_ACTIVE_FRAMES = window.__HOLON_ACTIVE_FRAMES || {};
-      window.__HOLON_ACTIVE_FRAMES[dv.deferralId] = frame;
 
       const isSinglePerson = dv.quorumRequired === 1;
       const quorumBadge = isSinglePerson
         ? `1-of-1 Self-Quorum &middot; ${dv.quorumApprovals}/1 signed`
-        : `${dv.quorumApprovals}/${dv.quorumRequired} Quorum &middot; ${dv.quorumObjections || 0} obj`;
+        : `${dv.quorumApprovals}/${dv.quorumRequired} Quorum &middot; ${dv.quorumObjections || 0} objections`;
 
-      const orbsHtml = frame.atoms.slice(1).map(atom => {
-        const sp = HOLON_SPECIES_PALETTE[atom.z] || HOLON_SPECIES_PALETTE[6];
-        const scoreStr = atom.voteScore > 0 ? `+${atom.voteScore.toFixed(1)}` : atom.voteScore.toFixed(1);
-        return `
-          <div style="display:inline-flex;align-items:center;gap:3px;">
-            <button class="holon-orb-pill ${atom.selected ? 'selected' : ''}"
-                    data-csd-tag="${atom.csdTag}"
-                    ${atom.disabled ? 'disabled' : ''}
-                    onclick="${atom.onClickJs || `holonSelectDeferralOrb('${dv.deferralId}', '${atom.choiceId}')`}"
-                    title="${atom.subtitle} (Z=${atom.z} ${sp.name} · vote ${scoreStr})">
-              <span class="holon-orb-dot" style="background:${sp.color};"></span>
-              <span>${atom.label}</span>
-              <span style="opacity:0.72;font-family:var(--mono);font-size:10px;">(${scoreStr})</span>
-            </button>
-            <button class="btn-ghost" style="color:#94A3B8;padding:2px 5px;font-size:11px;"
-                    data-csd-tag="btn_receipt_${atom.receiptId}"
-                    title="5-fact CEG receipt &amp; actions (P4)"
-                    onclick="openReceiptSheet('${atom.receiptId}')">&#9776;</button>
-          </div>
-        `;
-      }).join("");
-
-      const stageHtml = `
-        <div class="holon-stage-wrap" data-csd-tag="${dv.stageTag || `p9_holon_stage_${dv.deferralId}`}">
-          <canvas class="holon-stage-canvas"
-                  id="holonCanvas_${dv.deferralId}"
-                  data-holon-deferral-id="${dv.deferralId}"
-                  data-csd-tag="${dv.canvasTag || `holon_canvas_${dv.deferralId}`}"
-                  width="640" height="290"></canvas>
-          <div class="holon-hud-top">
-            <div class="holon-hud-badge">
-              <span><strong>P9 &middot; 3D Context Holon (Z=8 O):</strong> ${dv.contextTitle}</span>
-              <span style="color:#94A3B8;"><code>${dv.dimension}</code> &middot; 24-bohr World Box &middot; Drag to orbit / spring-bond</span>
-            </div>
-            <div class="holon-hud-badge" style="align-items:flex-end;">
-              <span style="color:#38BDF8;font-weight:600;">${quorumBadge}</span>
-              <span style="color:#94A3B8;">${state.holon3d.wasmLoaded ? 'CIRISHolon WASM + Bevy 3D' : 'CIRISHolon 3D FrameBuffer'}</span>
-            </div>
-          </div>
-          <div class="holon-hud-bottom">
-            <div class="holon-orb-bar" data-csd-tag="holon_orbs_${dv.deferralId}">
-              ${orbsHtml}
-            </div>
-            <div class="holon-ledger-line">
-              <span><code>STO-3G</code> T=${state.holon3d.eKin.toFixed(4)} E_h &middot; V&#8322;=${state.holon3d.ePair.toFixed(4)} E_h &middot; V_spring=${state.holon3d.eSpring.toFixed(4)}</span>
-              <span><code>GATE: ${state.holon3d.gateOpen ? 'OPEN (300K)' : 'CLOSED (NVE)'}</code> &middot; Bonds: ${frame.bonds.length}</span>
-            </div>
-          </div>
+      const choicesGridHtml = (dv.choices && dv.choices.length > 0) ? `
+        <div class="p9-selection-grid" data-csd-tag="p9_choices_${dv.deferralId}">
+          ${dv.choices.map(ch => {
+            const isSel = !!ch.selected || (dv.selectedChoiceId && dv.selectedChoiceId === ch.choiceId);
+            const recId = ch.receiptId || `orb_${ch.choiceId}`;
+            const tagAttr = ch.csdTag || `holon_orb_${ch.choiceId}`;
+            return `
+              <div class="p9-selection-tile ${isSel ? 'selected' : ''}"
+                   role="button"
+                   tabindex="0"
+                   data-bevy-choice="1"
+                   data-bevy-selected="${isSel ? '1' : '0'}"
+                   data-csd-tag="${tagAttr}"
+                   ${ch.disabled ? 'style="opacity:0.48;pointer-events:none;"' : `onclick="${ch.onClickJs || `holonSelectDeferralOrb('${dv.deferralId}', '${ch.choiceId}')`}"`}>
+                <div>
+                  <div class="p9-tile-top">
+                    <span class="p9-tile-check">${isSel ? '&#10003;' : ''}</span>
+                    <button class="btn-ghost" style="padding:2px 6px;font-size:12px;"
+                            data-csd-tag="btn_receipt_${recId}"
+                            title="5-fact CEG receipt &amp; actions (P4)"
+                            onclick="event.stopPropagation(); openReceiptSheet('${recId}')">&#9776;</button>
+                  </div>
+                  <div class="p9-tile-label">${ch.label}</div>
+                  ${ch.subtitle ? `<div class="p9-tile-sub">${ch.subtitle}</div>` : ''}
+                </div>
+              </div>
+            `;
+          }).join("")}
         </div>
-        ${summaryHtml ? `<div style="font-size:12px;color:var(--ink-mute);padding:4px 0 8px;">${summaryHtml}</div>` : ""}
+      ` : "";
+
+      const questionSlabHtml = `
+        <div class="p9-question-hero" data-bevy-question="1" data-csd-tag="${dv.stageTag || `p9_holon_stage_${dv.deferralId}`}">
+          <div class="p9-question-eyebrow">
+            <span>P9 Decision &middot; ${dv.dimension}</span>
+            <span>${quorumBadge}</span>
+          </div>
+          <div class="p9-question-title">${dv.contextTitle}</div>
+          ${dv.contextSubtitle ? `<div class="p9-question-sub">${dv.contextSubtitle}</div>` : ''}
+        </div>
+        ${choicesGridHtml}
+        ${summaryHtml ? `<div style="font-size:12.5px;color:var(--ink-mute);padding:4px 0 8px;">${summaryHtml}</div>` : ""}
+        ${bodyExtraHtml}
       `;
 
       const expandContent = `
         ${renderP2FieldRow({ labelHtml: "Ceremony / Deferral policy", valueHtml: `<code>${quorumRule || dv.dimension}</code>`, verification: "ByRule CC 4.5.12" })}
         ${renderP2FieldRow({ labelHtml: "Quorum tally", valueHtml: `${dv.quorumApprovals} of ${dv.quorumRequired} signatures &middot; ${dv.quorumObjections || 0} objections`, verification: "Wire" })}
         ${renderP2FieldRow({ labelHtml: "Silence / Deferral window", valueHtml: windowLabel, verification: "ByRule" })}
-        ${renderP2FieldRow({ labelHtml: "3D Holon FrameBuffer", valueHtml: `<code>${frame.atoms.length} atoms &middot; ${frame.bonds.length} cylinder bonds &middot; 24.0 bohr box</code>`, verification: "Wire" })}
         ${actionsHtml}
       `;
 
@@ -1265,7 +1396,7 @@
         chipLabel,
         chipTone,
         headerRightHtml: `<button class="btn-ghost" data-csd-tag="btn_receipt_${dv.receiptId || dv.deferralId}" title="5-fact CEG receipt &amp; actions (P4)" onclick="openReceiptSheet('${dv.receiptId || dv.deferralId}')">&#9776;</button>`,
-        bodyHtml: stageHtml,
+        bodyHtml: questionSlabHtml,
         ellipsisKey,
         ellipsisHtml: expandContent,
       });
@@ -1996,11 +2127,11 @@
         ellipsisHtml: wizardHeaderEllipsisHtml,
       });
 
-      // Project the First-Run Wizard as a series of 4 single-person `P9` DeferralVotes in the 3D `CIRISHolon` World Box
+      // Project the First-Run Wizard as a series of 4 single-person `P9` DeferralVote Question Slabs in the full-screen Bevy scene
       const wizDeferrals = buildWizardDeferralVotes();
       const activeDv = wizDeferrals.find(d => d.stepKey === w.step) || wizDeferrals[0];
       const deferralStepBarHtml = `
-        <div style="display:flex;gap:6px;flex-wrap:wrap;padding:6px 0;" data-csd-tag="wiz_deferral_sequence_bar">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;padding:8px 16px;border-bottom:1px solid var(--hairline);" data-csd-tag="wiz_deferral_sequence_bar">
           ${wizDeferrals.map((d, idx) => `
             <button class="btn ${d.stepKey === w.step ? 'btn-brand' : ''}"
                     style="font-size:11px;padding:4px 10px;"
@@ -2011,41 +2142,69 @@
           `).join("")}
         </div>
       `;
-      const activeP9DeferralHtml = renderP9TwoPathCeremony({
-        tag: "wiz_p9_active_deferral_3d",
-        title: `${activeDv.contextTitle} &mdash; 3D Holon Vote (P9)`,
-        chipLabel: activeDv.quorumApprovals >= 1 ? "1/1 Assented" : "Awaiting 1-of-1 Vote",
-        chipTone: activeDv.quorumApprovals >= 1 ? "ok" : "brand",
-        summaryHtml: `${deferralStepBarHtml}<div>Click or spring-drag any orbiting <strong>3D Choice Orb</strong> to the central <strong>Z=8 Context Holon</strong> to bond and sign your 1-of-1 self-quorum vote, or inspect the synchronized <code>CSD/4</code> fields below.</div>`,
-        ellipsisKey: "wiz_p9_active_deferral_detail",
-        quorumRule: `${activeDv.dimension} (1-of-1 single_person_deferral)`,
-        approvals: activeDv.quorumApprovals,
-        required: 1,
-        objections: activeDv.quorumObjections || 0,
-        windowLabel: "Immediate (0s self-quorum)",
-        deferralVote: activeDv,
-      });
+
+      const questionHeroForStep = (questionText, subText) => `
+        <div class="p9-question-hero"
+             data-bevy-question="1"
+             data-bevy-deferral-id="${activeDv.deferralId}"
+             data-csd-tag="holon_canvas_wiz_${w.step.toLowerCase()}">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;">
+            <span class="p9-question-eyebrow">
+              <span>P9 &middot; 1-OF-1 DEFERRAL QUESTION</span>
+              <span>&middot;</span>
+              <code>${activeDv.dimension}</code>
+            </span>
+            <div style="display:flex;align-items:center;gap:6px;">
+              ${renderP5ScopePill(activeDv.scope, "", true)}
+              <button class="btn-ghost"
+                      data-csd-tag="btn_receipt_${activeDv.receiptId}"
+                      title="5-fact CEG receipt &amp; actions (P4)"
+                      onclick="openReceiptSheet('${activeDv.receiptId}')">&#9776;</button>
+            </div>
+          </div>
+          <div class="p9-question-title" data-csd-tag="wiz_p9_active_deferral_3d">${questionText}</div>
+          <div class="p9-question-sub">${subText}</div>
+        </div>
+      `;
 
       let bodyHtml = "";
 
       if (w.step === "YOU") {
-        // Step 1 (`YOU`): `P1: CardShell` + `P6: Chip (Choice)` + `P2: FieldRow` + `P3: ItemRow` (`☰` -> `P4`) + `P10: QrCeremony` + `P9: TwoPathCeremonyBlock`
+        // Step 1 (`YOU`): Unified 3D `P9` Question & Selection Slab
         const identityChoicesHtml = `
-          <div style="display:flex; gap:10px; margin-bottom:12px;" data-csd-tag="setup_identity_path">
-            <button class="choice-btn ${w.identityPath === 'NEW' ? 'selected' : ''}"
-                    data-csd-tag="btn_setup_new_identity"
-                    ${lockedPath ? 'disabled' : ''}
-                    onclick="wizardSelectIdentityPath('NEW')">
-              <div style="font-weight:600; font-size:13px;">Set up a new CIRIS ID</div>
-              <div style="font-size:12px; color:var(--ink-mute);">Create a fresh root keypair on this device</div>
-            </button>
-            <button class="choice-btn ${w.identityPath === 'ADD_THIS_DEVICE' ? 'selected' : ''}"
-                    data-csd-tag="btn_setup_add_this_device"
-                    ${lockedPath ? 'disabled' : ''}
-                    onclick="wizardSelectIdentityPath('ADD_THIS_DEVICE')">
-              <div style="font-weight:600; font-size:13px;">Add this device to an existing CIRIS ID</div>
-              <div style="font-size:12px; color:var(--ink-mute);">Pair with your phone or laptop (CSD-093)</div>
-            </button>
+          ${questionHeroForStep(
+            "How do you want to establish your root identity on this device?",
+            "Select an identity path below to sign your 1-of-1 self-quorum deferral (op:scores on setup:identity_path)."
+          )}
+          <div class="p9-selection-grid" data-csd-tag="setup_identity_path">
+            <div class="p9-selection-tile ${w.identityPath === 'NEW' ? 'selected' : ''}"
+                 data-bevy-choice="1"
+                 data-bevy-selected="${w.identityPath === 'NEW' ? '1' : '0'}"
+                 data-csd-tag="btn_setup_new_identity"
+                 onclick="${lockedPath ? '' : "wizardSelectIdentityPath('NEW')"}">
+              <div class="p9-tile-top">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span class="p9-tile-check">${w.identityPath === 'NEW' ? '&#10003;' : '1'}</span>
+                  <span class="p9-tile-label">Set up a new CIRIS ID</span>
+                </div>
+                <span class="chip ${w.identityPath === 'NEW' ? 'ok' : ''}">1-of-1 Vote</span>
+              </div>
+              <div class="p9-tile-sub">Create a fresh Ed25519 + ML-DSA-65 root keypair on this device</div>
+            </div>
+            <div class="p9-selection-tile ${w.identityPath === 'ADD_THIS_DEVICE' ? 'selected' : ''}"
+                 data-bevy-choice="1"
+                 data-bevy-selected="${w.identityPath === 'ADD_THIS_DEVICE' ? '1' : '0'}"
+                 data-csd-tag="btn_setup_add_this_device"
+                 onclick="${lockedPath ? '' : "wizardSelectIdentityPath('ADD_THIS_DEVICE')"}">
+              <div class="p9-tile-top">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span class="p9-tile-check">${w.identityPath === 'ADD_THIS_DEVICE' ? '&#10003;' : '2'}</span>
+                  <span class="p9-tile-label">Add this device to an existing CIRIS ID</span>
+                </div>
+                <span class="chip ${w.identityPath === 'ADD_THIS_DEVICE' ? 'ok' : ''}">CSD-093</span>
+              </div>
+              <div class="p9-tile-sub">Pair with your existing phone or laptop via 2-path self-roster ceremony</div>
+            </div>
           </div>
         `;
 
@@ -2211,14 +2370,41 @@
           });
         }
       } else if (w.step === "JOIN_FEDERATION") {
-        // Step 2 (`JOIN_FEDERATION`): `P1: CardShell` + `P6: Chip (Choice)` + `P3: ItemRow` (`☰` -> `P4`) + `P2: FieldRow` + `P12: ConscienceStepBlock` (`CSD-118`)
+        // Step 2 (`JOIN_FEDERATION`): Unified 3D `P9` Question & Selection Slab + `P12: ConscienceStepBlock` (`CSD-118`)
         const consentBodyHtml = `
-          <div style="font-size:12px; color:var(--ink-mute); margin-bottom:8px;">
-            Nothing leaves <strong>Just me</strong> without an explicit scope choice. Diagnostic trace sharing is optional and unbiased:
-          </div>
-          <div style="display:flex; gap:8px; margin-bottom:10px;">
-            ${renderP6Chip({ tag: "trace_consent_yes", kind: "Choice", selected: w.traceConsent === true, label: "Share anonymized traces", onclick: "state.wizard.traceConsent=true; renderAll();" })}
-            ${renderP6Chip({ tag: "trace_consent_no", kind: "Choice", selected: w.traceConsent === false, label: "Keep traces local only", onclick: "state.wizard.traceConsent=false; state.wizard.traceAnalyze=false; renderAll();" })}
+          ${questionHeroForStep(
+            "Do you want to share anonymized diagnostic traces with the CIRIS federation?",
+            "Nothing leaves Just me without an explicit scope choice. Select your replication posture below (1-of-1 self-quorum vote on consent:trace_replication)."
+          )}
+          <div class="p9-selection-grid">
+            <div class="p9-selection-tile ${w.traceConsent === true ? 'selected' : ''}"
+                 data-bevy-choice="1"
+                 data-bevy-selected="${w.traceConsent === true ? '1' : '0'}"
+                 data-csd-tag="trace_consent_yes"
+                 onclick="state.wizard.traceConsent=true; renderAll();">
+              <div class="p9-tile-top">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span class="p9-tile-check">${w.traceConsent === true ? '&#10003;' : '1'}</span>
+                  <span class="p9-tile-label">Share anonymized traces</span>
+                </div>
+                <span class="chip ${w.traceConsent === true ? 'ok' : ''}">Everyone</span>
+              </div>
+              <div class="p9-tile-sub">Contribute stripped diagnostic traces to federation reliability</div>
+            </div>
+            <div class="p9-selection-tile ${w.traceConsent === false ? 'selected' : ''}"
+                 data-bevy-choice="1"
+                 data-bevy-selected="${w.traceConsent === false ? '1' : '0'}"
+                 data-csd-tag="trace_consent_no"
+                 onclick="state.wizard.traceConsent=false; state.wizard.traceAnalyze=false; renderAll();">
+              <div class="p9-tile-top">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span class="p9-tile-check">${w.traceConsent === false ? '&#10003;' : '2'}</span>
+                  <span class="p9-tile-label">Keep traces local only</span>
+                </div>
+                <span class="chip ${w.traceConsent === false ? 'ok' : ''}">Just me</span>
+              </div>
+              <div class="p9-tile-sub">Zero outbound trace replication; all telemetry stays on this node</div>
+            </div>
           </div>
           ${w.traceConsent !== null ? renderP3ItemRow({
             id: "setup_consent_replication",
@@ -2291,8 +2477,32 @@
           g14Notice: "Cryptographic envelopes verify who signed a consent claim, not whether a remote peer honors deletion after replication.",
         });
       } else if (w.step === "AI") {
-        // Step 3 (`AI`): `P1: CardShell` + `P2: FieldRow` + `P3: ItemRow` (`☰` -> `P4`) + `P11: LineageChainBlock` (`CSD-115`) + `P12: ConscienceStepBlock` (`H3ERE`)
+        // Step 3 (`AI`): Unified 3D `P9` Question & Selection Slab + `P11: LineageChainBlock` + `P12: ConscienceStepBlock`
         const step3BodyHtml = `
+          ${questionHeroForStep(
+            "Which inference engine should your bonded AI steward use?",
+            "Select an inference provider for your Depth-1 Steward–Agent bond (op:delegates_to on agency:operate, agency:defer_wa)."
+          )}
+          <div class="p9-selection-grid">
+            ${[
+              { id: "local_ollama", label: "Local Ollama (Keyless)", sub: "100% local inference on this machine · zero external API calls" },
+              { id: "ciris_portal", label: "CIRIS Steward Portal", sub: "Managed federation inference with H3ERE conscience gate" },
+              { id: "byok_openai", label: "Bring Your Own API Key", sub: "Direct provider key sealed in local 0600 storage" },
+            ].map((prov, idx) => `
+              <div class="p9-selection-tile ${w.llmProvider === prov.id ? 'selected' : ''}"
+                   data-bevy-choice="1"
+                   data-bevy-selected="${w.llmProvider === prov.id ? '1' : '0'}"
+                   onclick="state.wizard.llmProvider='${prov.id}'; renderAll();">
+                <div class="p9-tile-top">
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="p9-tile-check">${w.llmProvider === prov.id ? '&#10003;' : idx + 1}</span>
+                    <span class="p9-tile-label">${prov.label}</span>
+                  </div>
+                </div>
+                <div class="p9-tile-sub">${prov.sub}</div>
+              </div>
+            `).join("")}
+          </div>
           ${renderP2FieldRow({
             labelHtml: "Inference provider (keyless local options first)",
             wireName: "input_llm_provider",
@@ -2359,12 +2569,14 @@
           g14Notice: "Software conscience gates autonomous tool execution; physical host power and OS kernel remain under operator custody.",
         });
       } else if (w.step === "COMPLETE") {
-        // Step 4 (`COMPLETE`):
-        // - `ADD_THIS_DEVICE`: `P1: CardShell` + `P7: StateBlock` + `P9: TwoPathCeremonyBlock` + `P3: ItemRow` (`☰` -> `P4`)
-        // - `NEW` (`CSD-085`): `P1: CardShell` + `P2: FieldRow` (`0600 claim_pin`) + `P7: StateBlock` + `P3: ItemRow` (`☰` -> `P4`)
+        // Step 4 (`COMPLETE`): Unified 3D `P9` Question & Selection Slab
         if (w.identityPath === "ADD_THIS_DEVICE") {
           const approved = w.addDeviceStatus === "approved";
           const addCompleteBodyHtml = `
+            ${questionHeroForStep(
+              "Has your existing CIRIS device approved this enrollment?",
+              "Complete multi-device enrollment once your existing device signs the 2-of-2 self-roster approval or the 24h W_self silence window elapses."
+            )}
             ${!approved ? `
               ${renderP7StateBlock({
                 tag: "setup_add_device_waiting",
@@ -2403,19 +2615,45 @@
           });
         } else {
           const claimBodyHtml = `
+            ${questionHeroForStep(
+              "Are you ready to seal your 0600 claim_pin and claim ownership of this node?",
+              "Verify the local 0600 claim_pin file to bind your root key as SYSTEM_ADMIN on 127.0.0.1:4243 (POST /v1/setup/claim-remote)."
+            )}
             ${renderP2FieldRow({
               labelHtml: "0600 <code>claim_pin</code> file (never logged to stdout)",
               wireName: "claim_pin",
               verification: "Wire",
               valueHtml: `<input class="field-input" style="max-width:180px; font-family:var(--mono);" data-csd-tag="input_claim_pin" value="${w.claimPin0600}" oninput="state.wizard.claimPin0600=this.value; renderAll();" />`,
             })}
-            ${w.ownershipState === "unclaimed" ? `
-              <div style="padding:8px 0;">
-                <button class="btn btn-brand" data-csd-tag="btn_claim_node_pin" onclick="wizardClaimOwnershipNow()">
-                  Claim node with 0600 PIN (POST /v1/setup/claim-remote)
-                </button>
+            <div class="p9-selection-grid">
+              <div class="p9-selection-tile ${w.ownershipState === 'claimed' ? 'selected' : ''}"
+                   data-bevy-choice="1"
+                   data-bevy-selected="${w.ownershipState === 'claimed' ? '1' : '0'}"
+                   data-csd-tag="btn_claim_node_pin"
+                   onclick="wizardClaimOwnershipNow()">
+                <div class="p9-tile-top">
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="p9-tile-check">${w.ownershipState === 'claimed' ? '&#10003;' : '1'}</span>
+                    <span class="p9-tile-label">Claim node with 0600 PIN</span>
+                  </div>
+                  <span class="chip ${w.ownershipState === 'claimed' ? 'ok' : 'brand'}">POST /v1/setup/claim-remote</span>
+                </div>
+                <div class="p9-tile-sub">Bind ${w.fedidLabel || 'alice.ciris'} as SYSTEM_ADMIN on this CIRISServer node</div>
               </div>
-            ` : ''}
+              <div class="p9-selection-tile ${w.ownershipState === 'unclaimed' ? 'selected' : ''}"
+                   data-bevy-choice="1"
+                   data-bevy-selected="${w.ownershipState === 'unclaimed' ? '1' : '0'}"
+                   onclick="state.wizard.ownershipState='unclaimed'; renderAll();">
+                <div class="p9-tile-top">
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="p9-tile-check">2</span>
+                    <span class="p9-tile-label">Leave Unclaimed (Defer Claim)</span>
+                  </div>
+                  <span class="chip">0/1 Deferred</span>
+                </div>
+                <div class="p9-tile-sub">Keep node in unclaimed setup posture until PIN is verified</div>
+              </div>
+            </div>
             ${w.ownershipState === "claiming" ? renderP7StateBlock({
               tag: "setup_ownership_claiming",
               contentHtml: "Verifying 0600 <code>claim_pin</code> and binding owner key&hellip;",
@@ -2462,7 +2700,7 @@
         }
       }
 
-      return stepHeaderHtml + activeP9DeferralHtml + bodyHtml;
+      return stepHeaderHtml + deferralStepBarHtml + bodyHtml;
     }
 
     // ══════════════════════════════════════════════════════════════════════════
@@ -2828,25 +3066,26 @@
             window.__HOLON_ACTIVE_FRAMES[propDvId] = buildHolonFrameFromDeferral(propDv);
             return `
               <div class="item-row" style="flex-direction:column; align-items:stretch; gap:8px;" data-csd-tag="row_self_roster_${p.proposalId}">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                  <div>
-                    <strong data-csd-tag="text_self_roster_kind_${p.proposalId}">
-                      ${p.kind === 'add' ? 'Add device' : 'Evict device'}: ${p.subjectLabel}
-                    </strong>
-                    <div style="font-size:12px; color:var(--ink-mute);">
-                      Proposed by ${p.proposedByLabel} &middot; <span class="mono-hint">${p.subjectKeyId}</span>
+                <div class="p9-question-hero"
+                     style="margin:2px 0;"
+                     data-bevy-question="1"
+                     data-bevy-deferral-id="${propDvId}"
+                     data-csd-tag="holon_canvas_${p.proposalId}">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                      <div class="p9-question-eyebrow">P9 &middot; SELF-ROSTER CEREMONY QUESTION &middot; <code>self_roster:${p.kind}</code></div>
+                      <strong class="p9-question-title" style="display:block;font-size:15px;" data-csd-tag="text_self_roster_kind_${p.proposalId}">
+                        ${p.kind === 'add' ? 'Add device' : 'Evict device'}: ${p.subjectLabel}?
+                      </strong>
+                      <div style="font-size:12px; color:var(--ink-mute);">
+                        Proposed by ${p.proposedByLabel} &middot; <span class="mono-hint">${p.subjectKeyId}</span>
+                      </div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:6px;">
+                      <span class="chip warn" data-csd-tag="text_self_roster_signatures_${p.proposalId}">${sigText}</span>
+                      <button class="btn-ghost" data-csd-tag="btn_receipt_${p.proposalId}" title="5-fact CEG receipt &amp; actions (P4)" onclick="openReceiptSheet('setup_add_device')">&#9776;</button>
                     </div>
                   </div>
-                  <div style="display:flex;align-items:center;gap:6px;">
-                    <span class="chip warn" data-csd-tag="text_self_roster_signatures_${p.proposalId}">${sigText}</span>
-                    <button class="btn-ghost" data-csd-tag="btn_receipt_${p.proposalId}" title="5-fact CEG receipt &amp; actions (P4)" onclick="openReceiptSheet('setup_add_device')">&#9776;</button>
-                  </div>
-                </div>
-                <div class="holon-stage-wrap" style="margin:4px 0;">
-                  <canvas class="holon-stage-canvas" style="height:210px;"
-                          data-holon-deferral-id="${propDvId}"
-                          data-csd-tag="holon_canvas_${p.proposalId}"
-                          width="640" height="210"></canvas>
                 </div>
                 <div style="font-size:12px; color:var(--ink-mute);" data-csd-tag="text_self_roster_path_${p.proposalId}">
                   ${pathText}
@@ -2864,11 +3103,15 @@
                   ` : `
                     <div style="display:flex; gap:8px;">
                       <button class="btn btn-brand"
+                              data-bevy-choice="1"
+                              data-bevy-selected="1"
                               data-csd-tag="btn_self_roster_assent_${p.proposalId}"
                               onclick="openRosterAnswerConfirm('${p.proposalId}', true)">
                         Agree (+1)
                       </button>
                       <button class="btn btn-danger"
+                              data-bevy-choice="1"
+                              data-bevy-selected="0"
                               data-csd-tag="btn_self_roster_object_${p.proposalId}"
                               onclick="openRosterAnswerConfirm('${p.proposalId}', false)">
                         Object (-1)
@@ -3467,63 +3710,77 @@
       `;
     }
 
-    // Draw the 3D `CIRISHolon` atom/bond preview inside `P4: ReceiptSheet` (`#spatialCanvas`)
+    // Draw the 3D Spatial Slab preview inside `P4: ReceiptSheet` (`#spatialCanvas`) — no molecular spheres
     function draw3DViewForm(claim) {
       const canvas = document.getElementById("spatialCanvas");
       if (!canvas) return;
       const ctx = canvas.getContext("2d");
       const w = canvas.width, h = canvas.height;
-      ctx.fillStyle = "#0B101D";
+      ctx.fillStyle = "#F3F2EE";
       ctx.fillRect(0, 0, w, h);
 
-      // 3D floor grid lines
-      ctx.strokeStyle = "rgba(56, 189, 248, 0.18)";
+      // Subtle 3D architectural perspective grid
+      ctx.strokeStyle = "rgba(43, 84, 126, 0.12)";
       ctx.lineWidth = 1;
-      ctx.strokeRect(18, 14, w - 36, h - 28);
+      for (let x = 24; x < w; x += 48) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, h);
+        ctx.stroke();
+      }
+      for (let y = 24; y < h; y += 36) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
 
-      // Context Holon (left) bonded to Subject Atom (right)
-      const t = Math.max(0, Math.min(1, ((claim.score ?? 1.0) + 1) / 2));
-      const r = Math.round((0.97 + (0.20 - 0.97) * t) * 255);
-      const g = Math.round((0.44 + (0.83 - 0.44) * t) * 255);
-      const b = Math.round((0.44 + (0.60 - 0.44) * t) * 255);
-      const radius = 16 + (claim.confidence ?? 1.0) * 16;
-
-      // 3D Cylinder bond
-      ctx.strokeStyle = "rgba(148, 163, 184, 0.72)";
-      ctx.lineWidth = 6;
+      // 3D selection spline connecting Context Slab (left) -> Signed Envelope Slab (right)
+      const bGrad = ctx.createLinearGradient(w * 0.34, h * 0.5, w * 0.66, h * 0.5);
+      bGrad.addColorStop(0, "#2B547E");
+      bGrad.addColorStop(1, "#2E6F40");
+      ctx.strokeStyle = bGrad;
+      ctx.lineWidth = 3.5;
       ctx.beginPath();
-      ctx.moveTo(w * 0.34, h * 0.5);
-      ctx.lineTo(w * 0.66, h * 0.5);
+      ctx.moveTo(w * 0.38, h * 0.46);
+      ctx.bezierCurveTo(w * 0.48, h * 0.32, w * 0.52, h * 0.60, w * 0.60, h * 0.46);
       ctx.stroke();
 
-      // Steward Signet Torus Halo around Context Holon
-      ctx.strokeStyle = "rgba(250, 204, 21, 0.75)";
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.ellipse(w * 0.34, h * 0.5, 32, 12, -0.25, 0, Math.PI * 2);
-      ctx.stroke();
+      // Context Question Slab (left)
+      ctx.fillStyle = "#FFFFFF";
+      ctx.strokeStyle = "#2B547E";
+      ctx.lineWidth = 1.6;
+      ctx.fillRect(24, 34, 185, 86);
+      ctx.strokeRect(24, 34, 185, 86);
+      ctx.fillStyle = "#2B547E";
+      ctx.font = "600 9px 'IBM Plex Mono', monospace";
+      ctx.fillText("CONTEXT QUESTION SLAB (P9)", 34, 52);
+      ctx.fillStyle = "#1A1D1F";
+      ctx.font = "600 11px 'IBM Plex Sans', sans-serif";
+      ctx.fillText(String(claim.dimension || "claim").slice(0, 24), 34, 72);
+      ctx.fillStyle = "#5A626A";
+      ctx.font = "10px 'IBM Plex Mono', monospace";
+      ctx.fillText(`subject: ${String(claim.subject || "").slice(0, 18)}`, 34, 92);
 
-      // Context Holon (`Z=8` Oxygen)
-      const grad0 = ctx.createRadialGradient(w * 0.34 - 6, h * 0.5 - 6, 3, w * 0.34, h * 0.5, 22);
-      grad0.addColorStop(0, "#BAE6FD");
-      grad0.addColorStop(1, "#2563EB");
-      ctx.fillStyle = grad0;
-      ctx.beginPath();
-      ctx.arc(w * 0.34, h * 0.5, 22, 0, Math.PI * 2);
-      ctx.fill();
+      // Signed Selection / Envelope Slab (right)
+      ctx.fillStyle = "#EEF4FA";
+      ctx.strokeStyle = "#2E6F40";
+      ctx.lineWidth = 1.8;
+      ctx.fillRect(w - 215, 34, 191, 86);
+      ctx.strokeRect(w - 215, 34, 191, 86);
+      ctx.fillStyle = "#2E6F40";
+      ctx.font = "600 9px 'IBM Plex Mono', monospace";
+      ctx.fillText(`SIGNED SELECTION · op:${claim.op}`, w - 205, 52);
+      ctx.fillStyle = "#1A1D1F";
+      ctx.font = "600 11px 'IBM Plex Sans', sans-serif";
+      ctx.fillText(String(claim.title || claim.id).slice(0, 24), w - 205, 72);
+      ctx.fillStyle = "#5A626A";
+      ctx.font = "10px 'IBM Plex Mono', monospace";
+      ctx.fillText(`score=${(claim.score ?? 1.0).toFixed(2)} · conf=${(claim.confidence ?? 1.0).toFixed(2)}`, w - 205, 92);
 
-      // Subject / Vote Atom (`view_form(&Form)`)
-      const grad1 = ctx.createRadialGradient(w * 0.66 - 6, h * 0.5 - 6, 3, w * 0.66, h * 0.5, radius);
-      grad1.addColorStop(0, "#FFFFFF");
-      grad1.addColorStop(1, `rgb(${r}, ${g}, ${b})`);
-      ctx.fillStyle = grad1;
-      ctx.beginPath();
-      ctx.arc(w * 0.66, h * 0.5, radius, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = "#E2E8F0";
-      ctx.font = "11px 'IBM Plex Mono', monospace";
-      ctx.fillText(`op:${claim.op} · score=${(claim.score ?? 1.0).toFixed(2)} · conf=${(claim.confidence ?? 1.0).toFixed(2)}`, 28, h - 22);
+      ctx.fillStyle = "#5A626A";
+      ctx.font = "10px 'IBM Plex Mono', monospace";
+      ctx.fillText(`view_form(&Form) · 3D Spatial Slab Projection · scope=${claim.scope}`, 24, h - 18);
     }
 
     function renderItemRow(c) {
@@ -3820,219 +4077,132 @@
       });
     }
 
-    // ── 3D Bevy / `CIRISHolon` (`holon-render-3d`) Canvas Projection & Interactive Spring-Bond Loop ──
-    function drawSingleHolonCanvas(canvas) {
+    // ── Full-Screen Bevy / `CIRISHolon` (`holon-render-3d`) Spatial Scene (`100vw × 100vh`) ──
+    function drawFullScreenBevyScene() {
+      const canvas = document.getElementById("bevySceneCanvas");
       if (!canvas) return;
-      const deferralId = canvas.getAttribute("data-holon-deferral-id");
-      const frame = (window.__HOLON_ACTIVE_FRAMES || {})[deferralId];
-      if (!frame) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const vw = window.innerWidth || 1280;
+      const vh = window.innerHeight || 800;
+      if (canvas.width !== Math.round(vw * dpr) || canvas.height !== Math.round(vh * dpr)) {
+        canvas.width = Math.round(vw * dpr);
+        canvas.height = Math.round(vh * dpr);
+      }
 
       const ctx = canvas.getContext("2d");
-      const w = canvas.width, h = canvas.height;
-      ctx.clearRect(0, 0, w, h);
-
-      // Background radial glow
-      const bg = ctx.createRadialGradient(w * 0.5, h * 0.48, 10, w * 0.5, h * 0.5, w * 0.6);
-      bg.addColorStop(0, "#131C31");
-      bg.addColorStop(1, "#090D16");
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, w, h);
-
-      const yaw = state.holon3d.yaw;
-      const pitch = state.holon3d.pitch;
-      const zoom = state.holon3d.zoom;
-      const cy = Math.cos(yaw), sy = Math.sin(yaw);
-      const cp = Math.cos(pitch), sp = Math.sin(pitch);
-
-      function project3D(pt) {
-        const dx = pt[0] - 12.0;
-        const dy = pt[1] - 12.0;
-        const dz = pt[2] - 12.0;
-        const x1 = dx * cy + dz * sy;
-        const z1 = -dx * sy + dz * cy;
-        const y2 = dy * cp - z1 * sp;
-        const z2 = dy * sp + z1 * cp;
-        const fov = 24.0 * zoom;
-        const scale = fov / (26.0 + z2 * 0.45);
-        return {
-          sx: w * 0.5 + x1 * scale * 16.5,
-          sy: h * 0.48 - y2 * scale * 13.5,
-          z: z2,
-          scale,
-        };
-      }
-
-      // 1. Draw 24-bohr 12-edge World Box (`holon-render-3d::spawn_world_box`)
-      const L = frame.boxL || 24.0;
-      const corners = [
-        [3,3,3], [L-3,3,3], [L-3,L-3,3], [3,L-3,3],
-        [3,3,L-3], [L-3,3,L-3], [L-3,L-3,L-3], [3,L-3,L-3],
-      ].map(project3D);
-      const edges = [
-        [0,1],[1,2],[2,3],[3,0],
-        [4,5],[5,6],[6,7],[7,4],
-        [0,4],[1,5],[2,6],[3,7],
-      ];
-      ctx.strokeStyle = "rgba(56, 189, 248, 0.18)";
-      ctx.lineWidth = 1;
-      edges.forEach(([i, j]) => {
-        ctx.beginPath();
-        ctx.moveTo(corners[i].sx, corners[i].sy);
-        ctx.lineTo(corners[j].sx, corners[j].sy);
-        ctx.stroke();
-      });
-
-      const projectedAtoms = frame.atoms.map(a => ({
-        ...a,
-        proj: project3D(a.pos),
-      }));
-
-      // 2. Draw 3D Cylinder Bonds (`FrameBond`) + Faint Orbital Guide Tethers
-      projectedAtoms.slice(1).forEach(a => {
-        const c0 = projectedAtoms[0].proj;
-        const c1 = a.proj;
-        ctx.save();
-        if (a.selected) {
-          const bGrad = ctx.createLinearGradient(c0.sx, c0.sy, c1.sx, c1.sy);
-          bGrad.addColorStop(0, "rgba(96, 165, 250, 0.92)");
-          bGrad.addColorStop(1, "rgba(52, 211, 153, 0.92)");
-          ctx.strokeStyle = bGrad;
-          ctx.lineWidth = 5.5;
-        } else {
-          ctx.strokeStyle = "rgba(148, 163, 184, 0.22)";
-          ctx.setLineDash([4, 4]);
-          ctx.lineWidth = 1.4;
-        }
-        ctx.beginPath();
-        ctx.moveTo(c0.sx, c0.sy);
-        ctx.lineTo(c1.sx, c1.sy);
-        ctx.stroke();
-        ctx.restore();
-      });
-
-      // 3. Draw `CIRISGame` Steward Signet Torus Halo around Central Context Holon (`Atom 0`)
-      const c0 = projectedAtoms[0].proj;
       ctx.save();
-      ctx.strokeStyle = "rgba(250, 204, 21, 0.72)";
-      ctx.lineWidth = 2.4;
-      ctx.beginPath();
-      ctx.ellipse(c0.sx, c0.sy, 34 * c0.scale, 13 * c0.scale, yaw * 0.4, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.restore();
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, vw, vh);
 
-      // 4. Depth-sort and draw 3D Atoms (`Atom 0` = Context, `Atom 1..=K` = Choice Orbs)
-      const sorted = [...projectedAtoms].sort((a, b) => b.proj.z - a.proj.z);
-      canvas.__hitAtoms = [];
+      // 1. Warm Stone-and-Paper 3D Architectural Environment Lighting
+      const bg = ctx.createRadialGradient(vw * 0.5, vh * 0.32, 40, vw * 0.5, vh * 0.5, Math.max(vw, vh) * 0.78);
+      bg.addColorStop(0, "#FAF9F6");
+      bg.addColorStop(0.65, "#F3F1EC");
+      bg.addColorStop(1, "#E7E4DC");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, vw, vh);
 
-      sorted.forEach(a => {
-        const sp = HOLON_SPECIES_PALETTE[a.z] || HOLON_SPECIES_PALETTE[6];
-        const rPx = Math.max(11, a.radius * 18.5 * a.proj.scale);
-        const { sx, sy } = a.proj;
+      // 2. 3D Perspective World-Box Architectural Floor & Horizon Grid (`holon-render-3d::spawn_world_box`)
+      const horizonY = vh * 0.16 + state.holon3d.pitch * 36;
+      const vanishX = vw * 0.5 + state.holon3d.yaw * 64;
+      ctx.strokeStyle = "rgba(43, 84, 126, 0.065)";
+      ctx.lineWidth = 1;
 
-        // Outer glow for selected choice or Context Holon
-        if (a.isContext || a.selected) {
-          const glow = ctx.createRadialGradient(sx, sy, rPx * 0.4, sx, sy, rPx * 2.1);
-          glow.addColorStop(0, a.isContext ? "rgba(96, 165, 250, 0.36)" : "rgba(52, 211, 153, 0.36)");
-          glow.addColorStop(1, "rgba(0, 0, 0, 0)");
-          ctx.fillStyle = glow;
-          ctx.beginPath();
-          ctx.arc(sx, sy, rPx * 2.1, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        // 3D lit sphere
-        const sphereGrad = ctx.createRadialGradient(sx - rPx * 0.32, sy - rPx * 0.32, rPx * 0.12, sx, sy, rPx);
-        sphereGrad.addColorStop(0, "#FFFFFF");
-        sphereGrad.addColorStop(0.35, sp.color);
-        sphereGrad.addColorStop(1, "#0F172A");
-        ctx.fillStyle = sphereGrad;
+      const numRays = 16;
+      for (let i = -numRays; i <= numRays; i++) {
         ctx.beginPath();
-        ctx.arc(sx, sy, rPx, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Crisp rim
-        ctx.strokeStyle = a.selected ? "#38BDF8" : "rgba(255,255,255,0.35)";
-        ctx.lineWidth = a.selected ? 2.2 : 1.0;
+        ctx.moveTo(vanishX + i * 28, horizonY);
+        ctx.lineTo(vanishX + i * 220, vh);
         ctx.stroke();
+      }
+      for (let row = 1; row <= 10; row++) {
+        const t = Math.pow(row / 10, 1.55);
+        const y = horizonY + (vh - horizonY) * t;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(vw, y);
+        ctx.stroke();
+      }
 
-        // Species + Vote label
-        ctx.fillStyle = "#F8FAFC";
-        ctx.font = `${a.isContext ? "600 11px" : "500 10px"} 'IBM Plex Sans', sans-serif`;
-        ctx.textAlign = "center";
-        const shortLabel = a.isContext ? `CONTEXT (${sp.symbol})` : a.label;
-        ctx.fillText(shortLabel, sx, sy + rPx + 13);
+      // 3. Live 3D Selection Splines connecting every Question Slab (`[data-bevy-question="1"]`)
+      //    to its Selection Slabs (`[data-bevy-choice="1"]`) in the full-screen Bevy scene
+      const questions = document.querySelectorAll('[data-bevy-question="1"]');
+      questions.forEach(qEl => {
+        const qRect = qEl.getBoundingClientRect();
+        if (qRect.bottom < 0 || qRect.top > vh) return;
+        const qx = qRect.left + 26;
+        const qy = qRect.bottom - 8;
 
-        if (!a.isContext) {
-          canvas.__hitAtoms.push({ sx, sy, rPx: rPx + 6, choiceId: a.choiceId, deferralId });
-        }
+        const cardEl = qEl.closest(".card, .item-row") || qEl.parentElement;
+        if (!cardEl) return;
+        const choices = cardEl.querySelectorAll('[data-bevy-choice="1"]');
+        choices.forEach(cEl => {
+          const cRect = cEl.getBoundingClientRect();
+          const cx = cRect.left + 18;
+          const cy = cRect.top + cRect.height * 0.5;
+          const isSelected = cEl.getAttribute("data-bevy-selected") === "1" || cEl.classList.contains("selected");
+
+          ctx.save();
+          if (isSelected) {
+            const grad = ctx.createLinearGradient(qx, qy, cx, cy);
+            grad.addColorStop(0, "rgba(43, 84, 126, 0.55)");
+            grad.addColorStop(1, "rgba(46, 111, 64, 0.65)");
+            ctx.strokeStyle = grad;
+            ctx.lineWidth = 2.6;
+          } else {
+            ctx.strokeStyle = "rgba(90, 98, 106, 0.18)";
+            ctx.setLineDash([4, 4]);
+            ctx.lineWidth = 1.2;
+          }
+          ctx.beginPath();
+          ctx.moveTo(qx, qy);
+          ctx.bezierCurveTo(qx - 18, (qy + cy) * 0.5, cx - 22, cy, cx, cy);
+          ctx.stroke();
+          ctx.restore();
+        });
       });
 
-      // Also push to `/holon/webgl2/atoms3d.js` if loaded
-      if (typeof window.holon3d_frame_begin === "function") {
-        try {
-          window.holon3d_frame_begin(frame.atoms.length, frame.bonds.length, frame.boxL);
-          frame.atoms.forEach((a, idx) => {
-            const sp = HOLON_SPECIES_PALETTE[a.z] || HOLON_SPECIES_PALETTE[6];
-            window.holon3d_frame_atom(idx, a.pos[0], a.pos[1], a.pos[2], a.radius, sp.rgb[0], sp.rgb[1], sp.rgb[2]);
-          });
-          frame.bonds.forEach((b, idx) => {
-            window.holon3d_frame_bond(idx, b.a, b.b, b.order);
-          });
-          window.holon3d_frame_commit();
-        } catch (_e) {}
-      }
+      // 4. Subtle Bevy 3D Scene HUD watermark in bottom-right corner
+      ctx.fillStyle = "rgba(90, 98, 106, 0.55)";
+      ctx.font = "500 10px 'IBM Plex Mono', monospace";
+      ctx.textAlign = "right";
+      ctx.fillText(
+        `CIRISHolon 3D Scene (100vw×100vh) · P1–P12 Spatial Slabs · CIRISServer v${state.liveNode.version}`,
+        vw - 16,
+        vh - 10
+      );
+      ctx.restore();
     }
 
     function wireHolonCanvasEvents() {
-      document.querySelectorAll("canvas.holon-stage-canvas").forEach(canvas => {
-        if (canvas.__holonWired) {
-          drawSingleHolonCanvas(canvas);
-          return;
-        }
-        canvas.__holonWired = true;
-        drawSingleHolonCanvas(canvas);
+      drawFullScreenBevyScene();
+      if (window.__BEVY_VIEWPORT_WIRED) return;
+      window.__BEVY_VIEWPORT_WIRED = true;
 
-        let dragging = false;
-        let moved = false;
-        let lastX = 0, lastY = 0;
-
-        canvas.addEventListener("pointerdown", e => {
-          dragging = true;
-          moved = false;
-          lastX = e.clientX;
-          lastY = e.clientY;
-        });
-        window.addEventListener("pointermove", e => {
-          if (!dragging) return;
-          const dx = e.clientX - lastX;
-          const dy = e.clientY - lastY;
-          if (Math.abs(dx) > 2 || Math.abs(dy) > 2) moved = true;
-          lastX = e.clientX;
-          lastY = e.clientY;
-          state.holon3d.yaw += dx * 0.012;
-          state.holon3d.pitch = Math.max(-1.1, Math.min(1.1, state.holon3d.pitch + dy * 0.012));
-          document.querySelectorAll("canvas.holon-stage-canvas").forEach(drawSingleHolonCanvas);
-        });
-        window.addEventListener("pointerup", () => {
-          dragging = false;
-        });
-        canvas.addEventListener("click", e => {
-          if (moved) return;
-          const rect = canvas.getBoundingClientRect();
-          const scaleX = canvas.width / rect.width;
-          const scaleY = canvas.height / rect.height;
-          const cx = (e.clientX - rect.left) * scaleX;
-          const cy = (e.clientY - rect.top) * scaleY;
-          const hits = canvas.__hitAtoms || [];
-          for (const h of hits) {
-            const dist = Math.hypot(cx - h.sx, cy - h.sy);
-            if (dist <= h.rPx) {
-              holonSelectDeferralOrb(h.deferralId, h.choiceId);
-              return;
-            }
-          }
-        });
+      window.addEventListener("resize", () => {
+        requestAnimationFrame(drawFullScreenBevyScene);
       });
+
+      const surfaceEl = document.getElementById("surfaceRoot");
+      if (surfaceEl) {
+        surfaceEl.addEventListener("scroll", () => {
+          requestAnimationFrame(drawFullScreenBevyScene);
+        }, { passive: true });
+      }
+
+      window.addEventListener("pointermove", e => {
+        const vw = window.innerWidth || 1280;
+        const vh = window.innerHeight || 800;
+        const nx = (e.clientX / vw) - 0.5;
+        const ny = (e.clientY / vh) - 0.5;
+        state.holon3d.yaw = nx * 0.22;
+        state.holon3d.pitch = ny * 0.18;
+        if (surfaceEl) {
+          surfaceEl.style.setProperty("--cam-ry", `${(nx * 1.35).toFixed(2)}deg`);
+          surfaceEl.style.setProperty("--cam-rx", `${(-ny * 1.15).toFixed(2)}deg`);
+        }
+        requestAnimationFrame(drawFullScreenBevyScene);
+      }, { passive: true });
     }
 
     async function initHolonEngineAssets() {

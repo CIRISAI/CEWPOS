@@ -8,20 +8,23 @@
 > The whole thing is designed so that the rules cannot quietly drift from the code, and the code cannot
 > quietly drift from the formal models.
 >
-> **CIRISServer** (`v0.5.232`) and **CIRISAgent** (app store) are the **shipping production software** —
+> **CIRISServer** (`v0.5.243`) and **CIRISAgent** (app store) are the **shipping production software** —
 > the fabric node and the conscience-bearing AI agent. Their shipping multi-platform interface is
 > **[CIRISClient](https://github.com/CIRISAI/CIRISClient)** (Kotlin Multiplatform across Android, iOS,
-> desktop, and WASM browser, governed by **80+ Client Surface Definitions** in **CSD/3 → CSD/4** and the
+> desktop, and WASM browser, governed by **101 Client Surface Definitions** in **CSD/3 → CSD/4** and the
 > [Circles architecture](https://cirisai.github.io/CIRISClient/circles.html)). **CEWPOS is the native
 > OS & semantic-view architecture** over that same substrate: an **Attestation Calculus** evaluator,
-> **zero-import WASM view-forms**, and a **Bevy GPU / WebGPU renderer** driven directly by the formal
-> state and claim algebra of **[CIRISConstitution](https://github.com/CIRISAI/CIRISConstitution)**
+> **zero-import WASM view-forms**, and a **full-screen Bevy / `CIRISHolon` 3D renderer (`100vw × 100vh`)**
+> driven directly by the **12 closed UX primitives (`P1`–`P12`)** and the formal state and claim algebra of
+> **[CIRISConstitution](https://github.com/CIRISAI/CIRISConstitution)**
 > (`v1.0-rc8.1` / `rc9` formal closure). Continuously verified by
 > **[CIRISConformance](https://github.com/CIRISAI/CIRISConformance)** (17,000+ tests, 219 conformance
 > specs) · AGPL-3.0-or-later · part of the [CIRIS](https://ciris.ai) ecosystem.
 
 **New here?** Start with [`WHY.md`](WHY.md) — a 5-minute orientation (the inversion, the small kernel,
-the three layers, and why CEWPOS is *moderation-first*), and the plain-words
+the three layers, and why CEWPOS is *moderation-first*), [`AGENTS.md`](AGENTS.md) — the canonical
+engineering guide for **full-screen Bevy primitives-based rendering (`P1`–`P12`) and CEWPOS CEG
+projection**, and the plain-words
 [CIRIS Circles explainer](https://cirisai.github.io/CIRISClient/circles.html) (*"Starts close to you.
 Moves out only when you say so. Comes back if anyone in it asks."*).
 
@@ -38,9 +41,9 @@ scoped, pauseable by named humans, and checkable against both formal models and 
 | **1. Constitution (CC)** | Single rulebook | [CIRISConstitution](https://github.com/CIRISAI/CIRISConstitution) (`v1.0-rc8.1` tagged · `rc9` formal-closure branch): Ethics (Meta-Goal M-1, PDMA, Recursive Golden Rule, fail-secure) + **CEG wire grammar** (1+4 closed row types, 169 namespace families across 12 change kinds, 10 governance policy families) in one stewarded, versioned AGPL document. |
 | **2. Formal models** | Machine-checked witnesses | **14 formal model suites** (`formal/` in CC `rc9`): TLA+ (`trust_root`, `accord_halt`, `mesh_net`, `self_roster`, `retirement`, `consent`, `membership`, `two_path`, `withdraws_admission`, `guarantees`, `cewp_node` spine), Lean 4 (`accord_roster`, `reciprocity`, `influence`, `PolicyCorridor`, `coherence-ratchet`), and Python (`authority_tree`). **157 states** over **51 variables** in **9 planes** (`STATE_TABLE.tsv`), **152 checked invariants/theorems** (`INVARIANTS.tsv`), and the adequacy cascade: *ethics → 11 promises (G1–G28) → rules → invariants → state table → plane models → spine → CSD/4 catalogue → claims register*. |
 | **3. Substrate** | Crypto + storage + transport | [CIRISVerify](https://github.com/CIRISAI/CIRISVerify) `v20.2.0` (hybrid Ed25519 + ML-DSA-65 signatures, X25519 + ML-KEM-768 KEX, transparency), [CIRISPersist](https://github.com/CIRISAI/CIRISPersist) `v59.1.0` (signed state, 9-axis `ContextualIntegrity` gate, chunk-DAG + stream-STH, v4 hardware-amended genesis bundle), [CIRISEdge](https://github.com/CIRISAI/CIRISEdge) `v43.0.0` (sealed Reticulum transport, 26 Tier-1 constitutional `MessageType`s + 3 Tier-2 `Opaque*` channels, A/V + MLS/TreeKEM). |
-| **4. Fabric node** | The running peer | [CIRISServer](https://github.com/CIRISAI/CIRISServer) `v0.5.232` — the decentralized CEWP node (`ciris_server._native` cohabitation runtime folding `ciris-lens-core`, registry, and nodecore surfaces). Hosts routes, trust-root standing verdicts, households, communities, rooms, drive custody, self-key rosters, and the native 20-topology harness (`T0`–`T19`). |
+| **4. Fabric node** | The running peer | [CIRISServer](https://github.com/CIRISAI/CIRISServer) `v0.5.243` — the decentralized CEWP node (`ciris_server._native` cohabitation runtime folding `ciris-lens-core`, registry, and nodecore surfaces). Hosts routes, trust-root standing verdicts, households, communities, rooms, drive custody, self-key rosters, moderation & content notes, and the native 20-topology harness (`T0`–`T19`). |
 | **5. Agent runtime** | Conscience-bearing AI | **CIRISAgent** — H3ERE pipeline (ethical PDMA / common-sense CSDMA / domain DMAs + conscience gates), Wisdom-Based Deferral (WBD) to a named human Wise Authority, refusal available every round (`G17`), resource-cost accounting (`G27`), signed hash-chained audit trail, and a human halt latch that stops the agent's act gate (`423`) while leaving node data and serving doors open (`Inv_X1_LatchDoesNotBlockServing`). |
-| **6. Client surface** | Where a person meets the mesh | [CIRISClient](https://github.com/CIRISAI/CIRISClient) (KMP/Compose across Android, iOS, Desktop, and Browser WASM) + **CEWPOS** (native OS layer: Attestation Calculus + zero-import WASM view-forms + Bevy renderer). One runtime-narrowing client that adapts to whether the attached node is bare or has an agent brain folded onto it. |
+| **6. Client surface** | Where a person meets the mesh | [CIRISClient](https://github.com/CIRISAI/CIRISClient) (KMP/Compose across Android, iOS, Desktop, and Browser WASM) + **CEWPOS** (native OS layer: Attestation Calculus + zero-import WASM view-forms + full-screen Bevy / `CIRISHolon` 3D renderer). One runtime-narrowing client that adapts to whether the attached node is bare or has an agent brain folded onto it. |
 | **7. CSD/3 → CSD/4** | Surface + topology contracts | **CSD/3** (`CSD.md`): 6-stage lifecycle (`envisioned → shipped`), `ceg:` registry-bound fields, 4 mandatory list states, DSL v2 predicates, and static route closure (`check_csd_routes.py`). **CSD/4** (`FSD/CSD4.md`): binds each card's `csd:tests` block to the closed **20-topology catalogue (`T0`–`T19`, 110 state atoms)** so UI flows, the server harness, and the TLA+/Lean models prove the exact same network shape. |
 
 ### What a person actually experiences ([Circles](https://cirisai.github.io/CIRISClient/circles.html))
@@ -95,17 +98,17 @@ more than telling the truth.
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────┐
-│  CSD/3 → CSD/4 Surface & Topology Contracts (80+ cards · T0–T19 catalogue) │
+│  CSD/3 → CSD/4 Surface & Topology Contracts (101 cards · T0–T19 catalogue) │
 │  Every surface bound to CEG families, 4 list states, routes & state atoms  │
 ├─────────────────────────────────────┬──────────────────────────────────────┤
 │  CIRISClient (shipping KMP/Compose) │  CEWPOS (this repo · native/WASM)    │
 │  5 Circles · 7 Tabs · 6 Instruments │  Attestation Calculus · zero-import  │
-│  9 UI Primitives · 29 MQM locales   │  WASM view-forms · Scene IR · Bevy   │
+│  9 UI Primitives · 29 MQM locales   │  12 Primitives · Full-Screen Bevy 3D │
 ├─────────────────────────────────────┴──────────────────────────────────────┤
 │  CIRISAgent (shipping · app store · H3ERE conscience + WBD + Refusal G17)  │
 │  emits gate-checked attestations only — pauseable via Accord halt latch    │
 ├────────────────────────────────────────────────────────────────────────────┤
-│  CIRISServer v0.5.232 (shipping · decentralized CEWP fabric node)          │
+│  CIRISServer v0.5.243 (shipping · decentralized CEWP fabric node)          │
 │  ciris_server._native · lens-core + registry/node folded · T0–T19 harness  │
 ├──────────────┬──────────────┬──────────────┬───────────────────────────────┤
 │ciris-persist │ ciris-verify │  ciris-edge  │ CIRISConstitution v1.0-rc8.1  │
@@ -120,10 +123,10 @@ more than telling the truth.
 |---|---|---|
 | **Constitution & Formal Closure** | `CIRISConstitution` `v1.0-rc8.1` (`rc9` branch: 14 formal model suites, 157 states / 51 vars / 9 planes, 152 checked properties, 169 CEG families, 10 governance policies) | normative & machine-checked in CI (`TLC` + `Lean 4` + `authority_tree.py`) |
 | **Substrate crates** | `ciris-persist` v59.1 · `ciris-verify` v20.2 · `ciris-edge` v43.0 | production, conformance-verified (~1.21M LOC Rust across the 3 crates) |
-| **Fabric node** | `ciris-server` v0.5.232 (`ciris_server._native` cohabitation wheel + folded `ciris-lens-core`, registry, nodecore & `T0`–`T19` native harness) | production (~270k LOC Rust + ~80k LOC Python) |
+| **Fabric node** | `ciris-server` v0.5.243 (`ciris_server._native` cohabitation wheel + folded `ciris-lens-core`, registry, nodecore & `T0`–`T19` native harness) | production (~270k LOC Rust + ~80k LOC Python), consumed directly as a crate (`cewpos-node`) |
 | **Agent runtime** | `CIRISAgent` — H3ERE (PDMA/CSDMA/DSDMA + conscience gates), WBD deferral, human halt gate | on the app store; optional participant |
-| **Shipping client** | [`CIRISClient`](https://github.com/CIRISAI/CIRISClient) — KMP/Compose (Android, iOS, Desktop, WASM browser), 80+ CSD/3 & CSD/4 cards, 29 locales | shipping across 5 live-QA platforms |
-| **CEWPOS** *(this repo)* | Attestation Calculus · zero-import WASM view-forms · Scene IR · Bevy renderer | object model complete; evaluator + view-forms spike-proven; formal UI algebra planned in [`UI_FORMAL_PLAN.md`](UI_FORMAL_PLAN.md) |
+| **Shipping client** | [`CIRISClient`](https://github.com/CIRISAI/CIRISClient) — KMP/Compose (Android, iOS, Desktop, WASM browser), 101 CSD/3 & CSD/4 cards, 29 locales | shipping across 5 live-QA platforms |
+| **CEWPOS** *(this repo)* | Attestation Calculus · zero-import WASM view-forms · 12 closed UX primitives (`P1`–`P12`) · Full-Screen Bevy / `CIRISHolon` 3D Scene | object model complete; full-stack `cewpos-node` (`ciris-server v0.5.243`), evaluator + view-forms + 11/11 live `CSD/4` harness verified (see [`AGENTS.md`](AGENTS.md) & [`UI_FORMAL_PLAN.md`](UI_FORMAL_PLAN.md)) |
 
 See [`DEPLOYMENT.md`](DEPLOYMENT.md) for bare-metal requirements and node deployment topology, and
 [`UI_FORMAL_PLAN.md`](UI_FORMAL_PLAN.md) for the formal evaluation of the UI against CSD/3 → CSD/4,
