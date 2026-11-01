@@ -108,7 +108,7 @@ class CewposRequestHandler(http.server.SimpleHTTPRequestHandler):
                 },
             )
             return
-        if self.path == "/health" or self.path.startswith("/v1/"):
+        if self.path == "/health" or self.path.startswith("/v1/") or self.path.startswith("/cewpos/v1/"):
             self._proxy_to_node("GET")
             return
         super().do_GET()
