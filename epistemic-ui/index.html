@@ -455,6 +455,87 @@
       background: #ffffff;
       box-shadow: 0 6px 18px rgba(31, 94, 122, 0.10);
     }
+    /* ── Live QR Camera Viewfinder ── */
+    .qr-camera-viewport {
+      position: relative;
+      width: 100%;
+      height: 290px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #141413;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.25);
+    }
+    .qr-camera-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .qr-reticle {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-radius: 16px;
+      box-shadow: 0 0 0 4000px rgba(0, 0, 0, 0.45);
+      pointer-events: none;
+    }
+    .qr-reticle::before, .qr-reticle::after {
+      content: "";
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border-color: #D97757;
+      border-style: solid;
+    }
+    .qr-reticle::before {
+      top: -2px; left: -2px;
+      border-width: 4px 0 0 4px;
+      border-top-left-radius: 14px;
+    }
+    .qr-reticle::after {
+      bottom: -2px; right: -2px;
+      border-width: 0 4px 4px 0;
+      border-bottom-right-radius: 14px;
+    }
+    .qr-reticle-c2 {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+    }
+    .qr-reticle-c2::before, .qr-reticle-c2::after {
+      content: "";
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border-color: #D97757;
+      border-style: solid;
+    }
+    .qr-reticle-c2::before {
+      top: -2px; right: -2px;
+      border-width: 4px 4px 0 0;
+      border-top-right-radius: 14px;
+    }
+    .qr-reticle-c2::after {
+      bottom: -2px; left: -2px;
+      border-width: 0 0 4px 4px;
+      border-bottom-left-radius: 14px;
+    }
+    .qr-scan-line {
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #788C5D, #D97757, #788C5D, transparent);
+      box-shadow: 0 0 8px #788C5D;
+      animation: qrScanSweep 2s ease-in-out infinite alternate;
+    }
+    @keyframes qrScanSweep {
+      0% { top: 8%; opacity: 0.3; }
+      50% { opacity: 1; }
+      100% { top: 92%; opacity: 0.3; }
+    }
     .editorial-input-capsule {
       width: 100%;
       padding: 10px 14px;
@@ -939,6 +1020,9 @@
   <!-- Modal / Sheet Host -->
   <div id="sheetHost"></div>
 
+  <!-- Pure JS QR Decoder for Offline / Multi-Browser Camera Viewfinder -->
+  <script src="/jsqr.min.js"></script>
+
   <script>
     const CIRCLES = [
       { id: "JustMe", wire: "self", label: "Just me", color: "#22C0E8", rank: 0 },
@@ -1247,6 +1331,9 @@
     }
 
     function closeSheet() {
+      if (typeof closeQrCameraScanner === "function") {
+        closeQrCameraScanner();
+      }
       document.getElementById("sheetHost").innerHTML = "";
     }
 
@@ -2142,6 +2229,228 @@
       renderAll();
     }
 
+    // ── Live QR Camera Scanner Modal & Decoder ──
+    let __qrCameraStream = null;
+    let __qrScanAnimationId = null;
+
+    function openQrCameraScanner() {
+      const host = document.getElementById("sheetHost");
+      host.innerHTML = `
+        <div class="sheet-backdrop" onclick="if(event.target===this)closeQrCameraScanner()">
+          <div class="sheet" style="max-width:480px;" data-csd-tag="sheet_qr_camera_scanner">
+            <div class="sheet-header">
+              <span class="sheet-title">&#128247; Scan Device Pairing QR Code</span>
+              <button class="btn-ghost" onclick="closeQrCameraScanner()">&#10005;</button>
+            </div>
+
+            <div class="qr-camera-viewport">
+              <video id="qrCameraVideo" class="qr-camera-video" playsinline autoplay muted></video>
+              <canvas id="qrScanCanvas" style="display:none;"></canvas>
+              <div class="qr-reticle">
+                <div class="qr-reticle-c2"></div>
+                <div class="qr-scan-line"></div>
+              </div>
+              <div id="qrCameraStatusOverlay" style="display:none; position:absolute; inset:0; background:rgba(20,20,19,0.88); color:#FAF9F5; padding:24px; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;">
+                <div style="font-size:28px;">&#128248;</div>
+                <div id="qrCameraStatusMsg" style="font-size:13px; color:#E8E6DC; max-width:320px; line-height:1.4;">Connecting to camera&hellip;</div>
+              </div>
+            </div>
+
+            <div style="font-size:12.5px; color:var(--ink-mute); text-align:center; padding:10px 0 4px;">
+              Point your camera at the QR code displayed on your primary device.
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:10px; padding-top:10px; border-top:1px solid var(--hairline);">
+              <label class="btn" style="cursor:pointer;" title="Scan a saved QR code image or screenshot">
+                &#128194; Upload Image
+                <input type="file" id="qrFileInput" accept="image/*" style="display:none;" onchange="handleQrFileSelected(this)" />
+              </label>
+              <button class="btn" onclick="wizardScanQrFill(); closeQrCameraScanner();" title="Fill sample address for testing">
+                Demo Fill
+              </button>
+              <button class="btn" onclick="closeQrCameraScanner()">Cancel</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      startQrCameraStream();
+    }
+
+    async function startQrCameraStream() {
+      const statusOverlay = document.getElementById("qrCameraStatusOverlay");
+      const statusMsg = document.getElementById("qrCameraStatusMsg");
+      const videoEl = document.getElementById("qrCameraVideo");
+      const canvasEl = document.getElementById("qrScanCanvas");
+
+      if (!videoEl) return;
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        if (statusOverlay && statusMsg) {
+          statusOverlay.style.display = "flex";
+          statusMsg.innerHTML = "Camera API not supported in this browser. Please use the <strong>Upload Image</strong> button below.";
+        }
+        return;
+      }
+
+      try {
+        if (statusOverlay) statusOverlay.style.display = "flex";
+        if (statusMsg) statusMsg.textContent = "Requesting camera permissions…";
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: { ideal: "environment" },
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+          },
+          audio: false,
+        });
+
+        __qrCameraStream = stream;
+        videoEl.srcObject = stream;
+        await videoEl.play();
+
+        if (statusOverlay) statusOverlay.style.display = "none";
+
+        runQrDetectionLoop(videoEl, canvasEl);
+      } catch (err) {
+        console.warn("[QR Scanner] Camera error:", err);
+        if (statusOverlay && statusMsg) {
+          statusOverlay.style.display = "flex";
+          let friendly = "Camera access denied or unavailable.";
+          if (err.name === "NotAllowedError") friendly = "Camera permission was denied. Please allow camera access in browser settings, or upload a QR image.";
+          else if (err.name === "NotFoundError") friendly = "No video camera was found on this device. You can upload an image or type the address.";
+          statusMsg.innerHTML = `${friendly}<br><span style="font-size:11px; color:#B0AEA5;">(${err.name})</span>`;
+        }
+      }
+    }
+
+    function runQrDetectionLoop(videoEl, canvasEl) {
+      const hasBarcodeDetector = "BarcodeDetector" in window;
+      let detector = null;
+      if (hasBarcodeDetector) {
+        try {
+          detector = new BarcodeDetector({ formats: ["qr_code"] });
+        } catch (_e) {
+          detector = null;
+        }
+      }
+
+      const canvasCtx = canvasEl ? canvasEl.getContext("2d", { willReadFrequently: true }) : null;
+
+      async function scanFrame() {
+        if (!__qrCameraStream || !videoEl || videoEl.paused || videoEl.ended) return;
+
+        if (videoEl.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+          // 1. Native BarcodeDetector if available
+          if (detector) {
+            try {
+              const barcodes = await detector.detect(videoEl);
+              if (barcodes && barcodes.length > 0) {
+                const result = barcodes[0].rawValue;
+                if (result) {
+                  onQrCodeDetected(result);
+                  return;
+                }
+              }
+            } catch (_e) {}
+          }
+
+          // 2. jsQR via canvas
+          if (typeof jsQR === "function" && canvasEl && canvasCtx) {
+            if (canvasEl.width !== videoEl.videoWidth || canvasEl.height !== videoEl.videoHeight) {
+              canvasEl.width = videoEl.videoWidth;
+              canvasEl.height = videoEl.videoHeight;
+            }
+            canvasCtx.drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
+            try {
+              const imgData = canvasCtx.getImageData(0, 0, canvasEl.width, canvasEl.height);
+              const code = jsQR(imgData.data, imgData.width, imgData.height, {
+                inversionAttempts: "dontInvert",
+              });
+              if (code && code.data) {
+                onQrCodeDetected(code.data);
+                return;
+              }
+            } catch (_e) {}
+          }
+        }
+
+        __qrScanAnimationId = requestAnimationFrame(scanFrame);
+      }
+
+      __qrScanAnimationId = requestAnimationFrame(scanFrame);
+    }
+
+    function onQrCodeDetected(rawData) {
+      if (!rawData) return;
+      closeQrCameraScanner();
+
+      let uri = rawData.trim();
+      state.wizard.addDeviceContact = uri;
+      renderAll();
+
+      const input = document.querySelector('[data-csd-tag="input_add_device_contact"]');
+      if (input) input.value = uri;
+      const sendBtn = document.querySelector('[data-csd-tag="btn_add_device_send"]');
+      if (sendBtn) {
+        sendBtn.disabled = !state.wizard.addDeviceName.trim() || !uri;
+      }
+    }
+
+    function handleQrFileSelected(fileInput) {
+      if (!fileInput.files || fileInput.files.length === 0) return;
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = async function() {
+          if ("BarcodeDetector" in window) {
+            try {
+              const detector = new BarcodeDetector({ formats: ["qr_code"] });
+              const codes = await detector.detect(img);
+              if (codes && codes.length > 0) {
+                onQrCodeDetected(codes[0].rawValue);
+                return;
+              }
+            } catch (_e) {}
+          }
+
+          if (typeof jsQR === "function") {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imgData.data, imgData.width, imgData.height);
+            if (code && code.data) {
+              onQrCodeDetected(code.data);
+              return;
+            }
+          }
+
+          alert("Could not detect a QR code in the uploaded image. Please try another image or enter the contact address.");
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function closeQrCameraScanner() {
+      if (__qrScanAnimationId) {
+        cancelAnimationFrame(__qrScanAnimationId);
+        __qrScanAnimationId = null;
+      }
+      if (__qrCameraStream) {
+        try {
+          __qrCameraStream.getTracks().forEach(t => t.stop());
+        } catch (_e) {}
+        __qrCameraStream = null;
+      }
+      document.getElementById("sheetHost").innerHTML = "";
+    }
+
     function wizardScanQrFill() {
       // `btn_add_device_scan` (`P10: QrCeremony`) fills contact URI and never auto-sends (`CSD-093`)
       state.wizard.addDeviceContact = "ciris://ed25519:alice.ciris#root@192.168.1.42:4243";
@@ -2641,7 +2950,7 @@
               titleHtml: "Existing CIRIS ID Contact / QR Scan",
               payloadInputHtml: `<input class="spatial-input" data-csd-tag="input_add_device_contact" placeholder="ciris://ed25519:...@host:4243" value="${w.addDeviceContact}" oninput="wizardOnAddDeviceContactInput(this)" onblur="renderAll()" />`,
               scanButtonTag: "btn_add_device_scan",
-              onScanJs: "wizardScanQrFill()",
+              onScanJs: "openQrCameraScanner()",
               matchCode: w.addDeviceMatchCode,
               actionsHtml: `
                 <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0;">
