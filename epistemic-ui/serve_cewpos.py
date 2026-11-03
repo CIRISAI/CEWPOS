@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""CEWPOS Epistemic UI HTTP Server & Live CIRISServer v0.5.243 Reverse Proxy.
+"""CEWPOS Epistemic UI HTTP Server & Live CIRISServer v0.5.244 Reverse Proxy.
 
 Serves `/home/emoore/CEWPOS/epistemic-ui` on `http://127.0.0.1:8787` and forwards
 `/health`, `/lens/*`, and `/v1/*` requests to the local `CIRISServer` read API (`http://127.0.0.1:4243`)
 so the browser UI can interact with a live local node without cross-origin refusals.
 Also exposes `GET /cewpos/local-node` to surface local first-run metadata (such as
-whether `/tmp/ciris_qa_243/claim_pin` exists and its mode) for local QA.
+whether `/tmp/ciris_qa_244/claim_pin` exists and its mode) for local QA.
 """
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 NODE_BASE = os.environ.get("CIRIS_NODE_URL", "http://127.0.0.1:4243")
-DEFAULT_QA_HOME = "/tmp/ciris_qa_243" if Path("/tmp/ciris_qa_243").exists() else "/tmp/ciris_qa_fresh"
+DEFAULT_QA_HOME = "/tmp/ciris_qa_244" if Path("/tmp/ciris_qa_244").exists() else ("/tmp/ciris_qa_243" if Path("/tmp/ciris_qa_243").exists() else "/tmp/ciris_qa_fresh")
 QA_HOME = Path(os.environ.get("CIRIS_HOME", DEFAULT_QA_HOME))
 
 

@@ -884,8 +884,8 @@
     const urlParams = new URLSearchParams(window.location.search);
 
     let state = {
-      // Check URL param `?mode=setup` to boot directly into First-Run Wizard on a fresh node (`T0`)
-      setupMode: urlParams.get("mode") === "setup",
+      // Check URL param `?mode=setup` or `?setup=1` to boot directly into First-Run Wizard on a fresh node (`T0`)
+      setupMode: urlParams.get("mode") === "setup" || urlParams.get("setup") === "1" || urlParams.get("setup") === "true",
       circleId: "JustMe",
       tab: "Files",
       instrumentId: urlParams.get("instrument") || null,
@@ -928,11 +928,11 @@
         ownershipState: "unclaimed",  // unclaimed | claiming | claimed | error
       },
 
-      // ── Live CIRISServer v0.5.243 Full-Stack Crate Bridge State ──
+      // ── Live CIRISServer v0.5.244 Full-Stack Crate Bridge State ──
       liveNode: {
         connected: false,
-        version: "0.5.243",
-        keyId: "qa-243-node",
+        version: "0.5.244",
+        keyId: "qa-244-node",
         standing: "identified",
         nodeCode: null,
         isFirstRun: null,
@@ -964,14 +964,14 @@
         show2dInspector: true,
       },
 
-      // ── Live v0.5.243 OwnerRequests (`GET /v1/self/owner-requests` — Single-Person Votes) ──
+      // ── Live v0.5.244 OwnerRequests (`GET /v1/self/owner-requests` — Single-Person Votes) ──
       ownerRequests: [
         { id: "announce", title: "Announce Node on Mesh", description: "Sign owner_requests::announce so peers can discover this node", signed: false },
         { id: "root_acceptance", title: "Accept Baked Trust Root", description: "Sign owner_requests::root_acceptance for the canonical genesis seed", signed: true },
         { id: "community_trust", title: "Enable Community Cohort Trust", description: "Sign owner_requests::community_trust for N-member rooms", signed: false },
       ],
 
-      // ── Live v0.5.243 Communities & Chat Rooms (`GET/POST /v1/communities`) ──
+      // ── Live v0.5.244 Communities & Chat Rooms (`GET/POST /v1/communities`) ──
       communities: [
         { id: "comm-oak-street", name: "Oak Street Neighbours", cohort: "Neighbours", members: 6, moderator: "ed25519:neighbour_dan" },
         { id: "comm-solar-coop", name: "Solar Co-op Stewards", cohort: "CommunitiesAndBusinesses", members: 14, moderator: "ed25519:steward_maya" },
@@ -3472,7 +3472,7 @@
       `;
     }
 
-    // ── `☰` Universal CEG Hamburger (`P4: ReceiptSheet` / `CSD-006` / `v0.5.243`) ──
+    // ── `☰` Universal CEG Hamburger (`P4: ReceiptSheet` / `CSD-006` / `v0.5.244`) ──
     // Available on EVERY CEG object and its referents (blobs, files, messages, communities, rules, 3D holon orbs):
     // 1. 5 Universal Envelope Facts
     // 2. 3D `CIRISHolon` Atom/Bond Spatial View-Form (`#spatialCanvas`)
@@ -3585,7 +3585,7 @@
               ` : ''}
             </div>
 
-            <!-- 5. Referent / Blob / File Custody Acts (v0.5.243 /v1/files/{id}/custody|rename|move) -->
+            <!-- 5. Referent / Blob / File Custody Acts (v0.5.244 /v1/files/{id}/custody|rename|move) -->
             ${isBlobOrFile ? `
               <div class="card" style="padding:8px 14px; margin-top:8px;" data-csd-tag="receipt_blob_acts_${c.id}">
                 <div style="font-size:11px;font-weight:600;color:var(--ink-mute);margin-bottom:6px;">
@@ -3605,11 +3605,11 @@
               </div>
             ` : ''}
 
-            <!-- 6. Community Moderation & Content Flagging (v0.5.243 /v1/safety/moderation|flag) -->
+            <!-- 6. Community Moderation & Content Flagging (v0.5.244 /v1/safety/moderation|flag) -->
             ${isCommunityOrNeighbour ? `
               <div class="card" style="padding:8px 14px; margin-top:8px;" data-csd-tag="receipt_moderation_acts_${c.id}">
                 <div style="font-size:11px;font-weight:600;color:var(--ink-mute);margin-bottom:6px;">
-                  MODERATION &amp; SAFETY ACTS (<code>CC 4.5.4 &middot; v0.5.243</code>)
+                  MODERATION &amp; SAFETY ACTS (<code>CC 4.5.4 &middot; v0.5.244</code>)
                 </div>
                 <div style="display:flex;gap:6px;flex-wrap:wrap;">
                   <button class="btn" style="font-size:11px;padding:4px 9px;" data-csd-tag="btn_mod_flag_${c.id}" onclick="executeModerationAct('${c.id}', 'flag')">
@@ -3815,7 +3815,7 @@
       `;
     }
 
-    // ── Live Community Creation & Chat (`CIRISServer v0.5.243` `/v1/communities` & `/v1/chat`) ──
+    // ── Live Community Creation & Chat (`CIRISServer v0.5.244` `/v1/communities` & `/v1/chat`) ──
     async function createCommunityNow() {
       const inp = document.getElementById("newCommunityInput");
       const name = (inp ? inp.value : state.newCommunityName || "").trim() || "New Steward Co-op";

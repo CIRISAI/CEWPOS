@@ -2974,7 +2974,7 @@ dependencies = [
 [[package]]
 name = "ciris-lens-core"
 version = "1.4.4"
-source = "git+https://github.com/CIRISAI/CIRISServer?tag=v0.5.243#966911ca3eb4d7e77901067d9dad75fb4da09051"
+source = "git+https://github.com/CIRISAI/CIRISServer?tag=v0.5.244#eaf2e67c5eb93d0812510b2fd00a5eba47fa77aa"
 dependencies = [
  "axum",
  "base64 0.22.1",
@@ -3047,8 +3047,8 @@ dependencies = [
 
 [[package]]
 name = "ciris-server"
-version = "0.5.243"
-source = "git+https://github.com/CIRISAI/CIRISServer?tag=v0.5.243#966911ca3eb4d7e77901067d9dad75fb4da09051"
+version = "0.5.244"
+source = "git+https://github.com/CIRISAI/CIRISServer?tag=v0.5.244#eaf2e67c5eb93d0812510b2fd00a5eba47fa77aa"
 dependencies = [
  "anyhow",
  "async-trait",

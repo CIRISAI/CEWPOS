@@ -95,7 +95,7 @@ If an item on screen has a `☰` hamburger button, it is a signed CEG attestatio
 2. **3D Spatial Slab Preview (`view_form(&Form)`)**:
    - Interactive 3D slab projection showing the **Context Question Slab (`P9`)** connected via a 3D selection spline to the **Signed Selection / Envelope Slab (`op:${claim.op}`)**.
 3. **The 9 Uniform `AttOp`s (`RC9` `12 × 9` Occupancy Matrix)**:
-   - `Cosign`, `Withdraw`, `Supersede`, `Recant`, `Verify`, `History`, `Evidence`, `Details`, `Copy` — gated per `ChangeKind` by `ATTOP_MATRIX` (`algebra_engine.py`) and wired to live `CIRISServer v0.5.243` endpoints (`/v1/chat/{comm}/messages/{id}/{withdraw|supersede|recant}`).
+   - `Cosign`, `Withdraw`, `Supersede`, `Recant`, `Verify`, `History`, `Evidence`, `Details`, `Copy` — gated per `ChangeKind` by `ATTOP_MATRIX` (`algebra_engine.py`) and wired to live `CIRISServer v0.5.244` endpoints (`/v1/chat/{comm}/messages/{id}/{withdraw|supersede|recant}`).
 4. **Blob & Referent Custody Acts (`Files` / `Blob` referents)**:
    - `CustodyHolders` (`GET /v1/files/{id}/custody`), `RenameBlob` (`POST /v1/files/{id}/rename`), and `MoveCircle` (`POST /v1/files/{id}/move`).
 5. **`CC 4.5.4` Moderation & Content Note Acts**:
@@ -103,19 +103,19 @@ If an item on screen has a `☰` hamburger button, it is a signed CEG attestatio
 
 ---
 
-## 4. Full-Stack `ciris-server` (`v0.5.243`) Crate Consumption & Verification
+## 4. Full-Stack `ciris-server` (`v0.5.244`) Crate Consumption & Verification
 
-CEWPOS consumes [`CIRISServer`](https://github.com/CIRISAI/CIRISServer) directly as a Rust crate at **`tag = "v0.5.243"`** (`ciris-server` and `ciris-Select-core` in `view-forms-spike/Cargo.toml` and `attestation-calculus-spike/Cargo.toml`).
+CEWPOS consumes [`CIRISServer`](https://github.com/CIRISAI/CIRISServer) directly as a Rust crate at **`tag = "v0.5.244"`** (`ciris-server` and `ciris-Select-core` in `view-forms-spike/Cargo.toml` and `attestation-calculus-spike/Cargo.toml`).
 
 ### 4.1 Building the Full-Stack `cewpos-node` Binary & Running Rust Tests
 ```bash
-# 1. Run the 30 Attestation Calculus tests (including live ciris-server v0.5.243 router integration)
+# 1. Run the 30 Attestation Calculus tests (including live ciris-server v0.5.244 router integration)
 cargo test --manifest-path attestation-calculus-spike/Cargo.toml
 
 # 2. Run the 24 View-Forms & P1-P12 Epistemic Scene tests (GPU-free & wasm-portable)
 cargo test --manifest-path view-forms-spike/Cargo.toml --no-default-features
 
-# 3. Build the unified full-stack cewpos-node binary (CIRISServer v0.5.243 + Bevy P1-P12 Spatial Scene)
+# 3. Build the unified full-stack cewpos-node binary (CIRISServer v0.5.244 + Bevy P1-P12 Spatial Scene)
 cargo build --manifest-path view-forms-spike/Cargo.toml --no-default-features --features fullstack --bin cewpos-node
 ```
 
@@ -124,7 +124,7 @@ cargo build --manifest-path view-forms-spike/Cargo.toml --no-default-features --
 # Verify the 72-cell (12 ChangeKind x 6 Verb) RC9 matrix, 12x9 AttOp matrix, and 101/101 CSD/4 cards
 python3 epistemic-ui/algebra_engine.py
 
-# Run the 11-step live QA conformance harness against CIRISServer v0.5.243 (:4243) and CEWPOS (:8787)
+# Run the 11-step live QA conformance harness against CIRISServer v0.5.244 (:4243) and CEWPOS (:8787)
 python3 epistemic-ui/csd4_harness.py all
 ```
 

@@ -7497,7 +7497,7 @@
       "url": "http://127.0.0.1:4243/health",
       "reachable": true,
       "status_code": 200,
-      "summary": "standing=identified, key_id=qa-243-node-sf7zgc3kqh, version=0.5.243"
+      "summary": "standing=identified, key_id=qa-244-node-qdil5rnibj, version=0.5.244"
     },
     {
       "name": "CIRISAgent API Root",
@@ -7525,11 +7525,11 @@
     {
       "step_num": 1,
       "csd_ids": "CSD-080",
-      "name": "Fresh Node Health & Conformance (v0.5.243)",
+      "name": "Fresh Node Health & Conformance (v0.5.244)",
       "method_path": "GET /health",
       "status_code": 200,
       "passed": true,
-      "verified_detail": "version=0.5.243, key_id=qa-243-node-sf7zgc3kqh, standing=identified, profiles=['CCP', 'CCC', 'CCS']"
+      "verified_detail": "version=0.5.244, key_id=qa-244-node-qdil5rnibj, standing=identified, profiles=['CCP', 'CCC', 'CCS']"
     },
     {
       "step_num": 2,
@@ -7538,7 +7538,7 @@
       "method_path": "GET /v1/setup/consent-disclosure + /v1/federation/node-code",
       "status_code": 200,
       "passed": true,
-      "verified_detail": "grants=['replication', 'analyze'], location_max_h3=7, node_code=CIRIS-V1-AEOS-M23X-T6BR-OGV7..."
+      "verified_detail": "grants=['replication', 'analyze'], location_max_h3=7, node_code=CIRIS-V1-AHQ3-KS5E-7BEB-KF5T..."
     },
     {
       "step_num": 3,
@@ -7556,7 +7556,7 @@
       "method_path": "GET /v1/setup/status",
       "status_code": 200,
       "passed": true,
-      "verified_detail": "is_first_run=True, claim_pin_mode=0o600, pin_len=9 (Z478-9SXR)"
+      "verified_detail": "is_first_run=True, claim_pin_mode=0o600, pin_len=9 (6YKT-8WYG)"
     },
     {
       "step_num": 5,
@@ -7565,7 +7565,7 @@
       "method_path": "POST /v1/self/identity",
       "status_code": 200,
       "passed": true,
-      "verified_detail": "key_id=qa-243-node-user-mcs7viaw3n, hardware=SoftwareOnly, fedcode=CIRIS-V3-AMA2-XLOC-65M2-..."
+      "verified_detail": "key_id=qa-244-node-user-ynrpi3aeb2, hardware=SoftwareOnly, fedcode=CIRIS-V3-AMA3-RCTY-I5NX-..."
     },
     {
       "step_num": 6,
@@ -7574,7 +7574,7 @@
       "method_path": "POST /v1/setup/claim-remote",
       "status_code": 200,
       "passed": true,
-      "verified_detail": "role=SYSTEM_ADMIN, wa_id=wa-root-qa-243-node-user-mcs7viaw3n, attestation=b1074cf0-098e-4b06-8f99-8969a6e31f1a, pin_consumed_deleted=True"
+      "verified_detail": "role=SYSTEM_ADMIN, wa_id=wa-root-qa-244-node-user-ynrpi3aeb2, attestation=ad8f4f0a-afa5-42e1-8a66-2a9eada74d4f, pin_consumed_deleted=True"
     },
     {
       "step_num": 7,
@@ -7583,16 +7583,16 @@
       "method_path": "GET /v1/setup/status + /v1/setup/owned-nodes",
       "status_code": 200,
       "passed": true,
-      "verified_detail": "is_first_run=False, owner=qa-243-node-user-mcs7viaw3n, nodes=[{'key_id': 'qa-243-node-sf7zgc3kqh', 'is_self': True, 'announced': False, 'roster_member': False}]"
+      "verified_detail": "is_first_run=False, owner=qa-244-node-user-ynrpi3aeb2, nodes=[{'key_id': 'qa-244-node-qdil5rnibj', 'is_self': True, 'announced': False, 'roster_member': False}]"
     },
     {
       "step_num": 8,
       "csd_ids": "CSD-037",
       "name": "Enrolled Devices Roster (My Identity)",
-      "method_path": "GET /v1/self/occurrences?identity_key_id=qa-243-node-user-mcs7viaw3n",
+      "method_path": "GET /v1/self/occurrences?identity_key_id=qa-244-node-user-ynrpi3aeb2",
       "status_code": 200,
       "passed": true,
-      "verified_detail": "identity_key_id=qa-243-node-user-mcs7viaw3n, audience=owner, occurrences=0"
+      "verified_detail": "identity_key_id=qa-244-node-user-ynrpi3aeb2, audience=owner, occurrences=0"
     },
     {
       "step_num": 9,
@@ -7610,7 +7610,7 @@
       "method_path": "GET /v1/self/roster/proposals",
       "status_code": 200,
       "passed": true,
-      "verified_detail": "roster=['qa-243-node-user-mcs7viaw3n'], proposals=[], w_self_secs=86400 (24h)"
+      "verified_detail": "roster=['qa-244-node-user-ynrpi3aeb2'], proposals=[], w_self_secs=86400 (24h)"
     },
     {
       "step_num": 11,
@@ -7619,7 +7619,7 @@
       "method_path": "GET /v1/node/state + /v1/trust-root + :8787/health",
       "status_code": 200,
       "passed": true,
-      "verified_detail": "node.band=green, trust_root=entrenched, cewpos_proxy_version=0.5.243"
+      "verified_detail": "node.band=green, trust_root=entrenched, cewpos_proxy_version=0.5.244"
     }
   ]
 }

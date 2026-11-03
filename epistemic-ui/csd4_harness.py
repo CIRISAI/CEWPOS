@@ -35,6 +35,7 @@ import csv
 import dataclasses
 from dataclasses import dataclass, field
 import json
+import os
 import sys
 import urllib.request
 from pathlib import Path
@@ -989,10 +990,18 @@ def _http_json(
 def run_live_fresh_node_qa(
     node_base: str = "http://127.0.0.1:4243",
     ui_base: str = "http://127.0.0.1:8787",
-    qa_home: Path = Path("/tmp/ciris_qa_243"),
+    qa_home: Path | None = None,
 ) -> list[LiveQaStepResult]:
     """Executes an 11-step end-to-end First-Run Wizard, Node Claim & Multi-Device / Self-Key Roster
-    QA verification pass against the live CIRISServer v0.5.243 occurrence and CEWPOS UI proxy."""
+    QA verification pass against the live CIRISServer v0.5.244 occurrence and CEWPOS UI proxy."""
+    if qa_home is None:
+        env_home = os.environ.get("CIRIS_HOME")
+        if env_home:
+            qa_home = Path(env_home)
+        elif Path("/tmp/ciris_qa_244").exists():
+            qa_home = Path("/tmp/ciris_qa_244")
+        else:
+            qa_home = Path("/tmp/ciris_qa_243")
     steps: list[LiveQaStepResult] = []
     session_cache_path = qa_home / "cewpos_qa_session.json"
 
@@ -1005,10 +1014,10 @@ def run_live_fresh_node_qa(
         LiveQaStepResult(
             step_num=1,
             csd_ids="CSD-080",
-            name="Fresh Node Health & Conformance (v0.5.243)",
+            name="Fresh Node Health & Conformance (v0.5.244)",
             method_path="GET /health",
             status_code=st1,
-            passed=(st1 == 200 and ver == "0.5.243" and standing == "identified"),
+            passed=(st1 == 200 and ver in ("0.5.244", "0.5.243") and standing == "identified"),
             verified_detail=f"version={ver}, key_id={node_key_id}, standing={standing}, profiles={(h1.get('conformance') or {}).get('build_profiles')}",
         )
     )
@@ -1248,7 +1257,7 @@ def run_live_fresh_node_qa(
             name="Authenticated Node State, Entrenched Trust Root & CEWPOS :8787 Proxy",
             method_path="GET /v1/node/state + /v1/trust-root + :8787/health",
             status_code=200 if (st11a == 200 and st11b == 200 and st11c == 200) else min(st11a, st11b, st11c),
-            passed=(st11a == 200 and st11b == 200 and st11c == 200 and node_band == "green" and tr_state == "entrenched" and ui_h.get("version") == "0.5.243"),
+            passed=(st11a == 200 and st11b == 200 and st11c == 200 and node_band == "green" and tr_state == "entrenched" and ui_h.get("version") in ("0.5.244", "0.5.243")),
             verified_detail=f"node.band={node_band}, trust_root={tr_state}, cewpos_proxy_version={ui_h.get('version')}",
         )
     )
@@ -1343,10 +1352,10 @@ def main(argv: list[str]) -> int:
         status_str = "ONLINE" if p.reachable else "OFFLINE"
         print(f"  - [{status_str}] {p.name} ({p.url}) -> {p.summary}")
 
-    # 7. Run end-to-end First-Run Wizard & Multi-Device QA on freshly booted CIRISServer v0.5.243
+    # 7. Run end-to-end First-Run Wizard & Multi-Device QA on freshly booted CIRISServer v0.5.244
     live_qa_steps = run_live_fresh_node_qa()
     qa_passed = sum(1 for s in live_qa_steps if s.passed)
-    print(f"[7/7] Live Fresh-Node End-to-End QA (CIRISServer v0.5.243 + CEWPOS :8787): {qa_passed}/{len(live_qa_steps)} steps passed:")
+    print(f"[7/7] Live Fresh-Node End-to-End QA (CIRISServer v0.5.244 + CEWPOS :8787): {qa_passed}/{len(live_qa_steps)} steps passed:")
     for s in live_qa_steps:
         mark = "PASS" if s.passed else "FAIL"
         print(f"  - [Step {s.step_num:02d} {mark}] ({s.csd_ids}) {s.name}: {s.verified_detail}")

@@ -1,4 +1,4 @@
-//! cewpos-node — Full-stack CEWPOS node consuming `ciris-server` (`tag = "v0.5.243"`) directly as a crate.
+//! cewpos-node — Full-stack CEWPOS node consuming `ciris-server` (`tag = "v0.5.244"`) directly as a crate.
 //!
 //! Implements [`ciris_server::Adapter`] and boots [`ciris_server::serve_with_adapter`] over the
 //! single shared `ciris_server::ciris_persist::prelude::Engine` (`v59.1.2`) and `ciris-edge` (`v43.4.1`),
@@ -30,7 +30,7 @@ impl Adapter for CewposFullStackAdapter {
 
     fn status(&self) -> AdapterStatus {
         AdapterStatus {
-            adapter_id: "cewpos-holon-3d-v0.5.243".to_string(),
+            adapter_id: "cewpos-holon-3d-v0.5.244".to_string(),
             running: true,
         }
     }
@@ -48,7 +48,7 @@ impl Adapter for CewposFullStackAdapter {
                         let active = wiz.active_deferral_vote();
                         let (scene_3d, holon_frame) = view_deferral_vote(&active);
                         Json(serde_json::json!({
-                            "server_tag": "v0.5.243",
+                            "server_tag": "v0.5.244",
                             "node_key_id": node_key,
                             "active_deferral_vote": active,
                             "holon_frame": holon_frame,
