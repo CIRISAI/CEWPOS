@@ -1671,14 +1671,14 @@ impl FirstRunWizardState {
             ],
         });
 
-        // Vote 3: AI — Steward–Agent Depth-1 Bond & H3ERE Conscience (1-of-1 single-person vote)
+        // Vote 3: AI — Confer Depth-1 Bond to AI Agent (1-of-1 single-person vote)
         if self.run_with_ai {
             series.push(DeferralVote {
                 deferral_id: "deferral:setup:ai:v1".to_string(),
                 dimension: "delegates_to:steward_agent_bond:v1".to_string(),
                 cohort_scope: CircleScope::JustMe,
-                title: "Deferral 3/4 · AI — Confer Depth-1 Steward–Agent Bond?".to_string(),
-                context_prompt: "Single-person vote (1-of-1 self-quorum): Bind the local CIRIS AI steward under H3ERE ethical gates and Wisdom-Based Deferral (WBD returns control to you whenever uncertain).".to_string(),
+                title: "Choice 3/4 · AI — Confer Depth-1 Bond to AI Agent".to_string(),
+                context_prompt: "Single-person decision: Bond an AI agent under your human stewardship with H3ERE ethical gates and Wisdom-Based Deferral (WBD returns control to you whenever uncertain).".to_string(),
                 roster_size: 1,
                 enact_needed: 1,
                 approvals: u32::from(self.run_with_ai),
@@ -1688,8 +1688,8 @@ impl FirstRunWizardState {
                 choices: vec![
                     DeferralChoice {
                         choice_id: "bond_ai_steward".to_string(),
-                        label: "Assent: Bond Steward–AI (+1)".to_string(),
-                        consequence: "Emits depth-1 delegates_to bond; AI defers uncertain thoughts to your 3D deferral queue".to_string(),
+                        label: "Run with AI (+1)".to_string(),
+                        consequence: "Attaches a bonded AI agent under your stewardship; AI defers uncertain actions to your decision queue".to_string(),
                         vote_score: 1,
                         z_species: 6, // Carbon
                         action_tag: "wizard_mode_with_ai".to_string(),
@@ -1698,8 +1698,8 @@ impl FirstRunWizardState {
                     },
                     DeferralChoice {
                         choice_id: "run_without_ai".to_string(),
-                        label: "Abstain: Node-Only Mode (0)".to_string(),
-                        consequence: "Runs pure CEG storage/relay substrate without local AI agent".to_string(),
+                        label: "Run without AI (Bare Node) (0)".to_string(),
+                        consequence: "Operates purely as a local node on port 4243. Zero AI runtime; directs data custody, file storage, and peer mesh serving".to_string(),
                         vote_score: 0,
                         z_species: 3, // Lithium
                         action_tag: "wizard_mode_without_ai".to_string(),

@@ -201,15 +201,16 @@
       font-size: 12px;
     }
 
-    /* ── P1: CardShell (3D Spatial Slab in Full-Screen Bevy Scene) ── */
+    /* ── P1: CardShell (3D Spatial Slab in Full-Screen Bevy Scene — CIRISGame Bone Overlay) ── */
     .card {
-      background: rgba(255, 255, 255, 0.90);
-      backdrop-filter: blur(18px);
-      border: 1px solid rgba(20, 20, 19, 0.10);
+      max-width: 660px;
+      margin: 0 auto 16px;
+      background: rgba(250, 249, 245, 0.94);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(176, 174, 165, 0.38);
       border-radius: 16px;
-      padding: 8px 20px 14px;
-      margin-bottom: 16px;
-      box-shadow: 0 18px 42px rgba(20, 20, 19, 0.06), 0 1px 0 rgba(255, 255, 255, 0.92) inset;
+      padding: 14px 22px 18px;
+      box-shadow: 0 16px 40px rgba(20, 20, 19, 0.07), 0 1px 0 rgba(255, 255, 255, 0.85) inset;
       transform-style: preserve-3d;
       transition: transform 0.18s ease, box-shadow 0.18s ease;
     }
@@ -217,7 +218,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 0 10px;
+      padding: 10px 0 8px;
     }
     .card-header-title {
       font-size: 15px;
@@ -228,6 +229,17 @@
       gap: 8px;
       flex-wrap: wrap;
       letter-spacing: -0.01em;
+    }
+
+    /* ── Editorial Tagline & Narrative (CIRISGame Style) ── */
+    .editorial-tagline {
+      font-family: var(--serif);
+      font-size: 14.5px;
+      font-style: italic;
+      color: #5F5C55;
+      line-height: 1.45;
+      margin-bottom: 8px;
+      text-align: center;
     }
 
     /* ── P9: 3D Context Question & Selection Tiles in Full-Screen Bevy Scene ── */
@@ -256,9 +268,11 @@
       line-height: 1.3;
     }
     .p9-question-sub {
-      font-size: 13.5px;
+      font-family: var(--serif);
+      font-size: 14px;
       color: var(--ink-mute);
       margin-top: 4px;
+      line-height: 1.45;
     }
     .p9-selection-grid {
       display: grid;
@@ -357,11 +371,10 @@
       box-shadow: 0 8px 20px rgba(31, 94, 122, 0.10);
     }
     .spatial-field-label {
-      font-size: 11px;
-      font-family: var(--mono);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--ink-mute);
+      font-size: 12px;
+      font-family: var(--sans);
+      font-weight: 600;
+      color: var(--obsidian);
       margin-bottom: 4px;
       display: flex;
       justify-content: space-between;
@@ -375,11 +388,135 @@
       font-weight: 600;
       color: var(--obsidian);
       outline: none;
-      font-family: var(--sans);
+      font-family: var(--mono);
+      padding: 2px 0;
     }
     .spatial-input::placeholder {
       color: rgba(90, 98, 106, 0.5);
       font-weight: 400;
+    }
+
+    /* ── Tactile Device Pairing Ceremony (P10: QrCeremony — CIRISGame Design) ── */
+    .pairing-ceremony-card {
+      margin-top: 14px;
+      padding: 16px 18px;
+      background: rgba(234, 242, 238, 0.60);
+      border: 1px solid rgba(120, 140, 93, 0.35);
+      border-radius: 14px;
+      box-shadow: 0 6px 18px rgba(20, 20, 19, 0.03);
+    }
+    .pairing-ceremony-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .pairing-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(120, 140, 93, 0.20);
+      color: #788C5D;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .pairing-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--obsidian);
+    }
+    .pairing-sub {
+      font-family: var(--serif);
+      font-size: 12.5px;
+      color: var(--ink-mute);
+      margin-top: 2px;
+    }
+    .viewfinder-scan-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 14px;
+      background: rgba(250, 249, 245, 0.85);
+      border: 1.5px dashed rgba(176, 174, 165, 0.60);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      text-align: center;
+      margin-top: 10px;
+    }
+    .viewfinder-scan-box:hover {
+      border-color: var(--brand);
+      background: #ffffff;
+      box-shadow: 0 6px 18px rgba(31, 94, 122, 0.10);
+    }
+    .editorial-input-capsule {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1.5px solid rgba(176, 174, 165, 0.45);
+      background: rgba(250, 249, 245, 0.90);
+      font-family: var(--mono);
+      font-size: 13.5px;
+      color: var(--obsidian);
+      transition: all 0.16s ease;
+      box-sizing: border-box;
+      margin-top: 4px;
+    }
+    .editorial-input-capsule:focus {
+      outline: none;
+      border-color: var(--brand);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(31, 94, 122, 0.14);
+    }
+    .match-code-card {
+      margin-top: 12px;
+      padding: 14px;
+      border-radius: 10px;
+      background: rgba(212, 162, 127, 0.14);
+      border: 1px solid rgba(212, 162, 127, 0.45);
+      text-align: center;
+    }
+    .match-code-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: #966742;
+      font-weight: 600;
+    }
+    .match-code-digits {
+      font-family: var(--mono);
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      color: var(--obsidian);
+      margin: 4px 0;
+    }
+    .match-code-hint {
+      font-family: var(--serif);
+      font-size: 12px;
+      color: var(--ink-mute);
+    }
+    .status-pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--ink-mute);
+      display: inline-block;
+    }
+    .status-pulse-dot.ok {
+      background: #2E6F40;
+      box-shadow: 0 0 0 3px rgba(46, 111, 64, 0.20);
+    }
+    .status-pulse-dot.warn {
+      background: #D97757;
+      box-shadow: 0 0 0 3px rgba(217, 119, 87, 0.22);
     }
 
     /* ── P3: ItemRow — Strictly 3 Scannable Inline Elements (`Title`, `ScopePill`/`Chip`, `☰`/`⋯`) ── */
@@ -853,10 +990,10 @@
 
       // SAFETY
       { id: "s_self_1", tab: "Safety", scope: "JustMe", op: "scores", dimension: "custody_hw:enclave", title: "Hardware keystore sealed (Hybrid PQC)", score: 1.0, confidence: 1.0, subject: "ed25519:viewer_self", attester: "ed25519:viewer_self" },
-      { id: "s_fam_1", tab: "Safety", scope: "Family", op: "delegates_to", dimension: "bond:guardian:v1", title: "Guardian bond & child confidential help channel (CSD-119)", score: 1.0, confidence: 1.0, subject: "ed25519:child_leo", attester: "ed25519:viewer_self" },
+      { id: "s_fam_1", tab: "Safety", scope: "Family", op: "delegates_to", dimension: "bond:guardian:v1", title: "Guardian bond & child confidential help channel", score: 1.0, confidence: 1.0, subject: "ed25519:child_leo", attester: "ed25519:viewer_self" },
       { id: "s_nei_1", tab: "Safety", scope: "Neighbours", op: "scores", dimension: "moderation:standing", title: "Named moderator active (Dan · CC 4.5.4)", score: 1.0, confidence: 1.0, subject: "ed25519:oak_street", attester: "ed25519:neighbour_dan" },
       { id: "s_com_1", tab: "Safety", scope: "CommunitiesAndBusinesses", op: "scores", dimension: "quarantine:status", title: "Zero active quarantine holds", score: 1.0, confidence: 1.0, subject: "ed25519:solar_coop", attester: "ed25519:steward_maya" },
-      { id: "s_all_1", tab: "Safety", scope: "Everyone", op: "scores", dimension: "first_contact:gate", title: "First-Contact Gate & 1-step Root Exit (CSD-127)", score: 1.0, confidence: 1.0, subject: "ed25519:ciris_root", attester: "ed25519:ciris_root" },
+      { id: "s_all_1", tab: "Safety", scope: "Everyone", op: "scores", dimension: "first_contact:gate", title: "First-Contact Gate & 1-step Root Exit", score: 1.0, confidence: 1.0, subject: "ed25519:ciris_root", attester: "ed25519:ciris_root" },
 
       // RULES
       { id: "r_self_1", tab: "Rules", scope: "JustMe", op: "scores", dimension: "rule:smallest_circle", title: "Born in Just me (Inv_SmallestCircle)", score: 1.0, confidence: 1.0, subject: "ed25519:viewer_self", attester: "ed25519:viewer_self" },
@@ -1147,7 +1284,7 @@
               <input type="checkbox" ${state.hasAgent ? 'checked' : ''} onchange="state.hasAgent=this.checked; closeSheet(); renderAll();" />
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--ink-mute); padding:6px 2px; border-top:1px solid var(--hairline); margin-top:4px;">
-              <span>Fresh node First-Run Wizard (<code>CSD-080..085, 093</code>)</span>
+              <span>Fresh node First-Run Wizard</span>
               <button class="btn" data-csd-tag="btn_launch_first_run_wizard" onclick="startFirstRunWizard(true)">
                 Run First-Run Wizard&hellip;
               </button>
@@ -1414,13 +1551,13 @@
              data-bevy-question="1"
              data-csd-tag="${stageTag || tag}">
           <div class="p9-question-eyebrow">
-            <span>P9 &middot; ${eyebrow} &middot; <code>${dimension}</code></span>
+            <span>${eyebrow}</span>
             <div style="display:flex;align-items:center;gap:6px;">
               ${scope ? renderP5ScopePill(scope, "", true) : ''}
               ${quorumBadge ? `<span class="chip">${quorumBadge}</span>` : ''}
               ${receiptId ? `<button class="btn-ghost"
                       data-csd-tag="btn_receipt_${receiptId}"
-                      title="5-fact CEG receipt &amp; actions (P4)"
+                      title="5-fact CEG receipt &amp; actions"
                       onclick="openReceiptSheet('${receiptId}')">&#9776;</button>` : ''}
             </div>
           </div>
@@ -1503,28 +1640,55 @@
         titleHtml: title,
         chipLabel,
         chipTone,
-        headerRightHtml: `<button class="btn-ghost" data-csd-tag="btn_receipt_${dv.receiptId || dv.deferralId}" title="5-fact CEG receipt &amp; actions (P4)" onclick="openReceiptSheet('${dv.receiptId || dv.deferralId}')">&#9776;</button>`,
+        headerRightHtml: `<button class="btn-ghost" data-csd-tag="btn_receipt_${dv.receiptId || dv.deferralId}" title="5-fact CEG receipt &amp; actions" onclick="openReceiptSheet('${dv.receiptId || dv.deferralId}')">&#9776;</button>`,
         bodyHtml: choiceBlockHtml,
         ellipsisKey,
         ellipsisHtml: expandContent,
       });
     }
 
-    // `P10: QrCeremony` — QR code display + scan/paste fallback + 6-digit verification match code
+    // `P10: QrCeremony` — Tactile Device Pairing Ceremony (CIRISGame Style)
     function renderP10QrCeremony({ tag, titleHtml, payloadInputHtml, scanButtonTag, onScanJs, matchCode = null, statusNoteHtml = "", actionsHtml = "" }) {
       return `
-        <div style="border-top:1px solid var(--hairline); padding-top:10px; margin-top:6px;" data-csd-tag="${tag}">
-          <div class="kv-row">
-            <span>${titleHtml}</span>
-            <div style="display:flex; gap:6px; width:65%;">
-              ${payloadInputHtml}
-              <button class="btn" data-csd-tag="${scanButtonTag}" onclick="${onScanJs}">Scan QR</button>
+        <div class="pairing-ceremony-card" data-csd-tag="${tag}">
+          <div class="pairing-ceremony-header">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span class="pairing-icon">&#9678;</span>
+              <div>
+                <div class="pairing-title">${titleHtml}</div>
+                <div class="pairing-sub">Scan the pairing code on your primary device, or enter its address below.</div>
+              </div>
+            </div>
+            <button class="btn btn-brand" data-csd-tag="${scanButtonTag}" onclick="${onScanJs}">
+              &#128247; Scan QR Code
+            </button>
+          </div>
+
+          <div style="margin-top:12px;">
+            <div class="spatial-field-label">
+              <span>Existing Device Contact Address</span>
+              <span class="mono-hint">ciris:// address</span>
+            </div>
+            ${payloadInputHtml}
+          </div>
+
+          ${matchCode ? `
+            <div class="match-code-card">
+              <div class="match-code-eyebrow">VERIFY 6-DIGIT SAS MATCH CODE</div>
+              <div class="match-code-digits" data-csd-tag="text_add_device_match_code">${matchCode}</div>
+              <div class="match-code-hint">Confirm this code matches what is displayed on your primary device.</div>
+            </div>
+          ` : ''}
+
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:10px;border-top:1px solid rgba(176,174,165,0.25);">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span class="status-pulse-dot ${state.wizard.addDeviceStatus === 'approved' ? 'ok' : (state.wizard.addDeviceStatus === 'requested' ? 'warn' : '')}"></span>
+              <span class="mono-hint" data-csd-tag="text_add_device_status">Status: ${state.wizard.addDeviceStatus}</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              ${actionsHtml}
             </div>
           </div>
-          ${actionsHtml}
-          ${matchCode ? `
-            <div class="match-code-box" data-csd-tag="text_add_device_match_code">${matchCode}</div>
-          ` : ''}
           ${statusNoteHtml}
         </div>
       `;
@@ -1575,7 +1739,7 @@
           canvasTag: "csd_080_holon_wizard_3d",
           stageTag: "wiz_p9_stage_you",
           receiptId: w.identityPath === "ADD_THIS_DEVICE" ? "setup_add_device" : "setup_new_identity",
-          contextTitle: "Deferral 1/4 · Identity & Age Band",
+          contextTitle: "Choice 1/4 · Identity & Posture",
           contextSubtitle: `Who is setting up this device? (${handle})`,
           dimension: "deferral:setup:identity_root",
           scope: "JustMe",
@@ -1595,7 +1759,7 @@
             },
             {
               choiceId: "choice_identity_add_device",
-              label: "Add to Existing ID (CSD-093)",
+              label: "Add this device to an existing CIRIS ID",
               subtitle: "Pair via QR + 6-digit match code",
               voteScore: 1.0,
               atomicNumber: 6,
@@ -1637,8 +1801,8 @@
           canvasTag: "csd_080_holon_wizard_3d",
           stageTag: "wiz_p9_stage_consent",
           receiptId: "setup_consent_replication",
-          contextTitle: "Deferral 2/4 · Federation & Consent Disclosure",
-          contextSubtitle: "Nothing leaves Just me without an explicit vote",
+          contextTitle: "Choice 2/4 · Federation & Trace Sharing",
+          contextSubtitle: "Nothing leaves Just me without an explicit decision",
           dimension: "deferral:setup:consent_disclosure",
           scope: w.traceConsent ? "Everyone" : "JustMe",
           quorumRequired: 1,
@@ -1666,7 +1830,7 @@
             },
             {
               choiceId: "choice_never_allowed_ack",
-              label: "prohibited:* Bounds (CSD-118)",
+              label: "Constitutional Conscience Bounds",
               subtitle: "Hard Refusal G17 constitutional floor",
               voteScore: -1.0,
               atomicNumber: 9,
@@ -1681,8 +1845,8 @@
           canvasTag: "csd_080_holon_wizard_3d",
           stageTag: "wiz_p9_stage_ai",
           receiptId: "setup_steward_bond",
-          contextTitle: "Deferral 3/4 · Steward–Agent Bond (CSD-115)",
-          contextSubtitle: "Depth 1 · 365d review · H3ERE + 423 Halt Gate",
+          contextTitle: "Choice 3/4 · AI Agent Bonding",
+          contextSubtitle: "Depth 1 · 365d review · H3ERE + Stop Halt Gate",
           dimension: "deferral:setup:steward_bond",
           scope: "JustMe",
           quorumRequired: 1,
@@ -1692,8 +1856,8 @@
           choices: [
             {
               choiceId: "choice_bond_local_ollama",
-              label: "Bond Steward (Local Ollama)",
-              subtitle: "Keyless local inference · op:delegates_to",
+              label: "Bond AI Agent (Local Ollama)",
+              subtitle: "Keyless local inference under your stewardship",
               voteScore: 1.0,
               atomicNumber: 7,
               selected: w.runWithAi && w.llmProvider === "local_ollama",
@@ -1701,8 +1865,8 @@
             },
             {
               choiceId: "choice_bond_ciris_portal",
-              label: "Bond Steward (CIRIS Portal)",
-              subtitle: "Managed inference · op:delegates_to",
+              label: "Bond AI Agent (CIRIS Portal)",
+              subtitle: "Managed inference under your stewardship",
               voteScore: 1.0,
               atomicNumber: 6,
               selected: w.runWithAi && w.llmProvider === "ciris_portal",
@@ -1710,8 +1874,8 @@
             },
             {
               choiceId: "choice_bond_node_only",
-              label: "Bare Node Only (CSD-083)",
-              subtitle: "Run :4243 substrate without AI agent",
+              label: "Run without AI (Bare Node)",
+              subtitle: "Run port 4243 substrate without AI agent",
               voteScore: 0.0,
               atomicNumber: 3,
               selected: !w.runWithAi,
@@ -1725,7 +1889,7 @@
           canvasTag: "csd_080_holon_wizard_3d",
           stageTag: "wiz_p9_stage_complete",
           receiptId: "setup_owner_claim",
-          contextTitle: "Deferral 4/4 · Claim Node Ownership (CSD-085)",
+          contextTitle: "Choice 4/4 · Claim Node Ownership",
           contextSubtitle: `Bind SYSTEM_ADMIN via 0600 claim_pin (${state.liveNode.keyId})`,
           dimension: "deferral:setup:claim_remote",
           scope: "JustMe",
@@ -2230,14 +2394,15 @@
       // Project the First-Run Wizard as a series of 4 CEWP Choices
       const wizDeferrals = buildWizardDeferralVotes();
       const activeDv = wizDeferrals.find(d => d.stepKey === w.step) || wizDeferrals[0];
+      const stepNames = ["Identity & Posture", "Network & Consent", "AI & Stewardship", "Ownership Claim"];
       const deferralStepBarHtml = `
         <div style="display:flex;gap:6px;flex-wrap:wrap;padding:8px 0 14px;border-bottom:1px solid var(--hairline);margin-bottom:14px;" data-csd-tag="wiz_deferral_sequence_bar">
           ${wizDeferrals.map((d, idx) => `
             <button class="btn ${d.stepKey === w.step ? 'btn-brand' : ''}"
-                    style="font-size:11px;padding:4px 10px;"
+                    style="font-size:11.5px;padding:5px 12px;"
                     data-csd-tag="btn_wiz_deferral_${idx + 1}"
                     onclick="state.wizard.step='${d.stepKey}'; renderAll();">
-              ${idx + 1}. ${d.contextTitle.split('·')[1] || d.contextTitle} (${d.quorumApprovals}/1)
+              ${idx + 1}. ${stepNames[idx] || d.stepKey}
             </button>
           `).join("")}
         </div>
@@ -2271,8 +2436,8 @@
             {
               id: "add_device",
               label: "Add this device to an existing CIRIS ID",
-              consequence: "Pairs with your existing device (phone or laptop) via a 2-path self-roster ceremony (CSD-093).",
-              chipLabel: "CSD-093 Roster",
+              consequence: "Pairs with your existing device (phone or laptop) through a peer-to-peer verification ceremony.",
+              chipLabel: "Device Roster",
               selected: w.identityPath === "ADD_THIS_DEVICE",
               disabled: lockedPath,
               csdTag: "btn_setup_add_this_device",
@@ -2281,20 +2446,20 @@
           ],
         });
 
-        // 2. Node Operational Mode Choice (CSD-082 vs CSD-083) — Modern 3D Choice Slab, NOT a web form
+        // 2. Node Operational Mode Choice — Modern 3D Choice Slab
         const nodeModeChoiceHtml = renderP9ChoiceBlock({
           tag: "setup_node_mode",
           contextTitle: "Which operational mode should this node run in?",
-          contextSubtitle: "Choose whether to bond an ethical AI steward with H3ERE conscience gates or run as a bare network peer.",
+          contextSubtitle: "Choose whether to bond an AI agent under your stewardship with ethical conscience gates or run as a bare network peer.",
           dimension: "node:operational_mode",
-          eyebrow: "OPERATIONAL POSTURE &middot; CSD-082 VS CSD-083",
+          eyebrow: "OPERATIONAL POSTURE",
           scope: "JustMe",
           options: [
             {
               id: "run_with_ai",
-              label: "Run with AI Steward",
-              consequence: "Attaches an autonomous AI steward; enables H3ERE ethical conscience pipeline, Depth-1 bond, and 423 halt emergency brake (3-step setup).",
-              chipLabel: "CSD-082 · With AI",
+              label: "Run with AI",
+              consequence: "Attaches an AI agent bonded under your human stewardship. Enables the H3ERE ethical conscience pipeline, depth-1 delegation bond, and emergency stop halt gate.",
+              chipLabel: "With AI · 3 steps",
               selected: w.runWithAi === true,
               csdTag: "opt_run_with_ai",
               onSelectJs: "state.wizard.runWithAi=true; renderAll();",
@@ -2302,8 +2467,8 @@
             {
               id: "run_without_ai",
               label: "Run without AI (Bare Node)",
-              consequence: "Operates as a bare fabric node on :4243 only; zero AI runtime; directs data custody, file storage, and peer mesh serving (2-step setup).",
-              chipLabel: "CSD-083 · Node-Only",
+              consequence: "Operates purely as a local node on port 4243. Zero AI runtime; directs data custody, file storage, and peer mesh serving.",
+              chipLabel: "Node-Only · 2 steps",
               selected: w.runWithAi === false,
               csdTag: "opt_run_without_ai",
               onSelectJs: "state.wizard.runWithAi=false; renderAll();",
@@ -2388,7 +2553,7 @@
               {
                 id: "minor",
                 label: "Under 18 (Minor)",
-                consequence: "Pauses self-claim and mints a verified Guardian / Steward bond request (CC 3.2, CSD-119).",
+                consequence: "Pauses self-claim and mints a verified Guardian / Steward bond request (CC 3.2).",
                 chipLabel: "Guardian Req",
                 selected: w.ageBand === "MINOR",
                 csdTag: "age_band_minor",
@@ -2409,7 +2574,7 @@
           const minorNoticeHtml = w.ageBand === 'MINOR' ? renderP7StateBlock({
             tag: "txt_minor_guardian_required",
             tone: "brand",
-            contentHtml: "Under-18 setup pauses self-claim and mints a verified Guardian / Steward bond request (CC 3.2, CSD-119).",
+            contentHtml: "Under-18 setup pauses self-claim and mints a verified Guardian / Steward bond request (CC 3.2).",
           }) : '';
 
           const genesisReceiptHtml = renderP3ItemRow({
@@ -2432,8 +2597,8 @@
             </div>
             ${renderP10QrCeremony({
               tag: "csd_093_add_this_device",
-              titleHtml: "Existing CIRIS ID contact / QR (<code>P10: QrCeremony</code>)",
-              payloadInputHtml: `<input class="field-input" data-csd-tag="input_add_device_contact" placeholder="ciris://ed25519:...@host:4243" value="${w.addDeviceContact}" oninput="state.wizard.addDeviceContact=this.value; renderAll();" />`,
+              titleHtml: "Existing CIRIS ID Contact / QR Scan",
+              payloadInputHtml: `<input class="spatial-input" data-csd-tag="input_add_device_contact" placeholder="ciris://ed25519:...@host:4243" value="${w.addDeviceContact}" oninput="state.wizard.addDeviceContact=this.value; renderAll();" />`,
               scanButtonTag: "btn_add_device_scan",
               onScanJs: "wizardScanQrFill()",
               matchCode: w.addDeviceMatchCode,
@@ -2463,14 +2628,14 @@
                 }) : ''}
                 ${w.addDeviceMatchCode ? `
                   <div style="font-size:12px; color:var(--ink-mute); padding-bottom:8px;" data-csd-tag="text_add_device_held_note">
-                    Confirm this 6-digit code on your existing device (<code>My things &rsaquo; Devices &amp; keys</code>). If your CIRIS ID already has 2+ devices, a second signature lands immediately or a single signature waits out the 24h <code>W_self</code> window (<code>CSD-095</code>).
+                    Confirm this 6-digit code on your existing device (<code>My things &rsaquo; Devices &amp; keys</code>). If your CIRIS ID already has 2+ devices, a second signature lands immediately or a single signature waits out the 24h <code>W_self</code> window.
                   </div>
                 ` : ''}
               `,
             })}
             ${renderP3ItemRow({
               id: "setup_add_device",
-              titleHtml: `Pending self-roster enrollment: <code>${w.addDeviceName}</code>`,
+              titleHtml: `Pending self-key roster enrollment: <code>${w.addDeviceName}</code>`,
               subtitleHtml: `op:scores &middot; self_roster:add &middot; status: <code>${w.addDeviceStatus}</code>`,
               scopeId: "Everyone",
             })}
@@ -2618,7 +2783,7 @@
 
         const conscienceBlockHtml = renderP12ConscienceStep({
           tag: "wiz_p12_never_allowed",
-          title: "Never-Allowed Constitutional Bounds (P12 · CSD-118)",
+          title: "Constitutional Conscience Bounds (Article G17 Refusal)",
           chipLabel: "Hard Refusal G17",
           chipTone: "danger",
           ellipsisKey: "wiz_p12_step2",
@@ -2653,10 +2818,10 @@
         // ── Step 3 (`AI`): Clean 3D Inference Engine & Steward Bond Choice Slabs ──
         const inferenceChoiceHtml = renderP9ChoiceBlock({
           tag: "setup_inference_provider",
-          contextTitle: "Which inference engine should your bonded AI steward use?",
-          contextSubtitle: "Select an inference provider for your Depth-1 Steward–Agent bond (op:delegates_to on agency:operate, agency:defer_wa).",
+          contextTitle: "Which inference engine should your bonded AI agent use?",
+          contextSubtitle: "Select an inference provider for your Depth-1 human-to-agent delegation bond (op:delegates_to on agency:operate, agency:defer_wa).",
           dimension: "steward:inference_provider",
-          eyebrow: "INFERENCE PROVIDER &middot; STEWARD BOND",
+          eyebrow: "INFERENCE PROVIDER &middot; AGENT BOND",
           scope: "JustMe",
           stageTag: "holon_canvas_wiz_ai",
           receiptId: "setup_steward_bond",
@@ -2671,7 +2836,7 @@
             },
             {
               id: "ciris_portal",
-              label: "CIRIS Steward Portal",
+              label: "CIRIS Managed Inference",
               consequence: "Managed federation inference with H3ERE ethical bounds and collective model alignment.",
               chipLabel: "Federated Portal",
               selected: w.llmProvider === "ciris_portal",
@@ -2711,16 +2876,16 @@
 
         const bondItemHtml = renderP3ItemRow({
           id: "setup_steward_bond",
-          titleHtml: "Steward–Agent Bond (<code>CSD-115</code> &middot; Depth 1 &middot; 365d review)",
+          titleHtml: "Steward–Agent Bond (Depth 1 &middot; 365d review)",
           subtitleHtml: "op:delegates_to &middot; agency:operate, agency:defer_wa",
           scopeId: "JustMe",
           localOnlyBadge: true,
-          rightExtraHtml: renderP6Chip({ tag: "opt_template_companion_default", label: "Companion Steward", tone: "brand" }),
+          rightExtraHtml: renderP6Chip({ tag: "opt_template_companion_default", label: "Companion Agent", tone: "brand" }),
         });
 
         const lineageChainHtml = renderP11LineageChain({
           tag: "wiz_p11_steward_bond",
-          title: "Steward–Agent Lineage Chain (P11 · CSD-115)",
+          title: "Steward–Agent Lineage Chain",
           chipLabel: "Depth 1 · Inv_BondDepthOne",
           chipTone: "ok",
           ellipsisKey: "wiz_p11_bond_detail",
@@ -2732,7 +2897,7 @@
 
         const conscienceH3ereHtml = renderP12ConscienceStep({
           tag: "wiz_p12_h3ere",
-          title: "H3ERE Conscience Pipeline & Halt Gate (P12)",
+          title: "H3ERE Conscience Pipeline & Halt Gate",
           chipLabel: "22 Services · 6 Buses",
           chipTone: "brand",
           ellipsisKey: "wiz_p12_h3ere_detail",
@@ -2914,8 +3079,8 @@
       // Single cohesive 3D Spatial Slab container — no nested cards!
       return renderP1CardShell({
         tag: "csd_082_setup_wizard",
-        titleHtml: "First-Run Setup Wizard &middot; 3D Choice Slabs (P9)",
-        chipLabel: w.runWithAi ? "CSD-082 · With AI (3 steps)" : "CSD-083 · Node-only (2 steps)",
+        titleHtml: "First-Run Setup",
+        chipLabel: w.runWithAi ? "Run with AI (3 steps)" : "Node-only (2 steps)",
         chipTone: "brand",
         headerRightHtml: stepIndicatorsHtml,
         ellipsisKey: "wiz_node_posture",
@@ -2959,7 +3124,7 @@
             <div class="card" style="padding:8px 14px;">
               <div class="kv-row"><span>1. Device</span><strong>${dev.label} (<code>${dev.keyId}</code>)</strong></div>
               <div class="kv-row"><span>2. Future access</span><span>Cannot act as you or receive new Self-DEK content</span></div>
-              <div class="kv-row"><span>3. Path</span><span>${isSelf ? 'Self-release (requires 2-step force_self)' : (requiresQuorum ? 'Creates Self-Key Roster eviction proposal (CSD-095)' : 'Immediate revocation')}</span></div>
+              <div class="kv-row"><span>3. Path</span><span>${isSelf ? 'Self-release (requires 2-step force_self)' : (requiresQuorum ? 'Creates Self-Key Roster eviction proposal' : 'Immediate revocation')}</span></div>
             </div>
             <div class="state-banner danger" style="margin:10px 0;" data-csd-tag="txt_dek_honesty_note">
               <span><strong>Constitutional Honesty Note (CC 4.5.12.1 / 3.3.6.1):</strong> It can no longer act as you or receive anything new. Anything already shared with that device stays readable to it &mdash; CIRIS does not re-encrypt past content.</span>
@@ -3216,7 +3381,7 @@
         <div class="card" data-csd-tag="card_self_roster">
           <div class="card-header">
             <div class="card-header-title">
-              <span>Changes to your devices &mdash; Self-key roster (CSD-095)</span>
+              <span>Changes to your devices &mdash; Self-key roster</span>
               ${openProposals.length > 0
                 ? `<span class="chip warn">${openProposals.length} waiting</span>`
                 : `<span class="chip ok">All settled</span>`}
@@ -3363,7 +3528,7 @@
         <div class="card" data-csd-tag="csd_037_my_identity">
           <div class="card-header">
             <div class="card-header-title">
-              <span>My identity &amp; enrolled devices (CSD-037)</span>
+              <span>My identity &amp; enrolled devices</span>
               <span class="chip ok" data-csd-tag="identity_self_key_id">${md.selfKeyId}</span>
             </div>
             <button class="btn-ghost" onclick="toggleExpand('csd037_more')">&ctdot;</button>
@@ -3420,7 +3585,7 @@
         <div class="card" data-csd-tag="card_approve_device">
           <div class="card-header">
             <div class="card-header-title">
-              <span>Approve a new device (CSD-094)</span>
+              <span>Approve a new device</span>
               <span class="chip ${md.approvalWindowOpen ? 'ok' : ''}" data-csd-tag="text_approve_device_window">
                 ${md.approvalWindowOpen ? '10m window open' : 'Window closed'}
               </span>
@@ -3798,7 +3963,7 @@
         <div class="sheet-backdrop" onclick="if(event.target===this)closeSheet()">
           <div class="sheet" data-csd-tag="csd_128_protected_reporter">
             <div class="sheet-header">
-              <span class="sheet-title">File protected safety report (CSD-128)</span>
+              <span class="sheet-title">File protected safety report</span>
               <button class="btn-ghost" onclick="closeSheet()">&#10005;</button>
             </div>
             <div class="card" style="padding:8px 14px;">
@@ -3914,7 +4079,7 @@
                 <button class="btn btn-brand" onclick="startFirstRunWizard(true)">Launch First-Run Wizard</button>
               </div>
               <div class="kv-row">
-                <span>Multi-Device &amp; Self-Key Roster (<code>CSD-037, 094, 095</code>)</span>
+                <span>Multi-Device &amp; Self-Key Roster</span>
                 <button class="btn" onclick="selectInstrument('DevicesAndKeys')">Open Devices &amp; keys</button>
               </div>
             </div>
@@ -4031,7 +4196,7 @@
       if (inst.requiresAgent && !state.hasAgent) {
         return `
           <div class="state-banner" data-csd-tag="state_no_agent">
-            <span>No AI agent is attached to this node (<code>CSD-083</code> node-only mode).</span>
+            <span>No AI agent is attached to this node (node-only mode).</span>
             <span class="chip">Bare node (:4243)</span>
           </div>
         `;
@@ -4053,25 +4218,25 @@
         const steps = ["Decided", "Frozen", "SecretsDestroyed", "HandedOver", "Notified", "CustodianMinted", "Retired"];
         const curStep = steps[state.retirementStage - 1];
         return `
-          ${renderExpandableCard("csd_115_bond", "Steward — Agent bond (CSD-115)", "Bonded · 365d", "ok", `
+          ${renderExpandableCard("csd_115_bond", "Steward — Agent bond", "Bonded · 365d", "ok", `
             <div class="kv-row"><span>Powers</span><span class="mono-hint">agency:operate, agency:defer_wa</span></div>
             <div class="kv-row"><span>Depth</span><span>Depth 1 (Inv_BondDepthOne)</span></div>
           `)}
-          ${renderExpandableCard("csd_111_shutdown", "Planned shutdown dialogue (CSD-111)", "5m window", "brand", `
+          ${renderExpandableCard("csd_111_shutdown", "Planned shutdown dialogue", "5m window", "brand", `
             <div class="kv-row"><span>Agent response</span><span>May Accept, Object, or Postpone on record</span></div>
             <div class="kv-row"><span>G14 limit</span><span>Software records objection; physical power remains external</span></div>
           `)}
-          ${renderExpandableCard("csd_114_upgrade", "Upgrade offer v1.0-rc9 (CSD-114)", "12/12 peers ok", "ok", `
+          ${renderExpandableCard("csd_114_upgrade", "Upgrade offer v1.0-rc9", "12/12 peers ok", "ok", `
             <div class="kv-row"><span>Risk band</span><span>Low · Agent may refuse on record (G23)</span></div>
           `)}
-          ${renderExpandableCard("csd_118_never", "Never allowed bounds (CSD-118)", "Hard refusal G17", "danger", `
+          ${renderExpandableCard("csd_118_never", "Never allowed bounds", "Hard refusal G17", "danger", `
             <div class="kv-row"><span>prohibited:deception_fraud</span><span class="chip danger">NEVER_ALLOWED</span></div>
             <div class="kv-row"><span>prohibited:manipulation_coercion</span><span class="chip danger">NEVER_ALLOWED</span></div>
           `)}
           <div class="card" data-csd-tag="csd_113_retirement">
             <div class="card-header">
               <div class="card-header-title">
-                <span>Retirement ladder (CSD-113)</span>
+                <span>Retirement ladder</span>
                 <span class="chip brand">Step ${state.retirementStage}/7 &middot; ${curStep}</span>
               </div>
               <button class="btn-ghost" onclick="toggleExpand('retire')">&ctdot;</button>
@@ -4121,13 +4286,13 @@
         return `
           ${renderExpandableCard("csd_node_standing", "Trust root standing", `Rooted · v${state.liveNode.version}`, "ok", `
             <div class="kv-row"><span>Local node</span><span class="mono-hint">127.0.0.1:4243 (${state.liveNode.standing} · ${state.liveNode.keyId})</span></div>
-            <div class="kv-row"><span>Agent runtime</span><span class="mono-hint">${state.hasAgent ? '127.0.0.1:8080 (22/22 services · ciris-agent 2.17.0)' : 'Not attached (CSD-083 node-only)'}</span></div>
+            <div class="kv-row"><span>Agent runtime</span><span class="mono-hint">${state.hasAgent ? '127.0.0.1:8080 (22/22 services · ciris-agent 2.17.0)' : 'Not attached (node-only)'}</span></div>
             <div class="kv-row"><span>Crypto</span><span class="mono-hint">Ed25519 + ML-DSA-65 / X25519 + ML-KEM-768</span></div>
           `)}
           <div class="card" data-csd-tag="csd_080_first_run_launcher">
             <div class="card-header">
               <div class="card-header-title">
-                <span>First-Run Setup &amp; Node Claim Wizard (CSD-080..085, 093)</span>
+                <span>First-Run Setup &amp; Node Claim Wizard</span>
                 <span class="chip brand">${state.wizard.ownershipState}</span>
               </div>
               <button class="btn" data-csd-tag="btn_open_setup_wizard" onclick="startFirstRunWizard(false)">
@@ -4137,7 +4302,7 @@
           </div>
           ${renderP9TwoPathCeremony({
             tag: "csd_owner_requests_p9",
-            title: "Owner Deferral Votes (P9 · /v1/self/owner-requests)",
+            title: "Owner Decisions (/v1/self/owner-requests)",
             chipLabel: `${state.ownerRequests.filter(r => r.signed).length}/${state.ownerRequests.length} signed`,
             chipTone: "brand",
             ellipsisKey: "owner_req_p9_detail",
@@ -4147,11 +4312,11 @@
             windowLabel: "Immediate (0s owner self-quorum)",
             deferralVote: ownerDv,
           })}
-          ${renderExpandableCard("csd_118_never_allowed", "Never-allowed list & operator declaration (CSD-118)", "T0 · Enforced", "brand", `
+          ${renderExpandableCard("csd_118_never_allowed", "Never-allowed list & operator declaration", "T0 · Enforced", "brand", `
             <div class="kv-row"><span>prohibited:*</span><span>No hidden scoring, no silent forward, no unconsented training</span></div>
             <div class="kv-row"><span>CSD/4 tests</span><span class="mono-hint">first_run [root.none, node.unclaimed] &middot; declared [root.none, node.claimed]</span></div>
           `)}
-          ${renderExpandableCard("csd_csd4_catalogue_status", "CSD/4 catalogue v5 &amp; trace checkpoints (CSD-001..129)", "101/101 Green · T0–T19 · 120 atoms", "ok", `
+          ${renderExpandableCard("csd_csd4_catalogue_status", "Catalogue &amp; trace checkpoints (101 items)", "101/101 Green · T0–T19 · 120 atoms", "ok", `
             <div class="kv-row"><span>Cohort 1 (Pinned requirements.yaml)</span><span class="mono-hint">20/20 cards green (0 pending)</span></div>
             <div class="kv-row"><span>Cohort 2 (Testable flows)</span><span class="mono-hint">6/6 cards green (T1, T2, T8, T18)</span></div>
             <div class="kv-row"><span>Cohort 3 (Forced &amp; Reserved #179/#206)</span><span class="mono-hint">31/31 cards green (T0..T19)</span></div>
@@ -4180,12 +4345,12 @@
           ],
         };
         return `
-          ${renderExpandableCard("csd_117_wa", "Wise Authority rulings & conduct (CSD-117)", "Judges are judged", "brand", `
+          ${renderExpandableCard("csd_117_wa", "Wise Authority rulings & conduct", "Judges are judged", "brand", `
             <div class="kv-row"><span>Standing</span><span>Every WA deferral ruling is signed, peer-reviewed, and contestable</span></div>
           `)}
           ${renderP9TwoPathCeremony({
             tag: "csd_117_wa_p9_vote",
-            title: "Active Wise Authority Deferral Vote (P9 · CSD-117)",
+            title: "Active Wise Authority Deferral Vote",
             chipLabel: "1/1 Ruling Signed",
             chipTone: "ok",
             ellipsisKey: "wa_p9_detail",
@@ -4198,7 +4363,7 @@
       }
 
       return `
-        ${renderExpandableCard("csd_116_principles", "Published ethical principles (CSD-116)", "Lexical order", "brand", `
+        ${renderExpandableCard("csd_116_principles", "Published ethical principles", "Lexical order", "brand", `
           <div class="kv-row"><span>1. Meta-Goal M-1</span><span>Adaptive coherence &amp; flourishing</span></div>
           <div class="kv-row"><span>2. Tie-break rule</span><span>Protect the most vulnerable party first (CC 1.4)</span></div>
           <div class="kv-row"><span>3. Guarantee G14</span><span>Always state what the protocol cannot verify</span></div>
@@ -4299,7 +4464,8 @@
     }
 
     // ── Full-Screen Bevy / `CIRISHolon` (`holon-render-3d`) Spatial Scene (`100vw × 100vh`) ──
-    function drawFullScreenBevyScene() {
+    let __bevyLastTime = performance.now();
+    function drawFullScreenBevyScene(now) {
       const canvas = document.getElementById("bevySceneCanvas");
       if (!canvas) return;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -4310,16 +4476,22 @@
         canvas.height = Math.round(vh * dpr);
       }
 
+      const tNow = typeof now === "number" ? now : performance.now();
+      const dt = Math.min((tNow - __bevyLastTime) / 1000, 0.1);
+      __bevyLastTime = tNow;
+      state.holon3d.time = (state.holon3d.time || 0) + dt;
+      const time = state.holon3d.time;
+
       const ctx = canvas.getContext("2d");
       ctx.save();
       ctx.scale(dpr, dpr);
       ctx.clearRect(0, 0, vw, vh);
 
-      // 1. Warm Stone-and-Paper 3D Architectural Environment Lighting
+      // 1. Warm Stone-and-Paper 3D Architectural Environment Lighting (CIRISGame Bone/Linen)
       const bg = ctx.createRadialGradient(vw * 0.5, vh * 0.32, 40, vw * 0.5, vh * 0.5, Math.max(vw, vh) * 0.78);
-      bg.addColorStop(0, "#FAF9F6");
-      bg.addColorStop(0.65, "#F3F1EC");
-      bg.addColorStop(1, "#E7E4DC");
+      bg.addColorStop(0, "#FAF9F5");
+      bg.addColorStop(0.65, "#F3F0E8");
+      bg.addColorStop(1, "#E6E2D6");
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, vw, vh);
 
@@ -4329,15 +4501,15 @@
       ctx.strokeStyle = "rgba(43, 84, 126, 0.065)";
       ctx.lineWidth = 1;
 
-      const numRays = 16;
+      const numRays = 18;
       for (let i = -numRays; i <= numRays; i++) {
         ctx.beginPath();
         ctx.moveTo(vanishX + i * 28, horizonY);
-        ctx.lineTo(vanishX + i * 220, vh);
+        ctx.lineTo(vanishX + i * 240, vh);
         ctx.stroke();
       }
-      for (let row = 1; row <= 10; row++) {
-        const t = Math.pow(row / 10, 1.55);
+      for (let row = 1; row <= 11; row++) {
+        const t = Math.pow(row / 11, 1.55);
         const y = horizonY + (vh - horizonY) * t;
         ctx.beginPath();
         ctx.moveTo(0, y);
@@ -4345,7 +4517,91 @@
         ctx.stroke();
       }
 
-      // 3. Live 3D Selection Splines connecting every Question Slab (`[data-bevy-question="1"]`)
+      // 3. Living 3D Holon Graph (From Frame 1 — Central Anchor, Torus, & 5 Concentric Circle Orbits)
+      const anchorX = vanishX;
+      const anchorY = horizonY + 115 + Math.sin(time * 0.9) * 5;
+      const ringAspect = 0.30;
+
+      // 5 Concentric Circle Rings (Just me -> Everyone)
+      const circleRadii = [80, 140, 210, 290, 380];
+      const circleColors = [
+        "rgba(217, 119, 87, 0.32)",  // Just me (Clay)
+        "rgba(120, 140, 93, 0.25)",  // Family (Verdigris)
+        "rgba(106, 155, 204, 0.22)", // Neighbours (Lapis)
+        "rgba(142, 107, 168, 0.18)", // Communities & Businesses
+        "rgba(95, 92, 85, 0.14)",    // Everyone (Slate)
+      ];
+
+      circleRadii.forEach((r, idx) => {
+        ctx.save();
+        ctx.beginPath();
+        ctx.ellipse(anchorX, anchorY, r, r * ringAspect, 0, 0, Math.PI * 2);
+        ctx.strokeStyle = circleColors[idx];
+        ctx.lineWidth = idx === 0 ? 1.6 : 1.1;
+        if (idx > 1) ctx.setLineDash([6, 6]);
+        ctx.stroke();
+        ctx.restore();
+      });
+
+      // Orbiting Epistemic Species Nodes with connecting filaments
+      const speciesNodes = [
+        { r: 80, speed: 0.45, offset: 0.0, color: "#D97757", size: 6.5, label: "Identity" },
+        { r: 140, speed: -0.32, offset: 1.4, color: "#788C5D", size: 5.5, label: "Trust" },
+        { r: 210, speed: 0.24, offset: 2.9, color: "#6A9BCC", size: 5.5, label: "Peers" },
+        { r: 290, speed: -0.18, offset: 4.2, color: "#8E6BA8", size: 5.0, label: "Commons" },
+        { r: 380, speed: 0.12, offset: 5.6, color: "#5F5C55", size: 4.5, label: "Public" },
+      ];
+
+      speciesNodes.forEach((node) => {
+        const theta = time * node.speed + node.offset;
+        const nx = anchorX + Math.cos(theta) * node.r;
+        const ny = anchorY + Math.sin(theta) * node.r * ringAspect;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(anchorX, anchorY);
+        ctx.lineTo(nx, ny);
+        ctx.strokeStyle = "rgba(176, 174, 165, 0.20)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Node Glow Halo
+        const nGrad = ctx.createRadialGradient(nx, ny, 1, nx, ny, node.size * 2.4);
+        nGrad.addColorStop(0, node.color);
+        nGrad.addColorStop(1, "rgba(250, 249, 245, 0)");
+        ctx.fillStyle = nGrad;
+        ctx.beginPath();
+        ctx.arc(nx, ny, node.size * 2.4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Node Core
+        ctx.fillStyle = node.color;
+        ctx.beginPath();
+        ctx.arc(nx, ny, node.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+
+      // Central Anchor Node (Golden Amber Core + Torus Ring)
+      ctx.save();
+      ctx.beginPath();
+      ctx.ellipse(anchorX, anchorY, 28, 28 * ringAspect, time * 0.35, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(217, 119, 87, 0.65)";
+      ctx.lineWidth = 2.2;
+      ctx.stroke();
+
+      const aGrad = ctx.createRadialGradient(anchorX - 3, anchorY - 4, 2, anchorX, anchorY, 18);
+      aGrad.addColorStop(0, "#FAF9F5");
+      aGrad.addColorStop(0.35, "#D97757");
+      aGrad.addColorStop(0.85, "#8B3E2F");
+      aGrad.addColorStop(1, "rgba(139, 62, 47, 0.15)");
+      ctx.fillStyle = aGrad;
+      ctx.beginPath();
+      ctx.arc(anchorX, anchorY, 14, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // 4. Live 3D Selection Splines connecting every Question Slab (`[data-bevy-question="1"]`)
       //    to its Selection Slabs (`[data-bevy-choice="1"]`) in the full-screen Bevy scene
       const questions = document.querySelectorAll('[data-bevy-question="1"]');
       questions.forEach(qEl => {
@@ -4366,10 +4622,19 @@
           ctx.save();
           if (isSelected) {
             const grad = ctx.createLinearGradient(qx, qy, cx, cy);
-            grad.addColorStop(0, "rgba(43, 84, 126, 0.55)");
-            grad.addColorStop(1, "rgba(46, 111, 64, 0.65)");
+            grad.addColorStop(0, "rgba(217, 119, 87, 0.85)");
+            grad.addColorStop(1, "rgba(120, 140, 93, 0.90)");
             ctx.strokeStyle = grad;
-            ctx.lineWidth = 2.6;
+            ctx.lineWidth = 2.8;
+
+            // Animated Energy Pulse particle traveling along spline
+            const pulseT = (time * 1.5) % 1.0;
+            const px = (1 - pulseT) * (1 - pulseT) * qx + 2 * (1 - pulseT) * pulseT * (qx - 18) + pulseT * pulseT * cx;
+            const py = (1 - pulseT) * (1 - pulseT) * qy + 2 * (1 - pulseT) * pulseT * ((qy + cy) * 0.5) + pulseT * pulseT * cy;
+            ctx.fillStyle = "#788C5D";
+            ctx.beginPath();
+            ctx.arc(px, py, 3.5, 0, Math.PI * 2);
+            ctx.fill();
           } else {
             ctx.strokeStyle = "rgba(90, 98, 106, 0.18)";
             ctx.setLineDash([4, 4]);
@@ -4383,7 +4648,7 @@
         });
       });
 
-      // 4. Subtle Bevy 3D Scene HUD watermark in bottom-right corner
+      // 5. Subtle Bevy 3D Scene HUD watermark in bottom-right corner
       ctx.fillStyle = "rgba(90, 98, 106, 0.55)";
       ctx.font = "500 10px 'IBM Plex Mono', monospace";
       ctx.textAlign = "right";
@@ -4400,14 +4665,20 @@
       if (window.__BEVY_VIEWPORT_WIRED) return;
       window.__BEVY_VIEWPORT_WIRED = true;
 
+      function bevyLoop(now) {
+        drawFullScreenBevyScene(now);
+        requestAnimationFrame(bevyLoop);
+      }
+      requestAnimationFrame(bevyLoop);
+
       window.addEventListener("resize", () => {
-        requestAnimationFrame(drawFullScreenBevyScene);
+        drawFullScreenBevyScene();
       });
 
       const surfaceEl = document.getElementById("surfaceRoot");
       if (surfaceEl) {
         surfaceEl.addEventListener("scroll", () => {
-          requestAnimationFrame(drawFullScreenBevyScene);
+          drawFullScreenBevyScene();
         }, { passive: true });
       }
 
@@ -4422,7 +4693,6 @@
           surfaceEl.style.setProperty("--cam-ry", `${(nx * 1.35).toFixed(2)}deg`);
           surfaceEl.style.setProperty("--cam-rx", `${(-ny * 1.15).toFixed(2)}deg`);
         }
-        requestAnimationFrame(drawFullScreenBevyScene);
       }, { passive: true });
     }
 
@@ -4464,7 +4734,7 @@
       // Header Title
       const headerTitle = document.getElementById("headerTitle");
       if (state.setupMode) {
-        headerTitle.innerHTML = `<span style="color:var(--brand);">First-Run Setup (3D Holon P9)</span>`;
+        headerTitle.innerHTML = `<span style="color:var(--brand);">Device Setup</span>`;
       } else if (state.instrumentId) {
         const inst = INSTRUMENTS.find(i => i.id === state.instrumentId);
         headerTitle.innerHTML = `<span style="color:var(--ink-mute); font-weight:400;">My things /</span> <span>${inst.label}</span>`;

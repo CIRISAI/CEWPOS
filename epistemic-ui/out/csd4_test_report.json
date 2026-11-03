@@ -7497,7 +7497,7 @@
       "url": "http://127.0.0.1:4243/health",
       "reachable": true,
       "status_code": 200,
-      "summary": "standing=identified, key_id=qa-244-node-qdil5rnibj, version=0.5.244"
+      "summary": "standing=identified, key_id=qa-244-node-fgwztnsool, version=0.5.244"
     },
     {
       "name": "CIRISAgent API Root",
@@ -7529,7 +7529,7 @@
       "method_path": "GET /health",
       "status_code": 200,
       "passed": true,
-      "verified_detail": "version=0.5.244, key_id=qa-244-node-qdil5rnibj, standing=identified, profiles=['CCP', 'CCC', 'CCS']"
+      "verified_detail": "version=0.5.244, key_id=qa-244-node-fgwztnsool, standing=identified, profiles=['CCP', 'CCC', 'CCS']"
     },
     {
       "step_num": 2,
@@ -7538,7 +7538,7 @@
       "method_path": "GET /v1/setup/consent-disclosure + /v1/federation/node-code",
       "status_code": 200,
       "passed": true,
-      "verified_detail": "grants=['replication', 'analyze'], location_max_h3=7, node_code=CIRIS-V1-AHQ3-KS5E-7BEB-KF5T..."
+      "verified_detail": "grants=['replication', 'analyze'], location_max_h3=7, node_code=CIRIS-V1-AH4V-F5LT-JS6F-ESY3..."
     },
     {
       "step_num": 3,
@@ -7556,7 +7556,7 @@
       "method_path": "GET /v1/setup/status",
       "status_code": 200,
       "passed": true,
-      "verified_detail": "is_first_run=True, claim_pin_mode=0o600, pin_len=9 (6YKT-8WYG)"
+      "verified_detail": "is_first_run=True, claim_pin_mode=0o600, pin_len=9 (KA7N-F0V9)"
     },
     {
       "step_num": 5,
@@ -7565,7 +7565,7 @@
       "method_path": "POST /v1/self/identity",
       "status_code": 200,
       "passed": true,
-      "verified_detail": "key_id=qa-244-node-user-ynrpi3aeb2, hardware=SoftwareOnly, fedcode=CIRIS-V3-AMA3-RCTY-I5NX-..."
+      "verified_detail": "key_id=qa-244-node-user-ko4cmxn35s, hardware=SoftwareOnly, fedcode=CIRIS-V3-AMAV-G55M-EH24-..."
     },
     {
       "step_num": 6,
@@ -7574,7 +7574,7 @@
       "method_path": "POST /v1/setup/claim-remote",
       "status_code": 200,
       "passed": true,
-      "verified_detail": "role=SYSTEM_ADMIN, wa_id=wa-root-qa-244-node-user-ynrpi3aeb2, attestation=ad8f4f0a-afa5-42e1-8a66-2a9eada74d4f, pin_consumed_deleted=True"
+      "verified_detail": "role=SYSTEM_ADMIN, wa_id=wa-root-qa-244-node-user-ko4cmxn35s, attestation=669babd0-1982-42c1-8b8b-bac58934c872, pin_consumed_deleted=True"
     },
     {
       "step_num": 7,
@@ -7583,16 +7583,16 @@
       "method_path": "GET /v1/setup/status + /v1/setup/owned-nodes",
       "status_code": 200,
       "passed": true,
-      "verified_detail": "is_first_run=False, owner=qa-244-node-user-ynrpi3aeb2, nodes=[{'key_id': 'qa-244-node-qdil5rnibj', 'is_self': True, 'announced': False, 'roster_member': False}]"
+      "verified_detail": "is_first_run=False, owner=qa-244-node-user-ko4cmxn35s, nodes=[{'key_id': 'qa-244-node-fgwztnsool', 'is_self': True, 'announced': False, 'roster_member': False}]"
     },
     {
       "step_num": 8,
       "csd_ids": "CSD-037",
       "name": "Enrolled Devices Roster (My Identity)",
-      "method_path": "GET /v1/self/occurrences?identity_key_id=qa-244-node-user-ynrpi3aeb2",
+      "method_path": "GET /v1/self/occurrences?identity_key_id=qa-244-node-user-ko4cmxn35s",
       "status_code": 200,
       "passed": true,
-      "verified_detail": "identity_key_id=qa-244-node-user-ynrpi3aeb2, audience=owner, occurrences=0"
+      "verified_detail": "identity_key_id=qa-244-node-user-ko4cmxn35s, audience=owner, occurrences=0"
     },
     {
       "step_num": 9,
@@ -7610,7 +7610,7 @@
       "method_path": "GET /v1/self/roster/proposals",
       "status_code": 200,
       "passed": true,
-      "verified_detail": "roster=['qa-244-node-user-ynrpi3aeb2'], proposals=[], w_self_secs=86400 (24h)"
+      "verified_detail": "roster=['qa-244-node-user-ko4cmxn35s'], proposals=[], w_self_secs=86400 (24h)"
     },
     {
       "step_num": 11,
