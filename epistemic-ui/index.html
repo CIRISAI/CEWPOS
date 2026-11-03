@@ -2374,6 +2374,49 @@
       renderAll();
     }
 
+    // ── In-Place Input Handlers (Prevent Focus Loss / Keystroke Ejection) ──
+    function wizardOnFedidInput(input) {
+      state.wizard.fedidLabel = input.value;
+      const hint = document.getElementById("fedid_preview_hint");
+      if (hint) hint.textContent = `@${input.value.trim() || 'handle'}.ciris`;
+      const err = document.getElementById("fedid_error_box");
+      if (err) err.style.display = input.value.trim().toLowerCase() === 'ciris-client-user' ? 'block' : 'none';
+      const receiptTitle = document.getElementById("genesis_receipt_title");
+      if (receiptTitle) {
+        receiptTitle.innerHTML = `Genesis self-key root: <code>${input.value.trim() || 'alice.ciris'}</code>`;
+      }
+      const nextBtn = document.querySelector('[data-csd-tag="btn_next"]');
+      if (nextBtn) nextBtn.disabled = !canWizardAdvanceFromYou();
+    }
+
+    function wizardOnDeviceNameInput(input) {
+      state.wizard.deviceName = input.value;
+      const nextBtn = document.querySelector('[data-csd-tag="btn_next"]');
+      if (nextBtn) nextBtn.disabled = !canWizardAdvanceFromYou();
+    }
+
+    function wizardOnAddDeviceNameInput(input) {
+      state.wizard.addDeviceName = input.value;
+      const sendBtn = document.querySelector('[data-csd-tag="btn_add_device_send"]');
+      const lockedPath = ["requested", "approved", "retrying"].includes(state.wizard.addDeviceStatus);
+      if (sendBtn) {
+        sendBtn.disabled = !state.wizard.addDeviceName.trim() || !state.wizard.addDeviceContact.trim() || lockedPath;
+      }
+    }
+
+    function wizardOnAddDeviceContactInput(input) {
+      state.wizard.addDeviceContact = input.value;
+      const sendBtn = document.querySelector('[data-csd-tag="btn_add_device_send"]');
+      const lockedPath = ["requested", "approved", "retrying"].includes(state.wizard.addDeviceStatus);
+      if (sendBtn) {
+        sendBtn.disabled = !state.wizard.addDeviceName.trim() || !state.wizard.addDeviceContact.trim() || lockedPath;
+      }
+    }
+
+    function wizardOnClaimPinInput(input) {
+      state.wizard.claimPin0600 = input.value;
+    }
+
     function renderFirstRunWizard() {
       const w = state.wizard;
       const lockedPath = ["requested", "approved", "retrying"].includes(w.addDeviceStatus);
@@ -2484,23 +2527,21 @@
               <div class="spatial-field-box">
                 <div class="spatial-field-label">
                   <span>Root CIRIS Handle</span>
-                  <span class="mono-hint">@${w.fedidLabel.trim() || 'handle'}.ciris</span>
+                  <span class="mono-hint" id="fedid_preview_hint">@${w.fedidLabel.trim() || 'handle'}.ciris</span>
                 </div>
-                <input class="spatial-input" data-csd-tag="input_fedid_label" placeholder="e.g. alice.ciris" value="${w.fedidLabel}" oninput="state.wizard.fedidLabel=this.value; renderAll();" />
+                <input class="spatial-input" data-csd-tag="input_fedid_label" placeholder="e.g. alice.ciris" value="${w.fedidLabel}" oninput="wizardOnFedidInput(this)" onblur="renderAll()" />
               </div>
               <div class="spatial-field-box">
                 <div class="spatial-field-label">
                   <span>This Device's Name</span>
                   <span class="mono-hint">local device</span>
                 </div>
-                <input class="spatial-input" data-csd-tag="input_device_name" value="${w.deviceName}" oninput="state.wizard.deviceName=this.value; renderAll();" />
+                <input class="spatial-input" data-csd-tag="input_device_name" value="${w.deviceName}" oninput="wizardOnDeviceNameInput(this)" onblur="renderAll()" />
               </div>
             </div>
-            ${w.fedidLabel.trim().toLowerCase() === 'ciris-client-user' ? `
-              <div style="font-size:12px; color:var(--danger); padding:4px 0 10px;">
-                Generic label <code>ciris-client-user</code> is rejected; choose your own handle.
-              </div>
-            ` : ''}
+            <div id="fedid_error_box" style="font-size:12px; color:var(--danger); padding:4px 0 10px; display:${w.fedidLabel.trim().toLowerCase() === 'ciris-client-user' ? 'block' : 'none'};">
+              Generic label <code>ciris-client-user</code> is rejected; choose your own handle.
+            </div>
           `;
 
           // Key Custody Choice
@@ -2579,7 +2620,7 @@
 
           const genesisReceiptHtml = renderP3ItemRow({
             id: "setup_new_identity",
-            titleHtml: `Genesis self-key root: <code>${w.fedidLabel.trim() || 'alice.ciris'}</code>`,
+            titleHtml: `<span id="genesis_receipt_title">Genesis self-key root: <code>${w.fedidLabel.trim() || 'alice.ciris'}</code></span>`,
             subtitleHtml: `Ed25519 + ML-DSA-65 &middot; Custody: <code>${w.hardwareCustody ? 'secure_enclave' : 'software'}</code>`,
             scopeId: "JustMe",
             localOnlyBadge: true,
@@ -2593,12 +2634,12 @@
                 <span>Label for This New Device</span>
                 <span class="mono-hint">device identifier</span>
               </div>
-              <input class="spatial-input" data-csd-tag="input_add_device_name" value="${w.addDeviceName}" oninput="state.wizard.addDeviceName=this.value; renderAll();" />
+              <input class="spatial-input" data-csd-tag="input_add_device_name" value="${w.addDeviceName}" oninput="wizardOnAddDeviceNameInput(this)" onblur="renderAll()" />
             </div>
             ${renderP10QrCeremony({
               tag: "csd_093_add_this_device",
               titleHtml: "Existing CIRIS ID Contact / QR Scan",
-              payloadInputHtml: `<input class="spatial-input" data-csd-tag="input_add_device_contact" placeholder="ciris://ed25519:...@host:4243" value="${w.addDeviceContact}" oninput="state.wizard.addDeviceContact=this.value; renderAll();" />`,
+              payloadInputHtml: `<input class="spatial-input" data-csd-tag="input_add_device_contact" placeholder="ciris://ed25519:...@host:4243" value="${w.addDeviceContact}" oninput="wizardOnAddDeviceContactInput(this)" onblur="renderAll()" />`,
               scanButtonTag: "btn_add_device_scan",
               onScanJs: "wizardScanQrFill()",
               matchCode: w.addDeviceMatchCode,
@@ -3025,7 +3066,7 @@
                 <span>0600 <code>claim_pin</code> File (never logged to stdout)</span>
                 <span class="mono-hint">local mode 0600</span>
               </div>
-              <input class="spatial-input" style="font-family:var(--mono);" data-csd-tag="input_claim_pin" value="${w.claimPin0600}" oninput="state.wizard.claimPin0600=this.value; renderAll();" />
+              <input class="spatial-input" style="font-family:var(--mono);" data-csd-tag="input_claim_pin" value="${w.claimPin0600}" oninput="wizardOnClaimPinInput(this)" onblur="renderAll()" />
             </div>
           `;
 
@@ -4716,6 +4757,38 @@
     }
 
     // ── Main Render ──
+    function setSurfaceHtml(html) {
+      const activeEl = document.activeElement;
+      let focusedCsdTag = null;
+      let focusedId = null;
+      let selStart = null;
+      let selEnd = null;
+      if (activeEl && (activeEl.tagName === "INPUT" || activeEl.tagName === "TEXTAREA")) {
+        focusedCsdTag = activeEl.getAttribute("data-csd-tag");
+        focusedId = activeEl.id;
+        try {
+          selStart = activeEl.selectionStart;
+          selEnd = activeEl.selectionEnd;
+        } catch (_e) {}
+      }
+
+      document.getElementById("surfaceRoot").innerHTML = html;
+      wireHolonCanvasEvents();
+
+      if (focusedCsdTag || focusedId) {
+        const selector = focusedCsdTag ? `[data-csd-tag="${focusedCsdTag}"]` : `#${focusedId}`;
+        const restoredEl = document.querySelector(selector);
+        if (restoredEl && typeof restoredEl.focus === "function") {
+          restoredEl.focus();
+          if (selStart !== null && selEnd !== null) {
+            try {
+              restoredEl.setSelectionRange(selStart, selEnd);
+            } catch (_e) {}
+          }
+        }
+      }
+    }
+
     function renderAll() {
       const circle = getCircle(state.circleId);
       const pendingRosterCount = answerableProposalCount();
@@ -4789,8 +4862,7 @@
       // If First-Run Setup Mode is active, render the First-Run Wizard (`CSD-080`..`CSD-085`, `CSD-093`)
       if (state.setupMode) {
         html += renderFirstRunWizard();
-        document.getElementById("surfaceRoot").innerHTML = html;
-        wireHolonCanvasEvents();
+        setSurfaceHtml(html);
         return;
       }
 
@@ -4798,8 +4870,7 @@
       if (state.instrumentId) {
         const inst = INSTRUMENTS.find(i => i.id === state.instrumentId);
         html += renderInstrumentSurface(inst);
-        document.getElementById("surfaceRoot").innerHTML = html;
-        wireHolonCanvasEvents();
+        setSurfaceHtml(html);
         return;
       }
 
@@ -4880,8 +4951,7 @@
         `;
       }
 
-      document.getElementById("surfaceRoot").innerHTML = html;
-      wireHolonCanvasEvents();
+      setSurfaceHtml(html);
     }
 
     renderAll();
