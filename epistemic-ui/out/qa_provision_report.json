@@ -1,0 +1,2346 @@
+{
+  "runner_version": "1.0.0 (CSD/4 v5)",
+  "node_version": "0.5.244",
+  "timestamp": "2026-11-05T00:53:55Z",
+  "mode": "Fresh Isolated Node (:4243)",
+  "home_dir": "/tmp/ciris_qa_fresh_1793840032",
+  "node_url": "http://127.0.0.1:4243",
+  "ui_url": "http://127.0.0.1:8787",
+  "steps_total": 12,
+  "steps_passed": 12,
+  "steps_failed": 0,
+  "all_passed": true,
+  "steps": [
+    {
+      "step_num": 1,
+      "contract": {
+        "step_num": 1,
+        "csd_ids": [
+          "CSD-080"
+        ],
+        "name": "Fresh Node Health & Conformance Profiles",
+        "phase": "Boot & Mesh Transport",
+        "topologies": [
+          "T0"
+        ],
+        "required_atoms": [
+          "root.none",
+          "node.unclaimed"
+        ],
+        "primitives": [
+          "P1 CardShell",
+          "P2 FieldRow",
+          "P6 Chip"
+        ],
+        "wire_endpoint": "GET /health"
+      },
+      "passed": true,
+      "status_code": 200,
+      "summary": "version=0.5.244, key_id=qa-node-4243-wg2ntmzasw, standing=identified, profiles=['CCP', 'CCC', 'CCS']",
+      "details": {
+        "conformance": {
+          "build_profiles": [
+            "CCP",
+            "CCC",
+            "CCS"
+          ],
+          "ceg_wire_version": "1.0.0-rc2",
+          "contract_hashes": {
+            "consent_grammar_sha256": "4d473eac6f2bfde1a78b01e9a2ac8442fc9adb5207c7adeb51d509215b79e843",
+            "envelope_vocabulary_sha256": "8064aafe07646acefad93f51fbf7e79cb8ac421bd49318c5aad50ded142295b1",
+            "trace_summary_extraction_sha256": "f4dfea6e8e8e3f11d2abd22cb4dd5adbe15cf662246b7f90fbcfd0bb9cf5b76d",
+            "transform_algebra_sha256": "b7bd779468f4ad1ab551a5fd2dc0392df01e6f2e0ed393f924a806ed49686b4b"
+          },
+          "declared_at": "/v1/federation/conformance",
+          "wire_vocabulary_sha256": "c6bd6aa44111b226a6f204801b1afaa7153fb43296652c1f7cbc23228ac9346c"
+        },
+        "node": {
+          "home_id": "de9eedfe0f10d3d7",
+          "instance_id": "10a73acc-d528-433f-aaf3-0dc767632e10",
+          "key_id": "qa-node-4243-wg2ntmzasw",
+          "standing": "identified",
+          "started_at": "2026-11-05T00:53:53.723Z"
+        },
+        "status": "ok",
+        "version": "0.5.244"
+      },
+      "duration_ms": 0.368945999071002
+    },
+    {
+      "step_num": 2,
+      "contract": {
+        "step_num": 2,
+        "csd_ids": [
+          "CSD-082",
+          "CSD-118"
+        ],
+        "name": "First-Run Consent Disclosure & NodeCode Identity",
+        "phase": "Boundary & Cryptographic Identity",
+        "topologies": [
+          "T0"
+        ],
+        "required_atoms": [
+          "root.none",
+          "node.unclaimed"
+        ],
+        "primitives": [
+          "P1 CardShell",
+          "P7 StateBlock",
+          "P9 ChoiceBlock",
+          "P12 ConscienceStepBlock"
+        ],
+        "wire_endpoint": "GET /v1/setup/consent-disclosure + /v1/federation/node-code"
+      },
+      "passed": true,
+      "status_code": 200,
+      "summary": "node_code=CIRIS-V1-AHI2-V6HD-K4ZZ-..., grants=['replication', 'analyze'], max_h3=7",
+      "details": {
+        "consent": {
+          "data": {
+            "announce_requirement": {
+              "id": "mesh.announce_requirement",
+              "text": "A node that does not announce gets no service access on the mesh and no agent services. The accord's kill switch is only meaningful against a node it can reach, so an unreachable node is never served in the first place."
+            },
+            "declining_analyze": {
+              "allowed": true,
+              "costs": [
+                {
+                  "id": "consent.decline_analyze.cost.no_reputation",
+                  "text": "You build NO reputation \u2014 every capacity:* claim about you is refused, so none can ever exist."
+                },
+                {
+                  "id": "consent.decline_analyze.cost.no_capability_services",
+                  "text": "You cannot use streams or services that require third-party capability attestations, because you will not have any."
+                },
+                {
+                  "id": "consent.decline_analyze.cost.peers_may_refuse",
+                  "text": "Some peers may refuse to interact with you at all."
+                }
+              ],
+              "summary": {
+                "id": "consent.decline_analyze.summary",
+                "text": "You may send traces without consenting to be analyzed. Traces will still flow."
+              }
+            },
+            "details_expandable": true,
+            "grants": [
+              {
+                "covers": [
+                  "capacity:",
+                  "chat:",
+                  "ownership:",
+                  "self:delegates_to:",
+                  "trace:"
+                ],
+                "dimension": "consent:replication:v1",
+                "id": "replication",
+                "permits": {
+                  "id": "consent.grant.replication.permits",
+                  "text": "The peer may HOLD your traces."
+                },
+                "required": true,
+                "title": {
+                  "id": "consent.grant.replication.title",
+                  "text": "Send traces"
+                }
+              },
+              {
+                "dimension": "consent:state:granted:v1",
+                "id": "analyze",
+                "parameter": "analyze=True",
+                "permits": {
+                  "id": "consent.grant.analyze.permits",
+                  "text": "The peer may SCORE your traces \u2014 this is what builds reputation."
+                },
+                "required": false,
+                "scope": "analyze",
+                "title": {
+                  "id": "consent.grant.analyze.title",
+                  "text": "Be scored"
+                }
+              }
+            ],
+            "independent": {
+              "id": "consent.grants.independent",
+              "text": "These are separate consents on opposite edges. Granting one does not grant the other, and either can be withdrawn without the other."
+            },
+            "location": {
+              "carrier": "location_proof",
+              "cell_format": "h3",
+              "declining": {
+                "allowed": true,
+                "costs": [
+                  {
+                    "id": "location.cost.no_regional_reporting",
+                    "text": "Your activity cannot contribute to regional pattern reporting."
+                  },
+                  {
+                    "id": "location.cost.no_regional_community",
+                    "text": "You cannot take part in any regional community. Membership is decided by whether your cell falls inside the community's own region, so without a cell there is nothing to compare."
+                  }
+                ]
+              },
+              "kind": "envelope_field",
+              "max_resolution": 7,
+              "permits": {
+                "id": "location.permits",
+                "text": "Attaches a coarse H3 cell to your envelope so patterns can be reported across regions. The substrate refuses anything finer than resolution 7, so it identifies a rough region \u2014 never your specific locality or address."
+              },
+              "purpose": {
+                "id": "location.purpose",
+                "text": "Regional pattern reporting, and taking part in regional communities. A community may also use it as an OPTIONAL visibility gate, restricting items destined for that community to members whose region falls inside it. It is not a general restriction on your traces \u2014 that is decided by the consents above."
+              },
+              "required": false,
+              "title": {
+                "id": "location.title",
+                "text": "Share your approximate region"
+              }
+            },
+            "primary_action": {
+              "id": "consent.mesh_participation.action",
+              "text": "Consent to CIRIS Mesh Participation"
+            },
+            "source_locale": "en"
+          }
+        },
+        "node_code": {
+          "alias_hint": "qa-node-4243-wg2ntmzasw",
+          "code": "CIRIS-V1-AHI2-V6HD-K4ZZ-PPKQ-PSAW-OUAX-FOHM-D2EL-MZSN-PKHZ-6QBX-YK63-XHOD-E62N-N4YS-URGG-C7ZW-O5KM-CY5K-3QA4-FVWO-A2I2-GYAS-KSKS-PJKO-NHBQ-C5YW-CLLO-N5SG-KLJU-GI2D-GLLX-M4ZG-45DN-PJQX-G5YA-C5YW-CLLO-N5SG-KLJU-GI2D-GLLX-M4ZG-45DN-PJQX-G57J-2Y",
+          "key_id": "qa-node-4243-wg2ntmzasw",
+          "qr_payload": "CIRIS-V1-AHI2V6HDK4ZZPPKQPSAWOUAXFOHMD2ELMZSNPKHZ6QBXYK63XHODE62NN4YSURGGC7ZWO5KMCY5K3QA4FVWOA2I2GYASKSKSPJKONHBQC5YWCLLON5SGKLJUGI2DGLLXM4ZG45DNPJQXG5YAC5YWCLLON5SGKLJUGI2DGLLXM4ZG45DNPJQXG57J2Y"
+        }
+      },
+      "duration_ms": 0.687038991600275
+    },
+    {
+      "step_num": 3,
+      "contract": {
+        "step_num": 3,
+        "csd_ids": [
+          "CSD-093"
+        ],
+        "name": "Multi-Device Handshake Initial State",
+        "phase": "Add-This-Device Roster Handshake",
+        "topologies": [
+          "T0",
+          "T3"
+        ],
+        "required_atoms": [
+          "root.none",
+          "node.unclaimed"
+        ],
+        "primitives": [
+          "P9 ChoiceBlock",
+          "P10 QrCeremony"
+        ],
+        "wire_endpoint": "GET /v1/setup/add-device"
+      },
+      "passed": true,
+      "status_code": 200,
+      "summary": "state=idle",
+      "details": {
+        "state": "idle"
+      },
+      "duration_ms": 0.3580679767765105
+    },
+    {
+      "step_num": 4,
+      "contract": {
+        "step_num": 4,
+        "csd_ids": [
+          "CSD-085",
+          "CSD-118"
+        ],
+        "name": "First-Run Unclaimed Status & 0600 claim_pin",
+        "phase": "Physical Operator Presence",
+        "topologies": [
+          "T0"
+        ],
+        "required_atoms": [
+          "root.none",
+          "node.unclaimed"
+        ],
+        "primitives": [
+          "P1 CardShell",
+          "P2 FieldRow",
+          "P7 StateBlock"
+        ],
+        "wire_endpoint": "GET /v1/setup/status + local claim_pin (mode 0600)"
+      },
+      "passed": true,
+      "status_code": 200,
+      "summary": "is_first_run=True, claim_pin_mode=0o600, pin_len=9",
+      "details": {
+        "data": {
+          "is_first_run": true,
+          "setup_required": true,
+          "config_exists": false,
+          "claim_pin_file": "/tmp/ciris_qa_fresh_1793840032/claim_pin",
+          "cohort_scopes": [
+            "self",
+            "family",
+            "community",
+            "affiliations",
+            "species",
+            "biosphere",
+            "federation"
+          ]
+        }
+      },
+      "duration_ms": 0.49881701124832034
+    },
+    {
+      "step_num": 5,
+      "contract": {
+        "step_num": 5,
+        "csd_ids": [
+          "CSD-082",
+          "CSD-037"
+        ],
+        "name": "Mint Hybrid PQC Root Identity (Ed25519 + ML-DSA-65)",
+        "phase": "Genesis Root Authority",
+        "topologies": [
+          "T0"
+        ],
+        "required_atoms": [
+          "root.none"
+        ],
+        "primitives": [
+          "P1 CardShell",
+          "P3 ItemRow",
+          "P4 ReceiptSheet"
+        ],
+        "wire_endpoint": "POST /v1/self/identity"
+      },
+      "passed": true,
+      "status_code": 200,
+      "summary": "key_id=qa-node-4243-user-wgsmn4ftpc, hardware=SoftwareOnly, fedcode=CIRIS-V3-AMAT-LRQ6-6FXB-...",
+      "details": {
+        "fedcode": "CIRIS-V3-AMAT-LRQ6-6FXB-WRWM-H2M6-N2NV-GUMJ-FBQY-CGGG-CILM-LC4B-K2J6-7R3L-7LVI-X2QJ-YZH5-A6XV-YH6Q-X75R-JMVO-N5SG-UHG4-KL2E-L4WS-RCJS-4RP6-4AOH-CYJN-NZXW-IZJN-GQZD-IMZN-OVZW-K4RN-O5TX-G3LO-GRTH-I4DD-AAAA-AAAB-LHU5-LC3B-UWB6-CSYY-SIIG-ISIL-RZ2N-LNMJ-5EK4-KY5L-FOFI-YTHO-CGTE-QFQ",
+        "hardware_type": "SoftwareOnly",
+        "identity_type": "user",
+        "key_id": "qa-node-4243-user-wgsmn4ftpc",
+        "pubkey_ed25519_base64": "qL6gnGT9B69cH9C/+xSyrm9kahzcUvRF8tKIky5F/uA=",
+        "pubkey_ml_dsa_65_base64": "ZbUuw/+kAI9gItN+Lia3/VwrH6/Js1z3EecEjKJ/3qwd3uNu7rlQEn9zkEQY33ZXE+mM+zK96/+dy3bs9tuOmQHcYBq2MJpi1Rv6OlvOLUIMk1pA54LnuaVcpMDjm4en1qaAvGmN+OgdVNPQUHDTRwq3baFrkeRbZQE9sp8b9HfLtyWqlnQosWlWiPko72bUXme0SuB2vntUM1DE2CzSmGuYvlJps45zLEulWRH8PyoFId21w/kLAPdBc7ROCz8CeU/xOoDIhKvqnrfYH4FpZHBu/uujjlilzhfFFdo73N1yU96UosaFZfLUNaukcOIn1gFtBSd6jy8OuXgS01+UddMOM6xKmHE4hoySD6ZmVZBXdNbSAEbKlm/dqkVUNM0aknle/o+Rn5nPOEEYAiVdxJNH9N+yc/JgpFurhqEgg2m+Nh3jOthJplU9ZHyakUx5f3PiuiQTaTOxEReSWezJ/hO4CNiaosUdFCEin+3/UUhAD/ZLaRqN5q5uCZy90T7F0KgstQhEmrSpp65BozD70wnFhTBdBYrlJ9BoBVunQ/1x/dWQiB7T4kwmYXWlH/knltJdbAMfCCfwk7PkEcyV/2GMMI+U+g4vwq2TpiWG19fGndIPVdCMfuGVTeOQKZKX5YzOBUpOUrq0NJ7q6/fqDC4Kod8goNOW9MikdIHpMRRLq+1Zfqws+dxkJXB2UpwLmbxPmlmPnGRduMJWfxR9ZLc7Rn5uRbQ6/tESXu8h6y8WZlrrgd5MgCnOl1x94739c+mrKWl77Kr+GQnAmCYoh7ox/f4O295HIoER4w6FNEF/tDi/Fxg74wt0U1xRcxVsxXAd3nmErxVWv0EMBvZ8pyNTAyx2EP/dOMRYFzOs/IABbq70NeiSUc2P+Eze/PcOgOeZo0RCr4sbf7F02HL7oBxGpXWYOv/0gemDeN84puQ3YcJfZnhfgbiAjXtkrK73wsg1uEUhRh2wTNYvqr40o+6ZJpOIuMyXDP1S21kZLSPa9i9R1xFbc9UFudpZobdoqfBvMPNJekLbil5wOFfU68TUM7I7CBJyj5u2U4wGIiMDr+0oeDFzBY+w8IprtHvtjl6CJ/CG42IiN2XAbAD6votxxvSXvghQ9jQHqqqgjS4Ji+nufvzVNEB5EZwyQp0XDpdQAi9XqyBITw7BNgkCrbWIXoZcx26whU88501sle2MbsqtN1f75/j5uYmaehCAwKnzVXvJQtkARjod8+FP+uebjd4R0+NGs5tQlr7vMVLTvBeUiQhcGC7t26WDTjRctn4ff2U0Zjosim5/lC9EJ279/pvTwuo5x6q84pvwHsY2n+J19sbJUwbPEIL0b6OBntCcXN1OF66KCeY51RjIpqxHC+ZiQ54Mpl1faDP9XHJSvlrmErSdz7+Wn1XH2SKraOIi5fv+FmB4lLvyKsjJ5R3hohE39RAGZv9O+iVfF4QEyeqb6PTnBdSkfsk2D4Mi4uRt6s40n6mSI0kP+UzBWKdTv/X4DXnk64Uw3E43p7WY46AMzyj2ls/EhiK3Q6lS+g4IRsktWM+Qt/oDLrw5SFmMNTWUOH5KWFlEDHJWWhDcm6egk8mbdymHHSibxzFYhDbR6dxOZArBdpTlEF3rUI3tQ/P+/wHJKjCx+QqCrGbu0a6P+9wldP5u+YYio4mA9dcz3woSmFeOu6j7vkfcydoXCfNyzq0Mz+jvNPbjk79ia0XfW7HRROau88xMeHIy4ybQklqk9NZLR5zcX2jTPURKnl8+MFWtrFMZXKXU3zrx6ciSnAozvejEy5+VaJStBJqa27xnp2w9OqUcPW38E1R+OY2PVStD2D1AWn///x9OVBNLyAjucgMh+9ScbAUwK0bt7xwIhWZeHd3+VDAXGlXV/lVRysbRFg3MgHNUHwY27DPKdRdJ+f5HYAI8BXeMsIbLJTrYB3xU+wuhgLDQa0xoaxz39IKDRbU4Kgn7nLKXZhaxNSUJd9vbXq5NZa0/6NlVLq1g7dOUax3DTQYbpZs2TWZpPQfounvn6p7mVu4gqtSzzbhuWmShD1qVLxPvgff/GBjgM/lcfkXagXrxp4NXzR5ukj3p/OyD/LFnI0TGKFcaft21WJAFy/ETXVxRzzebCWp83/B79ntTlKblALYUwLX0d849ZhtxL5+fHnjBO+JShB4yzepyqHDP6sFLTBvI7qZVXp0Rgr/NHNQWSRPxmdGFnhiXdimnJhDc3+3dTFhuWOxwPgoGfOjC+z5xdod0jZZDcWprlVwEGub2A5p/cTnzh+m6fNN5jj8mAhgODXdLdWkMOj+V4WFY8mog/fWv1kFC1K3/ogOsjyMhRMoCE4Xj/EmOW6mIEfQwS5MFEoI43Fg42FBthUSs1FJrDK4ulCtNFUW+nGPosVnmjOh1ekVGpfwn0LDhkbd1d13cxAxkwxaS7Zd2xQhEEGZPL9XP+OKDiS7R5nSqNOiLNUo7DuM8nrA0ViQjeNRe5kOhkNNYKqRtS39YlYXWUYBNvlAvL+8u64LRoGqXphT6t09qbUvwTejVay8F/Wu2aeJh3iBuOLuoJyYoC8pWLm8LpTmfkxP1gUo+3Bq6ZUhcta4KKeIPz/UVoax+LdmPc4A="
+      },
+      "duration_ms": 4.73200500709936
+    },
+    {
+      "step_num": 6,
+      "contract": {
+        "step_num": 6,
+        "csd_ids": [
+          "CSD-085"
+        ],
+        "name": "Claim Node Ownership & Consume One-Time 0600 PIN",
+        "phase": "1-Phase Owner-Binding Attestation",
+        "topologies": [
+          "T0"
+        ],
+        "required_atoms": [
+          "root.none",
+          "node.claimed"
+        ],
+        "primitives": [
+          "P1 CardShell",
+          "P8 ConfirmSheet",
+          "P9 ChoiceBlock"
+        ],
+        "wire_endpoint": "POST /v1/setup/claim-remote"
+      },
+      "passed": true,
+      "status_code": 200,
+      "summary": "role=SYSTEM_ADMIN, wa_id=wa-root-qa-node-4243-user-wgsmn4ftpc, attestation=1e8b4c2f-a3b2-47f5-bca6-2a3b60905667, pin_consumed_deleted=True",
+      "details": {
+        "access_token": "sess:wa-root-qa-node-4243-user-wgsmn4ftpc:gTupJdAVinW1P8QeDwQcoOi1Y2l1V54v.6Y2DNsnkYXhdb5wQr-O85S-Sxmzwt2qXVXwhMWL4FOA",
+        "cohort_scope": "self",
+        "expires_in": 86400,
+        "identity_key_id": "qa-node-4243-user-wgsmn4ftpc",
+        "local_directory_updated": true,
+        "owner_binding_attestation_id": "1e8b4c2f-a3b2-47f5-bca6-2a3b60905667",
+        "role": "SYSTEM_ADMIN",
+        "token_type": "Bearer",
+        "user_id": "wa-root-qa-node-4243-user-wgsmn4ftpc",
+        "wa_id": "wa-root-qa-node-4243-user-wgsmn4ftpc"
+      },
+      "duration_ms": 34.30390096036717
+    },
+    {
+      "step_num": 7,
+      "contract": {
+        "step_num": 7,
+        "csd_ids": [
+          "CSD-085",
+          "CSD-118"
+        ],
+        "name": "Post-Claim Node Status & Owned-Nodes Binding",
+        "phase": "Authenticated Node Control",
+        "topologies": [
+          "T0"
+        ],
+        "required_atoms": [
+          "root.none",
+          "node.claimed"
+        ],
+        "primitives": [
+          "P1 CardShell",
+          "P2 FieldRow",
+          "P7 StateBlock"
+        ],
+        "wire_endpoint": "GET /v1/setup/status + GET /v1/setup/owned-nodes"
+      },
+      "passed": true,
+      "status_code": 200,
+      "summary": "is_first_run=False, owner=qa-node-4243-user-wgsmn4ftpc, owned_count=1",
+      "details": {
+        "status": {
+          "data": {
+            "is_first_run": false,
+            "setup_required": false,
+            "config_exists": true,
+            "cohort_scopes": [
+              "self",
+              "family",
+              "community",
+              "affiliations",
+              "species",
+              "biosphere",
+              "federation"
+            ]
+          }
+        },
+        "owned": {
+          "owner": "qa-node-4243-user-wgsmn4ftpc",
+          "nodes": [
+            {
+              "key_id": "qa-node-4243-wg2ntmzasw",
+              "is_self": true,
+              "announced": false,
+              "roster_member": false
+            }
+          ]
+        }
+      },
+      "duration_ms": 8.55544995283708
+    },
+    {
+      "step_num": 8,
+      "contract": {
+        "step_num": 8,
+        "csd_ids": [
+          "CSD-037"
+        ],
+        "name": "Enrolled Device Occurrences (My Identity)",
+        "phase": "Hardware Custody & Occurrences",
+        "topologies": [
+          "T3"
+        ],
+        "required_atoms": [
+          "roster.visible",
+          "device.joined"
+        ],
+        "primitives": [
+          "P1 CardShell",
+          "P3 ItemRow",
+          "P4 ReceiptSheet"
+        ],
+        "wire_endpoint": "GET /v1/self/occurrences"
+      },
+      "passed": true,
+      "status_code": 200,
+      "summary": "identity_key_id=qa-node-4243-user-wgsmn4ftpc, audience=owner, occurrences=0",
+      "details": {
+        "identity_key_id": "qa-node-4243-user-wgsmn4ftpc",
+        "audience": "owner",
+        "occurrences": []
+      },
+      "duration_ms": 2.0936839864589274
+    },
+    {
+      "step_num": 9,
+      "contract": {
+        "step_num": 9,
+        "csd_ids": [
+          "CSD-094"
+        ],
+        "name": "Open 10-Minute Device Approval Window & Poll Requests",
+        "phase": "2-Path Multi-Device Enrollment Window",
+        "topologies": [
+          "T3"
+        ],
+        "required_atoms": [
+          "device.join_requested"
+        ],
+        "primitives": [
+          "P1 CardShell",
+          "P9 ChoiceBlock",
+          "P10 QrCeremony"
+        ],
+        "wire_endpoint": "POST /v1/self/device-requests/open + GET /v1/self/device-requests"
+      },
+      "passed": true,
+      "status_code": 200,
+      "summary": "open=True, window_secs=600, window_secs_left=599",
+      "details": {
+        "open": {
+          "open": true,
+          "seconds": 600
+        },
+        "poll": {
+          "requests": [],
+          "window_secs_left": 599
+        }
+      },
+      "duration_ms": 1.1116639943793416
+    },
+    {
+      "step_num": 10,
+      "contract": {
+        "step_num": 10,
+        "csd_ids": [
+          "CSD-095"
+        ],
+        "name": "Self-Key Roster Proposals & 24h W_self Silence Window",
+        "phase": "Self-Key Roster Governance",
+        "topologies": [
+          "T3",
+          "T11"
+        ],
+        "required_atoms": [
+          "key.membership.evicted",
+          "self.roster_size.one"
+        ],
+        "primitives": [
+          "P1 CardShell",
+          "P3 ItemRow",
+          "P9 ChoiceBlock"
+        ],
+        "wire_endpoint": "GET /v1/self/roster/proposals"
+      },
+      "passed": true,
+      "status_code": 200,
+      "summary": "roster=['qa-node-4243-user-wgsmn4ftpc'], w_self_secs=86400 (24h), proposals=0",
+      "details": {
+        "identity_key_id": "qa-node-4243-user-wgsmn4ftpc",
+        "proposals": [],
+        "released_nodes": [],
+        "roster": [
+          "qa-node-4243-user-wgsmn4ftpc"
+        ],
+        "w_self_secs": 86400
+      },
+      "duration_ms": 4.590260039549321
+    },
+    {
+      "step_num": 11,
+      "contract": {
+        "step_num": 11,
+        "csd_ids": [
+          "CSD-105",
+          "CSD-129"
+        ],
+        "name": "Authenticated Node State, Trust Root & Reverse Proxy",
+        "phase": "Entrenched Posture & Mesh Liveness",
+        "topologies": [
+          "T8"
+        ],
+        "required_atoms": [
+          "root.infrastructure",
+          "root.rooted"
+        ],
+        "primitives": [
+          "P1 CardShell",
+          "P2 FieldRow",
+          "P6 Chip"
+        ],
+        "wire_endpoint": "GET /v1/node/state + GET /v1/trust-root + :8787/health"
+      },
+      "passed": true,
+      "status_code": 200,
+      "summary": "node.band=green, trust_root=entrenched, cewpos_ui_proxy=0.5.244",
+      "details": {
+        "state": {
+          "data": {
+            "as_of": "2026-11-05T00:53:55.554510784Z",
+            "band": "unknown",
+            "carriage": {
+              "band": "unknown",
+              "class_explains": [
+                {
+                  "band": "yellow",
+                  "class": "policy",
+                  "count": 0,
+                  "message": {
+                    "id": "operator.withhold_class.policy",
+                    "text": "A decision this node made on purpose \u2014 consent scope, a serve capability the peer does not hold, or the producer's own restriction. Working as configured: change the configuration, not the code."
+                  }
+                },
+                {
+                  "band": "red",
+                  "class": "fault",
+                  "count": 0,
+                  "message": {
+                    "id": "operator.withhold_class.fault",
+                    "text": "A read or a wiring step failed and the serve path failed closed. This is NOT a verdict about the peer \u2014 it is this node's fault to fix."
+                  }
+                },
+                {
+                  "band": "red",
+                  "class": "integrity",
+                  "count": 0,
+                  "message": {
+                    "id": "operator.withhold_class.integrity",
+                    "text": "A row this node holds could not be served at all: it would not serialize, its stored hash would not decode, or advertised bytes were unfetchable. A defect in local state, not a policy."
+                  }
+                }
+              ],
+              "explains": {
+                "id": "operator.carriage.not_exercised",
+                "text": "No replication round has finished on this process, so no serving-path gate has ever run and the withhold ledger has never been written to. The zero is untested, not clean."
+              },
+              "inbound_backpressure_drops": 0,
+              "recent_withholds": [],
+              "recent_withholds_cap": 64,
+              "rounds_by_outcome": {},
+              "rounds_total": 0,
+              "served_by_kind": {},
+              "served_total": 0,
+              "source": "ciris_edge::observability::EdgeMetrics::snapshot",
+              "standing": "not_exercised",
+              "withholds_by_class": {
+                "fault": 0,
+                "integrity": 0,
+                "policy": 0
+              },
+              "withholds_by_reason": {},
+              "withholds_total": 0,
+              "worst_withhold_class": null
+            },
+            "composed_from": [
+              "node_state",
+              "edge_metrics",
+              "trace_corpus",
+              "store_footprint",
+              "ingest_refusals"
+            ],
+            "headline": {
+              "id": "operator.headline.unknown",
+              "text": "One or more signals could not be computed. Read the unknown list \u2014 an uncomputed signal is not a healthy one."
+            },
+            "ingest": {
+              "accepted_total": 0,
+              "band": "unknown",
+              "by_kind": {},
+              "distinct_signers": 0,
+              "explains": {
+                "id": "operator.ingest.not_exercised",
+                "text": "Nothing has been offered to the HTTP ingest path on this process \u2014 no batch accepted and none refused. The zero is untested, not clean."
+              },
+              "note": {
+                "id": "operator.ingest.http_path_only",
+                "text": "This reading covers the HTTP ingest path only. A batch that arrives over the Reticulum relay is verified by the same persist gate but is not counted here, so a clean ingest reading is not a statement about every way a trace can be offered to this node."
+              },
+              "observed_since": "2026-11-05T00:53:55.125556897Z",
+              "refusals_in_window": 0,
+              "refusals_per_hour": 0.0,
+              "refused_total": 0,
+              "source": "ciris_server::ingest_http::IngestRefusals::snapshot",
+              "standing": "not_exercised",
+              "thresholds": {
+                "stable_signer_max": 8,
+                "sustained_min_refusals_in_window": 60,
+                "top_signers_cap": 5
+              },
+              "top_signers": [],
+              "unattributed_in_window": 0,
+              "window_seconds": 3600,
+              "window_truncated": false
+            },
+            "node": {
+              "as_of": "2026-11-05T00:53:55.554510784Z",
+              "band": "green",
+              "clock_dependent": [
+                "trust_root.drill_band",
+                "trust_root.standing",
+                "key_statements.standing",
+                "quarantine.state",
+                "consent_sla.overdue"
+              ],
+              "consent_sla": {
+                "band": "green",
+                "overdue": 0,
+                "read_only": true,
+                "sla_seconds": 86400
+              },
+              "genesis": {
+                "band": "green",
+                "posture": {
+                  "state": "entrenched"
+                }
+              },
+              "key_statements": {
+                "band": "green",
+                "considered": 0,
+                "standing": "stands",
+                "statement_at": "2026-11-05T00:53:55.554510784Z"
+              },
+              "peer_quota": {
+                "band": "green",
+                "note": "process-local gauge, not node state: resets on restart, differs between processes serving one node, and is stored nowhere. slot_denials must be 0 by the tracked-peers cap derivation; a non-zero reading means that arithmetic no longer holds in this build. refusals_by_budget / refused_keys_in_window (#609) count ordinary quota refusals per budget and distinct refused keys in the burst window; the BAND does not read them \u2014 a correct refusal is a fault report about someone else, so banding belongs to the consumer's standing fold.",
+                "observation": {
+                  "process_local": true,
+                  "refusals_by_budget": {},
+                  "refused_keys_in_window": 0,
+                  "slot_denials": 0,
+                  "tracked_peers": 2
+                }
+              },
+              "quarantine": {
+                "band": "green",
+                "state": "not_quarantined"
+              },
+              "self_key_id": "qa-node-4243-wg2ntmzasw",
+              "targeted": [
+                {
+                  "binding": "resolve_transit_eligibility_json",
+                  "requires": "a peer key id",
+                  "signal": "transit_eligibility"
+                },
+                {
+                  "binding": "is_load_bearing_json",
+                  "requires": "a CEG object (kind + id)",
+                  "signal": "load_bearing"
+                },
+                {
+                  "binding": "resolve_reverse_quorum_json",
+                  "requires": "a cohort and an action attestation id",
+                  "signal": "reverse_quorum_standing"
+                },
+                {
+                  "binding": "resolve_reverse_quorum_json",
+                  "requires": "a cohort and an action attestation id (per-objection)",
+                  "signal": "steward_tier_standing"
+                }
+              ],
+              "trust_root": {
+                "band": "green",
+                "drill_band": "green",
+                "drill_freshness": "Green",
+                "last_drill_at": "2026-10-04T22:43:08.071Z",
+                "root_ref": "humanity-accord",
+                "roots_considered": 1,
+                "standing": "valid",
+                "verdict": {
+                  "charter_has_recovery": true,
+                  "charter_quorum": {
+                    "distinct_holders": 3,
+                    "required": 2,
+                    "roster_size": 3
+                  },
+                  "drill_freshness": "Green",
+                  "edge_exists": true,
+                  "halt_latched": false,
+                  "holders_hardware": [
+                    {
+                      "class": "ExternalSecureElement",
+                      "key_id": "A1",
+                      "layer_a": true,
+                      "layer_b": true,
+                      "refusal": null
+                    },
+                    {
+                      "class": "ExternalSecureElement",
+                      "key_id": "B1",
+                      "layer_a": true,
+                      "layer_b": true,
+                      "refusal": null
+                    },
+                    {
+                      "class": "ExternalSecureElement",
+                      "key_id": "C1",
+                      "layer_a": true,
+                      "layer_b": true,
+                      "refusal": null
+                    }
+                  ],
+                  "holders_hardware_attested": true,
+                  "last_drill_at": "2026-10-04T22:43:08.071Z",
+                  "root_kind": "Family",
+                  "root_self_declares": true,
+                  "valid": true
+                }
+              }
+            },
+            "node_explains": [
+              {
+                "band": "green",
+                "message": {
+                  "id": "operator.trust_root.valid",
+                  "text": "This node roots to a trust root that checks out in full: a live trust edge, a self-declaring charter with a recovery commitment, and no halt latched."
+                },
+                "signal": "trust_root",
+                "token": "valid"
+              },
+              {
+                "band": "green",
+                "message": {
+                  "id": "operator.drill.green",
+                  "text": "This node's trust root proved its kill switch within the last 90 days."
+                },
+                "signal": "trust_root.drill",
+                "token": "green"
+              },
+              {
+                "band": "green",
+                "message": {
+                  "id": "operator.key_statements.stands",
+                  "text": "No revocation this node holds covers a statement made right now."
+                },
+                "signal": "key_statements",
+                "token": "stands"
+              },
+              {
+                "band": "green",
+                "message": {
+                  "id": "operator.quarantine.not_quarantined",
+                  "text": "No quarantine marker about this node's key has ever taken effect here."
+                },
+                "signal": "quarantine",
+                "token": "not_quarantined"
+              },
+              {
+                "band": "green",
+                "message": {
+                  "id": "operator.consent_sla.none_overdue",
+                  "text": "Every consent revocation this node promised to promote is inside its SLA window."
+                },
+                "signal": "consent_sla",
+                "token": "none_overdue"
+              },
+              {
+                "band": "green",
+                "message": {
+                  "id": "operator.peer_quota.clean",
+                  "text": "The peer-write quota has been exercised and its slot-denial arithmetic still holds."
+                },
+                "signal": "peer_quota",
+                "token": "clean"
+              }
+            ],
+            "receive": {
+              "applied_by_kind": {},
+              "applied_total": 0,
+              "apply_refusals_by_kind": {},
+              "apply_refusals_total": 0,
+              "band": "unknown",
+              "decided_total": 0,
+              "duplicate_by_kind": {},
+              "duplicate_total": 0,
+              "explains": {
+                "id": "operator.receive.not_exercised",
+                "text": "No replication round has finished on this process, so nothing has been offered to this node's apply path. The zero is untested, not clean."
+              },
+              "key_apply_refusals_by_reason": {},
+              "note": {
+                "id": "operator.receive.decided_denominator",
+                "text": "`decided_total` is every row a peer offered that reached an apply decision here: applied plus duplicate plus refused. Bytes this node could not decode reach no decision and are counted nowhere, so they are missing from this total rather than folded into it."
+              },
+              "rounds_total": 0,
+              "source": "ciris_edge::observability::EdgeMetrics::snapshot",
+              "standing": "not_exercised"
+            },
+            "source_locale": "en",
+            "sources": {
+              "edge_metrics": {
+                "present": true,
+                "produced_by": "ciris_edge::observability::EdgeMetrics::snapshot"
+              },
+              "ingest_refusals": {
+                "present": true,
+                "produced_by": "ciris_server::ingest_http::IngestRefusals::snapshot"
+              },
+              "node_state": {
+                "present": true,
+                "produced_by": "ciris_persist::federation::node_state::resolve_node_state"
+              },
+              "store_footprint": {
+                "present": true,
+                "produced_by": "ciris_persist::Engine::storage_summary()"
+              },
+              "trace_corpus": {
+                "present": true,
+                "produced_by": "ciris_persist::Engine::storage_summary().trace_events"
+              }
+            },
+            "store": {
+              "bytes_measurable": false,
+              "not_measured": {
+                "per_table_bytes": {
+                  "id": "operator.store.per_table_bytes_not_measured",
+                  "text": "Per-table BYTES read as 0 on SQLite builds without dbstat, so row counts are reported instead. A zero here means the size was not measured, never that the table is empty."
+                },
+                "wal_bytes": {
+                  "id": "operator.store.wal_bytes_not_measured",
+                  "text": "The write-ahead log is excluded from this total on BOTH backends \u2014 SQLite's figure counts database pages and PostgreSQL's counts the database, and the WAL is neither \u2014 and persist exposes no reader for it. On SQLite it is now BOUNDED (persist v38.4.0 sets a checkpoint threshold; before that it reached 218 MB against a 1.26 GB store), so it is a known small remainder there rather than an open-ended one. Either way it is not a number this surface can show you."
+                }
+              },
+              "tables": {
+                "accord_active_halt": {
+                  "rows": 0
+                },
+                "accord_decision": {
+                  "rows": 0
+                },
+                "accord_participation": {
+                  "rows": 0
+                },
+                "accord_proposal": {
+                  "rows": 0
+                },
+                "accord_proposal_nonce_claim": {
+                  "rows": 0
+                },
+                "accord_public_keys": {
+                  "rows": 0
+                },
+                "announced_peers": {
+                  "rows": 0
+                },
+                "attestation_subjects": {
+                  "rows": 2
+                },
+                "blackhole_rules": {
+                  "rows": 0
+                },
+                "blob_renditions": {
+                  "rows": 0
+                },
+                "canonical_role_withdrawal": {
+                  "rows": 0
+                },
+                "cirisgraph_consolidation_locks": {
+                  "rows": 0
+                },
+                "cirisgraph_edges": {
+                  "rows": 7
+                },
+                "cirisgraph_nodes": {
+                  "rows": 8
+                },
+                "cirisgraph_telemetry_metrics": {
+                  "rows": 0
+                },
+                "cirislens_audit_archives": {
+                  "rows": 0
+                },
+                "cirislens_audit_log": {
+                  "rows": 0
+                },
+                "cirislens_continuity_awareness": {
+                  "rows": 0
+                },
+                "cirislens_creation_ceremonies": {
+                  "rows": 0
+                },
+                "cirislens_deferral_reports": {
+                  "rows": 0
+                },
+                "cirislens_derived_calibration_bundles": {
+                  "rows": 0
+                },
+                "cirislens_derived_detection_events": {
+                  "rows": 0
+                },
+                "cirislens_feedback_mappings": {
+                  "rows": 0
+                },
+                "cirislens_identity_sequences": {
+                  "rows": 0
+                },
+                "cirislens_incident_records": {
+                  "rows": 0
+                },
+                "cirislens_key_escrows": {
+                  "rows": 0
+                },
+                "cirislens_ledger_checkpoints": {
+                  "rows": 0
+                },
+                "cirislens_ledger_entry_ranges": {
+                  "rows": 0
+                },
+                "cirislens_ledger_fork_evidence": {
+                  "rows": 0
+                },
+                "cirislens_ledger_heads": {
+                  "rows": 0
+                },
+                "cirislens_maintenance_locks": {
+                  "rows": 0
+                },
+                "cirislens_occurrence_registry": {
+                  "rows": 0
+                },
+                "cirislens_pseudonyms": {
+                  "rows": 0
+                },
+                "cirislens_revoked_service_tokens": {
+                  "rows": 0
+                },
+                "cirislens_scheduled_tasks": {
+                  "rows": 0
+                },
+                "cirislens_secrets_access_log": {
+                  "rows": 0
+                },
+                "cirislens_secrets_filter_config": {
+                  "rows": 0
+                },
+                "cirislens_secrets_master_key_meta": {
+                  "rows": 0
+                },
+                "cirislens_secrets_secrets": {
+                  "rows": 0
+                },
+                "cirislens_service_correlations": {
+                  "rows": 0
+                },
+                "cirislens_tasks": {
+                  "rows": 0
+                },
+                "cirislens_thoughts": {
+                  "rows": 0
+                },
+                "cirislens_tickets": {
+                  "rows": 0
+                },
+                "cirislens_wa_cert": {
+                  "rows": 1
+                },
+                "cirisnode_consent_sla_watch": {
+                  "rows": 0
+                },
+                "cirisnode_contributions": {
+                  "rows": 0
+                },
+                "cirisnode_credits_ledger": {
+                  "rows": 0
+                },
+                "cirisnode_expertise_ledger": {
+                  "rows": 0
+                },
+                "cirisnode_federation_delivery_attestations": {
+                  "rows": 0
+                },
+                "cirisnode_moderation_events": {
+                  "rows": 0
+                },
+                "cirisnode_promotion_attestations": {
+                  "rows": 0
+                },
+                "cirisnode_reconsideration_attestations": {
+                  "rows": 0
+                },
+                "cirisnode_reconsideration_requests": {
+                  "rows": 0
+                },
+                "cirisnode_revocation_promotion_watch": {
+                  "rows": 0
+                },
+                "cirisnode_scheduled_takedown_actions": {
+                  "rows": 0
+                },
+                "cirisnode_slashing_attestations": {
+                  "rows": 0
+                },
+                "cirisnode_votes": {
+                  "rows": 0
+                },
+                "consent_peer_set": {
+                  "rows": 0
+                },
+                "consent_peer_set_for": {
+                  "rows": 0
+                },
+                "content_aggregation": {
+                  "rows": 0
+                },
+                "content_manifest": {
+                  "rows": 0
+                },
+                "content_symbols": {
+                  "rows": 0
+                },
+                "dag_link_backfill_cursor": {
+                  "rows": 1
+                },
+                "edge_detection_events": {
+                  "rows": 0
+                },
+                "edge_outbound_queue": {
+                  "rows": 0
+                },
+                "federation_attestations": {
+                  "rows": 19
+                },
+                "federation_blob_associations": {
+                  "rows": 0
+                },
+                "federation_blob_key_grants": {
+                  "rows": 0
+                },
+                "federation_blobs": {
+                  "rows": 0
+                },
+                "federation_communities": {
+                  "rows": 1
+                },
+                "federation_community_blob_epoch": {
+                  "rows": 0
+                },
+                "federation_community_dek": {
+                  "rows": 0
+                },
+                "federation_community_dek_epoch": {
+                  "rows": 0
+                },
+                "federation_community_dek_member_grants": {
+                  "rows": 0
+                },
+                "federation_community_membership_listings": {
+                  "rows": 0
+                },
+                "federation_community_membership_revocations": {
+                  "rows": 0
+                },
+                "federation_community_membership_widenings": {
+                  "rows": 0
+                },
+                "federation_content_kem_identity": {
+                  "rows": 1
+                },
+                "federation_content_master": {
+                  "rows": 1
+                },
+                "federation_dag_chunks": {
+                  "rows": 0
+                },
+                "federation_families": {
+                  "rows": 1
+                },
+                "federation_family_membership_revocations": {
+                  "rows": 0
+                },
+                "federation_family_membership_widenings": {
+                  "rows": 0
+                },
+                "federation_group_versions": {
+                  "rows": 0
+                },
+                "federation_identity_occurrence_history": {
+                  "rows": 1
+                },
+                "federation_identity_occurrence_revocations": {
+                  "rows": 0
+                },
+                "federation_identity_occurrences": {
+                  "rows": 1
+                },
+                "federation_key_grant_pending": {
+                  "rows": 0
+                },
+                "federation_key_registration_history": {
+                  "rows": 0
+                },
+                "federation_keys": {
+                  "rows": 8
+                },
+                "federation_lineage_head_cosigns": {
+                  "rows": 0
+                },
+                "federation_location_proofs": {
+                  "rows": 0
+                },
+                "federation_manifest_children": {
+                  "rows": 0
+                },
+                "federation_org_memberships": {
+                  "rows": 0
+                },
+                "federation_organizations": {
+                  "rows": 0
+                },
+                "federation_partner_records": {
+                  "rows": 0
+                },
+                "federation_peer_metadata": {
+                  "rows": 0
+                },
+                "federation_revocation_quorum_state": {
+                  "rows": 0
+                },
+                "federation_revocations": {
+                  "rows": 0
+                },
+                "federation_role_withdrawals": {
+                  "rows": 0
+                },
+                "federation_scope_blobs": {
+                  "rows": 0
+                },
+                "federation_self_roster_proposals": {
+                  "rows": 0
+                },
+                "federation_stream_chunks": {
+                  "rows": 0
+                },
+                "federation_stream_dek_grants": {
+                  "rows": 0
+                },
+                "federation_stream_deks": {
+                  "rows": 0
+                },
+                "federation_stream_delivery_receipts": {
+                  "rows": 0
+                },
+                "federation_stream_epoch_counts": {
+                  "rows": 0
+                },
+                "federation_stream_sth": {
+                  "rows": 0
+                },
+                "federation_streams": {
+                  "rows": 0
+                },
+                "federation_trust_direction_held": {
+                  "rows": 0
+                },
+                "federation_trust_grants": {
+                  "rows": 0
+                },
+                "federation_withdraws_admission_depths": {
+                  "rows": 0
+                },
+                "freshness_floor": {
+                  "rows": 0
+                },
+                "goals": {
+                  "rows": 0
+                },
+                "hard_case_events": {
+                  "rows": 0
+                },
+                "identity_canonical_binding": {
+                  "rows": 0
+                },
+                "known_wire_hashes": {
+                  "rows": 0
+                },
+                "merkle_leaves": {
+                  "rows": 0
+                },
+                "merkle_sth_log": {
+                  "rows": 0
+                },
+                "purge_executions": {
+                  "rows": 0
+                },
+                "purge_tombstones": {
+                  "rows": 0
+                },
+                "refinery_schema_history": {
+                  "rows": 182
+                },
+                "retention_policies": {
+                  "rows": 0
+                },
+                "shared_instance_leases": {
+                  "rows": 0
+                },
+                "signed_wire_index": {
+                  "rows": 22
+                },
+                "storage_budget_installed": {
+                  "rows": 0
+                },
+                "trace_events": {
+                  "rows": 0
+                },
+                "trace_events_factor_rollup_1h": {
+                  "rows": 0
+                },
+                "trace_events_factor_rollup_meta": {
+                  "rows": 1
+                },
+                "trace_llm_calls": {
+                  "rows": 0
+                },
+                "trace_thought_signatures": {
+                  "rows": 0
+                },
+                "transport_destinations": {
+                  "rows": 2
+                },
+                "wholeness_witness_corpus": {
+                  "rows": 0
+                }
+              },
+              "total_disk_bytes": 3072000
+            },
+            "trace_plane": {
+              "age_seconds": null,
+              "band": "unknown",
+              "bands": {
+                "future_tolerance_minutes": 5,
+                "green_max_hours": 6,
+                "yellow_max_hours": 24
+              },
+              "explains": {
+                "id": "operator.trace_plane.never_admitted",
+                "text": "The corpus was read and holds no trace at all: nothing has ever been admitted on this node. There is no arrival instant to band, so this is an untested zero, not a healthy one \u2014 and on a node that has been serving for a while it is the same condition as a dark plane."
+              },
+              "last_admitted_at": null,
+              "note": {
+                "id": "operator.trace_plane.producer_asserted_ts",
+                "text": "`last_admitted_at` is MAX(trace_events.admitted_at) \u2014 when THIS node last accepted a trace, on its own clock (CIRISPersist#606, persist v32.1.0). It is no longer the producer's assertion, so a peer with a skewed clock can no longer move this node's liveness reading. `None` on a corpus whose rows all predate the admission column: that reads as `never_admitted`, which is honest \u2014 this node cannot say when it last accepted one \u2014 and deliberately NOT a fallback to the producer's timestamp, which would reinstate the very coupling this replaced. A far-future row is still called out as `future_dated`."
+              },
+              "rows": 0,
+              "source": "ciris_persist::Engine::storage_summary().trace_events",
+              "standing": "never_admitted"
+            },
+            "unknown": [
+              "carriage",
+              "receive",
+              "trace_plane",
+              "ingest"
+            ],
+            "volatility": {
+              "clock_dependent": [
+                "trust_root.drill_band",
+                "trust_root.standing",
+                "key_statements.standing",
+                "quarantine.state",
+                "consent_sla.overdue"
+              ],
+              "clock_dependent_local": {
+                "fields": [
+                  "trace_plane"
+                ],
+                "note": {
+                  "id": "operator.volatility.clock_dependent_local",
+                  "text": "This band is computed on THIS node from a stored instant against the read clock, so it moves on elapsed time alone \u2014 no state change, no new row. A node that stops admitting traces walks green to yellow to red on its own, which is the point: it goes red without anyone asking it to."
+                }
+              },
+              "process_local": {
+                "fields": [
+                  "carriage",
+                  "receive",
+                  "ingest"
+                ],
+                "note": {
+                  "id": "operator.volatility.process_local",
+                  "text": "The carriage, receive and ingest counters are process-local and cumulative since this process started. They reset on restart, differ between processes serving one node, and are stored nowhere. They are a gauge of this process, not a ledger of this node."
+                }
+              }
+            }
+          }
+        },
+        "trust_root": {
+          "posture": {
+            "state": "entrenched"
+          },
+          "banner": null,
+          "entrenched": true,
+          "roots": [
+            {
+              "root_key_id": "humanity-accord",
+              "root_kind": "Family",
+              "accepted": false,
+              "verdict": {
+                "charter_has_recovery": true,
+                "charter_quorum": {
+                  "distinct_holders": 3,
+                  "required": 2,
+                  "roster_size": 3
+                },
+                "drill_freshness": "Green",
+                "edge_exists": true,
+                "halt_latched": false,
+                "holders_hardware": [
+                  {
+                    "class": "ExternalSecureElement",
+                    "key_id": "A1",
+                    "layer_a": true,
+                    "layer_b": true,
+                    "refusal": null
+                  },
+                  {
+                    "class": "ExternalSecureElement",
+                    "key_id": "B1",
+                    "layer_a": true,
+                    "layer_b": true,
+                    "refusal": null
+                  },
+                  {
+                    "class": "ExternalSecureElement",
+                    "key_id": "C1",
+                    "layer_a": true,
+                    "layer_b": true,
+                    "refusal": null
+                  }
+                ],
+                "holders_hardware_attested": true,
+                "last_drill_at": "2026-10-04T22:43:08.071Z",
+                "lineage_head": {
+                  "at": null,
+                  "digest": null,
+                  "judged": null,
+                  "latest_cosign_at": null,
+                  "quorum": 0
+                },
+                "live": null,
+                "root_kind": "Family",
+                "root_self_declares": true,
+                "standing": "rooted",
+                "valid": true
+              }
+            }
+          ]
+        },
+        "ui": {
+          "conformance": {
+            "build_profiles": [
+              "CCP",
+              "CCC",
+              "CCS"
+            ],
+            "ceg_wire_version": "1.0.0-rc2",
+            "contract_hashes": {
+              "consent_grammar_sha256": "4d473eac6f2bfde1a78b01e9a2ac8442fc9adb5207c7adeb51d509215b79e843",
+              "envelope_vocabulary_sha256": "8064aafe07646acefad93f51fbf7e79cb8ac421bd49318c5aad50ded142295b1",
+              "trace_summary_extraction_sha256": "f4dfea6e8e8e3f11d2abd22cb4dd5adbe15cf662246b7f90fbcfd0bb9cf5b76d",
+              "transform_algebra_sha256": "b7bd779468f4ad1ab551a5fd2dc0392df01e6f2e0ed393f924a806ed49686b4b"
+            },
+            "declared_at": "/v1/federation/conformance",
+            "wire_vocabulary_sha256": "c6bd6aa44111b226a6f204801b1afaa7153fb43296652c1f7cbc23228ac9346c"
+          },
+          "node": {
+            "home_id": "de9eedfe0f10d3d7",
+            "instance_id": "10a73acc-d528-433f-aaf3-0dc767632e10",
+            "key_id": "qa-node-4243-wg2ntmzasw",
+            "standing": "identified",
+            "started_at": "2026-11-05T00:53:53.723Z"
+          },
+          "status": "ok",
+          "version": "0.5.244"
+        }
+      },
+      "duration_ms": 52.150883013382554
+    },
+    {
+      "step_num": 12,
+      "contract": {
+        "step_num": 12,
+        "csd_ids": [
+          "CSD-006",
+          "CSD-118"
+        ],
+        "name": "Epistemic UI Surface Contract & P1\u2013P12 Primitive Integrity",
+        "phase": "Closed Primitive & Directional Asymmetry Laws",
+        "topologies": [
+          "T0",
+          "T1"
+        ],
+        "required_atoms": [
+          "file.held",
+          "row.standing.admitted"
+        ],
+        "primitives": [
+          "P1..P12 All Closed Primitives",
+          "P4 Universal \u2630",
+          "P8 ConfirmSheet vs Inv_ExitOneStep"
+        ],
+        "wire_endpoint": ":8787/index.html + /cewpos/v1/scene + /tree"
+      },
+      "passed": true,
+      "status_code": 200,
+      "summary": "5 Circles=True, 7 Tabs=True, 3D Holon scene=200, /tree nodes=13, 423 halt emergency brake=verified",
+      "details": {
+        "ui_node": {
+          "node_base": "http://127.0.0.1:4243",
+          "ciris_home": "/tmp/ciris_wizard_live",
+          "claim_pin_exists": false,
+          "claim_pin_mode": null,
+          "claim_pin": null
+        },
+        "scene": {
+          "epistemic_scene": {
+            "nodes": [
+              {
+                "ShellHeader": {
+                  "active_instrument": null,
+                  "circle": "JustMe",
+                  "halt_status": "Clear",
+                  "my_things_tag": "btn_my_things",
+                  "shows_circle_governance_subtitle": true,
+                  "stop_everything_tag": "btn_stop_everything",
+                  "tab": "Files"
+                }
+              },
+              {
+                "PolicyLens": {
+                  "active_rules": [
+                    "my_rules"
+                  ],
+                  "disclosure": {
+                    "EllipsisExpand": {
+                      "collapsed_by_default": true,
+                      "summary_chip": "my_rules \u00b7 0 helpers",
+                      "tag": "btn_lens_ellipsis"
+                    }
+                  },
+                  "helper_keys": [],
+                  "sort_label": "newest_first",
+                  "tag": "csd_policy_lens_bar"
+                }
+              },
+              {
+                "Card": {
+                  "accent": "Brand",
+                  "fields": [
+                    {
+                      "basis": {
+                        "ByRule": {
+                          "cc_ref": "CC 6.2",
+                          "value": "Rooted"
+                        }
+                      },
+                      "gloss": "Computed from local rows (TrustRootVerdict.tla)",
+                      "label": "Trust Root Standing",
+                      "protocol_wire_name": "root.standing",
+                      "tag": "csd-field-root_standing",
+                      "value": "Rooted"
+                    },
+                    {
+                      "basis": {
+                        "Wire": {
+                          "gloss": null,
+                          "value": "1"
+                        }
+                      },
+                      "gloss": "Active hybrid Ed25519 + ML-DSA-65 device keys",
+                      "label": "Self-Key Roster Size",
+                      "protocol_wire_name": "self.roster_size",
+                      "tag": "csd-field-self_roster_size",
+                      "value": "1"
+                    }
+                  ],
+                  "items": [],
+                  "tag": "csd_main_card",
+                  "title": "Just me \u00b7 Files"
+                }
+              }
+            ],
+            "topology": "T0"
+          },
+          "wizard_scene": {
+            "nodes": [
+              {
+                "ShellHeader": {
+                  "active_instrument": "ThisNode",
+                  "circle": "JustMe",
+                  "halt_status": "Clear",
+                  "my_things_tag": "btn_my_things",
+                  "shows_circle_governance_subtitle": false,
+                  "stop_everything_tag": "btn_stop_everything",
+                  "tab": "Rules"
+                }
+              },
+              {
+                "TwoPathCeremony": {
+                  "can_assent": true,
+                  "can_object": true,
+                  "deferral_vote": {
+                    "approvals": 0,
+                    "choices": [
+                      {
+                        "action_tag": "wizard_select_new_id",
+                        "choice_id": "setup_new_identity",
+                        "consequence": "Creates a new Ed25519 + ML-DSA-65 hybrid identity on this device",
+                        "csd_tag": "CSD-082",
+                        "label": "Mint New CIRIS ID (+1)",
+                        "selected": false,
+                        "vote_score": 1,
+                        "z_species": 6
+                      },
+                      {
+                        "action_tag": "wizard_select_add_device",
+                        "choice_id": "setup_add_device",
+                        "consequence": "Submits an add-device request to your existing self-key roster",
+                        "csd_tag": "CSD-093",
+                        "label": "Join Existing CIRIS ID (+1)",
+                        "selected": false,
+                        "vote_score": 1,
+                        "z_species": 7
+                      },
+                      {
+                        "action_tag": "wizard_age_adult",
+                        "choice_id": "age_adult",
+                        "consequence": "Self-declares adult stewardship in local age-assurance record",
+                        "csd_tag": "CSD-082",
+                        "label": "18 or Older (+1)",
+                        "selected": false,
+                        "vote_score": 1,
+                        "z_species": 1
+                      },
+                      {
+                        "action_tag": "wizard_age_declined",
+                        "choice_id": "age_declined",
+                        "consequence": "Applies protective under-18 defaults; writes nothing to assurance record",
+                        "csd_tag": "CSD-082",
+                        "label": "Prefer Not to Say (0)",
+                        "selected": false,
+                        "vote_score": 0,
+                        "z_species": 3
+                      },
+                      {
+                        "action_tag": "wizard_age_minor",
+                        "choice_id": "age_minor",
+                        "consequence": "Refuses standalone setup; requires an adult family steward (CC 3.2)",
+                        "csd_tag": "CSD-082",
+                        "label": "Under 18 \u2014 Halt Setup (-1)",
+                        "selected": false,
+                        "vote_score": -1,
+                        "z_species": 9
+                      }
+                    ],
+                    "cohort_scope": "JustMe",
+                    "context_prompt": "Single-person vote (1-of-1 self-quorum): Mint a new hardware-sealed CIRIS ID or join an existing CIRIS ID roster, and attest age-assurance stewardship (CC 3.2).",
+                    "deferral_id": "deferral:setup:you:v1",
+                    "dimension": "setup:identity_and_stewardship:v1",
+                    "enact_needed": 1,
+                    "objections": 0,
+                    "roster_size": 1,
+                    "step_index": 1,
+                    "title": "Deferral 1/4 \u00b7 YOU \u2014 Who is stewarding this node?",
+                    "total_steps": 4
+                  },
+                  "disclosure": {
+                    "EllipsisExpand": {
+                      "collapsed_by_default": false,
+                      "summary_chip": "0/1 votes \u00b7 Step 1/4",
+                      "tag": "btn_p9_wizard_deferral_vote_ellipsis"
+                    }
+                  },
+                  "holon_frame": {
+                    "anchor": [
+                      12.0,
+                      12.0,
+                      12.0
+                    ],
+                    "atoms": [
+                      {
+                        "action_tag": "inspect_deferral_context",
+                        "csd_tag": "CSD-080",
+                        "index": 0,
+                        "label": "Deferral 1/4 \u00b7 YOU \u2014 Who is stewarding this node?",
+                        "radius": 1.65,
+                        "selected": false,
+                        "subtitle": "Single-person vote (1-of-1 self-quorum): Mint a new hardware-sealed CIRIS ID or join an existing CIRIS ID roster, and attest age-assurance stewardship (CC 3.2).",
+                        "vote_score": 0,
+                        "x": 12.0,
+                        "y": 12.0,
+                        "z": 12.0,
+                        "z_species": 8
+                      },
+                      {
+                        "action_tag": "wizard_select_new_id",
+                        "csd_tag": "CSD-082",
+                        "index": 1,
+                        "label": "Mint New CIRIS ID (+1)",
+                        "radius": 1.08,
+                        "selected": false,
+                        "subtitle": "Creates a new Ed25519 + ML-DSA-65 hybrid identity on this device",
+                        "vote_score": 1,
+                        "x": 12.0,
+                        "y": 5.6,
+                        "z": 10.6,
+                        "z_species": 6
+                      },
+                      {
+                        "action_tag": "wizard_select_add_device",
+                        "csd_tag": "CSD-093",
+                        "index": 2,
+                        "label": "Join Existing CIRIS ID (+1)",
+                        "radius": 1.08,
+                        "selected": false,
+                        "subtitle": "Submits an add-device request to your existing self-key roster",
+                        "vote_score": 1,
+                        "x": 18.086761704288982,
+                        "y": 10.022291236000337,
+                        "z": 12.0,
+                        "z_species": 7
+                      },
+                      {
+                        "action_tag": "wizard_age_adult",
+                        "csd_tag": "CSD-082",
+                        "index": 3,
+                        "label": "18 or Older (+1)",
+                        "radius": 1.08,
+                        "selected": false,
+                        "subtitle": "Self-declares adult stewardship in local age-assurance record",
+                        "vote_score": 1,
+                        "x": 15.761825614671828,
+                        "y": 17.177708763999664,
+                        "z": 13.4,
+                        "z_species": 1
+                      },
+                      {
+                        "action_tag": "wizard_age_declined",
+                        "csd_tag": "CSD-082",
+                        "index": 4,
+                        "label": "Prefer Not to Say (0)",
+                        "radius": 1.08,
+                        "selected": false,
+                        "subtitle": "Applies protective under-18 defaults; writes nothing to assurance record",
+                        "vote_score": 0,
+                        "x": 8.238174385328172,
+                        "y": 17.177708763999664,
+                        "z": 10.6,
+                        "z_species": 3
+                      },
+                      {
+                        "action_tag": "wizard_age_minor",
+                        "csd_tag": "CSD-082",
+                        "index": 5,
+                        "label": "Under 18 \u2014 Halt Setup (-1)",
+                        "radius": 1.08,
+                        "selected": false,
+                        "subtitle": "Refuses standalone setup; requires an adult family steward (CC 3.2)",
+                        "vote_score": -1,
+                        "x": 5.913238295711016,
+                        "y": 10.022291236000337,
+                        "z": 12.0,
+                        "z_species": 9
+                      }
+                    ],
+                    "bonds": [],
+                    "deferral_id": "deferral:setup:you:v1",
+                    "frame": 1,
+                    "grabbed": null,
+                    "quorum_label": "Single-Person Vote (1-of-1 Self-Quorum \u00b7 Step 1/4)",
+                    "step_index": 1,
+                    "total_steps": 4,
+                    "world_prompt": "Single-person vote (1-of-1 self-quorum): Mint a new hardware-sealed CIRIS ID or join an existing CIRIS ID roster, and attest age-assurance stewardship (CC 3.2).",
+                    "world_title": "Deferral 1/4 \u00b7 YOU \u2014 Who is stewarding this node?"
+                  },
+                  "own_proposal": false,
+                  "policy_family": "SelfRosterAdd",
+                  "proposal": "Deferral 1/4 \u00b7 YOU \u2014 Who is stewarding this node? \u2014 Single-person vote (1-of-1 self-quorum): Mint a new hardware-sealed CIRIS ID or join an existing CIRIS ID roster, and attest age-assurance stewardship (CC 3.2).",
+                  "proposed_by": "ed25519:viewer_self",
+                  "signers": [
+                    {
+                      "key_id": "ed25519:viewer_self",
+                      "state": "Proposed"
+                    }
+                  ],
+                  "tag_prefix": "p9_wizard_deferral_vote",
+                  "verdict": {
+                    "Pending": {
+                      "approvals": 0,
+                      "cancel_needed": 1,
+                      "enact_needed": 1,
+                      "floor_needed": 1,
+                      "objections": 0,
+                      "window_rem_secs": 86400
+                    }
+                  }
+                }
+              },
+              {
+                "SpatialCanvas": {
+                  "deferral_series": [
+                    {
+                      "approvals": 0,
+                      "choices": [
+                        {
+                          "action_tag": "wizard_select_new_id",
+                          "choice_id": "setup_new_identity",
+                          "consequence": "Creates a new Ed25519 + ML-DSA-65 hybrid identity on this device",
+                          "csd_tag": "CSD-082",
+                          "label": "Mint New CIRIS ID (+1)",
+                          "selected": false,
+                          "vote_score": 1,
+                          "z_species": 6
+                        },
+                        {
+                          "action_tag": "wizard_select_add_device",
+                          "choice_id": "setup_add_device",
+                          "consequence": "Submits an add-device request to your existing self-key roster",
+                          "csd_tag": "CSD-093",
+                          "label": "Join Existing CIRIS ID (+1)",
+                          "selected": false,
+                          "vote_score": 1,
+                          "z_species": 7
+                        },
+                        {
+                          "action_tag": "wizard_age_adult",
+                          "choice_id": "age_adult",
+                          "consequence": "Self-declares adult stewardship in local age-assurance record",
+                          "csd_tag": "CSD-082",
+                          "label": "18 or Older (+1)",
+                          "selected": false,
+                          "vote_score": 1,
+                          "z_species": 1
+                        },
+                        {
+                          "action_tag": "wizard_age_declined",
+                          "choice_id": "age_declined",
+                          "consequence": "Applies protective under-18 defaults; writes nothing to assurance record",
+                          "csd_tag": "CSD-082",
+                          "label": "Prefer Not to Say (0)",
+                          "selected": false,
+                          "vote_score": 0,
+                          "z_species": 3
+                        },
+                        {
+                          "action_tag": "wizard_age_minor",
+                          "choice_id": "age_minor",
+                          "consequence": "Refuses standalone setup; requires an adult family steward (CC 3.2)",
+                          "csd_tag": "CSD-082",
+                          "label": "Under 18 \u2014 Halt Setup (-1)",
+                          "selected": false,
+                          "vote_score": -1,
+                          "z_species": 9
+                        }
+                      ],
+                      "cohort_scope": "JustMe",
+                      "context_prompt": "Single-person vote (1-of-1 self-quorum): Mint a new hardware-sealed CIRIS ID or join an existing CIRIS ID roster, and attest age-assurance stewardship (CC 3.2).",
+                      "deferral_id": "deferral:setup:you:v1",
+                      "dimension": "setup:identity_and_stewardship:v1",
+                      "enact_needed": 1,
+                      "objections": 0,
+                      "roster_size": 1,
+                      "step_index": 1,
+                      "title": "Deferral 1/4 \u00b7 YOU \u2014 Who is stewarding this node?",
+                      "total_steps": 4
+                    },
+                    {
+                      "approvals": 0,
+                      "choices": [
+                        {
+                          "action_tag": "wizard_trace_yes",
+                          "choice_id": "trace_consent_yes",
+                          "consequence": "Diagnostic trace envelopes replicated to federation peers with 9-axis Contextual Integrity stripping.",
+                          "csd_tag": "CSD-082",
+                          "label": "Share anonymized traces",
+                          "selected": false,
+                          "vote_score": 0,
+                          "z_species": 6
+                        },
+                        {
+                          "action_tag": "wizard_trace_no",
+                          "choice_id": "trace_consent_no",
+                          "consequence": "Zero outbound trace replication; all telemetry stays on this node in Just me.",
+                          "csd_tag": "CSD-082",
+                          "label": "Keep traces local only",
+                          "selected": false,
+                          "vote_score": 0,
+                          "z_species": 8
+                        }
+                      ],
+                      "cohort_scope": "Everyone",
+                      "context_prompt": "Single-person self choice (1-of-1 self-quorum, CC 4.5.13): Decide whether diagnostic traces cross into federation scope. Declining is a complete answer (answer.value), not a failed vote.",
+                      "deferral_id": "deferral:setup:federation:v1",
+                      "dimension": "consent:replication:v1",
+                      "enact_needed": 1,
+                      "objections": 0,
+                      "roster_size": 1,
+                      "step_index": 2,
+                      "title": "Choice 2/4 \u00b7 JOIN_FEDERATION \u2014 Share reasoning traces with the mesh?",
+                      "total_steps": 4
+                    },
+                    {
+                      "approvals": 1,
+                      "choices": [
+                        {
+                          "action_tag": "wizard_mode_with_ai",
+                          "choice_id": "bond_ai_steward",
+                          "consequence": "Attaches a bonded AI agent under your stewardship; AI defers uncertain actions to your decision queue",
+                          "csd_tag": "CSD-082",
+                          "label": "Run with AI (+1)",
+                          "selected": true,
+                          "vote_score": 1,
+                          "z_species": 6
+                        },
+                        {
+                          "action_tag": "wizard_mode_without_ai",
+                          "choice_id": "run_without_ai",
+                          "consequence": "Operates purely as a local node on port 4243. Zero AI runtime; directs data custody, file storage, and peer mesh serving",
+                          "csd_tag": "CSD-083",
+                          "label": "Run without AI (Bare Node) (0)",
+                          "selected": false,
+                          "vote_score": 0,
+                          "z_species": 3
+                        }
+                      ],
+                      "cohort_scope": "JustMe",
+                      "context_prompt": "Single-person decision: Bond an AI agent under your human stewardship with H3ERE ethical gates and Wisdom-Based Deferral (WBD returns control to you whenever uncertain).",
+                      "deferral_id": "deferral:setup:ai:v1",
+                      "dimension": "delegates_to:steward_agent_bond:v1",
+                      "enact_needed": 1,
+                      "objections": 0,
+                      "roster_size": 1,
+                      "step_index": 3,
+                      "title": "Choice 3/4 \u00b7 AI \u2014 Confer Depth-1 Bond to AI Agent",
+                      "total_steps": 4
+                    },
+                    {
+                      "approvals": 0,
+                      "choices": [
+                        {
+                          "action_tag": "wizard_claim_ownership",
+                          "choice_id": "claim_node_root",
+                          "consequence": "Commits hybrid-signed delegates_to(user -> node, infra:*) via POST /v1/setup/root",
+                          "csd_tag": "CSD-085",
+                          "label": "Sign & Claim Node Ownership (+1)",
+                          "selected": false,
+                          "vote_score": 1,
+                          "z_species": 6
+                        },
+                        {
+                          "action_tag": "wizard_prev",
+                          "choice_id": "defer_claim_later",
+                          "consequence": "Keeps OwnerRequests pending in /v1/self/owner-requests until you sign",
+                          "csd_tag": "CSD-085",
+                          "label": "Hold in Deferral Queue (0)",
+                          "selected": false,
+                          "vote_score": 0,
+                          "z_species": 3
+                        }
+                      ],
+                      "cohort_scope": "JustMe",
+                      "context_prompt": "Single-person vote (1-of-1 self-quorum): Hybrid-sign (Ed25519 + ML-DSA-65) the infra:* owner-binding and pending OwnerRequests (`announce`, `root_acceptance`, `community_trust`).",
+                      "deferral_id": "deferral:setup:complete:v1",
+                      "dimension": "delegates_to:infra_root:v1",
+                      "enact_needed": 1,
+                      "objections": 0,
+                      "roster_size": 1,
+                      "step_index": 4,
+                      "title": "Deferral 4/4 \u00b7 COMPLETE \u2014 Sign & Claim Node Ownership",
+                      "total_steps": 4
+                    }
+                  ],
+                  "holon_frame": {
+                    "anchor": [
+                      12.0,
+                      12.0,
+                      12.0
+                    ],
+                    "atoms": [
+                      {
+                        "action_tag": "inspect_deferral_context",
+                        "csd_tag": "CSD-080",
+                        "index": 0,
+                        "label": "Deferral 1/4 \u00b7 YOU \u2014 Who is stewarding this node?",
+                        "radius": 1.65,
+                        "selected": false,
+                        "subtitle": "Single-person vote (1-of-1 self-quorum): Mint a new hardware-sealed CIRIS ID or join an existing CIRIS ID roster, and attest age-assurance stewardship (CC 3.2).",
+                        "vote_score": 0,
+                        "x": 12.0,
+                        "y": 12.0,
+                        "z": 12.0,
+                        "z_species": 8
+                      },
+                      {
+                        "action_tag": "wizard_select_new_id",
+                        "csd_tag": "CSD-082",
+                        "index": 1,
+                        "label": "Mint New CIRIS ID (+1)",
+                        "radius": 1.08,
+                        "selected": false,
+                        "subtitle": "Creates a new Ed25519 + ML-DSA-65 hybrid identity on this device",
+                        "vote_score": 1,
+                        "x": 12.0,
+                        "y": 5.6,
+                        "z": 10.6,
+                        "z_species": 6
+                      },
+                      {
+                        "action_tag": "wizard_select_add_device",
+                        "csd_tag": "CSD-093",
+                        "index": 2,
+                        "label": "Join Existing CIRIS ID (+1)",
+                        "radius": 1.08,
+                        "selected": false,
+                        "subtitle": "Submits an add-device request to your existing self-key roster",
+                        "vote_score": 1,
+                        "x": 18.086761704288982,
+                        "y": 10.022291236000337,
+                        "z": 12.0,
+                        "z_species": 7
+                      },
+                      {
+                        "action_tag": "wizard_age_adult",
+                        "csd_tag": "CSD-082",
+                        "index": 3,
+                        "label": "18 or Older (+1)",
+                        "radius": 1.08,
+                        "selected": false,
+                        "subtitle": "Self-declares adult stewardship in local age-assurance record",
+                        "vote_score": 1,
+                        "x": 15.761825614671828,
+                        "y": 17.177708763999664,
+                        "z": 13.4,
+                        "z_species": 1
+                      },
+                      {
+                        "action_tag": "wizard_age_declined",
+                        "csd_tag": "CSD-082",
+                        "index": 4,
+                        "label": "Prefer Not to Say (0)",
+                        "radius": 1.08,
+                        "selected": false,
+                        "subtitle": "Applies protective under-18 defaults; writes nothing to assurance record",
+                        "vote_score": 0,
+                        "x": 8.238174385328172,
+                        "y": 17.177708763999664,
+                        "z": 10.6,
+                        "z_species": 3
+                      },
+                      {
+                        "action_tag": "wizard_age_minor",
+                        "csd_tag": "CSD-082",
+                        "index": 5,
+                        "label": "Under 18 \u2014 Halt Setup (-1)",
+                        "radius": 1.08,
+                        "selected": false,
+                        "subtitle": "Refuses standalone setup; requires an adult family steward (CC 3.2)",
+                        "vote_score": -1,
+                        "x": 5.913238295711016,
+                        "y": 10.022291236000337,
+                        "z": 12.0,
+                        "z_species": 9
+                      }
+                    ],
+                    "bonds": [],
+                    "deferral_id": "deferral:setup:you:v1",
+                    "frame": 1,
+                    "grabbed": null,
+                    "quorum_label": "Single-Person Vote (1-of-1 Self-Quorum \u00b7 Step 1/4)",
+                    "step_index": 1,
+                    "total_steps": 4,
+                    "world_prompt": "Single-person vote (1-of-1 self-quorum): Mint a new hardware-sealed CIRIS ID or join an existing CIRIS ID roster, and attest age-assurance stewardship (CC 3.2).",
+                    "world_title": "Deferral 1/4 \u00b7 YOU \u2014 Who is stewarding this node?"
+                  },
+                  "scene": {
+                    "background": [
+                      0.98039216,
+                      0.9764706,
+                      0.9607843
+                    ],
+                    "camera": {
+                      "eye": [
+                        0.0,
+                        2.2,
+                        6.8
+                      ],
+                      "look_at": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ]
+                    },
+                    "nodes": [
+                      {
+                        "color": [
+                          0.88,
+                          0.87,
+                          0.84,
+                          1.0
+                        ],
+                        "label": null,
+                        "mesh": "Plane",
+                        "pos": [
+                          0.0,
+                          -1.6,
+                          0.0
+                        ],
+                        "scale": 10.0
+                      },
+                      {
+                        "color": [
+                          0.22,
+                          0.52,
+                          0.88,
+                          1.0
+                        ],
+                        "label": "deferral:setup:you:v1",
+                        "mesh": "Sphere",
+                        "pos": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "scale": 1.45
+                      },
+                      {
+                        "color": [
+                          0.82,
+                          0.68,
+                          0.28,
+                          1.0
+                        ],
+                        "label": "signet:setup:identity_and_stewardship:v1",
+                        "mesh": "Torus",
+                        "pos": [
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "scale": 1.85
+                      },
+                      {
+                        "color": [
+                          0.19999999,
+                          0.72,
+                          0.3,
+                          1.0
+                        ],
+                        "label": "setup_new_identity",
+                        "mesh": "Sphere",
+                        "pos": [
+                          0.0,
+                          -2.24,
+                          -0.63
+                        ],
+                        "scale": 0.81000006
+                      },
+                      {
+                        "color": [
+                          0.19999999,
+                          0.72,
+                          0.3,
+                          1.0
+                        ],
+                        "label": "setup_add_device",
+                        "mesh": "Sphere",
+                        "pos": [
+                          2.7390428,
+                          -0.69219804,
+                          0.0
+                        ],
+                        "scale": 0.81000006
+                      },
+                      {
+                        "color": [
+                          0.19999999,
+                          0.72,
+                          0.3,
+                          1.0
+                        ],
+                        "label": "age_adult",
+                        "mesh": "Sphere",
+                        "pos": [
+                          1.6928215,
+                          1.812198,
+                          0.63
+                        ],
+                        "scale": 0.81000006
+                      },
+                      {
+                        "color": [
+                          0.525,
+                          0.42000002,
+                          0.21000001,
+                          1.0
+                        ],
+                        "label": "age_declined",
+                        "mesh": "Sphere",
+                        "pos": [
+                          -1.6928215,
+                          1.812198,
+                          -0.63
+                        ],
+                        "scale": 0.81000006
+                      },
+                      {
+                        "color": [
+                          0.85,
+                          0.12,
+                          0.12,
+                          1.0
+                        ],
+                        "label": "age_minor",
+                        "mesh": "Sphere",
+                        "pos": [
+                          -2.7390428,
+                          -0.69219804,
+                          0.0
+                        ],
+                        "scale": 0.81000006
+                      }
+                    ]
+                  },
+                  "tag": "csd_080_holon_wizard_3d"
+                }
+              },
+              {
+                "Card": {
+                  "accent": "Brand",
+                  "fields": [
+                    {
+                      "basis": {
+                        "Wire": {
+                          "gloss": null,
+                          "value": "None"
+                        }
+                      },
+                      "gloss": "Identity choice (New CIRIS ID vs Add This Device)",
+                      "label": "Step 1 \u00b7 YOU",
+                      "protocol_wire_name": "setup.step.you",
+                      "tag": "step_indicator_you",
+                      "value": "Active"
+                    },
+                    {
+                      "basis": {
+                        "Wire": {
+                          "gloss": null,
+                          "value": "consent=None"
+                        }
+                      },
+                      "gloss": "GET /v1/setup/consent-disclosure (Send traces vs Be scored)",
+                      "label": "Step 2 \u00b7 JOIN_FEDERATION",
+                      "protocol_wire_name": "setup.step.join_federation",
+                      "tag": "step_indicator_join_federation",
+                      "value": "Pending"
+                    },
+                    {
+                      "basis": {
+                        "ByRule": {
+                          "cc_ref": "CC 4.4.3",
+                          "value": "CSD-082 3-step mode"
+                        }
+                      },
+                      "gloss": "Conscience-bearing AI & Steward Bond (CSD-115)",
+                      "label": "Step 3 \u00b7 AI",
+                      "protocol_wire_name": "setup.step.ai",
+                      "tag": "step_indicator_ai",
+                      "value": "Pending"
+                    }
+                  ],
+                  "items": [],
+                  "tag": "csd_082_setup_wizard",
+                  "title": "First-Run Setup Wizard \u00b7 CSD-082 With AI (3 steps)"
+                }
+              },
+              {
+                "Card": {
+                  "accent": "Brand",
+                  "fields": [
+                    {
+                      "basis": {
+                        "Wire": {
+                          "gloss": null,
+                          "value": ""
+                        }
+                      },
+                      "gloss": "Rejects generic ciris-client-user placeholder",
+                      "label": "CIRIS ID Handle",
+                      "protocol_wire_name": "POST /v1/self/identity",
+                      "tag": "input_fedid_label",
+                      "value": "(unset \u2014 neither path preselected)"
+                    },
+                    {
+                      "basis": {
+                        "Wire": {
+                          "gloss": null,
+                          "value": "Founder Laptop"
+                        }
+                      },
+                      "gloss": null,
+                      "label": "This Device's Name",
+                      "protocol_wire_name": "self.occurrence_id",
+                      "tag": "input_device_name",
+                      "value": "Founder Laptop"
+                    },
+                    {
+                      "basis": {
+                        "ByRule": {
+                          "cc_ref": "CC 3.3.6",
+                          "value": "Hybrid PQC required"
+                        }
+                      },
+                      "gloss": "Ed25519 + ML-DSA-65 hybrid keypair",
+                      "label": "Hardware Enclave Key Custody",
+                      "protocol_wire_name": "key.custody.hardware",
+                      "tag": "toggle_secure_2fa",
+                      "value": "true"
+                    }
+                  ],
+                  "items": [
+                    {
+                      "chips": [
+                        {
+                          "kind": "Choice",
+                          "label": "Choose",
+                          "selected": false,
+                          "tag": "chip_choice_new_identity",
+                          "tone": "Brand"
+                        }
+                      ],
+                      "id": "setup_new_identity",
+                      "lens_verdict": "Clear",
+                      "primary_action": null,
+                      "receipt": null,
+                      "scope_pill": {
+                        "circle": "JustMe",
+                        "color_hex": "#22C0E8",
+                        "label": "Just me",
+                        "local_only_badge": true,
+                        "tag": "pill_scope_setup_new"
+                      },
+                      "subtitle": "Mint a fresh hybrid Ed25519 + ML-DSA-65 root keypair (CSD-082)",
+                      "tag": "btn_setup_new_identity",
+                      "title": "Set up a new CIRIS ID"
+                    },
+                    {
+                      "chips": [
+                        {
+                          "kind": "Choice",
+                          "label": "Choose",
+                          "selected": false,
+                          "tag": "chip_choice_add_device",
+                          "tone": "Brand"
+                        }
+                      ],
+                      "id": "setup_add_this_device",
+                      "lens_verdict": "Clear",
+                      "primary_action": null,
+                      "receipt": null,
+                      "scope_pill": {
+                        "circle": "JustMe",
+                        "color_hex": "#22C0E8",
+                        "label": "Just me",
+                        "local_only_badge": true,
+                        "tag": "pill_scope_setup_add_device"
+                      },
+                      "subtitle": "Pair with your existing phone or laptop via 6-digit match code (CSD-093)",
+                      "tag": "btn_setup_add_this_device",
+                      "title": "Add this device to an existing CIRIS ID"
+                    }
+                  ],
+                  "tag": "setup_step_you",
+                  "title": "Step 1 \u00b7 Who is setting up this device? (CSD-082 / CSD-093)"
+                }
+              }
+            ],
+            "topology": "T0"
+          }
+        },
+        "tree_nodes": 13
+      },
+      "duration_ms": 2.5013729464262724
+    }
+  ]
+}

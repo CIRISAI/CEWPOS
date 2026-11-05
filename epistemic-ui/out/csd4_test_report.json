@@ -7495,9 +7495,9 @@
     {
       "name": "CIRISServer Embedded Node Health",
       "url": "http://127.0.0.1:4243/health",
-      "reachable": true,
-      "status_code": 200,
-      "summary": "standing=identified, key_id=qa-244-node-fgwztnsool, version=0.5.244"
+      "reachable": false,
+      "status_code": 0,
+      "summary": "<urlopen error [Errno 111] Connection refused>"
     },
     {
       "name": "CIRISAgent API Root",
@@ -7527,36 +7527,36 @@
       "csd_ids": "CSD-080",
       "name": "Fresh Node Health & Conformance (v0.5.244)",
       "method_path": "GET /health",
-      "status_code": 200,
-      "passed": true,
-      "verified_detail": "version=0.5.244, key_id=qa-244-node-fgwztnsool, standing=identified, profiles=['CCP', 'CCC', 'CCS']"
+      "status_code": 0,
+      "passed": false,
+      "verified_detail": "version=, key_id=, standing=, profiles=None"
     },
     {
       "step_num": 2,
       "csd_ids": "CSD-082, CSD-118",
       "name": "First-Run Consent Disclosure & NodeCode",
       "method_path": "GET /v1/setup/consent-disclosure + /v1/federation/node-code",
-      "status_code": 200,
-      "passed": true,
-      "verified_detail": "grants=['replication', 'analyze'], location_max_h3=7, node_code=CIRIS-V1-AH4V-F5LT-JS6F-ESY3..."
+      "status_code": 0,
+      "passed": false,
+      "verified_detail": "grants=[], location_max_h3=None, node_code=..."
     },
     {
       "step_num": 3,
       "csd_ids": "CSD-093",
       "name": "Add-This-Device Initial Handshake State",
       "method_path": "GET /v1/setup/add-device",
-      "status_code": 200,
-      "passed": true,
-      "verified_detail": "state=idle"
+      "status_code": 0,
+      "passed": false,
+      "verified_detail": "state="
     },
     {
       "step_num": 4,
       "csd_ids": "CSD-085, CSD-118",
       "name": "First-Run Unclaimed Status & 0600 claim_pin File",
-      "method_path": "GET /v1/setup/status",
+      "method_path": "GET /v1/setup/status (cached from initial boot)",
       "status_code": 200,
       "passed": true,
-      "verified_detail": "is_first_run=True, claim_pin_mode=0o600, pin_len=9 (KA7N-F0V9)"
+      "verified_detail": "is_first_run=True, claim_pin_mode=0o600, pin=6BS9-KYQR"
     },
     {
       "step_num": 5,
@@ -7565,7 +7565,7 @@
       "method_path": "POST /v1/self/identity",
       "status_code": 200,
       "passed": true,
-      "verified_detail": "key_id=qa-244-node-user-ko4cmxn35s, hardware=SoftwareOnly, fedcode=CIRIS-V3-AMAV-G55M-EH24-..."
+      "verified_detail": "key_id=wizard-node-user-25a277grwt, fedcode=CIRIS-V3-AMAZ-YUYO-DUPQ-..."
     },
     {
       "step_num": 6,
@@ -7574,52 +7574,52 @@
       "method_path": "POST /v1/setup/claim-remote",
       "status_code": 200,
       "passed": true,
-      "verified_detail": "role=SYSTEM_ADMIN, wa_id=wa-root-qa-244-node-user-ko4cmxn35s, attestation=669babd0-1982-42c1-8b8b-bac58934c872, pin_consumed_deleted=True"
+      "verified_detail": "role=SYSTEM_ADMIN, wa_id=wa-root-wizard-node-user-25a277grwt, attestation=9480bf00-5466-4629-9398-4bd062d34ec8, pin_consumed_deleted=True"
     },
     {
       "step_num": 7,
       "csd_ids": "CSD-085, CSD-118",
       "name": "Post-Claim Node Status & Owned-Nodes Binding",
       "method_path": "GET /v1/setup/status + /v1/setup/owned-nodes",
-      "status_code": 200,
-      "passed": true,
-      "verified_detail": "is_first_run=False, owner=qa-244-node-user-ko4cmxn35s, nodes=[{'key_id': 'qa-244-node-fgwztnsool', 'is_self': True, 'announced': False, 'roster_member': False}]"
+      "status_code": 0,
+      "passed": false,
+      "verified_detail": "is_first_run=None, owner=None, nodes=[]"
     },
     {
       "step_num": 8,
       "csd_ids": "CSD-037",
       "name": "Enrolled Devices Roster (My Identity)",
-      "method_path": "GET /v1/self/occurrences?identity_key_id=qa-244-node-user-ko4cmxn35s",
-      "status_code": 200,
-      "passed": true,
-      "verified_detail": "identity_key_id=qa-244-node-user-ko4cmxn35s, audience=owner, occurrences=0"
+      "method_path": "GET /v1/self/occurrences?identity_key_id=wizard-node-user-25a277grwt",
+      "status_code": 0,
+      "passed": false,
+      "verified_detail": "identity_key_id=None, audience=None, occurrences=0"
     },
     {
       "step_num": 9,
       "csd_ids": "CSD-094",
       "name": "Open 10-Minute Device Approval Window & Poll Requests",
       "method_path": "POST /v1/self/device-requests/open + GET /v1/self/device-requests",
-      "status_code": 200,
-      "passed": true,
-      "verified_detail": "open=True, window_secs=600, window_secs_left=599, requests=[]"
+      "status_code": 0,
+      "passed": false,
+      "verified_detail": "open=None, window_secs=None, window_secs_left=0, requests=None"
     },
     {
       "step_num": 10,
       "csd_ids": "CSD-095",
       "name": "Self-Key Roster Proposals & 24h W_self Window",
       "method_path": "GET /v1/self/roster/proposals",
-      "status_code": 200,
-      "passed": true,
-      "verified_detail": "roster=['qa-244-node-user-ko4cmxn35s'], proposals=[], w_self_secs=86400 (24h)"
+      "status_code": 0,
+      "passed": false,
+      "verified_detail": "roster=[], proposals=None, w_self_secs=None (24h)"
     },
     {
       "step_num": 11,
       "csd_ids": "CSD-105, CSD-129",
       "name": "Authenticated Node State, Entrenched Trust Root & CEWPOS :8787 Proxy",
       "method_path": "GET /v1/node/state + /v1/trust-root + :8787/health",
-      "status_code": 200,
-      "passed": true,
-      "verified_detail": "node.band=green, trust_root=entrenched, cewpos_proxy_version=0.5.244"
+      "status_code": 0,
+      "passed": false,
+      "verified_detail": "node.band=None, trust_root=None, cewpos_proxy_version=None"
     }
   ]
 }

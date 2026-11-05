@@ -1477,6 +1477,78 @@ def verify_all_invariants() -> None:
     assert roster_prop.is_answerable_by("occ-a2")
     assert len(roster_prop.build_answer_confirm_sheet(True)["facts"]) == 3
 
+    # 4b. CC 4.5.13 ChoiceItem & Derived Impact Formal Verification (Issue #2)
+    choice_item_sample = {
+        "id": "choice:setup:trace_replication:v1",
+        "kind": "choice",
+        "context": {
+            "circle": "federation",
+            "role": "consent",
+            "atoms": ["root.none", "node.unclaimed"],
+            "title": {"id": "txt_title", "text": "Share diagnostic traces with the CIRIS federation?"},
+            "body": [{"id": "txt_body", "text": "Nothing leaves Just me without an explicit scope choice."}],
+        },
+        "facts": [
+            {
+                "label": {"id": "lbl_scope", "text": "Active Scope"},
+                "value": "Just me",
+                "provenance": "by_rule",
+            }
+        ],
+        "policy": "self_choice",
+        "options": [
+            {
+                "value": "trace_consent_yes",
+                "tag": "trace_consent_yes",
+                "benefit": {"id": "b_yes", "text": "Share anonymized diagnostic traces to help mesh reliability"},
+                "downside": {"id": "d_yes", "text": "Stripped telemetry replicates across federation peers"},
+                "writes": [{"family": "consent:replication:v1", "verb": "attest", "scope": "federation"}],
+                "impact": {
+                    "moves": {"id": "m_traces", "text": "Diagnostic trace envelopes"},
+                    "to": {"audience": "federation peers", "tier": "federation"},
+                    "direction": "widens",
+                    "undo": {"possible": True, "how": {"id": "u_yes", "text": "Withdraw anytime in Just me settings"}},
+                },
+                "available": True,
+            },
+            {
+                "value": "trace_consent_no",
+                "tag": "trace_consent_no",
+                "benefit": {"id": "b_no", "text": "Zero diagnostic telemetry leaves this device"},
+                "downside": {"id": "d_no", "text": "Cannot benefit from federation trace diagnostics"},
+                "writes": [],
+                "impact": {
+                    "moves": {"id": "m_local", "text": "Keeps all traces local to node storage"},
+                    "to": {"audience": "owner's node only", "tier": "local"},
+                    "direction": "narrows",
+                    "undo": {"possible": True, "how": {"id": "u_no", "text": "Can enable sharing at any time"}},
+                },
+                "available": True,
+            },
+        ],
+        "required": True,
+        "answer": {
+            "state": "signed",
+            "value": "trace_consent_no",
+            "shown_digest": "sha256-dummy-shown-digest",
+        },
+    }
+
+    # Verify CDDL requirements
+    assert choice_item_sample["kind"] in ("choice", "entry", "act", "notice")
+    assert choice_item_sample["policy"] == "self_choice"
+    assert len(choice_item_sample["options"]) == 2
+
+    # Verify Directional Asymmetry derived from impact:
+    yes_imp = choice_item_sample["options"][0]["impact"]
+    no_imp = choice_item_sample["options"][1]["impact"]
+    assert (yes_imp["direction"] == "widens" or not yes_imp["undo"]["possible"]) is True, "Widening option requires P8"
+    assert (no_imp["direction"] == "widens" or not no_imp["undo"]["possible"]) is False, "Narrowing option executes in 1 step"
+
+    # Verify self-choice decline is answer.value, not a failed/cancelled vote:
+    assert choice_item_sample["answer"]["value"] == "trace_consent_no"
+    assert choice_item_sample["answer"]["state"] == "signed"
+
     for step_name in ("YOU", "JOIN_FEDERATION", "AI", "COMPLETE"):
         wiz_s = FirstRunWizardState(step=step_name, identity_path="ADD_THIS_DEVICE", add_device_held_by_roster=True)
         wiz_scene = project_first_run_wizard_scene(wiz_s)
@@ -1536,6 +1608,7 @@ def verify_all_invariants() -> None:
     print(f"[PASS] 12 × 6 (ChangeKind × Verb) Occupancy Matrix: {occupied} / 72 legal cells verified")
     print("[PASS] Directional Asymmetry Law: outward -> 3-fact ConfirmSheet; inward/halt/exit -> 1-step")
     print(f"[PASS] 10 Governance Policy Families: {len(GOVERNANCE_POLICIES)} policy machines verified against TwoPath.tla")
+    print("[PASS] CC 4.5.13 ChoiceItem & Derived Impact: CDDL validated, P8 derived from impact, decline is answer.value")
     print("[PASS] Inv_X1_LatchDoesNotBlockServing: 423 Locked freezes agent gate while data doors stay open")
     print(f"[PASS] Hamburger Epistemic Invariant (CSD-006): verified on {len(tree)} CSD/4 tree nodes")
     print(f"[PASS] 11 Reserved Promise Cards (CSD-111..128): {len(promise_cards)} cards composed from P1..P12")

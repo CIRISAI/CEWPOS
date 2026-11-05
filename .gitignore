@@ -7,6 +7,7 @@
 
 # WASM build outputs (rebuildable via each spike's build.sh)
 **/*.wasm
+!docs/**/*.wasm
 
 # scratch build script provenance is kept; temp/db/os files are not
 *.db

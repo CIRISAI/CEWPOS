@@ -61,7 +61,7 @@ class CewposRequestHandler(http.server.SimpleHTTPRequestHandler):
 
         req = urllib.request.Request(target_url, data=body, headers=headers, method=method)
         try:
-            with urllib.request.urlopen(req, timeout=60.0) as resp:
+            with urllib.request.urlopen(req, timeout=300.0) as resp:
                 resp_body = resp.read()
                 self.send_response(resp.status)
                 self.send_header("Content-Type", resp.headers.get("Content-Type", "application/json"))

@@ -25,6 +25,7 @@
 //! feature.
 
 pub mod algebra;
+pub mod choice_item;
 pub mod epistemic_scene;
 pub mod scene;
 pub mod view_form;
@@ -37,6 +38,11 @@ pub use algebra::{
     GovernancePolicySpec, HaltVerdict, InstrumentId, MemberStage, OntologyClass, PolicyLensVerdict,
     Receipt5, ReceiptAct, RetirementStage, RootVerdict, RowStanding, StatePlaneVector,
     SurfaceState, Tone, TopologyId, TwoPathVerdict, Verb, VerificationBasis, ViewerContext,
+};
+pub use choice_item::{
+    AnswerState, ChoiceAnswer, ChoiceCircle, ChoiceContext, ChoiceFact, ChoiceItem, ChoiceKind,
+    ChoiceOption, ChoiceRole, ChoiceWrite, DerivedImpact, EntrySpec, ImpactDestination,
+    ImpactDirection, TextRef, UndoSpec,
 };
 pub use attestation_calculus_spike::forms;
 pub use epistemic_scene::{

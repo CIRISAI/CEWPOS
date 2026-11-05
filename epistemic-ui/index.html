@@ -1658,6 +1658,74 @@
       `;
     }
 
+    // ── CC 4.5.13 ChoiceItem Renderer (P9 ChoiceBlock + Derived P8 ConfirmSheet) ──
+    function renderP9FromChoiceItem(item, { onSelectJs = null, extraActionsHtml = "" } = {}) {
+      if (!item) return "";
+      const isSelf = item.policy === "self_choice" || (item.context && (item.context.role === "first_run" || item.context.role === "consent"));
+      const selectedVal = (item.answer && item.answer.value) || item.default || null;
+
+      const options = (item.options || []).map((opt, idx) => {
+        const isSel = selectedVal === opt.value;
+        const consequence = (opt.benefit && opt.downside)
+          ? `Benefit: ${opt.benefit.text || opt.benefit} &middot; Downside: ${opt.downside.text || opt.downside}`
+          : (opt.consequence || "");
+
+        // Directional Asymmetry Law: outward/widening or irreversible actions require P8 ConfirmSheet
+        const imp = opt.impact || {};
+        const isWidening = imp.direction === "widens" || (imp.undo && imp.undo.possible === false);
+
+        let clickJs = "";
+        if (isWidening) {
+          const movesText = imp.moves ? (imp.moves.text || imp.moves) : "State mutation";
+          const toText = imp.to ? `${imp.to.audience} (${imp.to.tier})` : "Federation";
+          const undoText = imp.undo ? (imp.undo.possible ? ((imp.undo.how && imp.undo.how.text) || "Yes — retract in 1 step") : "No — irreversible") : "Yes";
+          const dangerNote = imp.to && imp.to.tier === "federation"
+            ? `<div class="danger-banner" style="margin-top:8px;font-size:12px;">⚠️ Federation exposure: This telemetry will replicate across federation peers.</div>`
+            : "";
+
+          clickJs = `openP8ConfirmSheet({
+            tag: 'confirm_${opt.value}',
+            title: 'Confirm ${opt.benefit ? (opt.benefit.text || opt.benefit) : opt.value}',
+            fact1Label: 'What moves', fact1Val: '${movesText.replace(/'/g, "\\'")}',
+            fact2Label: 'Where it goes', fact2Val: '${toText.replace(/'/g, "\\'")}',
+            fact3Label: 'Can I undo it?', fact3Val: '${undoText.replace(/'/g, "\\'")}',
+            noteHtml: '${dangerNote.replace(/'/g, "\\'")}',
+            confirmTag: 'btn_confirm_${opt.value}',
+            confirmLabel: 'Confirm & Sign',
+            confirmTone: 'btn-brand',
+            onConfirmJs: 'closeSheet(); ${onSelectJs ? onSelectJs(opt.value) : `console.log("selected ${opt.value}")`}',
+          })`;
+        } else {
+          // Narrowing and reversible options execute immediately in 1 step (Inv_ExitOneStep)
+          clickJs = onSelectJs ? onSelectJs(opt.value) : `console.log("selected ${opt.value}")`;
+        }
+
+        return {
+          id: opt.value,
+          label: opt.benefit ? (opt.benefit.text || opt.benefit) : opt.value,
+          consequence,
+          chipLabel: imp.to ? (imp.to.tier === 'federation' ? 'Everyone' : 'Just me') : '',
+          selected: isSel,
+          csdTag: opt.tag || `choice_${opt.value}`,
+          onSelectJs: clickJs,
+        };
+      });
+
+      return renderP9ChoiceBlock({
+        tag: item.id || "choice_item",
+        contextTitle: item.context && item.context.title ? (item.context.title.text || item.context.title) : "Decision",
+        contextSubtitle: item.context && item.context.body && item.context.body[0] ? (item.context.body[0].text || item.context.body[0]) : "",
+        dimension: (item.options && item.options[0] && item.options[0].writes && item.options[0].writes[0] && item.options[0].writes[0].family) || item.policy || "choice:v1",
+        eyebrow: isSelf ? "SINGLE-PERSON SELF CHOICE" : "QUORUM CEREMONY",
+        scope: item.context && item.context.circle ? (item.context.circle === 'federation' ? 'Everyone' : 'JustMe') : 'JustMe',
+        options,
+        actionsHtml: extraActionsHtml,
+        approvals: selectedVal ? 1 : 0,
+        required: 1,
+        objections: 0,
+      });
+    }
+
     // `P9: TwoPathCeremonyBlock` — Adapter mapping ceremony/deferral votes to `renderP9ChoiceBlock`
     function renderP9TwoPathCeremony({
       tag,
@@ -2457,6 +2525,53 @@
       renderAll();
     }
 
+    let __addDevicePollTimer = null;
+
+    async function wizardPollAddDeviceStatus() {
+      try {
+        const resp = await fetch("/v1/setup/add-device");
+        if (!resp.ok) return;
+        const data = await resp.json().catch(() => ({}));
+        const w = state.wizard;
+        if (data.state === "approved") {
+          w.addDeviceStatus = "approved";
+          w.addDeviceOwnerKeyId = data.owner_key_id || w.addDeviceOwnerKeyId;
+          w.addDeviceServerNote = `Owner approval validated and held offline (owner: ${w.addDeviceOwnerKeyId || 'verified'}). Proceed to next step.`;
+          if (__addDevicePollTimer) {
+            clearInterval(__addDevicePollTimer);
+            __addDevicePollTimer = null;
+          }
+          renderAll();
+        } else if (data.state === "requested") {
+          w.addDeviceStatus = "requested";
+          if (data.match_code) w.addDeviceMatchCode = data.match_code;
+          renderAll();
+        } else if (data.state === "denied") {
+          w.addDeviceStatus = "denied";
+          w.addDeviceServerNote = "Your other device denied the request.";
+          if (__addDevicePollTimer) {
+            clearInterval(__addDevicePollTimer);
+            __addDevicePollTimer = null;
+          }
+          renderAll();
+        } else if (data.state === "failed") {
+          w.addDeviceStatus = "failed";
+          w.addDeviceServerNote = data.detail || "Verification failed.";
+          if (__addDevicePollTimer) {
+            clearInterval(__addDevicePollTimer);
+            __addDevicePollTimer = null;
+          }
+          renderAll();
+        }
+      } catch (_e) {}
+    }
+
+    function startAddDevicePolling() {
+      if (__addDevicePollTimer) clearInterval(__addDevicePollTimer);
+      wizardPollAddDeviceStatus();
+      __addDevicePollTimer = setInterval(wizardPollAddDeviceStatus, 2000);
+    }
+
     async function wizardSendAddDeviceRequest() {
       const w = state.wizard;
       const contact = (w.addDeviceContact || "").trim();
@@ -2475,6 +2590,7 @@
       w.addDeviceStatus = "retrying";
       w.addDeviceServerNote = "Contacting existing device over Reticulum mesh (POST /v1/setup/add-device)…";
       renderAll();
+      startAddDevicePolling();
       try {
         const resp = await fetch("/v1/setup/add-device", {
           method: "POST",
@@ -2482,13 +2598,14 @@
           body: JSON.stringify({
             contact,
             device_name: deviceName,
+            label: deviceName,
           }),
         });
         const data = await resp.json().catch(() => ({}));
         if (resp.ok) {
           w.addDeviceStatus = data.state || "requested";
           w.addDeviceMatchCode = data.match_code || data.code || data.verification_code || "482 913";
-          w.addDeviceServerNote = `200 OK from /v1/setup/add-device: state=${w.addDeviceStatus}`;
+          w.addDeviceServerNote = `Accepted from /v1/setup/add-device: state=${w.addDeviceStatus}`;
         } else if (resp.status === 503 && data.reason_id === "add_device.owner_route_pending") {
           const retrySecs = parseInt(resp.headers.get("Retry-After") || "10", 10) || 10;
           w.addDeviceStatus = "retrying";
@@ -2671,11 +2788,23 @@
       }, 60);
     }
 
-    function wizardFinishSetup() {
+    async function wizardFinishSetup() {
       const w = state.wizard;
-      if (w.identityPath === "ADD_THIS_DEVICE" && w.addDeviceStatus !== "approved") {
-        // E9 < E10: cannot call /v1/setup/complete before approval lands (`CSD-093`)
-        return;
+      if (w.identityPath === "ADD_THIS_DEVICE") {
+        if (w.addDeviceStatus !== "approved") {
+          // E9 < E10: cannot call /v1/setup/complete before approval lands (`CSD-093`)
+          return;
+        }
+        try {
+          const resp = await fetch("/v1/setup/add-device/complete", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+          });
+          if (resp.ok) {
+            const data = await resp.json().catch(() => ({}));
+            w.addDeviceStatus = data.state || "applied";
+          }
+        } catch (_e) {}
       }
       state.hasAgent = w.runWithAi;
       state.setupMode = false;
@@ -2956,6 +3085,7 @@
                 <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0;">
                   <span class="mono-hint" data-csd-tag="text_add_device_status">Status: ${w.addDeviceStatus}</span>
                   <div style="display:flex; gap:6px;">
+                    <button class="btn" onclick="startAddDevicePolling()" title="Poll node for approval verification">&#8635; Check status</button>
                     <button class="btn btn-brand"
                             data-csd-tag="btn_add_device_send"
                             ${!w.addDeviceName.trim() || !w.addDeviceContact.trim() || lockedPath ? 'disabled' : ''}
@@ -3309,8 +3439,8 @@
                 contentHtml: `Waiting for approval of match code <strong>${w.addDeviceMatchCode || '482 913'}</strong> on your existing device (<code>409 add_device.not_approved</code> blocks premature completion).`,
               })}
               <div style="display:flex; gap:8px; padding:8px 0;">
-                <button class="btn" data-csd-tag="btn_add_device_finish_retry" onclick="state.wizard.addDeviceStatus='approved'; renderAll();">
-                  Check approval again (Simulate Approved)
+                <button class="btn btn-brand" data-csd-tag="btn_add_device_finish_retry" onclick="startAddDevicePolling(); wizardPollAddDeviceStatus();">
+                  &#8635; Check approval status
                 </button>
               </div>
             ` : renderP7StateBlock({

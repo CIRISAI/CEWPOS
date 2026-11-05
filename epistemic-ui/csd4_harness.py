@@ -998,6 +998,8 @@ def run_live_fresh_node_qa(
         env_home = os.environ.get("CIRIS_HOME")
         if env_home:
             qa_home = Path(env_home)
+        elif Path("/tmp/ciris_wizard_live").exists():
+            qa_home = Path("/tmp/ciris_wizard_live")
         elif Path("/tmp/ciris_qa_244").exists():
             qa_home = Path("/tmp/ciris_qa_244")
         else:

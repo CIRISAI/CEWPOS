@@ -188,8 +188,13 @@ impl TwoPathCeremonyNode {
         let proposer = proposed_by.into();
         let (_, holon_frame) = view_deferral_vote(&vote);
         let verdict = if vote.objections > 0 {
-            TwoPathVerdict::Cancelled {
-                reason: "Objection / refusal recorded".to_string(),
+            if vote.is_single_person_vote() {
+                // In the single-person self case: A decline is an answer.value, never a failed vote (CC 4.5.13 / Issue #2).
+                TwoPathVerdict::LandsForward
+            } else {
+                TwoPathVerdict::Cancelled {
+                    reason: "Objection / refusal recorded".to_string(),
+                }
             }
         } else if vote.approvals >= vote.enact_needed {
             TwoPathVerdict::LandsForward
@@ -231,6 +236,15 @@ impl TwoPathCeremonyNode {
             deferral_vote: Some(vote),
             holon_frame: Some(holon_frame),
         }
+    }
+
+    /// Construct a `P9: TwoPathCeremonyNode` directly from a canonical CC 4.5.13 [`crate::choice_item::ChoiceItem`].
+    pub fn from_choice_item(
+        tag_prefix: impl Into<String>,
+        proposed_by: impl Into<String>,
+        item: &crate::choice_item::ChoiceItem,
+    ) -> Self {
+        item.to_ceremony_node(tag_prefix, proposed_by)
     }
 }
 

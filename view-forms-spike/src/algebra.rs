@@ -1624,49 +1624,39 @@ impl FirstRunWizardState {
             ],
         });
 
-        // Vote 2: JOIN_FEDERATION — Cohort Scope & Trace Replication Consent (1-of-1 single-person vote)
+        // Vote 2: JOIN_FEDERATION — Cohort Scope & Trace Replication Consent (1-of-1 self choice, CC 4.5.13)
         series.push(DeferralVote {
             deferral_id: "deferral:setup:federation:v1".to_string(),
             dimension: "consent:replication:v1".to_string(),
             cohort_scope: CircleScope::Everyone,
-            title: "Deferral 2/4 · JOIN_FEDERATION — Share reasoning traces with the mesh?".to_string(),
-            context_prompt: "Single-person vote (1-of-1 self-quorum): Decide whether signed reasoning traces cross from local self-scope into federation cohort scope (`consent:replication:v1`).".to_string(),
+            title: "Choice 2/4 · JOIN_FEDERATION — Share reasoning traces with the mesh?".to_string(),
+            context_prompt: "Single-person self choice (1-of-1 self-quorum, CC 4.5.13): Decide whether diagnostic traces cross into federation scope. Declining is a complete answer (answer.value), not a failed vote.".to_string(),
             roster_size: 1,
             enact_needed: 1,
-            approvals: u32::from(self.trace_consent == Some(true)),
-            objections: u32::from(self.trace_consent == Some(false)),
+            approvals: u32::from(self.trace_consent.is_some()),
+            objections: 0,
             step_index: 2,
             total_steps,
             choices: vec![
                 DeferralChoice {
                     choice_id: "trace_consent_yes".to_string(),
-                    label: "Assent: Share Traces (+1)".to_string(),
-                    consequence: "Emits signed consent:replication:v1 at federation scope".to_string(),
-                    vote_score: 1,
-                    z_species: 6, // Carbon
+                    label: "Share anonymized traces".to_string(),
+                    consequence: "Diagnostic trace envelopes replicated to federation peers with 9-axis Contextual Integrity stripping.".to_string(),
+                    vote_score: 0,
+                    z_species: 6, // Carbon (widening)
                     action_tag: "wizard_trace_yes".to_string(),
                     selected: self.trace_consent == Some(true),
                     csd_tag: "CSD-082".to_string(),
                 },
                 DeferralChoice {
                     choice_id: "trace_consent_no".to_string(),
-                    label: "Refuse: Keep Local Only (-1)".to_string(),
-                    consequence: "Keeps all attestations and traces strictly within self cohort scope".to_string(),
-                    vote_score: -1,
-                    z_species: 9, // Fluorine
+                    label: "Keep traces local only".to_string(),
+                    consequence: "Zero outbound trace replication; all telemetry stays on this node in Just me.".to_string(),
+                    vote_score: 0, // In self choice, declining is answer.value, not a negative vote score
+                    z_species: 8, // Oxygen (narrows)
                     action_tag: "wizard_trace_no".to_string(),
                     selected: self.trace_consent == Some(false),
                     csd_tag: "CSD-082".to_string(),
-                },
-                DeferralChoice {
-                    choice_id: "announce_ownership".to_string(),
-                    label: "Sign Owner Request: Announce (+1)".to_string(),
-                    consequence: "Signs owner_requests::announce so peers can discover this node".to_string(),
-                    vote_score: 1,
-                    z_species: 7, // Nitrogen
-                    action_tag: "wizard_toggle_announce".to_string(),
-                    selected: self.announce_ownership,
-                    csd_tag: "CSD-085".to_string(),
                 },
             ],
         });
