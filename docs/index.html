@@ -80,8 +80,9 @@
       border-radius: 16px;
       position: sticky;
       top: 12px;
-      background: rgba(250, 249, 245, 0.86);
+      background: rgba(250, 249, 245, 0.72);
       backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       box-shadow: 0 10px 30px rgba(20, 20, 19, 0.06), 0 1px 0 rgba(255, 255, 255, 0.8) inset;
       z-index: 20;
     }
@@ -193,7 +194,9 @@
       padding: 2px 2px 10px;
     }
     .lens-drawer {
-      background: var(--paper);
+      background: rgba(242, 239, 233, 0.55);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       border: 1px solid var(--hairline);
       border-radius: 10px;
       padding: 12px 14px;
@@ -205,14 +208,15 @@
     .card {
       max-width: 660px;
       margin: 0 auto 16px;
-      background: rgba(250, 249, 245, 0.94);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(176, 174, 165, 0.38);
+      background: rgba(250, 249, 245, 0.68);
+      backdrop-filter: blur(14px) saturate(120%);
+      -webkit-backdrop-filter: blur(14px) saturate(120%);
+      border: 1px solid rgba(255, 255, 255, 0.75);
       border-radius: 16px;
       padding: 14px 22px 18px;
-      box-shadow: 0 16px 40px rgba(20, 20, 19, 0.07), 0 1px 0 rgba(255, 255, 255, 0.85) inset;
+      box-shadow: 0 16px 40px rgba(20, 20, 19, 0.07), 0 1px 0 rgba(255, 255, 255, 0.90) inset;
       transform-style: preserve-3d;
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
     }
     .card-header {
       display: flex;
@@ -289,8 +293,10 @@
       text-align: left;
       padding: 14px 16px;
       border-radius: 14px;
-      border: 1.5px solid var(--hairline);
-      background: rgba(250, 249, 245, 0.92);
+      border: 1.5px solid rgba(228, 224, 214, 0.85);
+      background: rgba(255, 255, 255, 0.52);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       cursor: pointer;
       font-family: var(--sans);
       transform: translate3d(0, 0, 4px);
@@ -299,14 +305,16 @@
     }
     .p9-selection-tile:hover:not(:disabled) {
       transform: translate3d(0, -2px, 14px);
-      border-color: rgba(31, 94, 122, 0.45);
-      background: #fff;
+      border-color: rgba(31, 94, 122, 0.55);
+      background: rgba(255, 255, 255, 0.80);
       box-shadow: 0 12px 26px rgba(20, 20, 19, 0.08);
     }
     .p9-selection-tile.selected {
       transform: translate3d(0, -3px, 22px);
       border-color: var(--brand);
-      background: #fff;
+      background: rgba(255, 255, 255, 0.90);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       box-shadow: 0 16px 34px rgba(31, 94, 122, 0.14), 0 0 0 1px var(--brand);
     }
     .p9-selection-tile:disabled {
@@ -358,8 +366,10 @@
       margin: 12px 0;
     }
     .spatial-field-box {
-      background: rgba(250, 249, 245, 0.95);
-      border: 1.5px solid var(--hairline);
+      background: rgba(255, 255, 255, 0.48);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1.5px solid rgba(228, 224, 214, 0.85);
       border-radius: 12px;
       padding: 10px 14px;
       box-shadow: 0 4px 12px rgba(20, 20, 19, 0.03);
@@ -367,7 +377,7 @@
     }
     .spatial-field-box:focus-within {
       border-color: var(--brand);
-      background: #ffffff;
+      background: rgba(255, 255, 255, 0.85);
       box-shadow: 0 8px 20px rgba(31, 94, 122, 0.10);
     }
     .spatial-field-label {
@@ -714,11 +724,20 @@
       width: 100%;
       padding: 8px 11px;
       border-radius: 8px;
-      border: 1px solid var(--hairline);
-      background: var(--bone);
+      border: 1px solid rgba(228, 224, 214, 0.85);
+      background: rgba(255, 255, 255, 0.52);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       font-family: var(--sans);
       font-size: 13px;
       color: var(--obsidian);
+      box-sizing: border-box;
+      transition: background 0.16s, border-color 0.16s;
+    }
+    .field-input:focus {
+      background: rgba(255, 255, 255, 0.85);
+      border-color: var(--brand);
+      outline: none;
     }
     .choice-btn {
       flex: 1;
@@ -763,10 +782,18 @@
       flex: 1;
       padding: 8px 12px;
       border-radius: 999px;
-      border: 1px solid var(--hairline);
-      background: #fff;
+      border: 1px solid rgba(228, 224, 214, 0.85);
+      background: rgba(255, 255, 255, 0.52);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       font-family: var(--sans);
       font-size: 13px;
+      outline: none;
+      transition: background 0.16s, border-color 0.16s;
+    }
+    .compose-input:focus {
+      background: rgba(255, 255, 255, 0.85);
+      border-color: var(--brand);
     }
 
     /* ── Bottom Circle Bar (5 Circles) ── */
@@ -819,12 +846,14 @@
     .sheet {
       width: 100%;
       max-width: 560px;
-      background: var(--bone);
+      background: rgba(250, 249, 245, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border-top-left-radius: 16px;
       border-top-right-radius: 16px;
-      border: 1px solid var(--hairline);
+      border: 1px solid rgba(255, 255, 255, 0.80);
       padding: 18px 20px 24px;
-      box-shadow: 0 -8px 30px rgba(0,0,0,0.08);
+      box-shadow: 0 -8px 30px rgba(0,0,0,0.12);
       max-height: 85vh;
       overflow-y: auto;
     }
@@ -1080,6 +1109,159 @@
       background: #E8E4DA;
       color: #4A4A46;
     }
+
+    /* ── On-Rails Guided Animation Engine HUD & Spotlight ── */
+    .rail-spotlight {
+      outline: 2.5px solid var(--brand) !important;
+      outline-offset: 3px !important;
+      box-shadow: 0 0 28px rgba(31, 94, 122, 0.45) !important;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    #railTourDock {
+      position: fixed;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(720px, 94vw);
+      z-index: 1000;
+      pointer-events: auto;
+      animation: railDockSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes railDockSlideUp {
+      from { transform: translate(-50%, 40px); opacity: 0; }
+      to { transform: translate(-50%, 0); opacity: 1; }
+    }
+    .rail-card {
+      background: rgba(250, 249, 245, 0.88);
+      backdrop-filter: blur(20px) saturate(130%);
+      -webkit-backdrop-filter: blur(20px) saturate(130%);
+      border: 1.5px solid rgba(31, 94, 122, 0.32);
+      border-radius: 18px;
+      box-shadow: 0 20px 50px rgba(15, 20, 28, 0.20), 0 1px 0 rgba(255, 255, 255, 0.95) inset;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .rail-progress-bar-container {
+      width: 100%;
+      height: 4px;
+      background: rgba(20, 20, 19, 0.08);
+      position: relative;
+    }
+    .rail-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--c-justme) 0%, var(--brand) 45%, var(--c-neighbours) 100%);
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+    .rail-content {
+      padding: 13px 18px 12px;
+    }
+    .rail-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+    .rail-badge-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .rail-live-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: #207A3C;
+      background: rgba(32, 122, 60, 0.12);
+      padding: 2px 8px;
+      border-radius: 999px;
+      letter-spacing: 0.04em;
+    }
+    .rail-live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #207A3C;
+      animation: railPulse 1.4s ease-in-out infinite;
+    }
+    @keyframes railPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.85); }
+    }
+    .rail-step-pill {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--brand);
+      background: rgba(31, 94, 122, 0.09);
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+    .rail-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .rail-btn-icon {
+      background: rgba(255, 255, 255, 0.75);
+      border: 1px solid var(--hairline);
+      border-radius: 8px;
+      padding: 3px 8px;
+      font-size: 12px;
+      color: var(--obsidian);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--sans);
+      font-weight: 500;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .rail-btn-icon:hover {
+      background: #fff;
+      border-color: var(--brand);
+    }
+    .rail-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--obsidian);
+      letter-spacing: -0.01em;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .rail-desc {
+      font-size: 13px;
+      color: #383836;
+      line-height: 1.45;
+      margin-bottom: 8px;
+    }
+    .rail-action-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.65);
+      border: 1px solid rgba(228, 224, 214, 0.80);
+      border-radius: 10px;
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+    .rail-action-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--brand);
+      font-weight: 500;
+      font-family: var(--mono);
+      font-size: 11.5px;
+    }
   </style>
 </head>
 <body>
@@ -1100,8 +1282,8 @@
       <div class="topbar-center" id="headerTitle"></div>
 
       <div class="topbar-right">
-        <button id="btn_tour_toggle" class="btn btn-brand" onclick="toggleTourDrawer()" title="Explain the Epistemic Web" style="font-weight:600; gap:5px;">
-          <span>📖</span> <span>Tour &amp; Guide</span>
+        <button id="btn_tour_toggle" class="btn btn-brand" onclick="toggleTourOnRails()" title="Guided Walkthrough on Rails" style="font-weight:600; gap:6px;">
+          <span id="tour_btn_icon">🎬</span> <span id="tour_btn_label">Tour on Rails</span>
         </button>
         <button id="btn_stop_everything" data-csd-tag="btn_stop_everything" class="btn btn-stop" onclick="toggleHalt()">
           Stop
@@ -5075,29 +5257,34 @@
       ctx.scale(dpr, dpr);
       ctx.clearRect(0, 0, vw, vh);
 
-      // 1. Warm Stone-and-Paper 3D Architectural Environment Lighting (CIRISGame Bone/Linen)
-      const bg = ctx.createRadialGradient(vw * 0.5, vh * 0.32, 40, vw * 0.5, vh * 0.5, Math.max(vw, vh) * 0.78);
+      // 1. Move living holon anchor downwards into the mid-lower viewport (vh * 0.58) so it is prominently visible through & beneath translucent cards
+      const vanishX = vw * 0.5 + state.holon3d.yaw * 64;
+      const targetAnchorY = Math.max(vh * 0.58, 400);
+      const anchorX = vanishX;
+      const anchorY = targetAnchorY + Math.sin(time * 0.85) * 8;
+      const horizonY = anchorY - 150 + state.holon3d.pitch * 36;
+
+      // Warm Stone-and-Paper 3D Architectural Environment Lighting centered around the living holon anchor
+      const bg = ctx.createRadialGradient(anchorX, anchorY - 20, 50, anchorX, anchorY, Math.max(vw, vh) * 0.82);
       bg.addColorStop(0, "#FAF9F5");
-      bg.addColorStop(0.65, "#F3F0E8");
-      bg.addColorStop(1, "#E6E2D6");
+      bg.addColorStop(0.55, "#F3F0E8");
+      bg.addColorStop(1, "#E1DCCF");
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, vw, vh);
 
       // 2. 3D Perspective World-Box Architectural Floor & Horizon Grid (`holon-render-3d::spawn_world_box`)
-      const horizonY = vh * 0.16 + state.holon3d.pitch * 36;
-      const vanishX = vw * 0.5 + state.holon3d.yaw * 64;
-      ctx.strokeStyle = "rgba(43, 84, 126, 0.065)";
+      ctx.strokeStyle = "rgba(43, 84, 126, 0.075)";
       ctx.lineWidth = 1;
 
-      const numRays = 18;
+      const numRays = 22;
       for (let i = -numRays; i <= numRays; i++) {
         ctx.beginPath();
-        ctx.moveTo(vanishX + i * 28, horizonY);
-        ctx.lineTo(vanishX + i * 240, vh);
+        ctx.moveTo(vanishX + i * 30, horizonY);
+        ctx.lineTo(vanishX + i * 260, vh);
         ctx.stroke();
       }
-      for (let row = 1; row <= 11; row++) {
-        const t = Math.pow(row / 11, 1.55);
+      for (let row = 1; row <= 13; row++) {
+        const t = Math.pow(row / 13, 1.45);
         const y = horizonY + (vh - horizonY) * t;
         ctx.beginPath();
         ctx.moveTo(0, y);
@@ -5105,19 +5292,18 @@
         ctx.stroke();
       }
 
-      // 3. Living 3D Holon Graph (From Frame 1 — Central Anchor, Torus, & 5 Concentric Circle Orbits)
-      const anchorX = vanishX;
-      const anchorY = horizonY + 115 + Math.sin(time * 0.9) * 5;
-      const ringAspect = 0.30;
+      // 3. Living 3D Holon Graph (5 Concentric Circle Orbits centered at anchorY)
+      const baseR = Math.min(Math.max(vw * 0.16, 95), 180);
+      const circleRadii = [baseR * 0.75, baseR * 1.35, baseR * 2.05, baseR * 2.85, baseR * 3.75];
+      const ringAspect = 0.34;
 
       // 5 Concentric Circle Rings (Just me -> Everyone)
-      const circleRadii = [80, 140, 210, 290, 380];
       const circleColors = [
-        "rgba(217, 119, 87, 0.32)",  // Just me (Clay)
-        "rgba(120, 140, 93, 0.25)",  // Family (Verdigris)
-        "rgba(106, 155, 204, 0.22)", // Neighbours (Lapis)
-        "rgba(142, 107, 168, 0.18)", // Communities & Businesses
-        "rgba(95, 92, 85, 0.14)",    // Everyone (Slate)
+        "rgba(217, 119, 87, 0.38)",  // Just me (Clay)
+        "rgba(120, 140, 93, 0.32)",  // Family (Verdigris)
+        "rgba(106, 155, 204, 0.28)", // Neighbours (Lapis)
+        "rgba(142, 107, 168, 0.24)", // Communities & Businesses
+        "rgba(95, 92, 85, 0.18)",    // Everyone (Slate)
       ];
 
       circleRadii.forEach((r, idx) => {
@@ -5125,7 +5311,7 @@
         ctx.beginPath();
         ctx.ellipse(anchorX, anchorY, r, r * ringAspect, 0, 0, Math.PI * 2);
         ctx.strokeStyle = circleColors[idx];
-        ctx.lineWidth = idx === 0 ? 1.6 : 1.1;
+        ctx.lineWidth = idx === 0 ? 1.8 : 1.2;
         if (idx > 1) ctx.setLineDash([6, 6]);
         ctx.stroke();
         ctx.restore();
@@ -5133,11 +5319,11 @@
 
       // Orbiting Epistemic Species Nodes with connecting filaments
       const speciesNodes = [
-        { r: 80, speed: 0.45, offset: 0.0, color: "#D97757", size: 6.5, label: "Identity" },
-        { r: 140, speed: -0.32, offset: 1.4, color: "#788C5D", size: 5.5, label: "Trust" },
-        { r: 210, speed: 0.24, offset: 2.9, color: "#6A9BCC", size: 5.5, label: "Peers" },
-        { r: 290, speed: -0.18, offset: 4.2, color: "#8E6BA8", size: 5.0, label: "Commons" },
-        { r: 380, speed: 0.12, offset: 5.6, color: "#5F5C55", size: 4.5, label: "Public" },
+        { r: circleRadii[0], speed: 0.45, offset: 0.0, color: "#D97757", size: 6.5, label: "Identity" },
+        { r: circleRadii[1], speed: -0.32, offset: 1.4, color: "#788C5D", size: 5.5, label: "Trust" },
+        { r: circleRadii[2], speed: 0.24, offset: 2.9, color: "#6A9BCC", size: 5.5, label: "Peers" },
+        { r: circleRadii[3], speed: -0.18, offset: 4.2, color: "#8E6BA8", size: 5.0, label: "Commons" },
+        { r: circleRadii[4], speed: 0.12, offset: 5.6, color: "#5F5C55", size: 4.5, label: "Public" },
       ];
 
       speciesNodes.forEach((node) => {
@@ -5501,190 +5687,445 @@
       setSurfaceHtml(html);
     }
 
-    // ── Explanatory Tour & Guide Engine (Epistemic Web in Simple Language) ──
-    let isTourOpen = false;
+    // ── Automated On-Rails Guided Animation Engine (Epistemic Web Interactive Demo) ──
+    const RAIL_TOUR = {
+      active: false,
+      paused: false,
+      stepIndex: 0,
+      stepTimer: null,
+      subTimers: [],
+      progressInterval: null,
+      stepStartTime: 0,
+      stepDuration: 8000,
+      currentActionText: "",
 
-    function toggleTourDrawer() {
-      if (isTourOpen) closeTourDrawer();
-      else openTourDrawer();
-    }
+      steps: [
+        {
+          id: "circles",
+          pill: "PRINCIPLE 1 OF 7 · BOUNDARIES",
+          title: "The 5 Concentric Circles of Visibility",
+          desc: "Data in the Epistemic Web is born in 'Just me' (completely local). It never leaks across the network unless you explicitly sign an attestation widening its reach.",
+          spotlight: ".bottom-circles",
+          duration: 8000,
+          run: (sub) => {
+            state.circleId = "JustMe"; state.tab = "Files"; state.setupMode = false; state.instrumentId = null; closeSheet(); renderAll();
+            RAIL_TOUR.setActionStatus("Scope: Just me (strictly local on-device encrypted storage)");
 
-    function closeTourDrawer() {
-      isTourOpen = false;
-      const host = document.getElementById("tourHost");
-      if (host) host.innerHTML = "";
-    }
+            sub(() => {
+              state.circleId = "Family"; renderAll();
+              RAIL_TOUR.setActionStatus("Scope widened: Family Circle (shared encryption keys)");
+            }, 2700);
 
-    function openTourDrawer() {
-      isTourOpen = true;
-      const host = document.getElementById("tourHost");
-      if (!host) return;
+            sub(() => {
+              state.circleId = "Neighbours"; renderAll();
+              RAIL_TOUR.setActionStatus("Scope widened: Neighbours Circle (peer mesh federation)");
+            }, 5400);
+          }
+        },
+        {
+          id: "receipt",
+          pill: "PRINCIPLE 2 OF 7 · PROVENANCE",
+          title: "The Universal Cryptographic Receipt (☰)",
+          desc: "Every claim carries an immutable receipt. Clicking '☰' reveals the 5 Plain-Language Envelope Facts (Who, What, Scope, Rule, Provenance), 3D slab preview, and 9 uniform attestation acts.",
+          spotlight: '[data-csd-tag="btn_receipt_f_nei_1"]',
+          duration: 8500,
+          run: (sub) => {
+            state.circleId = "Neighbours"; state.tab = "Files"; state.setupMode = false; state.instrumentId = null; closeSheet(); renderAll();
+            RAIL_TOUR.setActionStatus("Targeting 'beach.jpg' in Neighbours Circle...");
 
-      host.innerHTML = `
-        <div class="tour-backdrop" onclick="if(event.target===this)closeTourDrawer()">
-          <div class="tour-panel">
-            <div class="tour-header">
-              <div>
-                <div class="tour-title">
-                  <span>📖</span> The Epistemic Web
-                </div>
-                <div class="tour-subtitle">Human-Stewarded Computing &middot; Interactive Guide</div>
+            sub(() => {
+              openReceiptSheet("f_nei_1");
+              RAIL_TOUR.setSpotlight("#sheetHost .sheet");
+              RAIL_TOUR.setActionStatus("Opened P4 ReceiptSheet: 5 Envelope Facts + 3D view_form preview");
+            }, 1800);
+
+            sub(() => {
+              RAIL_TOUR.setActionStatus("Notice '1-step Take back to Just me' (Inv_ExitOneStep) & 9 AttOps");
+            }, 5400);
+          }
+        },
+        {
+          id: "asymmetry",
+          pill: "PRINCIPLE 3 OF 7 · SAFETY",
+          title: "Directional Asymmetry Law (ConfirmSheet vs. 1-Step Exit)",
+          desc: "Outward sharing or delegating requires a 3-Fact Confirmation Sheet (P8). Narrowing scope or withdrawing executes in 1 immediate click with zero friction.",
+          spotlight: "#sheetHost .sheet",
+          duration: 8500,
+          run: (sub) => {
+            closeSheet();
+            state.circleId = "Neighbours"; state.tab = "Files"; state.setupMode = false; renderAll();
+            RAIL_TOUR.setActionStatus("Attempting to share 'beach.jpg' outwardly to Everyone...");
+
+            sub(() => {
+              openP8ConfirmSheet({
+                tag: "confirm_widen_beach_everyone",
+                title: "Share beach.jpg to Everyone (Public Mesh)",
+                fact1Label: "What moves", fact1Val: "beach.jpg (holds_bytes attestation)",
+                fact2Label: "Where it goes", fact2Val: "Everyone (mesh federation peers)",
+                fact3Label: "Can I undo it?", fact3Val: "Yes — retract back to Just me in 1 step anytime",
+                noteHtml: '<div class="danger-banner" style="margin-top:8px;font-size:12px;">⚠️ Federation exposure: This photo will replicate to all public peers under CC 3.3.1 replication consent.</div>',
+                confirmTag: "btn_confirm_widen_yes",
+                confirmLabel: "Sign & Share to Everyone",
+                confirmTone: "btn-brand",
+                onConfirmJs: "closeSheet();",
+              });
+              RAIL_TOUR.setSpotlight("#sheetHost .sheet");
+              RAIL_TOUR.setActionStatus("P8 ConfirmSheet: 1. What moves · 2. Where it goes · 3. Can I undo it?");
+            }, 1800);
+
+            sub(() => {
+              RAIL_TOUR.setActionStatus("Directional Asymmetry: Inward retraction takes 1 immediate step without friction");
+            }, 5500);
+          }
+        },
+        {
+          id: "choice",
+          pill: "PRINCIPLE 4 OF 7 · STEWARDSHIP",
+          title: "CC 4.5.13 ChoiceBlock: Human Stewards the AI",
+          desc: "The AI steward never makes high-stakes decisions silently. Every decision is posed as Context, Options, and derived Consequences before anything is signed.",
+          spotlight: '[data-csd-tag="csd_choice_motion_access"]',
+          duration: 8500,
+          run: (sub) => {
+            closeSheet();
+            state.circleId = "Neighbours"; state.tab = "Decisions"; state.setupMode = false; renderAll();
+            RAIL_TOUR.setActionStatus("Posing high-stakes AI steward deferral decision...");
+
+            sub(() => {
+              const btn1 = document.querySelector('[data-csd-tag="btn_choice_motion_grant"]');
+              if (btn1) btn1.click();
+              RAIL_TOUR.setActionStatus("Selected: 'Grant 72h Access' — live 3D spline & consequences rendered");
+            }, 2000);
+
+            sub(() => {
+              const btn2 = document.querySelector('[data-csd-tag="btn_choice_motion_decline"]');
+              if (btn2) btn2.click();
+              RAIL_TOUR.setActionStatus("Selected: 'Decline Request' — recorded as valid answer value, not error");
+            }, 5200);
+          }
+        },
+        {
+          id: "emergency",
+          pill: "PRINCIPLE 5 OF 7 · TOTAL CONTROL",
+          title: "Constitutional Emergency Brake (423 Stop)",
+          desc: "Hit 'Stop' anytime. It activates an instant 423 Locked latch freezing all background AI agent autonomy, while keeping your data export doors completely open.",
+          spotlight: '[data-csd-tag="btn_stop_everything"]',
+          duration: 8000,
+          run: (sub) => {
+            closeSheet();
+            RAIL_TOUR.setActionStatus("Engaging constitutional emergency latch in header...");
+
+            sub(() => {
+              if (!state.halted) toggleHalt();
+              state.expandedIds['halt_detail'] = true;
+              renderAll();
+              RAIL_TOUR.setSpotlight('[data-csd-tag="p7_halted"]');
+              RAIL_TOUR.setActionStatus("423 Locked active: AI autonomy halted, read/export access preserved");
+            }, 1800);
+
+            sub(() => {
+              if (state.halted) toggleHalt();
+              renderAll();
+              RAIL_TOUR.setActionStatus("Emergency brake released: operational posture restored");
+            }, 5500);
+          }
+        },
+        {
+          id: "identity",
+          pill: "PRINCIPLE 6 OF 7 · SOVEREIGNTY",
+          title: "Physical Hardware Sovereignty & Multi-Device (P10)",
+          desc: "No corporate passwords or Big Tech logins. Identity is a hybrid post-quantum key pair held in hardware (USB/NFC/TPM). New devices pair via QR & SAS match codes.",
+          spotlight: '[data-csd-tag="csd_036_device_roster"]',
+          duration: 8500,
+          run: (sub) => {
+            closeSheet();
+            state.setupMode = false;
+            state.instrumentId = "DevicesAndKeys";
+            renderAll();
+            RAIL_TOUR.setActionStatus("Inspecting dual-signer roster (Ed25519 + ML-DSA-65) & key lineage");
+
+            sub(() => {
+              RAIL_TOUR.setSpotlight('[data-csd-tag="csd_093_add_this_device"]');
+              RAIL_TOUR.setActionStatus("P10 QR ceremony: Pairing devices with 6-digit cryptographic SAS match code");
+            }, 4200);
+          }
+        },
+        {
+          id: "wizard",
+          pill: "PRINCIPLE 7 OF 7 · PROVISIONING",
+          title: "First-Run Sovereign Provisioning Wizard",
+          desc: "A sequence of 4 simple ChoiceBlocks initializes a sovereign node: identity handle, diagnostic consent, steward bonding, and sealing with an unextractable 0600 PIN.",
+          spotlight: '[data-csd-tag="card_wizard_YOU"]',
+          duration: 9000,
+          run: (sub) => {
+            closeSheet();
+            state.instrumentId = null;
+            state.setupMode = true;
+            state.wizard.step = "YOU";
+            renderAll();
+            RAIL_TOUR.setActionStatus("Wizard Step 1: Root Handle (@alice.ciris) & Posture (Run with AI Steward)");
+
+            sub(() => {
+              state.wizard.step = "JOIN_FEDERATION";
+              renderAll();
+              RAIL_TOUR.setSpotlight('[data-csd-tag="card_wizard_JOIN_FEDERATION"]');
+              RAIL_TOUR.setActionStatus("Wizard Step 2: Explicit Diagnostic Trace Consent Gate");
+            }, 2800);
+
+            sub(() => {
+              state.wizard.step = "AI";
+              renderAll();
+              RAIL_TOUR.setSpotlight('[data-csd-tag="card_wizard_AI"]');
+              RAIL_TOUR.setActionStatus("Wizard Step 3: Inference Engine Selection (Keyless Local Ollama)");
+            }, 5500);
+
+            sub(() => {
+              state.wizard.step = "COMPLETE";
+              renderAll();
+              RAIL_TOUR.setSpotlight('[data-csd-tag="card_wizard_COMPLETE"]');
+              RAIL_TOUR.setActionStatus("Wizard Step 4: Ready to seal node ownership with 0600 PIN!");
+            }, 8000);
+          }
+        }
+      ],
+
+      clearSubTimers: () => {
+        RAIL_TOUR.subTimers.forEach(t => clearTimeout(t));
+        RAIL_TOUR.subTimers = [];
+      },
+
+      setSpotlight: (selector) => {
+        document.querySelectorAll(".rail-spotlight").forEach(el => el.classList.remove("rail-spotlight"));
+        if (!selector) return;
+        const target = document.querySelector(selector);
+        if (target) {
+          target.classList.add("rail-spotlight");
+          target.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+      },
+
+      setActionStatus: (msg) => {
+        RAIL_TOUR.currentActionText = msg;
+        const statusEl = document.getElementById("railActionStatus");
+        if (statusEl) {
+          statusEl.innerHTML = `<span style="animation:railPulse 1s infinite;">⚡</span> ${msg}`;
+        }
+      },
+
+      updateProgress: () => {
+        if (!RAIL_TOUR.active || RAIL_TOUR.paused) return;
+        const elapsed = Date.now() - RAIL_TOUR.stepStartTime;
+        const pct = Math.min(100, Math.max(0, (elapsed / RAIL_TOUR.stepDuration) * 100));
+        const bar = document.getElementById("railProgressBar");
+        if (bar) bar.style.width = pct + "%";
+      },
+
+      renderDock: () => {
+        const host = document.getElementById("tourHost");
+        if (!host) return;
+        if (!RAIL_TOUR.active) {
+          host.innerHTML = "";
+          RAIL_TOUR.setSpotlight(null);
+          return;
+        }
+
+        const step = RAIL_TOUR.steps[RAIL_TOUR.stepIndex];
+        const stepNum = RAIL_TOUR.stepIndex + 1;
+        const total = RAIL_TOUR.steps.length;
+
+        host.innerHTML = `
+          <div id="railTourDock">
+            <div class="rail-card">
+              <div class="rail-progress-bar-container">
+                <div id="railProgressBar" class="rail-progress-fill"></div>
               </div>
-              <button class="btn-ghost" onclick="closeTourDrawer()" style="font-size:18px; padding:4px 8px;">✕</button>
-            </div>
+              <div class="rail-content">
+                <div class="rail-topbar">
+                  <div class="rail-badge-group">
+                    <span class="rail-live-chip">
+                      <span class="rail-live-dot"></span>
+                      <span>ON RAILS</span>
+                    </span>
+                    <span class="rail-step-pill">${step.pill || `STEP ${stepNum} OF ${total}`}</span>
+                  </div>
+                  <div class="rail-controls">
+                    <button class="rail-btn-icon" onclick="RAIL_TOUR.togglePause()" title="${RAIL_TOUR.paused ? 'Resume tour' : 'Pause tour'}">
+                      ${RAIL_TOUR.paused ? '▶ Resume' : '⏸ Pause'}
+                    </button>
+                    <button class="rail-btn-icon" onclick="RAIL_TOUR.prev()" title="Previous step" ${RAIL_TOUR.stepIndex === 0 ? 'disabled style="opacity:0.4;"' : ''}>
+                      ⏮
+                    </button>
+                    <button class="rail-btn-icon" onclick="RAIL_TOUR.next()" title="Next step">
+                      ⏭
+                    </button>
+                    <button class="rail-btn-icon" onclick="RAIL_TOUR.stop()" title="Exit walkthrough" style="color:var(--danger);">
+                      ✕ Exit
+                    </button>
+                  </div>
+                </div>
 
-            <div class="tour-body">
-              <!-- Welcome & Overview -->
-              <div class="tour-card" style="border-left: 3px solid var(--brand); background: #FAF7F0;">
-                <div class="tour-card-eyebrow">Interactive Live Simulator</div>
-                <div class="tour-card-title">Welcome to CEWPOS</div>
-                <div class="tour-card-text">
-                  You are looking at a <strong>real, live CEWPOS node</strong> running inside your browser with rich sample data.
-                  The background is a <strong>full-screen 3D spatial scene</strong> with tactile perspective slabs and selection splines.
-                  <br><br>
-                  Unlike the legacy web of corporate silos, black-box algorithms, and unverified data, the <strong>Epistemic Web</strong> is built on cryptographic proof, hardware custody, and strict human stewardship.
+                <div class="rail-title">
+                  <span>${step.title}</span>
                 </div>
-                <div style="font-size:11px; color:var(--ink-mute);">
-                  Tip: Click any interactive button below to test features in the real client!
+                <div class="rail-desc">
+                  ${step.desc}
                 </div>
-              </div>
 
-              <!-- Chapter 1: You Own Your Identity -->
-              <div class="tour-card">
-                <div class="tour-card-eyebrow">Principle 1 &middot; Root Sovereignty</div>
-                <div class="tour-card-title">You Own Your Identity (No Big Tech Logins)</div>
-                <div class="tour-card-text">
-                  On the traditional web, platforms own your account and rent access back to you. On the Epistemic Web, your identity is a <strong>hybrid post-quantum cryptographic key pair</strong> (<code>Ed25519 + ML-DSA-65</code>) held in physical hardware (a USB key, NFC token, or hardware enclave).
-                  There are no corporate passwords or centralized login servers.
-                </div>
-                <div class="tour-card-actions">
-                  <button class="btn" onclick="tourOpenDevices()">Inspect Hardware Keys &amp; Roster</button>
-                </div>
-              </div>
-
-              <!-- Chapter 2: The 5 Concentric Circles -->
-              <div class="tour-card">
-                <div class="tour-card-eyebrow">Principle 2 &middot; Explicit Boundaries</div>
-                <div class="tour-card-title">The 5 Concentric Circles of Visibility</div>
-                <div class="tour-card-text">
-                  Instead of a blunt "public vs. private" toggle, everything lives in one of <strong>5 concentric circles</strong>.
-                  Data is <em>born in Just me</em> and stays completely local. It only travels outward if you explicitly sign an attestation widening its reach.
-                </div>
-                <div class="tour-card-actions">
-                  <button class="btn" style="border-color:#22C0E8;" onclick="tourOpenCircle('JustMe')">1. Just me (Private)</button>
-                  <button class="btn" style="border-color:#419CA0;" onclick="tourOpenCircle('Family')">2. Family</button>
-                  <button class="btn" style="border-color:#7A6FD6;" onclick="tourOpenCircle('Neighbours')">3. Neighbours</button>
-                  <button class="btn" style="border-color:#C96A38;" onclick="tourOpenCircle('CommunitiesAndBusinesses')">4. Communities</button>
-                  <button class="btn" style="border-color:#B08A3E;" onclick="tourOpenCircle('Everyone')">5. Everyone (Mesh)</button>
-                </div>
-              </div>
-
-              <!-- Chapter 3: The Universal Receipt -->
-              <div class="tour-card">
-                <div class="tour-card-eyebrow">Principle 3 &middot; Universal Receipts</div>
-                <div class="tour-card-title">Every Item Has a Receipt (☰)</div>
-                <div class="tour-card-text">
-                  If an item has a hamburger button (<code>☰</code>), it is an immutable, signed cryptographic claim. Clicking it reveals the <strong>5 Plain-Language Envelope Facts</strong>:
-                  <em>Who it's about, Who sent it, Who can see it, What it is, and What rule it follows</em>, plus a 3D spatial preview.
-                </div>
-                <div class="tour-card-actions">
-                  <button class="btn btn-brand" onclick="tourOpenSampleReceipt('f_nei_1')">Open Receipt on 'beach.jpg'</button>
-                  <button class="btn" onclick="tourOpenSampleReceipt('f_self_1')">Open Receipt on Journal</button>
-                </div>
-              </div>
-
-              <!-- Chapter 4: Directional Asymmetry -->
-              <div class="tour-card">
-                <div class="tour-card-eyebrow">Principle 4 &middot; Asymmetric Protection</div>
-                <div class="tour-card-title">Directional Asymmetry Law</div>
-                <div class="tour-card-text">
-                  Sharing outward or taking an irreversible action requires a <strong>3-Fact Confirmation Sheet (P8)</strong>:
-                  <em>1. What moves &middot; 2. Where it goes &middot; 3. Can I undo it?</em>
-                  <br><br>
-                  In contrast, pulling data back into <em>Just me</em> (or leaving a group) executes in <strong>one immediate click (Inv_ExitOneStep)</strong> with zero friction.
-                </div>
-                <div class="tour-card-actions">
-                  <button class="btn btn-brand" onclick="tourTestWidening()">Try Widening 'beach.jpg' to Everyone</button>
-                  <button class="btn" onclick="tourOpenCircle('Neighbours')">Inspect Current Scope</button>
-                </div>
-              </div>
-
-              <!-- Chapter 5: Human Stewards the AI (ChoiceBlock) -->
-              <div class="tour-card">
-                <div class="tour-card-eyebrow">Principle 5 &middot; True Stewardship</div>
-                <div class="tour-card-title">Human Stewards the AI (P9 ChoiceBlock)</div>
-                <div class="tour-card-text">
-                  Under <strong>CC 4.5.13</strong>, the AI agent never makes high-stakes decisions silently. Consequential actions are posed through unified <strong>ChoiceBlocks</strong>:
-                  presenting clear <em>Context, Options, and derived Consequences</em> before anything is signed. Declining is a complete answer, not a failure.
-                </div>
-                <div class="tour-card-actions">
-                  <button class="btn" onclick="tourOpenDecisions()">Explore Governance &amp; AI Deferrals</button>
-                </div>
-              </div>
-
-              <!-- Chapter 6: The Emergency Brake -->
-              <div class="tour-card">
-                <div class="tour-card-eyebrow">Principle 6 &middot; Total Control</div>
-                <div class="tour-card-title">The Emergency Brake (423 Locked)</div>
-                <div class="tour-card-text">
-                  Hit the <strong>Stop</strong> button in the top-right header at any time. It triggers a constitutional latch (<code>423 Locked</code>):
-                  freezing all background AI agent autonomy instantly, while keeping your data export doors completely open (<em>Inv_X1_LatchDoesNotBlockServing</em>).
-                </div>
-                <div class="tour-card-actions">
-                  <button class="btn btn-stop" onclick="tourTriggerHalt()">Test Stop Everything (423 Halt)</button>
-                </div>
-              </div>
-
-              <!-- Chapter 7: First-Run Node Setup Wizard -->
-              <div class="tour-card">
-                <div class="tour-card-eyebrow">Principle 7 &middot; Physical Presence</div>
-                <div class="tour-card-title">Fresh Device Setup Wizard</div>
-                <div class="tour-card-text">
-                  Experience how a new sovereign node is initialized: establishing root identity, selecting whether to run with an AI steward, setting privacy consents, and claiming ownership with an unextractable 0600 PIN.
-                </div>
-                <div class="tour-card-actions">
-                  <button class="btn" onclick="tourLaunchWizard()">Launch First-Run Setup Wizard</button>
+                <div class="rail-action-row">
+                  <div class="rail-action-status" id="railActionStatus">
+                    <span>⚡</span> <span>${RAIL_TOUR.currentActionText || 'Observing live state...'}</span>
+                  </div>
+                  <div style="font-size:11px; color:var(--ink-mute); font-family:var(--mono);">
+                    ${stepNum}/${total}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      `;
-    }
+        `;
 
-    function tourOpenCircle(circleId, tab) {
-      closeTourDrawer();
-      state.circleId = circleId;
-      state.tab = tab || "Files";
-      state.setupMode = false;
-      state.instrumentId = null;
-      renderAll();
-    }
+        const btnIcon = document.getElementById("tour_btn_icon");
+        const btnLabel = document.getElementById("tour_btn_label");
+        if (btnIcon && btnLabel) {
+          btnIcon.textContent = "🎬";
+          btnLabel.textContent = `On Rails (${stepNum}/${total})`;
+        }
+      },
 
-    function tourOpenDevices() {
-      closeTourDrawer();
-      state.setupMode = false;
-      state.instrumentId = "DevicesAndKeys";
-      renderAll();
-    }
+      executeStep: (idx) => {
+        if (idx < 0 || idx >= RAIL_TOUR.steps.length) {
+          RAIL_TOUR.finish();
+          return;
+        }
+        RAIL_TOUR.stepIndex = idx;
+        RAIL_TOUR.clearSubTimers();
+        clearTimeout(RAIL_TOUR.stepTimer);
 
-    function tourOpenSampleReceipt(claimId) {
-      closeTourDrawer();
-      state.setupMode = false;
-      state.instrumentId = null;
-      if (claimId === "f_self_1") {
+        const step = RAIL_TOUR.steps[idx];
+        RAIL_TOUR.stepDuration = step.duration || 8000;
+        RAIL_TOUR.stepStartTime = Date.now();
+        RAIL_TOUR.currentActionText = "Starting step...";
+        RAIL_TOUR.renderDock();
+        RAIL_TOUR.setSpotlight(step.spotlight);
+
+        const sub = (fn, delay) => {
+          const t = setTimeout(fn, delay);
+          RAIL_TOUR.subTimers.push(t);
+        };
+
+        try {
+          step.run(sub);
+        } catch (e) {
+          console.error("Rail step error:", e);
+        }
+
+        if (!RAIL_TOUR.paused) {
+          RAIL_TOUR.stepTimer = setTimeout(() => {
+            RAIL_TOUR.executeStep(idx + 1);
+          }, RAIL_TOUR.stepDuration);
+        }
+      },
+
+      togglePause: () => {
+        if (!RAIL_TOUR.active) return;
+        RAIL_TOUR.paused = !RAIL_TOUR.paused;
+        if (RAIL_TOUR.paused) {
+          clearTimeout(RAIL_TOUR.stepTimer);
+          RAIL_TOUR.clearSubTimers();
+          RAIL_TOUR.setActionStatus("Walkthrough paused — you can interact freely with the UI");
+        } else {
+          RAIL_TOUR.executeStep(RAIL_TOUR.stepIndex);
+        }
+        RAIL_TOUR.renderDock();
+      },
+
+      next: () => {
+        if (RAIL_TOUR.stepIndex < RAIL_TOUR.steps.length - 1) {
+          RAIL_TOUR.executeStep(RAIL_TOUR.stepIndex + 1);
+        } else {
+          RAIL_TOUR.finish();
+        }
+      },
+
+      prev: () => {
+        if (RAIL_TOUR.stepIndex > 0) {
+          RAIL_TOUR.executeStep(RAIL_TOUR.stepIndex - 1);
+        }
+      },
+
+      start: (startIdx = 0) => {
+        RAIL_TOUR.active = true;
+        RAIL_TOUR.paused = false;
+        if (!RAIL_TOUR.progressInterval) {
+          RAIL_TOUR.progressInterval = setInterval(RAIL_TOUR.updateProgress, 80);
+        }
+        RAIL_TOUR.executeStep(startIdx);
+      },
+
+      stop: () => {
+        RAIL_TOUR.active = false;
+        RAIL_TOUR.paused = false;
+        clearTimeout(RAIL_TOUR.stepTimer);
+        RAIL_TOUR.clearSubTimers();
+        if (RAIL_TOUR.progressInterval) {
+          clearInterval(RAIL_TOUR.progressInterval);
+          RAIL_TOUR.progressInterval = null;
+        }
+        RAIL_TOUR.setSpotlight(null);
+        RAIL_TOUR.renderDock();
+
+        const btnIcon = document.getElementById("tour_btn_icon");
+        const btnLabel = document.getElementById("tour_btn_label");
+        if (btnIcon && btnLabel) {
+          btnIcon.textContent = "🎬";
+          btnLabel.textContent = "Tour on Rails";
+        }
+      },
+
+      finish: () => {
+        RAIL_TOUR.stop();
         state.circleId = "JustMe";
         state.tab = "Files";
-      } else {
-        state.circleId = "Neighbours";
-        state.tab = "Files";
+        state.setupMode = false;
+        state.instrumentId = null;
+        closeSheet();
+        renderAll();
+
+        const host = document.getElementById("tourHost");
+        if (host) {
+          host.innerHTML = `
+            <div id="railTourDock">
+              <div class="rail-card" style="border-color:var(--ok);">
+                <div class="rail-content">
+                  <div class="rail-topbar">
+                    <span class="chip ok">🎉 WALKTHROUGH COMPLETE</span>
+                    <button class="rail-btn-icon" onclick="RAIL_TOUR.stop()">✕ Close</button>
+                  </div>
+                  <div class="rail-title">You've Experienced the Epistemic Web</div>
+                  <div class="rail-desc">
+                    All 7 core principles — concentric circles, universal receipts, directional asymmetry, AI stewardship ChoiceBlocks, 423 halt, hardware sovereignty, and sovereign provisioning — are live in this node.
+                  </div>
+                  <div style="display:flex; gap:8px; margin-top:8px;">
+                    <button class="btn btn-brand" onclick="RAIL_TOUR.start(0)">Replay Walkthrough</button>
+                    <button class="btn" onclick="RAIL_TOUR.stop()">Explore Freely</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+          setTimeout(() => { if (host.querySelector('#railTourDock')) host.innerHTML = ""; }, 8000);
+        }
       }
-      renderAll();
-      setTimeout(() => openReceiptSheet(claimId || "f_nei_1"), 60);
+    };
+
+    function toggleTourOnRails() {
+      if (RAIL_TOUR.active) {
+        RAIL_TOUR.togglePause();
+      } else {
+        RAIL_TOUR.start(0);
+      }
     }
 
     function tourTestWidening() {
-      closeTourDrawer();
       state.setupMode = false;
       state.instrumentId = null;
       state.circleId = "Neighbours";
@@ -5706,38 +6147,15 @@
       }, 80);
     }
 
-    function tourOpenDecisions() {
-      closeTourDrawer();
-      state.setupMode = false;
-      state.instrumentId = null;
-      state.circleId = "Neighbours";
-      state.tab = "Decisions";
-      renderAll();
-    }
-
-    function tourTriggerHalt() {
-      toggleHalt();
-      state.expandedIds['halt_detail'] = true;
-      renderAll();
-    }
-
-    function tourLaunchWizard() {
-      closeTourDrawer();
-      state.instrumentId = null;
-      state.setupMode = true;
-      state.wizard.step = "YOU";
-      renderAll();
-    }
-
     renderAll();
     syncLiveNode();
     initHolonEngineAssets();
 
-    // Auto-open the Explanatory Tour on first visit if not deep-linked
+    // Auto-start the On-Rails Animated Tour on visit if not deep-linked
     if (!urlParams.get("instrument") && !urlParams.get("circle") && !urlParams.get("mode") && !urlParams.get("setup")) {
       setTimeout(() => {
-        if (!isTourOpen) openTourDrawer();
-      }, 350);
+        if (!RAIL_TOUR.active) RAIL_TOUR.start(0);
+      }, 1200);
     }
   </script>
 </body>
