@@ -41,14 +41,14 @@ flowchart LR
 |---|---|---|---|
 | CIRISServer Embedded Node Health | `http://127.0.0.1:4243/health` | OFFLINE | <urlopen error [Errno 111] Connection refused> |
 | CIRISAgent API Root | `http://127.0.0.1:8080/` | OFFLINE | <urlopen error [Errno 111] Connection refused> |
-| CEWPOS Epistemic UI Surface | `http://127.0.0.1:8787/index.html` | ONLINE (`200`) | 5 Circles=True, 7 Tabs=True, FirstRunWizard(CSD-080..085,093)=True, SelfKeyRoster(CSD-037,094,095)=True, ProgressiveDisclosure(☰/⋯)=True |
-| CEWPOS Promise Cards Bundle (CSD-111..128) | `http://127.0.0.1:8787/out/all_promise_cards.json` | ONLINE (`200`) | 26 reserved CSD cards projected (CSD-037..CSD-128) |
+| CEWPOS Epistemic UI Surface | `http://127.0.0.1:8787/index.html` | OFFLINE | <urlopen error [Errno 111] Connection refused> |
+| CEWPOS Promise Cards Bundle (CSD-111..128) | `http://127.0.0.1:8787/out/all_promise_cards.json` | OFFLINE | <urlopen error [Errno 111] Connection refused> |
 
 ### 2.2 End-to-End Live QA on Freshly Configured `CIRISServer v0.5.241` Node (`11/11` Steps Passed)
 
 | Step | CSD(s) | Verification Step | Live Endpoint Call | Result | Verified Wire Payload / Invariant |
 |---:|---|---|---|---|---|
-| `01` | `CSD-080` | Fresh Node Health & Conformance (v0.5.244) | `GET /health` | ❌ FAIL (`0`) | version=, key_id=, standing=, profiles=None |
+| `01` | `CSD-080` | Fresh Node Health & Conformance (v0.5.245) | `GET /health` | ❌ FAIL (`0`) | version=, key_id=, standing=, profiles=None |
 | `02` | `CSD-082, CSD-118` | First-Run Consent Disclosure & NodeCode | `GET /v1/setup/consent-disclosure + /v1/federation/node-code` | ❌ FAIL (`0`) | grants=[], location_max_h3=None, node_code=... |
 | `03` | `CSD-093` | Add-This-Device Initial Handshake State | `GET /v1/setup/add-device` | ❌ FAIL (`0`) | state= |
 | `04` | `CSD-085, CSD-118` | First-Run Unclaimed Status & 0600 claim_pin File | `GET /v1/setup/status (cached from initial boot)` | ✅ PASS (`200`) | is_first_run=True, claim_pin_mode=0o600, pin=6BS9-KYQR |

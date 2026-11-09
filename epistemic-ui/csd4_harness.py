@@ -993,7 +993,7 @@ def run_live_fresh_node_qa(
     qa_home: Path | None = None,
 ) -> list[LiveQaStepResult]:
     """Executes an 11-step end-to-end First-Run Wizard, Node Claim & Multi-Device / Self-Key Roster
-    QA verification pass against the live CIRISServer v0.5.244 occurrence and CEWPOS UI proxy."""
+    QA verification pass against the live CIRISServer v0.5.245 occurrence and CEWPOS UI proxy."""
     if qa_home is None:
         env_home = os.environ.get("CIRIS_HOME")
         if env_home:
@@ -1016,7 +1016,7 @@ def run_live_fresh_node_qa(
         LiveQaStepResult(
             step_num=1,
             csd_ids="CSD-080",
-            name="Fresh Node Health & Conformance (v0.5.244)",
+            name="Fresh Node Health & Conformance (v0.5.245)",
             method_path="GET /health",
             status_code=st1,
             passed=(st1 == 200 and ver in ("0.5.244", "0.5.243") and standing == "identified"),
@@ -1354,10 +1354,10 @@ def main(argv: list[str]) -> int:
         status_str = "ONLINE" if p.reachable else "OFFLINE"
         print(f"  - [{status_str}] {p.name} ({p.url}) -> {p.summary}")
 
-    # 7. Run end-to-end First-Run Wizard & Multi-Device QA on freshly booted CIRISServer v0.5.244
+    # 7. Run end-to-end First-Run Wizard & Multi-Device QA on freshly booted CIRISServer v0.5.245
     live_qa_steps = run_live_fresh_node_qa()
     qa_passed = sum(1 for s in live_qa_steps if s.passed)
-    print(f"[7/7] Live Fresh-Node End-to-End QA (CIRISServer v0.5.244 + CEWPOS :8787): {qa_passed}/{len(live_qa_steps)} steps passed:")
+    print(f"[7/7] Live Fresh-Node End-to-End QA (CIRISServer v0.5.245 + CEWPOS :8787): {qa_passed}/{len(live_qa_steps)} steps passed:")
     for s in live_qa_steps:
         mark = "PASS" if s.passed else "FAIL"
         print(f"  - [Step {s.step_num:02d} {mark}] ({s.csd_ids}) {s.name}: {s.verified_detail}")

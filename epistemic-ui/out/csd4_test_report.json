@@ -7509,23 +7509,23 @@
     {
       "name": "CEWPOS Epistemic UI Surface",
       "url": "http://127.0.0.1:8787/index.html",
-      "reachable": true,
-      "status_code": 200,
-      "summary": "5 Circles=True, 7 Tabs=True, FirstRunWizard(CSD-080..085,093)=True, SelfKeyRoster(CSD-037,094,095)=True, ProgressiveDisclosure(\u2630/\u22ef)=True"
+      "reachable": false,
+      "status_code": 0,
+      "summary": "<urlopen error [Errno 111] Connection refused>"
     },
     {
       "name": "CEWPOS Promise Cards Bundle (CSD-111..128)",
       "url": "http://127.0.0.1:8787/out/all_promise_cards.json",
-      "reachable": true,
-      "status_code": 200,
-      "summary": "26 reserved CSD cards projected (CSD-037..CSD-128)"
+      "reachable": false,
+      "status_code": 0,
+      "summary": "<urlopen error [Errno 111] Connection refused>"
     }
   ],
   "live_qa_steps": [
     {
       "step_num": 1,
       "csd_ids": "CSD-080",
-      "name": "Fresh Node Health & Conformance (v0.5.244)",
+      "name": "Fresh Node Health & Conformance (v0.5.245)",
       "method_path": "GET /health",
       "status_code": 0,
       "passed": false,

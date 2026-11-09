@@ -43,6 +43,6 @@ pub mod effect;
 #[cfg(feature = "real-edge")]
 pub mod transport;
 
-/// (D) Full-stack consumption of `ciris-server` (`tag = "v0.5.244"`) as a crate.
+/// (D) Full-stack consumption of `ciris-server` (`tag = "v0.5.245"`) as a crate.
 #[cfg(feature = "real-server")]
 pub use ciris_server;

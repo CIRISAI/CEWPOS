@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""CEWPOS Epistemic UI HTTP Server & Live CIRISServer v0.5.244 Reverse Proxy.
+"""CEWPOS Epistemic UI HTTP Server & Live CIRISServer v0.5.245 Reverse Proxy.
 
 Serves `/home/emoore/CEWPOS/epistemic-ui` on `http://127.0.0.1:8787` and forwards
 `/health`, `/lens/*`, and `/v1/*` requests to the local `CIRISServer` read API (`http://127.0.0.1:4243`)

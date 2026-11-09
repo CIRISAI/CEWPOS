@@ -10,7 +10,7 @@ description = "Typed view-form spike: a real CEG `scores` attestation -> pure to
 # --no-default-features to keep it GPU-free and wasm-portable.
 default = ["render"]
 render = ["dep:bevy", "dep:image"]
-# fullstack: consumes ciris-server directly as a crate at tag v0.5.244 (which
+# fullstack: consumes ciris-server directly as a crate at tag v0.5.245 (which
 # re-exports ciris_server::ciris_persist v59.1.2 and ciris-edge v43.4.1) and
 # boots the full-stack CEWPOS node via ciris_server::serve_with_adapter.
 fullstack = [
@@ -32,7 +32,7 @@ name = "render"
 path = "src/bin/render.rs"
 required-features = ["render"]
 
-# Full-stack CEWPOS node consuming ciris-server (tag v0.5.244) as a crate via Adapter.
+# Full-stack CEWPOS node consuming ciris-server (tag v0.5.245) as a crate via Adapter.
 [[bin]]
 name = "cewpos-node"
 path = "src/bin/cewpos_node.rs"
@@ -51,8 +51,8 @@ serde_json = "1"
 bevy = { version = "0.19", optional = true }
 image = { version = "0.25", optional = true }
 
-# Full-stack ciris-server consumption directly from tag v0.5.244.
-ciris-server = { git = "https://github.com/CIRISAI/CIRISServer", tag = "v0.5.244", default-features = false, optional = true }
+# Full-stack ciris-server consumption directly from tag v0.5.245.
+ciris-server = { git = "https://github.com/CIRISAI/CIRISServer", tag = "v0.5.245", default-features = false, optional = true }
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync"], optional = true }
 axum = { version = "0.8", optional = true }
 anyhow = { version = "1", optional = true }

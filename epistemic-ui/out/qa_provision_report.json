@@ -1,15 +1,15 @@
 {
   "runner_version": "1.0.0 (CSD/4 v5)",
   "node_version": "0.5.244",
-  "timestamp": "2026-11-05T00:53:55Z",
+  "timestamp": "2026-11-09T23:51:28Z",
   "mode": "Fresh Isolated Node (:4243)",
-  "home_dir": "/tmp/ciris_qa_fresh_1793840032",
+  "home_dir": "/tmp/ciris_qa_fresh_1794268285",
   "node_url": "http://127.0.0.1:4243",
   "ui_url": "http://127.0.0.1:8787",
   "steps_total": 12,
-  "steps_passed": 12,
-  "steps_failed": 0,
-  "all_passed": true,
+  "steps_passed": 10,
+  "steps_failed": 2,
+  "all_passed": false,
   "steps": [
     {
       "step_num": 1,
@@ -36,7 +36,7 @@
       },
       "passed": true,
       "status_code": 200,
-      "summary": "version=0.5.244, key_id=qa-node-4243-wg2ntmzasw, standing=identified, profiles=['CCP', 'CCC', 'CCS']",
+      "summary": "version=0.5.245, key_id=qa-node-4243-ziljgy6p4d, standing=identified, profiles=['CCP', 'CCC', 'CCS']",
       "details": {
         "conformance": {
           "build_profiles": [
@@ -47,24 +47,24 @@
           "ceg_wire_version": "1.0.0-rc2",
           "contract_hashes": {
             "consent_grammar_sha256": "4d473eac6f2bfde1a78b01e9a2ac8442fc9adb5207c7adeb51d509215b79e843",
-            "envelope_vocabulary_sha256": "8064aafe07646acefad93f51fbf7e79cb8ac421bd49318c5aad50ded142295b1",
+            "envelope_vocabulary_sha256": "4c5a5e8a019bc8c9c895a5b91693438aafe9066237305d07e04dd31d36596eff",
             "trace_summary_extraction_sha256": "f4dfea6e8e8e3f11d2abd22cb4dd5adbe15cf662246b7f90fbcfd0bb9cf5b76d",
             "transform_algebra_sha256": "b7bd779468f4ad1ab551a5fd2dc0392df01e6f2e0ed393f924a806ed49686b4b"
           },
           "declared_at": "/v1/federation/conformance",
-          "wire_vocabulary_sha256": "c6bd6aa44111b226a6f204801b1afaa7153fb43296652c1f7cbc23228ac9346c"
+          "wire_vocabulary_sha256": "38bd4847c1203ae6da7b26c560ee51b577daaab4ef2d7924067995769100829e"
         },
         "node": {
-          "home_id": "de9eedfe0f10d3d7",
-          "instance_id": "10a73acc-d528-433f-aaf3-0dc767632e10",
-          "key_id": "qa-node-4243-wg2ntmzasw",
+          "home_id": "646e3a47a99a8fba",
+          "instance_id": "5252498e-ed7c-412a-ae0d-fb04e8f7f2a4",
+          "key_id": "qa-node-4243-ziljgy6p4d",
           "standing": "identified",
-          "started_at": "2026-11-05T00:53:53.723Z"
+          "started_at": "2026-11-09T23:51:26.035Z"
         },
         "status": "ok",
-        "version": "0.5.244"
+        "version": "0.5.245"
       },
-      "duration_ms": 0.368945999071002
+      "duration_ms": 0.3046100027859211
     },
     {
       "step_num": 2,
@@ -93,13 +93,13 @@
       },
       "passed": true,
       "status_code": 200,
-      "summary": "node_code=CIRIS-V1-AHI2-V6HD-K4ZZ-..., grants=['replication', 'analyze'], max_h3=7",
+      "summary": "node_code=CIRIS-V1-AFSG-O3UK-7JYJ-..., grants=['replication', 'analyze'], max_h3=7",
       "details": {
         "consent": {
           "data": {
             "announce_requirement": {
-              "id": "mesh.announce_requirement",
-              "text": "A node that does not announce gets no service access on the mesh and no agent services. The accord's kill switch is only meaningful against a node it can reach, so an unreachable node is never served in the first place."
+              "id": "mesh.announce_costs",
+              "text": "If you don't announce, nobody can reach you through the mesh in this version: your contact code identifies you but doesn't yet carry a way to reach your devices. You can't take part in public groups. A private room needs both of you to have announced."
             },
             "declining_analyze": {
               "allowed": true,
@@ -204,13 +204,13 @@
           }
         },
         "node_code": {
-          "alias_hint": "qa-node-4243-wg2ntmzasw",
-          "code": "CIRIS-V1-AHI2-V6HD-K4ZZ-PPKQ-PSAW-OUAX-FOHM-D2EL-MZSN-PKHZ-6QBX-YK63-XHOD-E62N-N4YS-URGG-C7ZW-O5KM-CY5K-3QA4-FVWO-A2I2-GYAS-KSKS-PJKO-NHBQ-C5YW-CLLO-N5SG-KLJU-GI2D-GLLX-M4ZG-45DN-PJQX-G5YA-C5YW-CLLO-N5SG-KLJU-GI2D-GLLX-M4ZG-45DN-PJQX-G57J-2Y",
-          "key_id": "qa-node-4243-wg2ntmzasw",
-          "qr_payload": "CIRIS-V1-AHI2V6HDK4ZZPPKQPSAWOUAXFOHMD2ELMZSNPKHZ6QBXYK63XHODE62NN4YSURGGC7ZWO5KMCY5K3QA4FVWOA2I2GYASKSKSPJKONHBQC5YWCLLON5SGKLJUGI2DGLLXM4ZG45DNPJQXG5YAC5YWCLLON5SGKLJUGI2DGLLXM4ZG45DNPJQXG57J2Y"
+          "alias_hint": "qa-node-4243-ziljgy6p4d",
+          "code": "CIRIS-V1-AFSG-O3UK-7JYJ-TDPT-2SOI-T5DD-N22H-QHNO-U726-76VJ-27KL-GDCE-VM72-PKXF-6PDY-Y7JP-32TR-DKOZ-6SAV-JB36-RTCQ-O564-55K2-I3MD-DO6T-GANP-C5YW-CLLO-N5SG-KLJU-GI2D-GLL2-NFWG-UZ3Z-GZYD-IZAA-C5YW-CLLO-N5SG-KLJU-GI2D-GLL2-NFWG-UZ3Z-GZYD-IZA3-LA",
+          "key_id": "qa-node-4243-ziljgy6p4d",
+          "qr_payload": "CIRIS-V1-AFSGO3UK7JYJTDPT2SOIT5DDN22HQHNOU72676VJ27KLGDCEVM72PKXF6PDYY7JP32TRDKOZ6SAVJB36RTCQO56455K2I3MDDO6TGANPC5YWCLLON5SGKLJUGI2DGLL2NFWGUZ3ZGZYDIZAAC5YWCLLON5SGKLJUGI2DGLL2NFWGUZ3ZGZYDIZA3LA"
         }
       },
-      "duration_ms": 0.687038991600275
+      "duration_ms": 0.5733700236305594
     },
     {
       "step_num": 3,
@@ -241,7 +241,7 @@
       "details": {
         "state": "idle"
       },
-      "duration_ms": 0.3580679767765105
+      "duration_ms": 0.3031309461221099
     },
     {
       "step_num": 4,
@@ -275,7 +275,7 @@
           "is_first_run": true,
           "setup_required": true,
           "config_exists": false,
-          "claim_pin_file": "/tmp/ciris_qa_fresh_1793840032/claim_pin",
+          "claim_pin_file": "/tmp/ciris_qa_fresh_1794268285/claim_pin",
           "cohort_scopes": [
             "self",
             "family",
@@ -287,7 +287,7 @@
           ]
         }
       },
-      "duration_ms": 0.49881701124832034
+      "duration_ms": 0.3990179975517094
     },
     {
       "step_num": 5,
@@ -314,16 +314,16 @@
       },
       "passed": true,
       "status_code": 200,
-      "summary": "key_id=qa-node-4243-user-wgsmn4ftpc, hardware=SoftwareOnly, fedcode=CIRIS-V3-AMAT-LRQ6-6FXB-...",
+      "summary": "key_id=qa-node-4243-user-svs5g7huvg, hardware=SoftwareOnly, fedcode=CIRIS-V3-AMAW-SEG5-PILI-...",
       "details": {
-        "fedcode": "CIRIS-V3-AMAT-LRQ6-6FXB-WRWM-H2M6-N2NV-GUMJ-FBQY-CGGG-CILM-LC4B-K2J6-7R3L-7LVI-X2QJ-YZH5-A6XV-YH6Q-X75R-JMVO-N5SG-UHG4-KL2E-L4WS-RCJS-4RP6-4AOH-CYJN-NZXW-IZJN-GQZD-IMZN-OVZW-K4RN-O5TX-G3LO-GRTH-I4DD-AAAA-AAAB-LHU5-LC3B-UWB6-CSYY-SIIG-ISIL-RZ2N-LNMJ-5EK4-KY5L-FOFI-YTHO-CGTE-QFQ",
+        "fedcode": "CIRIS-V3-AMAW-SEG5-PILI-GGEP-SKGL-274M-ASCV-JBWZ-CIS3-LNAB-XB3Y-MTP4-P2X7-EI7H-UUNP-SJ7K-HIK6-YXUK-MVZB-5LUT-6LIY-OQQI-USTA-4BEU-2HX4-TJCI-AYOH-CYJN-NZXW-IZJN-GQZD-IMZN-OVZW-K4RN-ON3H-GNLH-G5UH-K5TH-AAAA-AAAB-55AB-MQOU-UTQZ-JD2K-BD7I-YZYK-3VIG-H7YQ-NWB7-7YGY-TAPE-2X3B-RHAP-2PA",
         "hardware_type": "SoftwareOnly",
         "identity_type": "user",
-        "key_id": "qa-node-4243-user-wgsmn4ftpc",
-        "pubkey_ed25519_base64": "qL6gnGT9B69cH9C/+xSyrm9kahzcUvRF8tKIky5F/uA=",
-        "pubkey_ml_dsa_65_base64": "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"
+        "key_id": "qa-node-4243-user-svs5g7huvg",
+        "pubkey_ed25519_base64": "56Ua+SfqOhXsXoplch6uk/LRh0IIpKYOBJTR78mkSAY=",
+        "pubkey_ml_dsa_65_base64": "eMZ4oKOE/kFtOsYpLcpOte7C1BqnLskmm5g5ybnFT7U63ikok06RNAJkDtJ9p1AnI0MLkIGsgAzp7ahIIDJl1pamlM5yPztgB7/Owr+05FInnUzTxzNtAilhUe3tT1PGd2LwmxOyRDjqFzisav348YKmbbr0FU2lPwGe1ZeNkSYNi+7ncGpNHsCDNORcoq1O+oakccqVoHuSvr3FKcW53m3edr+ztyXH4lW901nEl7dbNddQzDzKM2yVpGym3B1X72XYmcG9265h/TZyRzOxKYPahs9xgvSQ4KRN8JcmJ0hxytln3tVctjUCiCFfY4zbLYOmtQNdExF/7vdeANM6toCww0VYiyv8Pm0kaUqE7lLRAaVvl+FmqQGPAMIgaZhftTLMZTLkVQ90g84lMKaYblq3Ft6phJ5IWslUV08whtYUeLXKyvXu68iqiZUmIwJl8ufJM6AHqmv23DPX+/mqjAiCdOmmaHt+I7LCMLsPm+4uu6Q/XtWqByDHSpkThub3pUmVm7XBkLYo0c1mro997QIcgVzD8vYSIJ/LbIZwxD+q/yIQ+0Bf4zzQegCvH2rcSRzRWpnDOER8BfW1zWezTuNHVspI7tLdZLIBa2ETDIZKKQ8Nxk0RksqIJR/FEaLhLVKcGcxI3KfW731ZLZG63re6S7f38yZHG3f1XrBSjnA4OIMr11gBDFwcmB1f9aT2S71owtjDpFeGrUBg5aDN3dZiIkD36T7g+70/kRQZOD+WPRybaEy9eVOVuxg8brEm/62bwZfRPrkQ0TPXhELbZVFEBP368F8LLLR9qHM1JNHagNBCUHuvYYHhmHOqEoa4xIvlgDWjhdWcDBjxKr7qrKkpr+4U+06upe6UiPVBbi2+3lZqbD6Jhp18hdWOF7aEDtsEPwKsaI/ZIUnhY/NntBxwNhrS3Ql010K0g51fIZutZjNAckGbWAn1oUiZQE7CcjkWW5rbxm1cg0KuwFlsZmM+7bqXb/AQqqcoxdaXouU10uaTCEmXfFsk5MM3V3sayZegB1JwrvV4FmZ/5kM+GaFupWXIc8SfYZMmriZSk4mT6uPnm1yMnNf++/0DAJOMS1wYcvBEhlTwi1l8v8JzuI+JWaJFN3G+wt3pD7Ks5MZHhsddV5YTJKI6WI+I8n5mktlRvGlfH2rUN4XWScwv+BIxqHnvDBfs1+S1S1EdCiti/x47WPTSwxSmdL/FzJdLrYuuBjgbFH0Pilc0IXwWZ/Lh+qy744i7rv5/4mQgzDKMZIu42koXup3wNvA223bTziVdtHrRoM5EMJ24sF567ZR5P7yGrw2HHisywpdLf3CQ7MeaGwn3qrfTkWEhED5d9ahnH+if1aF9VYixXk7Ng6VJvxJX85a2kPusGXBvk7gI2hEDiahKk2+XIkJv6M1nEeHLFaK2kc36TXRRBfsdw+7GVf6HUL/iwc1cdQtXuiQIqMqMBbK69c5eAwG2Lw92bRCXnziBYshyTbzIkJ5HkBu6zjdzmc4GN6WSqdvK1Ee8QL98yQlhxtvL0kHjba+J+4JjAa16S1buIniZJxayaw73SU+BtIhkixvo6JRniygIgIBaWjojAYBll6SoW+5rnAxlr8BOhzMfIh2k7pVSuANvRd6vjx0ytt59FkXBQGlU+PpqITYHth3ewWD9mrOENGS3qSE1zv+l/eVtfC0FKdljaQP2/teUJBib1YLVJ7LpRH8jtl6mdsyNcWBFwl85iHooGls0IHYD+F5uy1Hdd7VO2k/aZ75TPY36lUDUfshoCLb77G6sDqeMJH3z6NNsLbr8L0XHBooLINFrLqp3oIfO/2YF+GVjJvK5u+Fu4y1HqCWE4kdsDfRyLvdOtuFm6hRuTtHwHW13hs1DAnBXlXrfdVQXnYg+LQrzavb+ks8bws1DoYgRXCSJHOzejY8cnT8k/nH0G/w4adIMAu0xIGSWKqGwn/0buWHkNWOAJeKJeF0Ovoi1wlunbX9uIQn5XHVHyrNysA+TvYcx/Vhaj2gJzMmmOSKXaM56/9olu/NLWLqpofALkYpA0Xl0KHvpu4YgFapJ6IHBuxWyq1MXEIC/2SkOs2L+uolKEwdW1s5HNR9+1me4rnTWc8xCC78j2ROPiJ5Nrjsj/rk+sevzRDLkmwVF9+dlSY4HVERI8XuMatATU+p4cvShKVhn4TFkEhv14W1uYUX0mlbez25yXG2R2pvLzJVWPNsEQ0sw6dk33e7T3Dsnyl+cUSbVQPORr6HFXDUxVgEktHRL9BgM/AxXGPXD3JMXXD3um08GYIe016JB5LgiDTIfNpfU3oQfTaGmG2t32MtiDFT3H364wIswlL19Y1vLWJGgu5bo3Kt126Sk65PdqCRjPgsRBFgnjyb3Hsv8u06YWh+QCt+eusQHsDxS2T6DOvVUs3fJ/B4snYgD9EK1K8Re6wsRcns6VjaE7NcJn55MOWRTmjQskAKWdSWCh4Fvz5JtieJicWugAtZEkkzYMD92VoocbEJEltuH6S0hx+6Pg/Il5hoF4gttk/Ewr3Ndk88VyyK9qYLpTE7WYnbhGvYuqDpSbV6wgJ+cCvH0t2UidGmH4AgD7bQgZLlfx1uB3yZbaNgWdRQ="
       },
-      "duration_ms": 4.73200500709936
+      "duration_ms": 3.6307169939391315
     },
     {
       "step_num": 6,
@@ -350,20 +350,20 @@
       },
       "passed": true,
       "status_code": 200,
-      "summary": "role=SYSTEM_ADMIN, wa_id=wa-root-qa-node-4243-user-wgsmn4ftpc, attestation=1e8b4c2f-a3b2-47f5-bca6-2a3b60905667, pin_consumed_deleted=True",
+      "summary": "role=SYSTEM_ADMIN, wa_id=wa-root-qa-node-4243-user-svs5g7huvg, attestation=874f1668-f933-445c-b63b-4ee4a94d7b79, pin_consumed_deleted=True",
       "details": {
-        "access_token": "sess:wa-root-qa-node-4243-user-wgsmn4ftpc:gTupJdAVinW1P8QeDwQcoOi1Y2l1V54v.6Y2DNsnkYXhdb5wQr-O85S-Sxmzwt2qXVXwhMWL4FOA",
+        "access_token": "sess:wa-root-qa-node-4243-user-svs5g7huvg:MW838ujGDNexnP1eqdN_p8UZ9XyzZp8E.YR2dbgUC1KRObT6v5bKYAKmQYXfmiYTmR0C0Idy7pQs",
         "cohort_scope": "self",
         "expires_in": 86400,
-        "identity_key_id": "qa-node-4243-user-wgsmn4ftpc",
+        "identity_key_id": "qa-node-4243-user-svs5g7huvg",
         "local_directory_updated": true,
-        "owner_binding_attestation_id": "1e8b4c2f-a3b2-47f5-bca6-2a3b60905667",
+        "owner_binding_attestation_id": "874f1668-f933-445c-b63b-4ee4a94d7b79",
         "role": "SYSTEM_ADMIN",
         "token_type": "Bearer",
-        "user_id": "wa-root-qa-node-4243-user-wgsmn4ftpc",
-        "wa_id": "wa-root-qa-node-4243-user-wgsmn4ftpc"
+        "user_id": "wa-root-qa-node-4243-user-svs5g7huvg",
+        "wa_id": "wa-root-qa-node-4243-user-svs5g7huvg"
       },
-      "duration_ms": 34.30390096036717
+      "duration_ms": 23.250529018696398
     },
     {
       "step_num": 7,
@@ -391,7 +391,7 @@
       },
       "passed": true,
       "status_code": 200,
-      "summary": "is_first_run=False, owner=qa-node-4243-user-wgsmn4ftpc, owned_count=1",
+      "summary": "is_first_run=False, owner=qa-node-4243-user-svs5g7huvg, owned_count=1",
       "details": {
         "status": {
           "data": {
@@ -410,10 +410,10 @@
           }
         },
         "owned": {
-          "owner": "qa-node-4243-user-wgsmn4ftpc",
+          "owner": "qa-node-4243-user-svs5g7huvg",
           "nodes": [
             {
-              "key_id": "qa-node-4243-wg2ntmzasw",
+              "key_id": "qa-node-4243-ziljgy6p4d",
               "is_self": true,
               "announced": false,
               "roster_member": false
@@ -421,7 +421,7 @@
           ]
         }
       },
-      "duration_ms": 8.55544995283708
+      "duration_ms": 4.5596620184369385
     },
     {
       "step_num": 8,
@@ -448,13 +448,13 @@
       },
       "passed": true,
       "status_code": 200,
-      "summary": "identity_key_id=qa-node-4243-user-wgsmn4ftpc, audience=owner, occurrences=0",
+      "summary": "identity_key_id=qa-node-4243-user-svs5g7huvg, audience=owner, occurrences=0",
       "details": {
-        "identity_key_id": "qa-node-4243-user-wgsmn4ftpc",
+        "identity_key_id": "qa-node-4243-user-svs5g7huvg",
         "audience": "owner",
         "occurrences": []
       },
-      "duration_ms": 2.0936839864589274
+      "duration_ms": 1.1629650252871215
     },
     {
       "step_num": 9,
@@ -491,7 +491,7 @@
           "window_secs_left": 599
         }
       },
-      "duration_ms": 1.1116639943793416
+      "duration_ms": 0.7499450002796948
     },
     {
       "step_num": 10,
@@ -519,17 +519,17 @@
       },
       "passed": true,
       "status_code": 200,
-      "summary": "roster=['qa-node-4243-user-wgsmn4ftpc'], w_self_secs=86400 (24h), proposals=0",
+      "summary": "roster=['qa-node-4243-user-svs5g7huvg'], w_self_secs=86400 (24h), proposals=0",
       "details": {
-        "identity_key_id": "qa-node-4243-user-wgsmn4ftpc",
+        "identity_key_id": "qa-node-4243-user-svs5g7huvg",
         "proposals": [],
         "released_nodes": [],
         "roster": [
-          "qa-node-4243-user-wgsmn4ftpc"
+          "qa-node-4243-user-svs5g7huvg"
         ],
         "w_self_secs": 86400
       },
-      "duration_ms": 4.590260039549321
+      "duration_ms": 3.1726270099170506
     },
     {
       "step_num": 11,
@@ -555,13 +555,13 @@
         ],
         "wire_endpoint": "GET /v1/node/state + GET /v1/trust-root + :8787/health"
       },
-      "passed": true,
-      "status_code": 200,
-      "summary": "node.band=green, trust_root=entrenched, cewpos_ui_proxy=0.5.244",
+      "passed": false,
+      "status_code": 0,
+      "summary": "node.band=green, trust_root=entrenched, cewpos_ui_proxy=None",
       "details": {
         "state": {
           "data": {
-            "as_of": "2026-11-05T00:53:55.554510784Z",
+            "as_of": "2026-11-09T23:51:27.991331703Z",
             "band": "unknown",
             "carriage": {
               "band": "unknown",
@@ -601,9 +601,35 @@
               "inbound_backpressure_drops": 0,
               "recent_withholds": [],
               "recent_withholds_cap": 64,
-              "rounds_by_outcome": {},
+              "rounds_by_outcome": {
+                "completed": 0,
+                "error": 0,
+                "no_route": 0,
+                "refused": 0,
+                "timed_out": 0
+              },
               "rounds_total": 0,
-              "served_by_kind": {},
+              "served_by_kind": {
+                "accord_quorum_evidence": 0,
+                "attestation": 0,
+                "community": 0,
+                "community_membership_listing": 0,
+                "community_membership_revocation": 0,
+                "community_membership_widening": 0,
+                "family": 0,
+                "family_membership_revocation": 0,
+                "family_membership_widening": 0,
+                "identity_occurrence": 0,
+                "identity_occurrence_revocation": 0,
+                "key": 0,
+                "key_grant": 0,
+                "location_proof": 0,
+                "org_membership": 0,
+                "organization": 0,
+                "partner_record": 0,
+                "revocation": 0,
+                "transport_destination": 0
+              },
               "served_total": 0,
               "source": "ciris_edge::observability::EdgeMetrics::snapshot",
               "standing": "not_exercised",
@@ -640,7 +666,7 @@
                 "id": "operator.ingest.http_path_only",
                 "text": "This reading covers the HTTP ingest path only. A batch that arrives over the Reticulum relay is verified by the same persist gate but is not counted here, so a clean ingest reading is not a statement about every way a trace can be offered to this node."
               },
-              "observed_since": "2026-11-05T00:53:55.125556897Z",
+              "observed_since": "2026-11-09T23:51:27.514201043Z",
               "refusals_in_window": 0,
               "refusals_per_hour": 0.0,
               "refused_total": 0,
@@ -657,7 +683,7 @@
               "window_truncated": false
             },
             "node": {
-              "as_of": "2026-11-05T00:53:55.554510784Z",
+              "as_of": "2026-11-09T23:51:27.991331703Z",
               "band": "green",
               "clock_dependent": [
                 "trust_root.drill_band",
@@ -682,7 +708,7 @@
                 "band": "green",
                 "considered": 0,
                 "standing": "stands",
-                "statement_at": "2026-11-05T00:53:55.554510784Z"
+                "statement_at": "2026-11-09T23:51:27.991331703Z"
               },
               "peer_quota": {
                 "band": "green",
@@ -699,7 +725,7 @@
                 "band": "green",
                 "state": "not_quarantined"
               },
-              "self_key_id": "qa-node-4243-wg2ntmzasw",
+              "self_key_id": "qa-node-4243-ziljgy6p4d",
               "targeted": [
                 {
                   "binding": "resolve_transit_eligibility_json",
@@ -828,13 +854,73 @@
               }
             ],
             "receive": {
-              "applied_by_kind": {},
+              "applied_by_kind": {
+                "accord_quorum_evidence": 0,
+                "attestation": 0,
+                "community": 0,
+                "community_membership_listing": 0,
+                "community_membership_revocation": 0,
+                "community_membership_widening": 0,
+                "family": 0,
+                "family_membership_revocation": 0,
+                "family_membership_widening": 0,
+                "identity_occurrence": 0,
+                "identity_occurrence_revocation": 0,
+                "key": 0,
+                "key_grant": 0,
+                "location_proof": 0,
+                "org_membership": 0,
+                "organization": 0,
+                "partner_record": 0,
+                "revocation": 0,
+                "transport_destination": 0
+              },
               "applied_total": 0,
-              "apply_refusals_by_kind": {},
+              "apply_refusals_by_kind": {
+                "accord_quorum_evidence": 0,
+                "attestation": 0,
+                "community": 0,
+                "community_membership_listing": 0,
+                "community_membership_revocation": 0,
+                "community_membership_widening": 0,
+                "family": 0,
+                "family_membership_revocation": 0,
+                "family_membership_widening": 0,
+                "identity_occurrence": 0,
+                "identity_occurrence_revocation": 0,
+                "key": 0,
+                "key_grant": 0,
+                "location_proof": 0,
+                "org_membership": 0,
+                "organization": 0,
+                "partner_record": 0,
+                "revocation": 0,
+                "transport_destination": 0
+              },
               "apply_refusals_total": 0,
               "band": "unknown",
               "decided_total": 0,
-              "duplicate_by_kind": {},
+              "duplicate_by_kind": {
+                "accord_quorum_evidence": 0,
+                "attestation": 0,
+                "community": 0,
+                "community_membership_listing": 0,
+                "community_membership_revocation": 0,
+                "community_membership_widening": 0,
+                "family": 0,
+                "family_membership_revocation": 0,
+                "family_membership_widening": 0,
+                "identity_occurrence": 0,
+                "identity_occurrence_revocation": 0,
+                "key": 0,
+                "key_grant": 0,
+                "location_proof": 0,
+                "org_membership": 0,
+                "organization": 0,
+                "partner_record": 0,
+                "revocation": 0,
+                "transport_destination": 0
+              },
               "duplicate_total": 0,
               "explains": {
                 "id": "operator.receive.not_exercised",
@@ -1017,12 +1103,6 @@
                 "cirislens_wa_cert": {
                   "rows": 1
                 },
-                "cirisnode_consent_sla_watch": {
-                  "rows": 0
-                },
-                "cirisnode_contributions": {
-                  "rows": 0
-                },
                 "cirisnode_credits_ledger": {
                   "rows": 0
                 },
@@ -1032,28 +1112,10 @@
                 "cirisnode_federation_delivery_attestations": {
                   "rows": 0
                 },
-                "cirisnode_moderation_events": {
-                  "rows": 0
-                },
                 "cirisnode_promotion_attestations": {
                   "rows": 0
                 },
-                "cirisnode_reconsideration_attestations": {
-                  "rows": 0
-                },
-                "cirisnode_reconsideration_requests": {
-                  "rows": 0
-                },
-                "cirisnode_revocation_promotion_watch": {
-                  "rows": 0
-                },
                 "cirisnode_scheduled_takedown_actions": {
-                  "rows": 0
-                },
-                "cirisnode_slashing_attestations": {
-                  "rows": 0
-                },
-                "cirisnode_votes": {
                   "rows": 0
                 },
                 "consent_peer_set": {
@@ -1081,7 +1143,10 @@
                   "rows": 0
                 },
                 "federation_attestations": {
-                  "rows": 19
+                  "rows": 20
+                },
+                "federation_attestations_form_refused": {
+                  "rows": 0
                 },
                 "federation_blob_associations": {
                   "rows": 0
@@ -1105,9 +1170,6 @@
                   "rows": 0
                 },
                 "federation_community_dek_member_grants": {
-                  "rows": 0
-                },
-                "federation_community_membership_listings": {
                   "rows": 0
                 },
                 "federation_community_membership_revocations": {
@@ -1162,15 +1224,6 @@
                   "rows": 0
                 },
                 "federation_manifest_children": {
-                  "rows": 0
-                },
-                "federation_org_memberships": {
-                  "rows": 0
-                },
-                "federation_organizations": {
-                  "rows": 0
-                },
-                "federation_partner_records": {
                   "rows": 0
                 },
                 "federation_peer_metadata": {
@@ -1249,7 +1302,7 @@
                   "rows": 0
                 },
                 "refinery_schema_history": {
-                  "rows": 182
+                  "rows": 193
                 },
                 "retention_policies": {
                   "rows": 0
@@ -1285,7 +1338,7 @@
                   "rows": 0
                 }
               },
-              "total_disk_bytes": 3072000
+              "total_disk_bytes": 2908160
             },
             "trace_plane": {
               "age_seconds": null,
@@ -1408,34 +1461,10 @@
           ]
         },
         "ui": {
-          "conformance": {
-            "build_profiles": [
-              "CCP",
-              "CCC",
-              "CCS"
-            ],
-            "ceg_wire_version": "1.0.0-rc2",
-            "contract_hashes": {
-              "consent_grammar_sha256": "4d473eac6f2bfde1a78b01e9a2ac8442fc9adb5207c7adeb51d509215b79e843",
-              "envelope_vocabulary_sha256": "8064aafe07646acefad93f51fbf7e79cb8ac421bd49318c5aad50ded142295b1",
-              "trace_summary_extraction_sha256": "f4dfea6e8e8e3f11d2abd22cb4dd5adbe15cf662246b7f90fbcfd0bb9cf5b76d",
-              "transform_algebra_sha256": "b7bd779468f4ad1ab551a5fd2dc0392df01e6f2e0ed393f924a806ed49686b4b"
-            },
-            "declared_at": "/v1/federation/conformance",
-            "wire_vocabulary_sha256": "c6bd6aa44111b226a6f204801b1afaa7153fb43296652c1f7cbc23228ac9346c"
-          },
-          "node": {
-            "home_id": "de9eedfe0f10d3d7",
-            "instance_id": "10a73acc-d528-433f-aaf3-0dc767632e10",
-            "key_id": "qa-node-4243-wg2ntmzasw",
-            "standing": "identified",
-            "started_at": "2026-11-05T00:53:53.723Z"
-          },
-          "status": "ok",
-          "version": "0.5.244"
+          "error": "<urlopen error [Errno 111] Connection refused>"
         }
       },
-      "duration_ms": 52.150883013382554
+      "duration_ms": 36.247702955733985
     },
     {
       "step_num": 12,
@@ -1462,16 +1491,12 @@
         ],
         "wire_endpoint": ":8787/index.html + /cewpos/v1/scene + /tree"
       },
-      "passed": true,
-      "status_code": 200,
+      "passed": false,
+      "status_code": 0,
       "summary": "5 Circles=True, 7 Tabs=True, 3D Holon scene=200, /tree nodes=13, 423 halt emergency brake=verified",
       "details": {
         "ui_node": {
-          "node_base": "http://127.0.0.1:4243",
-          "ciris_home": "/tmp/ciris_wizard_live",
-          "claim_pin_exists": false,
-          "claim_pin_mode": null,
-          "claim_pin": null
+          "error": "<urlopen error [Errno 111] Connection refused>"
         },
         "scene": {
           "epistemic_scene": {
@@ -2340,7 +2365,7 @@
         },
         "tree_nodes": 13
       },
-      "duration_ms": 2.5013729464262724
+      "duration_ms": 1.358281064312905
     }
   ]
 }

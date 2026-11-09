@@ -29,7 +29,7 @@ and a renderer-neutral typed Scene IR, with Bevy 0.19 as the headless renderer.
 | `view_form` is **pure, total, deterministic** | ✅ | tests: clamps/NaN-safe, same Form ⇒ identical `Scene` |
 | Typed Scene IR ⇒ Bevy entities ⇒ **headless PNG** | ✅ | `out/attestation-render.png`, 512×512 RGBA, ~164 KB |
 | The view logic is **browser-portable** (wasm32) | ✅ | `cargo build --target wasm32-unknown-unknown --no-default-features --lib` → ok |
-| Full-stack binary consuming `ciris-server v0.5.244` directly as a crate | ✅ | `cargo build --no-default-features --features fullstack --bin cewpos-node` → ok |
+| Full-stack binary consuming `ciris-server v0.5.245` directly as a crate | ✅ | `cargo build --no-default-features --features fullstack --bin cewpos-node` → ok |
 | Full Bevy **wasm app** render-to-PNG in a browser | ⛔ not attempted here | feasibility-proven separately; see *WASM / browser note* |
 
 ## The render
