@@ -279,6 +279,59 @@ gaps" residue is mostly **clean unbuilt vocabulary builds** (each a new `subject
 the amendment process, no new primitive), with only a handful of genuine refusals — an honest roadmap,
 not a wall.
 
+## How to Start and Run CEWPOS
+
+CEWPOS can be built and run natively with its full-stack node and Bevy/Canvas spatial interface:
+
+### 1. Prerequisites (Ubuntu / Debian Linux)
+Ensure system development packages for OpenSSL, libudev, SQLite3, Wayland, and ALSA are installed:
+```bash
+sudo apt-get update && sudo apt-get install -y \
+    build-essential pkg-config libssl-dev libudev-dev libsqlite3-dev \
+    libwayland-dev libasound2-dev
+```
+
+### 2. Build the System
+```bash
+# 1. Build the full-stack cewpos-node binary (consuming CIRISServer v0.5.245 as a crate)
+cargo build --manifest-path view-forms-spike/Cargo.toml --no-default-features --features fullstack --bin cewpos-node
+
+# 2. Run the Attestation Calculus & View-Forms test suites
+cargo test --manifest-path attestation-calculus-spike/Cargo.toml
+cargo test --manifest-path view-forms-spike/Cargo.toml --no-default-features
+```
+
+### 3. Launching CEWPOS
+
+You can start the full CEWPOS stack in either single-node mode or automated multi-occurrence mode:
+
+#### Option A: Start a Local Node and Live Epistemic UI
+```bash
+# Terminal 1: Start the cewpos-node runtime
+export CIRIS_HOME="/tmp/ciris_cewpos"
+export CIRIS_KEY_ID="my-steward-node"
+./view-forms-spike/target/debug/cewpos-node
+
+# Terminal 2: Start the Epistemic UI & reverse proxy
+python3 epistemic-ui/serve_cewpos.py 8787
+```
+Open **`http://127.0.0.1:8787`** in any modern web browser to interact with the full-screen Bevy spatial scene, First-Run Wizard, 5 Circles, and 3D ChoiceBlocks.
+
+#### Option B: Run the Automated Two-Occurrence Ceremony Harness
+To simulate two independent CEWPOS occurrences, perform first-run enrollment, exchange contact codes (QR pairing), and test chat and file exchange:
+```bash
+python3 epistemic-ui/two_instance_runner.py
+```
+
+#### Option C: Run Full CSD/4 Formal UI Conformance & Tree Verification
+```bash
+# Verify the 12 closed UX primitives, 1+4 CEG grammar, and CSD/4 tree
+python3 epistemic-ui/algebra_engine.py
+
+# Run the 12-step fresh node provisioning QA suite
+python3 epistemic-ui/qa_provision_runner.py --fresh
+```
+
 ## What's proven (real toolchains, on disk)
 
 - **Homoiconicity** — JCS round-trip is byte-identical; the reader admits only the 1+4; `emit → promote`
