@@ -1333,8 +1333,8 @@
       { id: "Help", label: "Help & principles", sub: "Published principles & limits", requiresAgent: false },
     ];
 
-    // ── Rich Signed CEG Claims across all 5 Circles × 7 Tabs ──
-    let CLAIMS = [
+    // ── Rich Signed CEG Claims across all 5 Circles × 7 Tabs (Empty by default; populated by live mesh or tour) ──
+    const DEMO_CLAIMS = [
       // FILES
       { id: "f_self_1", tab: "Files", scope: "JustMe", op: "scores", dimension: "holds_bytes:journal-2026.md", title: "journal-2026.md", score: 0.9, confidence: 1.0, subject: "ed25519:viewer_self", attester: "ed25519:viewer_self" },
       { id: "f_self_2", tab: "Files", scope: "JustMe", op: "scores", dimension: "holds_bytes:tax-notes.pdf", title: "tax-notes.pdf", score: 0.8, confidence: 1.0, subject: "ed25519:viewer_self", attester: "ed25519:viewer_self" },
@@ -1383,9 +1383,10 @@
       { id: "rec_com_1", tab: "Record", scope: "CommunitiesAndBusinesses", op: "supersedes", dimension: "supersedes:budget_v1", title: "Superseded: Q4 budget v1 -> v2", score: 1.0, confidence: 1.0, subject: "ed25519:solar_coop", attester: "ed25519:steward_maya" },
       { id: "rec_all_1", tab: "Record", scope: "Everyone", op: "scores", dimension: "sth:federation_checkpoint", title: "Federation transparency checkpoint #1,024", score: 1.0, confidence: 1.0, subject: "ed25519:ciris_root", attester: "ed25519:ciris_root" },
     ];
+    let CLAIMS = [];
 
     const CEREMONIES_BY_CIRCLE = {
-      JustMe: { title: "Add S23 Phone key to self-roster", policy: "self_roster_add (24h W_self window · quorum or lone path)", need: 2 },
+      JustMe: { title: "Add Mobile Device key to self-roster", policy: "self_roster_add (24h W_self window · quorum or lone path)", need: 2 },
       Family: { title: "Renew Family Helper AI steward bond", policy: "custodian_replace (2-of-2 cosigned · 365d review)", need: 2 },
       Neighbours: { title: "Invite Priya to Neighbours circle", policy: "community_invite (>2/3 + invitee acceptance · 72h)", need: 3 },
       CommunitiesAndBusinesses: { title: "Approve Q4 Solar Co-op budget", policy: "default_standing (>2/3 enact · >=1/3 brake · 72h)", need: 4 },
@@ -1419,7 +1420,7 @@
         identityPath: null,           // null | 'NEW' | 'ADD_THIS_DEVICE' (unbiased at launch!)
         runWithAi: true,              // true (3 steps) | false (2 steps, CSD-083)
         fedidLabel: "",               // rejects 'ciris-client-user'
-        deviceName: "Founder Laptop",
+        deviceName: "Personal Device",
         hardwareCustody: true,
         username: "admin",
         password: "",
@@ -1430,12 +1431,12 @@
         llmProvider: "local_ollama",
         llmStatus: "not run",         // not run | testing | ok | failed
         stewardTemplate: "companion_default",
-        addDeviceName: "S23 Phone",
+        addDeviceName: "Mobile Device",
         addDeviceContact: "",
         addDeviceMatchCode: null,
         addDeviceStatus: "idle",      // idle | requested | approved | applied | denied | expired | failed
         addDeviceHeldByRoster: true,
-        claimPin0600: "849201",       // read from 0600 claim_pin file
+        claimPin0600: "",             // read from 0600 claim_pin file
         ownershipState: "unclaimed",  // unclaimed | claiming | claimed | error
       },
 
@@ -1476,83 +1477,40 @@
       },
 
       // ── Live v0.5.245 OwnerRequests (`GET /v1/self/owner-requests` — Single-Person Votes) ──
-      ownerRequests: [
-        { id: "announce", title: "Announce Node on Mesh", description: "Sign owner_requests::announce so peers can discover this node", signed: false },
-        { id: "root_acceptance", title: "Accept Baked Trust Root", description: "Sign owner_requests::root_acceptance for the canonical genesis seed", signed: true },
-        { id: "community_trust", title: "Enable Community Cohort Trust", description: "Sign owner_requests::community_trust for N-member rooms", signed: false },
-      ],
+      ownerRequests: [],
 
       // ── Live v0.5.245 Communities & Chat Rooms (`GET/POST /v1/communities`) ──
-      communities: [
-        { id: "comm-oak-street", name: "Oak Street Neighbours", cohort: "Neighbours", members: 6, moderator: "ed25519:neighbour_dan" },
-        { id: "comm-solar-coop", name: "Solar Co-op Stewards", cohort: "CommunitiesAndBusinesses", members: 14, moderator: "ed25519:steward_maya" },
-      ],
-      activeCommunityId: "comm-oak-street",
+      communities: [],
+      activeCommunityId: null,
       newCommunityName: "",
       chatAttachmentId: "",
       lastHamburgerNote: null,
 
       // ── Full Multi-Device & Self-Key Roster State (`CSD-037`, `CSD-094`, `CSD-095`) ──
       multiDevice: {
-        selfKeyId: "ed25519:alice.ciris#root",
-        activeOccurrenceId: "occ-a1", // Switchable between 'occ-a1', 'occ-a2', 'occ-a3'
+        selfKeyId: "",
+        activeOccurrenceId: "occ-a1",
         showRevoked: false,
         revokeForcePendingId: null,   // 2-stage force_self confirmation (`CSD-037`)
         incompleteRevokeNote: null,
-        approvalWindowOpen: true,
-        approvalWindowRemSecs: 600,   // 10m window (`CSD-094`)
+        approvalWindowOpen: false,
+        approvalWindowRemSecs: 0,
         lastHeldBannerProposalId: null,
         lastReceiptNote: null,
         devices: [
           {
             occurrenceId: "occ-a1",
-            keyId: "ed25519:a1_founder_laptop",
-            label: "Founder Laptop (A1)",
+            keyId: "ed25519:a1_device",
+            label: "This Device",
             deviceClass: "laptop",
             reachable: true,
-            hardwareCustody: "tpm",
-            dekRecipient: true,
-            revoked: false,
-          },
-          {
-            occurrenceId: "occ-a2",
-            keyId: "ed25519:a2_pixel_phone",
-            label: "Pixel Phone (A2)",
-            deviceClass: "phone",
-            reachable: false,
-            hardwareCustody: "secure_enclave",
+            hardwareCustody: "software",
             dekRecipient: true,
             revoked: false,
           },
         ],
-        pendingDeviceRequests: [
-          {
-            requestId: "req-s23",
-            occurrenceId: "occ-a3",
-            keyId: "ed25519:a3_s23_phone",
-            label: "S23 Phone (A3)",
-            deviceClass: "phone",
-            matchCode: "482 913",
-            status: "pending", // pending | approved | held | denied
-          },
-        ],
-        proposals: [
-          {
-            proposalId: "prop-add-a3",
-            kind: "add",
-            subjectKeyId: "ed25519:a3_s23_phone",
-            subjectOccurrenceId: "occ-a3",
-            subjectLabel: "S23 Phone (A3)",
-            subjectClass: "phone",
-            proposedByOccurrenceId: "occ-a1",
-            proposedByLabel: "Founder Laptop (A1)",
-            approvals: ["occ-a1"],
-            objectors: [],
-            windowRemSecs: 86400,
-            earliestLoneAt: "2026-10-21T17:45:00Z (24h W_self)",
-            settled: null, // null | 'LANDED' | 'REFUSED' | 'CANCELLED'
-          },
-        ],
+        pendingDeviceRequests: [],
+        proposals: [],
       },
     };
 
@@ -6053,6 +6011,10 @@
       },
 
       start: (startIdx = 0) => {
+        if (CLAIMS.length === 0) {
+          CLAIMS = DEMO_CLAIMS.map(c => ({ ...c }));
+          renderAll();
+        }
         RAIL_TOUR.active = true;
         RAIL_TOUR.paused = false;
         if (!RAIL_TOUR.progressInterval) {
@@ -6064,6 +6026,8 @@
       stop: () => {
         RAIL_TOUR.active = false;
         RAIL_TOUR.paused = false;
+        CLAIMS = [];
+        renderAll();
         clearTimeout(RAIL_TOUR.stepTimer);
         RAIL_TOUR.clearSubTimers();
         if (RAIL_TOUR.progressInterval) {
@@ -6151,8 +6115,8 @@
     syncLiveNode();
     initHolonEngineAssets();
 
-    // Auto-start the On-Rails Animated Tour on visit if not deep-linked
-    if (!urlParams.get("instrument") && !urlParams.get("circle") && !urlParams.get("mode") && !urlParams.get("setup")) {
+    // Start On-Rails Animated Tour only if explicitly requested via ?tour=1
+    if (urlParams.get("tour") === "1" || urlParams.get("tour") === "true") {
       setTimeout(() => {
         if (!RAIL_TOUR.active) RAIL_TOUR.start(0);
       }, 1200);

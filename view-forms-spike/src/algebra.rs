@@ -2231,8 +2231,8 @@ mod tests {
         let prop = SelfRosterProposal {
             proposal_id: "prop-2".to_string(),
             kind: SelfRosterProposalKind::Add,
-            subject_key_id: "ed25519:s23_phone".to_string(),
-            subject_label: "S23 Phone".to_string(),
+            subject_key_id: "ed25519:mobile_device".to_string(),
+            subject_label: "Mobile Device".to_string(),
             proposed_by_occurrence_id: "occ-a1".to_string(),
             proposed_by_label: "Founder Laptop (A1)".to_string(),
             roster_size: 2,

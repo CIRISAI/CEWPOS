@@ -1465,8 +1465,8 @@ def verify_all_invariants() -> None:
     roster_prop = SelfRosterProposal(
         proposal_id="prop-2",
         kind="add",
-        subject_key_id="ed25519:s23_phone",
-        subject_label="S23 Phone",
+        subject_key_id="ed25519:mobile_device",
+        subject_label="Mobile Device",
         proposed_by_occurrence_id="occ-a1",
         proposed_by_label="Founder Laptop (A1)",
         roster_size=2,

@@ -1161,7 +1161,7 @@ pub fn project_promise_card(csd_id: &str, ctx: &ViewerContext) -> Vec<EpistemicN
                 summary_chip: "1 of 2 signed · 24h W_self".to_string(),
             },
             policy_family: GovernancePolicyFamily::SelfRosterAdd,
-            proposal: "Add S23 Phone (occ-a3) to Self-Key Roster".to_string(),
+            proposal: "Add Mobile Device (occ-a3) to Self-Key Roster".to_string(),
             proposed_by: "occ-a1 (Founder Laptop)".to_string(),
             signers: vec![
                 SignerChip {
