@@ -317,11 +317,22 @@ python3 epistemic-ui/serve_cewpos.py 8787
 ```
 Open **`http://127.0.0.1:8787`** in any modern web browser to interact with the full-screen Bevy spatial scene, First-Run Wizard, 5 Circles, and 3D ChoiceBlocks.
 
-#### Option B: Run the Automated Two-Occurrence Ceremony Harness
-To simulate two independent CEWPOS occurrences, perform first-run enrollment, exchange contact codes (QR pairing), and test chat and file exchange:
+#### Option B: Run the Automated Two-Occurrence Mesh Ceremony Harness
+To simulate two independent CEWPOS occurrences, perform first-run enrollment, exchange contact codes (QR pairing), and test real two-way chat and file exchange over the live Reticulum mesh:
 ```bash
 python3 epistemic-ui/two_instance_runner.py
 ```
+This automated harness exercises 10 live ceremony steps:
+1. **Bootstraps dual isolated occurrences**: Node 1 (Alice: `:4242` Reticulum / `:4243` Read API / `:8787` UI) and Node 2 (Bob: `:4244` Reticulum / `:4245` Read API / `:8788` UI).
+2. **First-run Wizard & 0600 `claim_pin`**: Claims node ownership via `POST /v1/setup/claim-remote` and mints hybrid user identities.
+3. **Federation Announcement & Ownership Promotion**: Promotes owner bindings to `cohort_scope: "federation"` (`CC 5.4.6`).
+4. **Multi-device Pairing Window**: Exercises `CSD-094` 10-minute pairing ceremony (`POST /v1/self/device-requests/open`).
+5. **Federated Discovery & QR Exchange**: Generates `CIRIS-V3-...` federated contact codes (`GET /v1/self/contact-code`).
+6. **Mutual Federation Peering**: Exposes `SignedKeyRecord`s and transit KEX destinations (`POST /v1/federation/peering`).
+7. **Anti-Entropy Key Pull**: Verifies automatic Reticulum mesh convergence via `pending_contacts` into reciprocal contact relationships.
+8. **Pair Room Foundation & Handshake**: Founders pair community via `POST /v1/chat` and completes invitation/acceptance join.
+9. **Live Two-Way Mesh Messaging**: Posts and reads real MLS-encrypted messages across the nodes (`POST` / `GET /v1/chat/{community_id}/messages`).
+10. **Sovereign Drive & 3D Bevy Holon Scenes**: Verifies FSD file custody (`/v1/drive`) and 3D spatial scene projection (`/cewpos/v1/scene` and `/cewpos/v1/wizard-deferrals`).
 
 #### Option C: Run Full CSD/4 Formal UI Conformance & Tree Verification
 ```bash
