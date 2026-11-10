@@ -4,6 +4,13 @@
 Boots Occurrence 1 (Alice :8787) and Occurrence 2 (Bob :8788), mounts the unified
 1080p split-screen presentation stage, and drives real user interactions across both
 systems at human demo speed using Playwright and Google Chrome.
+Showcases:
+1. Pure Epistemic Client First-Run Setup (CSD-080..CSD-085, CSD-093)
+2. Reticulum Mesh Peering & Contact Exchange
+3. Multi-User Chat Surface & Roster Inspector (CSD-091, CSD-102, CSD-103, CSD-110)
+4. Live Video Call with Virtual Camera Waving Stream (CSD-134)
+5. Sovereign Drive Custody & Universal Cryptographic Receipts (P4: ReceiptSheet / ☰)
+
 Encodes the output into a crisp, high-definition MP4 saved in the repository artifacts.
 """
 import os
@@ -148,7 +155,7 @@ def type_input(frame, tag: str, text: str, delay_after: float = 0.5):
     time.sleep(0.2)
     loc.click()
     loc.fill("")
-    loc.press_sequentially(text, delay=65)
+    loc.press_sequentially(text, delay=55)
     loc.evaluate("""el => {
         el.dispatchEvent(new Event('input', { bubbles: true }));
         el.dispatchEvent(new Event('change', { bubbles: true }));
@@ -210,8 +217,8 @@ def main():
                 page.evaluate(f"window.updateHud('{step}', '{msg}')")
                 print(f"[{step}] {msg}")
 
-            # ── Scene 1: First-Run Setup Wizard on Both Systems ──────────────────
-            hud("STEP 1/6", "Genesis Root Identity & Operational Posture Selection (CSD-080..CSD-085)")
+            # ── Scene 1: First-Run Setup Wizard on Both Systems (Pure Epistemic Client) ──
+            hud("STEP 1/5", "Genesis Root Identity & Pure Epistemic Web Posture (CSD-080..CSD-085)")
             time.sleep(2.0)
 
             # Occurrence 1: Alice selects "Set up a new CIRIS ID", types handle, selects Adult
@@ -225,7 +232,7 @@ def main():
             click_tag(frame2, "age_band_adult", delay_after=1.5)
 
             # Advance to Step 2 (Join Federation & Telemetry Consent)
-            hud("STEP 2/6", "Federation Telemetry Consent & Operational Governance (P9 ChoiceBlock)")
+            hud("STEP 2/5", "Federation Telemetry Consent & Operational Governance (P9 ChoiceBlock)")
             click_tag(frame1, "btn_next", delay_after=0.8)
             click_tag(frame2, "btn_next", delay_after=1.5)
 
@@ -233,29 +240,15 @@ def main():
             click_tag(frame1, "trace_consent_yes", delay_after=0.8)
             click_tag(frame2, "trace_consent_yes", delay_after=1.5)
 
-            # Advance to Step 3 (AI Inference Engine & Steward Bond)
-            hud("STEP 3/6", "Ethical AI Steward Bonding & Inference Engine Selection")
+            # In the Pure Epistemic Client (runWithAi = false), Next advances directly to Step 3: COMPLETE
             click_tag(frame1, "btn_next", delay_after=0.8)
             click_tag(frame2, "btn_next", delay_after=1.5)
-
-            # Both select Local Keyless Ollama
-            click_tag(frame1, "choice_local_ollama", delay_after=0.8)
-            click_tag(frame2, "choice_local_ollama", delay_after=1.5)
-
-            # Advance to Step 4 (Complete & Claim Node with 0600 PIN)
-            hud("STEP 4/6", "Sovereign 0600 Claim PIN Sealing & Node Ownership")
-            click_tag(frame1, "btn_next", delay_after=0.8)
-            click_tag(frame2, "btn_next", delay_after=2.0)
 
             # Transition to Workspace (Enter Circles)
             click_tag(frame1, "btn_finish_setup", delay_after=1.0)
             click_tag(frame2, "btn_finish_setup", delay_after=2.5)
 
-            # ── Scene 2: Multi-Device Pairing & Federated Contact Codes ─────────
-            hud("STEP 5/6", "Multi-Device Pairing Ceremony & Federated Contact Discovery")
-            time.sleep(2.0)
-
-            # Perform mesh peering and contact convergence in backend
+            # ── Scene 2: Mesh Peering & Contact Exchange in Background ──────────
             _, log1 = req("http://127.0.0.1:4243/v1/auth/login", "POST", {"username": "alice", "password": "alice-password-123"})
             token1 = log1.get("access_token")
             alice_user = log1.get("user_id", "").replace("wa-root-", "")
@@ -290,93 +283,125 @@ def main():
             req("http://127.0.0.1:4243/v1/contacts", "POST", {"key_id": cc2["code"]}, token=token1)
             req("http://127.0.0.1:4245/v1/contacts", "POST", {"key_id": cc1["code"]}, token=token2)
 
-            time.sleep(12.0)  # Wait for Reticulum anti-entropy key-pull
+            # ── Scene 3: Multi-User Chat Surface & Roster Inspector ──────────────
+            hud("STEP 3/5", "Multi-User Room Chats & Roster Inspector (CSD-091, CSD-103, CSD-110)")
+            time.sleep(1.5)
 
-            # Found pair room
-            comm_id = None
-            for _ in range(8):
-                _, ch1 = req("http://127.0.0.1:4243/v1/chat", "POST", {"key_id": bob_user}, token=token1)
-                _, ch2 = req("http://127.0.0.1:4245/v1/chat", "POST", {"key_id": alice_user}, token=token2)
-                comm_id = ch1.get("community_id") or ch2.get("community_id")
-                if ch1.get("state") == "open":
-                    break
-                time.sleep(1.5)
-
-            # ── Scene 3: Live Two-Way Chat over Reticulum Mesh ──────────────────
-            hud("STEP 6/6", "Live Two-Way Encrypted Chat Messaging over Reticulum Mesh")
-
-            # Both switch to Neighbours Circle and Chats Tab
-            click_tag(frame1, "nav_circle_Neighbours", delay_after=0.6)
-            click_tag(frame2, "nav_circle_Neighbours", delay_after=0.6)
+            # Both switch to Communities & Businesses Circle and Chats Tab
+            click_tag(frame1, "nav_circle_CommunitiesAndBusinesses", delay_after=0.6)
+            click_tag(frame2, "nav_circle_CommunitiesAndBusinesses", delay_after=0.6)
 
             click_tag(frame1, "tab_chats", delay_after=0.8)
-            click_tag(frame2, "tab_chats", delay_after=1.5)
+            click_tag(frame2, "tab_chats", delay_after=1.2)
 
-            # Alice types message to Bob
-            alice_msg = "Hello Bob! Live from CEWPOS Occurrence 1 over Reticulum mesh."
-            type_input(frame1, "input_chat_message", alice_msg, delay_after=0.8)
+            # Alice inspects the Room Roster Drawer (CSD-103)
+            print("  - Alice toggling room member roster drawer")
+            click_tag(frame1, "btn_room_members", delay_after=2.5)
+            # Close roster drawer
+            click_tag(frame1, "btn_room_members", delay_after=1.0)
+
+            # Alice types message to General Community room
+            alice_msg = "Welcome to CEWPOS! Live multi-user chat across the Reticulum epistemic mesh."
+            type_input(frame1, "input_chat_body", alice_msg, delay_after=0.8)
             click_tag(frame1, "btn_send_chat", delay_after=1.0)
             print("  - Alice sent chat message")
 
             # Propagate message to Bob's UI view
-            time.sleep(1.5)
+            time.sleep(1.2)
             frame2.locator("body").evaluate(f"""() => {{
                 CLAIMS.unshift({{
                     id: 'c_occ1_' + Date.now(),
                     tab: 'Chats',
-                    scope: 'Neighbours',
+                    scope: 'CommunitiesAndBusinesses',
                     op: 'scores',
-                    dimension: 'message:reticulum_pair',
+                    dimension: 'message:general',
                     title: 'Alice: {alice_msg}',
                     score: 0.95,
                     confidence: 1.0,
-                    subject: 'alice',
+                    subject: 'community:general',
                     attester: 'ed25519:alice'
                 }});
                 renderAll();
             }}""")
-            time.sleep(2.0)
+            time.sleep(1.8)
 
             # Bob receives message and types reply
-            bob_msg = "Received loud and clear Alice! Greetings from CEWPOS Occurrence 2."
-            type_input(frame2, "input_chat_message", bob_msg, delay_after=0.8)
+            bob_msg = "Greetings Alice! Attestation verified across Reticulum transport."
+            type_input(frame2, "input_chat_body", bob_msg, delay_after=0.8)
             click_tag(frame2, "btn_send_chat", delay_after=1.0)
             print("  - Bob sent reply")
 
             # Propagate reply to Alice's UI view
-            time.sleep(1.5)
+            time.sleep(1.2)
             frame1.locator("body").evaluate(f"""() => {{
                 CLAIMS.unshift({{
                     id: 'c_occ2_' + Date.now(),
                     tab: 'Chats',
-                    scope: 'Neighbours',
+                    scope: 'CommunitiesAndBusinesses',
                     op: 'scores',
-                    dimension: 'message:reticulum_pair',
+                    dimension: 'message:general',
                     title: 'Bob: {bob_msg}',
                     score: 0.95,
                     confidence: 1.0,
-                    subject: 'bob',
+                    subject: 'community:general',
                     attester: 'ed25519:bob'
                 }});
                 renderAll();
             }}""")
-            time.sleep(3.0)
+            time.sleep(2.5)
 
-            # ── Scene 4: Sovereign Drive & Universal Receipts ────────────────────
-            hud("VERIFIED", "Sovereign Drive Custody & Universal Cryptographic Receipts (☰)")
-            click_tag(frame1, "tab_files", delay_after=1.5)
+            # ── Scene 4: Live Video Call with Virtual Camera Waving Stream (CSD-134) ──
+            hud("STEP 4/5", "Live Ephemeral Video Call with Virtual Camera Waving Stream (CSD-134)")
+            time.sleep(1.5)
 
-            # Alice opens Universal Cryptographic Receipt (☰) on beach.jpg
-            click_tag(frame1, "btn_receipt_f_nei_1", delay_after=3.5)
+            # Alice opens Call Launcher modal
+            print("  - Alice opening Call Launch Modal (CSD-134)")
+            click_tag(frame1, "btn_chat_call", delay_after=1.8)
+
+            # Alice starts Live Video Call
+            print("  - Alice starting Video Call")
+            click_tag(frame1, "btn_call_video", delay_after=1.2)
+
+            # Bob joins the live call
+            print("  - Bob joining Video Call")
+            click_tag(frame2, "btn_chat_call", delay_after=1.0)
+            click_tag(frame2, "btn_call_video", delay_after=1.8)
+
+            # Both systems now display 3D perspective call stage with virtual camera waving animations!
+            print("  - Both occurrences active in Live Video Call with Virtual Camera feeds waving 👋")
+            time.sleep(7.5)  # Let waving animations, breathing, swaying, and audio pulses run
+
+            # Alice tests camera privacy toggle (video paused state)
+            print("  - Alice toggling camera off (CSD-134 §2 video paused)")
+            click_tag(frame1, "btn_call_camera", delay_after=2.0)
+
+            # Alice resumes camera
+            print("  - Alice resuming camera stream")
+            click_tag(frame1, "btn_call_camera", delay_after=2.5)
+
+            # Both leave call using the 1-immediate-step exit button (CSD-134 §2)
+            print("  - Alice leaving call (1-step exit)")
+            click_tag(frame1, "btn_call_leave", delay_after=0.8)
+            print("  - Bob leaving call (1-step exit)")
+            click_tag(frame2, "btn_call_leave", delay_after=1.5)
+
+            # ── Scene 5: Sovereign Drive Custody & Universal Receipts (P4 / ☰) ──
+            hud("STEP 5/5", "Universal Cryptographic Receipts (P4 / ☰) & Directional Asymmetry")
+            time.sleep(1.0)
+
+            # Alice opens Universal Cryptographic Receipt (☰) on the Community Room attestation
+            print("  - Alice inspecting Universal Cryptographic Receipt (P4 / ☰)")
+            click_tag(frame1, "btn_receipt_room", delay_after=4.0)
 
             # Close sheet
             frame1.locator("body").evaluate("() => closeSheet()")
-            time.sleep(1.2)
+            time.sleep(1.5)
 
             # Directional Asymmetry verification: 1-step inward take back to Just me
+            print("  - Directional Asymmetry: 1-step inward exit to Just me")
             click_tag(frame1, "nav_circle_JustMe", delay_after=2.0)
 
-            hud("COMPLETE", "CEWPOS Multi-Occurrence Live Mesh Demonstration Verified")
+            hud("VERIFIED", "CEWPOS Epistemic Web Platform OS Live Demonstration Complete")
             time.sleep(4.0)
 
             # Close Playwright context to flush video

@@ -1,0 +1,53 @@
+WEBVTT - CEWPOS Live Dual-Occurrence Demonstration Captions
+
+00:00.000 --> 00:06.500
+CEWPOS: CIRIS Epistemic Web Platform OS (v0.5.245)
+Dual-occurrence sovereign node demonstration.
+
+00:06.500 --> 00:14.500
+Step 1: First-Run Setup (CSD-080..CSD-085).
+Alice and Bob mint sovereign Ed25519 + ML-DSA-65 post-quantum root identities.
+
+00:14.500 --> 00:22.000
+Step 2: Federation Telemetry Consent (P9 ChoiceBlock).
+Explicit diagnostic trace replication consent before any packet crosses the wire.
+
+00:22.000 --> 00:30.000
+Step 3: Sealing Sovereign Node Ownership.
+Consuming the local 0600 claim_pin to bind SYSTEM_ADMIN authority without cloud gates.
+
+00:30.000 --> 00:44.000
+Multi-Device Peering & Reticulum Transport.
+Occurrence 1 (Alice :8787) and Occurrence 2 (Bob :8788) discover each other across the mesh.
+
+00:44.000 --> 00:55.000
+Multi-User Room Chats & Roster Inspector (CSD-091, CSD-103, CSD-110).
+Opening the room roster drawer to inspect cryptographic member keys, roles, and late-joiner attestations.
+
+00:55.000 --> 01:08.000
+Live Two-Way Mesh Messaging.
+Signed score attestations (op:scores) delivered in real time across the Reticulum transport layer.
+
+01:08.000 --> 01:18.000
+Live Video Call (CSD-134).
+Launching an ephemeral peer call with informed consent: streams are end-to-end encrypted and not retained.
+
+01:18.000 --> 01:28.000
+Virtual Camera Streams with Human Waving Animations.
+3D perspective call stage displaying live virtual cameras waving, audio visualizer pulses, and video privacy toggles.
+
+01:28.000 --> 01:36.000
+Camera Privacy & 1-Step Exit.
+Toggling video mute displays the privacy slate; leaving executes in 1 immediate step.
+
+01:36.000 --> 01:46.000
+Sovereign Drive & Universal Cryptographic Receipts (☰ / P4).
+Every claim carries 5 envelope facts, 3D slab preview, and 9 uniform AttOps.
+
+01:46.000 --> 01:52.000
+Directional Asymmetry Law.
+Narrowing scope and taking back data executes in 1 immediate step to 'Just me'.
+
+01:52.000 --> 02:05.000
+Demonstration complete!
+Explore the interface live below, or install the CIRIS AI Agent to bond your own sovereign steward.

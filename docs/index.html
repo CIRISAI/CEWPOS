@@ -1578,6 +1578,174 @@
       background: #D92B2B;
       transform: translate3d(0, -2px, 14px);
     }
+
+    /* ── Live Demo Video Modal & End CTA Screen ── */
+    .welcome-demo-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 10px 0 14px;
+      padding: 10px 18px;
+      background: linear-gradient(90deg, rgba(31, 94, 122, 0.22), rgba(65, 156, 160, 0.16));
+      border: 1px solid rgba(31, 94, 122, 0.45);
+      border-radius: 12px;
+      font-size: 13px;
+      color: var(--obsidian);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+      animation: fadeIn 0.3s ease;
+    }
+    .demo-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: rgba(10, 13, 18, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.22s ease-out;
+    }
+    .demo-modal-dialog {
+      background: #14181F;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 1060px;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0, 0, 0, 0.7);
+    }
+    .demo-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 22px;
+      background: #11151A;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+    }
+    .demo-video-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      overflow: hidden;
+    }
+    .demo-video-wrap video {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+    }
+    .demo-caption-overlay {
+      position: absolute;
+      bottom: 58px;
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: 86%;
+      text-align: center;
+      background: rgba(14, 18, 24, 0.88);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #F5F5F7;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      line-height: 1.4;
+    }
+    .demo-chapters-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 10px 16px;
+      background: #11151A;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      overflow-x: auto;
+    }
+    .demo-chapter-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 11.5px;
+      color: #B0BEC5;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+    .demo-chapter-btn:hover, .demo-chapter-btn.active {
+      background: rgba(31, 94, 122, 0.35);
+      border-color: #419CA0;
+      color: #fff;
+    }
+    .demo-end-screen {
+      position: absolute;
+      inset: 0;
+      background: rgba(13, 16, 21, 0.96);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+      overflow-y: auto;
+      text-align: center;
+      animation: fadeIn 0.3s ease;
+      z-index: 10;
+    }
+    .demo-end-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .demo-end-sub {
+      font-size: 14px;
+      color: #90A4AE;
+      max-width: 600px;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .demo-end-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      width: 100%;
+      max-width: 820px;
+      margin-top: 18px;
+      text-align: left;
+    }
+    .demo-cta-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .demo-code-box {
+      background: #090C10;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: #58A6FF;
+      margin: 8px 0 12px;
+      user-select: all;
+    }
   </style>
 </head>
 <body>
@@ -1598,7 +1766,10 @@
       <div class="topbar-center" id="headerTitle"></div>
 
       <div class="topbar-right">
-        <button id="btn_tour_toggle" class="btn btn-brand" onclick="toggleTourOnRails()" title="Guided Walkthrough on Rails" style="font-weight:600; gap:6px;">
+        <button id="btn_watch_demo" class="btn btn-brand" onclick="openDemoVideoModal()" title="Watch Dual-Occurrence Live Video Demo" style="font-weight:600; gap:6px; box-shadow:0 2px 10px rgba(31,94,122,0.35);">
+          <span>▶</span> <span>Watch Live Demo</span>
+        </button>
+        <button id="btn_tour_toggle" class="btn" onclick="toggleTourOnRails()" title="Guided Walkthrough on Rails" style="font-weight:500; gap:6px;">
           <span id="tour_btn_icon">🎬</span> <span id="tour_btn_label">Tour on Rails</span>
         </button>
         <button id="btn_stop_everything" data-csd-tag="btn_stop_everything" class="btn btn-stop" onclick="toggleHalt()">
@@ -1609,6 +1780,24 @@
         </button>
       </div>
     </header>
+
+    <!-- Welcome Demo Notification Banner -->
+    <div id="welcomeDemoBanner" class="welcome-demo-banner">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:18px;">🎬</span>
+        <div>
+          <strong>Live Dual-Occurrence Demonstration:</strong> Reticulum mesh peering, multi-user chat, live video calls with virtual camera waving animations, and 1-step exits.
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="btn btn-brand" onclick="openDemoVideoModal()" style="font-size:12px;padding:4px 12px;white-space:nowrap;">
+          ▶ Watch Demo
+        </button>
+        <button class="btn-ghost" onclick="document.getElementById('welcomeDemoBanner').style.display='none'" style="font-size:14px;padding:2px 8px;" title="Dismiss banner">
+          &times;
+        </button>
+      </div>
+    </div>
 
     <!-- 7 Circle Tabs -->
     <nav class="tabs" id="tabsBar"></nav>
@@ -1625,6 +1814,9 @@
 
   <!-- Explanatory Tour Host -->
   <div id="tourHost"></div>
+
+  <!-- Demo Video Modal Host -->
+  <div id="demoVideoHost"></div>
 
   <!-- Pure JS QR Decoder for Offline / Multi-Browser Camera Viewfinder -->
   <script src="jsqr.min.js"></script>
@@ -5283,6 +5475,301 @@
       setTimeout(initCallCanvasAnimations, 50);
     }
 
+    function drawVirtualCameraPerson(ctx, w, h, personId, isSelf, t, isMuted, isCamOff) {
+      if (isCamOff) {
+        ctx.fillStyle = "#121416";
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = "rgba(255,255,255,0.12)";
+        ctx.beginPath();
+        ctx.arc(w / 2, h / 2 - 12, 32, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#A09C94";
+        ctx.font = "12px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("📷 Video Paused", w / 2, h / 2 + 38);
+        return;
+      }
+
+      let theme = {
+        bg1: "#141E28", bg2: "#223444",
+        skin: "#F2C7A5", skinShadow: "#DBAC8B",
+        hair: "#2C1D11", hairStyle: "long",
+        shirt: "#1F5E7A", shirtAccent: "#2E7D9E",
+        phase: 0,
+        waveSide: 1,
+        name: "You"
+      };
+
+      if (personId.includes("maya") || personId.includes("steward_maya")) {
+        theme = {
+          bg1: "#2B1E17", bg2: "#422D22",
+          skin: "#E5A97D", skinShadow: "#C98A5E",
+          hair: "#1E140E", hairStyle: "curls",
+          shirt: "#C96A38", shirtAccent: "#D97B48",
+          phase: 1.2,
+          waveSide: 1,
+          name: "Maya"
+        };
+      } else if (personId.includes("sam")) {
+        theme = {
+          bg1: "#142628", bg2: "#1F3A3D",
+          skin: "#F5CEB2", skinShadow: "#DEA787",
+          hair: "#5C3A21", hairStyle: "short",
+          shirt: "#2A7075", shirtAccent: "#3B8A90",
+          phase: 2.5,
+          waveSide: -1,
+          name: "Sam"
+        };
+      } else if (personId.includes("dan") || personId.includes("bob") || personId.includes("occ2")) {
+        theme = {
+          bg1: "#1E1A2B", bg2: "#2E2842",
+          skin: "#ECC49F", skinShadow: "#D4A57C",
+          hair: "#242426", hairStyle: "short",
+          shirt: "#7A6FD6", shirtAccent: "#8F85E6",
+          phase: 3.8,
+          waveSide: 1,
+          name: "Bob"
+        };
+      } else if (personId.includes("ada")) {
+        theme = {
+          bg1: "#1D231A", bg2: "#2B3527",
+          skin: "#EFC8A6", skinShadow: "#D9A880",
+          hair: "#8A3B14", hairStyle: "bob",
+          shirt: "#788C5D", shirtAccent: "#8CA36E",
+          phase: 4.5,
+          waveSide: 1,
+          name: "Ada"
+        };
+      }
+
+      // 1. Room Background
+      const bgGrad = ctx.createLinearGradient(0, 0, w, h);
+      bgGrad.addColorStop(0, theme.bg1);
+      bgGrad.addColorStop(1, theme.bg2);
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, w, h);
+
+      // Soft studio lighting
+      const lightGrad = ctx.createRadialGradient(w * 0.8, h * 0.2, 10, w * 0.8, h * 0.2, w * 0.6);
+      lightGrad.addColorStop(0, "rgba(255, 230, 190, 0.15)");
+      lightGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+      ctx.fillStyle = lightGrad;
+      ctx.fillRect(0, 0, w, h);
+
+      // Subtle room shelf
+      ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
+      ctx.fillRect(0, h * 0.72, w, 4);
+      ctx.fillRect(w * 0.15, h * 0.45, 12, h * 0.27);
+      ctx.fillStyle = "rgba(255, 255, 255, 0.08)";
+      ctx.fillRect(w * 0.15 + 3, h * 0.47, 6, h * 0.25);
+
+      // 2. Person Geometry with Natural Animation
+      const p = theme.phase;
+      const breathe = Math.sin(t * 2.2 + p) * 2;
+      const headSway = Math.sin(t * 1.6 + p) * 1.5;
+      const cx = w / 2;
+      const cy = h / 2 + 10;
+
+      // Torso / Shoulders
+      ctx.save();
+      ctx.translate(cx + headSway * 0.4, cy + breathe);
+
+      ctx.fillStyle = theme.shirt;
+      ctx.beginPath();
+      ctx.moveTo(-54, 75);
+      ctx.quadraticCurveTo(-48, 14, -22, 6);
+      ctx.lineTo(22, 6);
+      ctx.quadraticCurveTo(48, 14, 54, 75);
+      ctx.closePath();
+      ctx.fill();
+
+      // Collar
+      ctx.strokeStyle = theme.shirtAccent;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(-16, 6);
+      ctx.lineTo(0, 24);
+      ctx.lineTo(16, 6);
+      ctx.stroke();
+
+      // Neck
+      ctx.fillStyle = theme.skinShadow;
+      ctx.fillRect(-11, -12, 22, 20);
+      ctx.fillStyle = theme.skin;
+      ctx.fillRect(-9, -12, 18, 18);
+
+      ctx.restore();
+
+      // Head
+      const headX = cx + headSway;
+      const headY = cy - 26 + breathe * 0.6;
+      const headR = 24;
+
+      ctx.save();
+      ctx.translate(headX, headY);
+
+      if (theme.hairStyle === "long" || theme.hairStyle === "curls") {
+        ctx.fillStyle = theme.hair;
+        ctx.beginPath();
+        ctx.arc(0, 2, headR + 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillRect(-headR - 4, 0, (headR + 4) * 2, 38);
+      }
+
+      ctx.fillStyle = theme.skin;
+      ctx.beginPath();
+      ctx.arc(0, 0, headR, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Hair
+      ctx.fillStyle = theme.hair;
+      ctx.beginPath();
+      if (theme.hairStyle === "short") {
+        ctx.arc(0, -5, headR + 1, Math.PI, Math.PI * 2);
+        ctx.quadraticCurveTo(headR - 4, -4, 0, -8);
+        ctx.quadraticCurveTo(-headR + 4, -4, -headR, -5);
+      } else if (theme.hairStyle === "curls") {
+        ctx.arc(0, -6, headR + 3, Math.PI * 0.9, Math.PI * 2.1);
+        ctx.arc(-16, -10, 8, 0, Math.PI * 2);
+        ctx.arc(0, -18, 9, 0, Math.PI * 2);
+        ctx.arc(16, -10, 8, 0, Math.PI * 2);
+      } else {
+        ctx.arc(0, -6, headR + 2, Math.PI * 0.9, Math.PI * 2.1);
+        ctx.lineTo(headR, 6);
+        ctx.lineTo(-headR, 6);
+      }
+      ctx.fill();
+
+      // Eyes
+      const isBlink = Math.sin(t * 1.8 + p * 3) > 0.96;
+      ctx.fillStyle = "#1E1610";
+      if (isBlink) {
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(-9, -2); ctx.lineTo(-3, -2);
+        ctx.moveTo(3, -2); ctx.lineTo(9, -2);
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.arc(-6, -2, 2.8, 0, Math.PI * 2);
+        ctx.arc(6, -2, 2.8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#FFF";
+        ctx.beginPath();
+        ctx.arc(-5.2, -3, 1, 0, Math.PI * 2);
+        ctx.arc(6.8, -3, 1, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Smile
+      const talkingMouth = !isMuted ? (Math.abs(Math.sin(t * 6 + p)) * 3) : 0;
+      ctx.strokeStyle = "#8C4A38";
+      ctx.fillStyle = "#B55848";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      if (talkingMouth > 1.2) {
+        ctx.ellipse(0, 9, 5, 2 + talkingMouth, 0, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.arc(0, 6, 6, 0.15 * Math.PI, 0.85 * Math.PI);
+        ctx.stroke();
+      }
+
+      ctx.restore();
+
+      // 3. ANIMATED WAVING ARM & HAND (👋)
+      const waveSide = theme.waveSide;
+      const waveSpeed = 5.2;
+      const waveAngle = Math.sin(t * waveSpeed + p) * 0.38;
+      const shoulderX = cx + (waveSide * 34);
+      const shoulderY = cy + 18 + breathe;
+      const elbowX = shoulderX + (waveSide * 26);
+      const elbowY = shoulderY - 20;
+
+      ctx.save();
+      ctx.strokeStyle = theme.shirt;
+      ctx.lineWidth = 14;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(shoulderX, shoulderY);
+      ctx.lineTo(elbowX, elbowY);
+      ctx.stroke();
+
+      ctx.translate(elbowX, elbowY);
+      const baseAngle = waveSide > 0 ? -1.1 : 1.1;
+      ctx.rotate(baseAngle + waveAngle);
+
+      ctx.strokeStyle = theme.shirt;
+      ctx.lineWidth = 12;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(0, -14);
+      ctx.stroke();
+
+      ctx.strokeStyle = theme.skin;
+      ctx.lineWidth = 9;
+      ctx.beginPath();
+      ctx.moveTo(0, -12);
+      ctx.lineTo(0, -32);
+      ctx.stroke();
+
+      ctx.translate(0, -34);
+      ctx.fillStyle = theme.skin;
+      ctx.beginPath();
+      ctx.arc(0, 0, 6.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.lineWidth = 3.2;
+      ctx.strokeStyle = theme.skin;
+      ctx.lineCap = "round";
+      const fingerSpread = [-5, -2, 2, 5];
+      fingerSpread.forEach((fx, i) => {
+        const fLen = i === 1 || i === 2 ? 8 : 6.5;
+        const fAngle = (fx * 0.08) + Math.sin(t * 8 + i) * 0.1;
+        ctx.beginPath();
+        ctx.moveTo(fx * 0.7, 0);
+        ctx.lineTo(fx + Math.sin(fAngle) * 4, -fLen);
+        ctx.stroke();
+      });
+      ctx.beginPath();
+      ctx.moveTo(waveSide > 0 ? -4 : 4, 2);
+      ctx.lineTo(waveSide > 0 ? -9 : 9, -2);
+      ctx.stroke();
+
+      ctx.restore();
+
+      // 4. Viewfinder Corners & Stream Stamp
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.20)";
+      ctx.lineWidth = 1.5;
+      const bSize = 10;
+      const pad = 8;
+      ctx.beginPath(); ctx.moveTo(pad, pad + bSize); ctx.lineTo(pad, pad); ctx.lineTo(pad + bSize, pad); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(w - pad - bSize, pad); ctx.lineTo(w - pad, pad); ctx.lineTo(w - pad, pad + bSize); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(pad, h - pad - bSize); ctx.lineTo(pad, h - pad); ctx.lineTo(pad + bSize, h - pad); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(w - pad - bSize, h - pad); ctx.lineTo(w - pad, h - pad); ctx.lineTo(w - pad, h - pad - bSize); ctx.stroke();
+
+      ctx.fillStyle = "rgba(255, 255, 255, 0.45)";
+      ctx.font = "9px monospace";
+      ctx.textAlign = "left";
+      ctx.fillText("CAM · 1080p 60fps", pad + 4, pad + 12);
+
+      // Audio visualizer bar
+      if (!isMuted) {
+        ctx.fillStyle = isSelf ? "rgba(91, 232, 165, 0.75)" : "rgba(201, 106, 56, 0.75)";
+        const bars = 16;
+        const barW = 3.5;
+        const gap = 2.5;
+        const startX = (w - (bars * (barW + gap))) / 2;
+        for (let b = 0; b < bars; b++) {
+          const freq = (t * 4 + b * 0.45 + p) % (Math.PI * 2);
+          const barH = 3 + Math.abs(Math.sin(freq)) * 14;
+          const x = startX + b * (barW + gap);
+          const y = h - pad - 4 - barH;
+          ctx.fillRect(x, y, barW, barH);
+        }
+      }
+    }
+
     let callAnimTime = 0;
     function initCallCanvasAnimations() {
       if (!state.activeCall) return;
@@ -5291,7 +5778,7 @@
 
       function renderFrame() {
         if (!state.activeCall) return;
-        callAnimTime += 0.05;
+        callAnimTime += 0.04;
         canvases.forEach(cvs => {
           const ctx = cvs.getContext("2d");
           if (!ctx) return;
@@ -5300,72 +5787,9 @@
           const isSelf = cvs.id.includes("self");
           const isCamOff = isSelf && state.activeCall.cameraOff;
           const isMuted = isSelf && state.activeCall.muted;
+          const personId = cvs.id.replace("canvas_call_", "");
 
-          ctx.clearRect(0, 0, w, h);
-
-          // Background gradient
-          const grad = ctx.createLinearGradient(0, 0, w, h);
-          if (isSelf) {
-            grad.addColorStop(0, "#0c1820");
-            grad.addColorStop(1, "#182c38");
-          } else {
-            grad.addColorStop(0, "#15181b");
-            grad.addColorStop(1, "#1f2428");
-          }
-          ctx.fillStyle = grad;
-          ctx.fillRect(0, 0, w, h);
-
-          if (isCamOff) {
-            ctx.fillStyle = "rgba(255,255,255,0.15)";
-            ctx.beginPath();
-            ctx.arc(w / 2, h / 2 - 10, 30, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = "#A09C94";
-            ctx.font = "12px sans-serif";
-            ctx.textAlign = "center";
-            ctx.fillText("Video Paused", w / 2, h / 2 + 35);
-            return;
-          }
-
-          // Subtle scanlines
-          ctx.strokeStyle = "rgba(255,255,255,0.03)";
-          ctx.lineWidth = 1;
-          for (let y = 0; y < h; y += 4) {
-            ctx.beginPath();
-            ctx.moveTo(0, y);
-            ctx.lineTo(w, y);
-            ctx.stroke();
-          }
-
-          // Avatar silhouette in center
-          const seed = cvs.id.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
-          ctx.fillStyle = isSelf ? "rgba(31, 94, 122, 0.35)" : "rgba(120, 140, 93, 0.35)";
-          ctx.beginPath();
-          ctx.arc(w / 2, h / 2 - 12, 28, 0, Math.PI * 2);
-          ctx.fill();
-
-          ctx.fillStyle = isSelf ? "#5BE8A5" : "#E2DDD2";
-          ctx.font = "bold 18px monospace";
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          const initials = isSelf ? "YOU" : cvs.id.replace("canvas_call_", "").substring(0, 2).toUpperCase();
-          ctx.fillText(initials, w / 2, h / 2 - 12);
-
-          // Animated Audio Waveform
-          if (!isMuted) {
-            ctx.fillStyle = isSelf ? "rgba(91, 232, 165, 0.7)" : "rgba(201, 106, 56, 0.7)";
-            const bars = 18;
-            const barW = 4;
-            const gap = 3;
-            const startX = (w - (bars * (barW + gap))) / 2;
-            for (let b = 0; b < bars; b++) {
-              const freq = (callAnimTime * 2 + b * 0.4 + seed) % (Math.PI * 2);
-              const barH = 4 + Math.abs(Math.sin(freq)) * 22;
-              const x = startX + b * (barW + gap);
-              const y = h - 22 - barH;
-              ctx.fillRect(x, y, barW, barH);
-            }
-          }
+          drawVirtualCameraPerson(ctx, w, h, personId, isSelf, callAnimTime, isMuted, isCamOff);
         });
         state.activeCall.animFrameId = requestAnimationFrame(renderFrame);
       }
@@ -6961,9 +7385,196 @@
       }, 80);
     }
 
+    // ── Live Demonstration Video Player & Captions Engine ──
+    const DEMO_CAPTIONS = [
+      { start: 0.0, end: 6.5, text: "CEWPOS Live Dual-Occurrence Demonstration — Sovereign Epistemic Web Platform OS (v0.5.245)." },
+      { start: 6.5, end: 14.5, text: "Step 1: First-Run Setup (CSD-080..CSD-085) — Alice and Bob establish genesis Ed25519 + ML-DSA-65 post-quantum root identities." },
+      { start: 14.5, end: 22.0, text: "Step 2: Federation Telemetry Consent (P9 ChoiceBlock) — Explicit diagnostic trace replication consent before crossing the wire." },
+      { start: 22.0, end: 30.0, text: "Step 3: Sealing Sovereign Node Ownership — Consuming the local 0600 claim_pin to bind SYSTEM_ADMIN authority without cloud gates." },
+      { start: 30.0, end: 44.0, text: "Mesh Peering & Reticulum Transport — Occurrence 1 (Alice :8787) and Occurrence 2 (Bob :8788) discover each other across the mesh." },
+      { start: 44.0, end: 55.0, text: "Multi-User Room Chats & Roster Inspector (CSD-091, CSD-103) — Inspecting room keys, roles, and late-joiner attestations." },
+      { start: 55.0, end: 68.0, text: "Live Two-Way Mesh Messaging — Signed score attestations (op:scores) delivered in real time across Reticulum transport." },
+      { start: 68.0, end: 78.0, text: "Live Video Call (CSD-134) — Launching an ephemeral peer call with informed consent: streams are end-to-end encrypted and not retained." },
+      { start: 78.0, end: 88.0, text: "Virtual Camera Streams with Human Waving Animations — 3D perspective call stage displaying live virtual cameras waving 👋 with audio visualizer pulses." },
+      { start: 88.0, end: 96.0, text: "Camera Privacy & 1-Step Exit — Toggling video mute displays the privacy slate; leaving executes in 1 immediate step." },
+      { start: 96.0, end: 104.0, text: "Universal Cryptographic Receipts (P4 / ☰) — 5 plain-language envelope facts, 3D spatial slab preview, and 9 uniform AttOps." },
+      { start: 104.0, end: 110.0, text: "Directional Asymmetry Law — Narrowing scope and taking back data executes in 1 immediate step to 'Just me'." },
+      { start: 110.0, end: 999.0, text: "Demonstration complete! Explore the interface live below, or install the CIRIS AI Agent to bond your own sovereign steward." }
+    ];
+
+    function openDemoVideoModal() {
+      const host = document.getElementById("demoVideoHost");
+      if (!host) return;
+      host.innerHTML = `
+        <div class="demo-modal-backdrop" id="demoModalBackdrop" onclick="if(event.target===this)closeDemoVideoModal()">
+          <div class="demo-modal-dialog">
+            <div class="demo-modal-header">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:18px;">🎬</span>
+                <div>
+                  <div style="font-size:15px;font-weight:700;color:#fff;">CEWPOS Live Dual-Occurrence Demonstration</div>
+                  <div style="font-size:11.5px;color:#90A4AE;margin-top:1px;">
+                    Reticulum Mesh Peering &middot; Multi-User Chat &middot; Waving Video Calls (CSD-134) &middot; Universal Receipts (☰)
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <button class="btn btn-ghost" onclick="showDemoEndOverlay()" style="font-size:12px;color:#80D8FF;">
+                  Skip to Explore &rarr;
+                </button>
+                <button class="btn-ghost" onclick="closeDemoVideoModal()" style="font-size:18px;color:#fff;padding:0 6px;" title="Close video">
+                  &times;
+                </button>
+              </div>
+            </div>
+
+            <div class="demo-video-wrap">
+              <video id="demoVideoElement" controls autoplay playsinline src="demo.mp4">
+                <track kind="captions" src="demo_captions.vtt" srclang="en" label="English" default>
+              </video>
+              <div class="demo-caption-overlay" id="demoCaptionOverlay">
+                Starting CEWPOS demonstration...
+              </div>
+
+              <!-- End Screen Overlay with 'Explore the interface' & Invitations -->
+              <div class="demo-end-screen" id="demoEndScreen" style="display:none;">
+                <div style="font-size:36px;margin-bottom:8px;">🎉</div>
+                <div class="demo-end-title">Explore the Interface Live in Your Browser</div>
+                <div class="demo-end-sub">
+                  You have watched the full live demonstration. The entire 5-Circle, 7-Tab, 6-Instrument spatial interface is active below. Click any item, inspect cryptographic receipts (☰), test the 423 emergency brake, or launch a video call.
+                </div>
+
+                <button class="btn btn-brand" onclick="closeDemoVideoModal()" style="font-size:16px;font-weight:600;padding:12px 32px;border-radius:10px;box-shadow:0 8px 24px rgba(31,94,122,0.45);cursor:pointer;margin-bottom:6px;">
+                  🧭 Explore the Interface
+                </button>
+
+                <div class="demo-end-cards">
+                  <!-- Card 1: Add Sovereign AI Steward -->
+                  <div class="demo-cta-card">
+                    <div>
+                      <div style="font-weight:600;color:#fff;font-size:14px;display:flex;align-items:center;gap:8px;">
+                        <span>🤖</span> <span>Add Sovereign AI Stewardship</span>
+                      </div>
+                      <div style="font-size:12.5px;color:#B0BEC5;margin-top:6px;line-height:1.4;">
+                        CEWPOS is the pure epistemic client OS. To bond an autonomous ethical AI steward to your node, install CIRISAgent:
+                      </div>
+                      <div class="demo-code-box">pip install ciris-agent</div>
+                    </div>
+                    <div style="display:flex;gap:8px;margin-top:4px;">
+                      <a href="https://github.com/CIRISAI/CIRISAgent" target="_blank" class="btn" style="font-size:11.5px;padding:5px 12px;text-decoration:none;">
+                        CIRISAgent on GitHub &rarr;
+                      </a>
+                    </div>
+                  </div>
+
+                  <!-- Card 2: Try CEWPOS Locally -->
+                  <div class="demo-cta-card">
+                    <div>
+                      <div style="font-weight:600;color:#fff;font-size:14px;display:flex;align-items:center;gap:8px;">
+                        <span>🖥️</span> <span>Run CEWPOS Sovereign Node</span>
+                      </div>
+                      <div style="font-size:12.5px;color:#B0BEC5;margin-top:6px;line-height:1.4;">
+                        Run the native Rust full-stack node with CIRISServer (:4243) and the full-screen Bevy spatial scene:
+                      </div>
+                      <div class="demo-code-box" style="font-size:10.5px;">cargo run --manifest-path view-forms-spike/Cargo.toml --features fullstack --bin cewpos-node</div>
+                    </div>
+                    <div style="display:flex;gap:8px;margin-top:4px;">
+                      <a href="https://github.com/CIRISAI/CEWPOS" target="_blank" class="btn" style="font-size:11.5px;padding:5px 12px;text-decoration:none;">
+                        CEWPOS Repository &rarr;
+                      </a>
+                      <button class="btn btn-ghost" onclick="replayDemoVideo()" style="font-size:11.5px;padding:5px 12px;">
+                        ↺ Replay
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Clickable Chapters Timeline Bar -->
+            <div class="demo-chapters-bar">
+              <span style="font-size:11px;color:#78909C;font-weight:500;">Chapters:</span>
+              <button class="demo-chapter-btn" onclick="seekDemoVideo(0)">0:00 Setup</button>
+              <button class="demo-chapter-btn" onclick="seekDemoVideo(15)">0:15 Consent</button>
+              <button class="demo-chapter-btn" onclick="seekDemoVideo(35)">0:35 Peering</button>
+              <button class="demo-chapter-btn" onclick="seekDemoVideo(45)">0:45 Multi-User Chat</button>
+              <button class="demo-chapter-btn" onclick="seekDemoVideo(68)">1:08 Video Call 👋</button>
+              <button class="demo-chapter-btn" onclick="seekDemoVideo(96)">1:36 Receipts ☰</button>
+              <button class="demo-chapter-btn" onclick="showDemoEndOverlay()" style="color:#80D8FF;border-color:rgba(128,216,255,0.4);">
+                1:42 Explore &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const video = document.getElementById("demoVideoElement");
+      const captionOverlay = document.getElementById("demoCaptionOverlay");
+
+      if (video) {
+        video.addEventListener("timeupdate", () => {
+          const cur = video.currentTime;
+          const match = DEMO_CAPTIONS.find(c => cur >= c.start && cur < c.end);
+          if (match && captionOverlay) {
+            captionOverlay.textContent = match.text;
+            captionOverlay.style.opacity = "1";
+          }
+        });
+
+        video.addEventListener("ended", () => {
+          showDemoEndOverlay();
+        });
+      }
+    }
+
+    function showDemoEndOverlay() {
+      const endScreen = document.getElementById("demoEndScreen");
+      const captionOverlay = document.getElementById("demoCaptionOverlay");
+      if (captionOverlay) captionOverlay.style.opacity = "0";
+      if (endScreen) {
+        endScreen.style.display = "flex";
+      }
+      const video = document.getElementById("demoVideoElement");
+      if (video && !video.paused) {
+        video.pause();
+      }
+    }
+
+    function replayDemoVideo() {
+      const endScreen = document.getElementById("demoEndScreen");
+      if (endScreen) endScreen.style.display = "none";
+      const video = document.getElementById("demoVideoElement");
+      if (video) {
+        video.currentTime = 0;
+        video.play();
+      }
+    }
+
+    function seekDemoVideo(sec) {
+      const endScreen = document.getElementById("demoEndScreen");
+      if (endScreen) endScreen.style.display = "none";
+      const video = document.getElementById("demoVideoElement");
+      if (video) {
+        video.currentTime = sec;
+        video.play();
+      }
+    }
+
+    function closeDemoVideoModal() {
+      const host = document.getElementById("demoVideoHost");
+      if (host) host.innerHTML = "";
+    }
+
     renderAll();
     syncLiveNode();
     initHolonEngineAssets();
+
+    // Auto-launch demo modal if ?demo=1 or on first visit without query params
+    if (urlParams.get("demo") === "1" || urlParams.get("demo") === "true") {
+      setTimeout(() => {
+        openDemoVideoModal();
+      }, 500);
+    }
 
     // Start On-Rails Animated Tour only if explicitly requested via ?tour=1
     if (urlParams.get("tour") === "1" || urlParams.get("tour") === "true") {
