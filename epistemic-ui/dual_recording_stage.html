@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>CEWPOS Live Dual-Occurrence Demonstration — Occurrence 1 (Alice) & Occurrence 2 (Bob)</title>
+  <style>
+    :root {
+      --bg: #0d0f12;
+      --card-bg: #14181d;
+      --border: #232a32;
+      --accent: #2e7d32;
+      --accent-glow: rgba(46, 125, 50, 0.35);
+      --amber: #e65100;
+      --cyan: #00838f;
+      --text: #e0e4ea;
+      --text-muted: #8892a0;
+      --mono: "IBM Plex Mono", "JetBrains Mono", monospace;
+      --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+    }
+    #stageContainer {
+      display: flex;
+      flex-direction: column;
+      width: 1920px;
+      height: 1080px;
+      background: var(--bg);
+    }
+
+    /* ── Top Architectural Header Bar (56px) ── */
+    #topHeader {
+      height: 56px;
+      background: #11151a;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      flex-shrink: 0;
+    }
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #fff;
+    }
+    .brand-tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      background: rgba(255,255,255,0.08);
+      padding: 3px 8px;
+      border-radius: 4px;
+      color: #b0bec5;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .protocol-chips {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chip {
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .chip-green {
+      background: rgba(46, 125, 50, 0.15);
+      color: #66bb6a;
+      border: 1px solid rgba(76, 175, 80, 0.35);
+    }
+    .chip-cyan {
+      background: rgba(0, 131, 143, 0.15);
+      color: #4dd0e1;
+      border: 1px solid rgba(0, 188, 212, 0.35);
+    }
+    .chip-amber {
+      background: rgba(230, 81, 0, 0.15);
+      color: #ffa726;
+      border: 1px solid rgba(255, 152, 0, 0.35);
+    }
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #4caf50;
+      box-shadow: 0 0 8px #4caf50;
+      display: inline-block;
+    }
+
+    /* ── Dual Split Body (970px) ── */
+    #dualBody {
+      display: flex;
+      flex: 1;
+      height: calc(1080px - 56px - 54px);
+      width: 1920px;
+    }
+    .occurrence-pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background: #000;
+    }
+    .occurrence-pane:first-child {
+      border-right: 2px solid var(--border);
+    }
+    .pane-bar {
+      height: 38px;
+      background: #14181f;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      font-size: 12px;
+      font-family: var(--mono);
+      color: #cfd8dc;
+      flex-shrink: 0;
+    }
+    .pane-badge {
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10.5px;
+      font-weight: 600;
+    }
+    .badge-alice {
+      background: rgba(78, 143, 222, 0.2);
+      color: #90caf9;
+      border: 1px solid rgba(78, 143, 222, 0.4);
+    }
+    .badge-bob {
+      background: rgba(222, 126, 78, 0.2);
+      color: #ffcc80;
+      border: 1px solid rgba(222, 126, 78, 0.4);
+    }
+    .pane-frame-wrap {
+      flex: 1;
+      width: 100%;
+      height: calc(100% - 38px);
+      position: relative;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* ── Bottom HUD / Telemetry Ticker (54px) ── */
+    #bottomHud {
+      height: 54px;
+      background: #0f1216;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      font-family: var(--mono);
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+    .hud-phase {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .hud-step-pill {
+      background: #232a32;
+      color: #fff;
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 11px;
+    }
+    .hud-message {
+      color: #eceff1;
+      font-size: 12.5px;
+    }
+    .hud-metrics {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: #78909c;
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+  <div id="stageContainer">
+    <!-- Top Architectural Header Bar -->
+    <header id="topHeader">
+      <div class="brand-section">
+        <span class="status-dot"></span>
+        <span class="brand-title">CEWPOS · CIRIS Epistemic Web Platform OS</span>
+        <span class="brand-tag">v0.5.245</span>
+      </div>
+      <div class="protocol-chips">
+        <span class="chip chip-green">PQC: Ed25519 + ML-DSA-65</span>
+        <span class="chip chip-cyan">Reticulum Mesh: 0.0.0.0:4242 ↔ 4244</span>
+        <span class="chip chip-amber">MLS TreeKEM Ciphertext</span>
+        <span class="chip chip-green">12 Closed UX Primitives (P1–P12)</span>
+      </div>
+    </header>
+
+    <!-- Dual Split Body -->
+    <main id="dualBody">
+      <!-- Occurrence 1: Alice -->
+      <section class="occurrence-pane" id="paneOcc1">
+        <div class="pane-bar">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="pane-badge badge-alice">OCCURRENCE 1</span>
+            <strong>Alice</strong> &middot; Founder Sovereign Node
+          </div>
+          <div style="color:#78909c;">
+            UI: <code style="color:#90caf9;">:8787</code> &middot; RET: <code>4242</code> &middot; Read API: <code>:4243</code>
+          </div>
+        </div>
+        <div class="pane-frame-wrap">
+          <iframe id="frameOcc1" src="http://127.0.0.1:8787/?setup=1"></iframe>
+        </div>
+      </section>
+
+      <!-- Occurrence 2: Bob -->
+      <section class="occurrence-pane" id="paneOcc2">
+        <div class="pane-bar">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="pane-badge badge-bob">OCCURRENCE 2</span>
+            <strong>Bob</strong> &middot; Peer Sovereign Node
+          </div>
+          <div style="color:#78909c;">
+            UI: <code style="color:#ffcc80;">:8788</code> &middot; RET: <code>4244</code> &middot; Read API: <code>:4245</code>
+          </div>
+        </div>
+        <div class="pane-frame-wrap">
+          <iframe id="frameOcc2" src="http://127.0.0.1:8788/?setup=1"></iframe>
+        </div>
+      </section>
+    </main>
+
+    <!-- Bottom HUD / Telemetry Ticker -->
+    <footer id="bottomHud">
+      <div class="hud-phase">
+        <span class="hud-step-pill" id="hudStepBadge">STEP 1/6</span>
+        <span class="hud-message" id="hudMessage">Dual Occurrence Bootstrapping & First-Run Wizard Enrollment</span>
+      </div>
+      <div class="hud-metrics">
+        <span>Substrate: <strong>SQLite Engine v59.1.2</strong></span>
+        <span>Transport: <strong>ciris-edge v43.4.1</strong></span>
+        <span>Scene: <strong>3D Bevy Spatial Holon</strong></span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Exposed helper to update HUD text from automated recording driver
+    window.updateHud = function(stepText, messageText) {
+      const b = document.getElementById("hudStepBadge");
+      const m = document.getElementById("hudMessage");
+      if (b) b.textContent = stepText;
+      if (m) m.textContent = messageText;
+    };
+  </script>
+</body>
+</html>

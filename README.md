@@ -334,7 +334,17 @@ This automated harness exercises 10 live ceremony steps:
 9. **Live Two-Way Mesh Messaging**: Posts and reads real MLS-encrypted messages across the nodes (`POST` / `GET /v1/chat/{community_id}/messages`).
 10. **Sovereign Drive & 3D Bevy Holon Scenes**: Verifies FSD file custody (`/v1/drive`) and 3D spatial scene projection (`/cewpos/v1/scene` and `/cewpos/v1/wizard-deferrals`).
 
-#### Option C: Run Full CSD/4 Formal UI Conformance & Tree Verification
+#### Option C: Live Screen Recording Video Harness & Pre-Recorded Walkthrough
+An automated dual-occurrence screen recording harness runs headless Google Chrome (1920×1080) at human demo speed using Playwright, capturing the entire end-to-end setup and mesh communication sequence in a single high-definition MP4:
+```bash
+# Record live demo across Occurrence 1 (:8787) & Occurrence 2 (:8788)
+python3 epistemic-ui/record_demo.py
+```
+The pre-recorded video is saved in repository artifacts:
+- **Video Walkthrough Artifact**: [`artifacts/cewpos_live_demo.mp4`](artifacts/cewpos_live_demo.mp4) (1080p · 25 fps · H.264/AAC · ~9.1 MB · 1m 38s).
+- Covers Genesis setup wizard (`CSD-080`..`CSD-085`), adult age-band custody, telemetry consent, local keyless AI bonding, 0600 `claim_pin` sealing, Reticulum mesh transport peering (`0.0.0.0:4242 ↔ 4244`), live two-way chat messaging in Neighbours Circle, Sovereign FSD Drive, and Universal CEG Receipts (`☰` / `P4`).
+
+#### Option D: Run Full CSD/4 Formal UI Conformance & Tree Verification
 ```bash
 # Verify the 12 closed UX primitives, 1+4 CEG grammar, and CSD/4 tree
 python3 epistemic-ui/algebra_engine.py
