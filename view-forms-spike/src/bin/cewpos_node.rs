@@ -82,6 +82,11 @@ async fn main() -> anyhow::Result<()> {
         .unwrap_or_else(|_| PathBuf::from("/tmp/ciris_cewpos_243"));
     let key_id = std::env::var("CIRIS_KEY_ID").unwrap_or_else(|_| "cewpos-243-node".to_string());
     ciris_server::init_tracing_with(Some(&home.join("logs")));
-    let cfg = ServerConfig::from_home(home, key_id)?;
+    let mut cfg = ServerConfig::from_home(home, key_id)?;
+    if let Ok(addr_str) = std::env::var("CIRIS_LISTEN_ADDR") {
+        if let Ok(addr) = addr_str.parse::<std::net::SocketAddr>() {
+            cfg.listen_addr = addr;
+        }
+    }
     serve_with_adapter(cfg, std::sync::Arc::new(CewposFullStackAdapter)).await
 }
