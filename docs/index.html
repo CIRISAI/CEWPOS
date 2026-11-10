@@ -1262,6 +1262,322 @@
       font-family: var(--mono);
       font-size: 11.5px;
     }
+
+    /* ── Multi-User Chat & Room Surfaces (CSD-091, CSD-103, CSD-110) ── */
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transform-style: preserve-3d;
+    }
+    .chat-room-nav {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      overflow-x: auto;
+      padding: 4px 2px;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .chat-room-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.75);
+      border: 1px solid rgba(228, 224, 214, 0.90);
+      border-radius: 12px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 4px 16px rgba(20, 20, 19, 0.03);
+    }
+    .chat-room-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .chat-room-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--obsidian);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chat-room-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chat-call-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(46, 125, 90, 0.12);
+      color: #246B4E;
+      border: 1px solid rgba(46, 125, 90, 0.35);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.16s ease;
+      box-shadow: 0 2px 6px rgba(46, 125, 90, 0.08);
+    }
+    .chat-call-btn:hover {
+      background: rgba(46, 125, 90, 0.22);
+      border-color: #246B4E;
+      transform: translateY(-1px);
+    }
+    .chat-members-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(20, 20, 19, 0.05);
+      border: 1px solid rgba(228, 224, 214, 0.85);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12px;
+      color: var(--obsidian);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .chat-members-btn:hover {
+      background: rgba(20, 20, 19, 0.08);
+      border-color: var(--brand);
+    }
+    .chat-roster-drawer {
+      background: rgba(246, 244, 239, 0.95);
+      border: 1px solid rgba(210, 204, 192, 0.85);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      animation: fadeIn 0.2s ease;
+    }
+    .chat-roster-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .chat-roster-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      background: #fff;
+      border: 1px solid var(--hairline);
+      border-radius: 8px;
+      font-size: 12px;
+    }
+    .chat-message-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 440px;
+      overflow-y: auto;
+      padding: 8px 4px;
+    }
+    .chat-msg-card {
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(228, 224, 214, 0.85);
+      border-radius: 10px;
+      padding: 10px 14px;
+      position: relative;
+      transition: transform 0.16s ease, border-color 0.16s ease;
+    }
+    .chat-msg-card:hover {
+      border-color: rgba(31, 94, 122, 0.4);
+      transform: translate3d(0, -1px, 4px);
+    }
+    .chat-msg-card.mine {
+      background: rgba(234, 243, 248, 0.85);
+      border-color: rgba(31, 94, 122, 0.25);
+    }
+    .chat-msg-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--ink-mute);
+      margin-bottom: 4px;
+    }
+    .chat-msg-author {
+      font-weight: 600;
+      color: var(--obsidian);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .chat-msg-body {
+      font-size: 13.5px;
+      color: var(--obsidian);
+      line-height: 1.45;
+      white-space: pre-wrap;
+    }
+
+    /* ── CSD-134 Video & Voice Calls (3D Spatial Call Stage) ── */
+    .call-stage-card {
+      background: rgba(18, 20, 22, 0.94);
+      color: #F0EDE6;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 16px 20px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+      transform-style: preserve-3d;
+      animation: fadeIn 0.22s ease-out;
+    }
+    .call-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+    }
+    .call-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(46, 125, 90, 0.25);
+      color: #5BE8A5;
+      border: 1px solid rgba(91, 232, 165, 0.4);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: var(--mono);
+      letter-spacing: 0.02em;
+    }
+    .call-status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #5BE8A5;
+      animation: pulseGreen 1.4s infinite;
+    }
+    @keyframes pulseGreen {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.2); }
+    }
+    .call-disclaimer-box {
+      margin: 12px 0;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 12px;
+      color: #C0BCB4;
+    }
+    .call-video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin: 14px 0;
+      perspective: 1200px;
+    }
+    .call-video-tile {
+      position: relative;
+      background: #141618;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      overflow: hidden;
+      aspect-ratio: 16 / 10;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 10px 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      transform: translate3d(0, 0, 8px);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .call-video-tile:hover {
+      transform: translate3d(0, -3px, 18px);
+      border-color: rgba(91, 232, 165, 0.45);
+    }
+    .call-video-tile.speaking {
+      border-color: #5BE8A5;
+      box-shadow: 0 0 16px rgba(91, 232, 165, 0.3);
+    }
+    .call-tile-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 2;
+    }
+    .call-tile-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .call-tile-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      opacity: 0.85;
+    }
+    .call-tile-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 2;
+      font-size: 11px;
+      color: #A09C94;
+    }
+    .call-controls-dock {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 14px 0 4px;
+      border-top: 1px solid rgba(255, 255, 255, 0.10);
+      margin-top: 8px;
+    }
+    .call-ctrl-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.08);
+      color: #F0EDE6;
+      transition: all 0.16s ease;
+      transform: translate3d(0, 0, 6px);
+    }
+    .call-ctrl-btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+      transform: translate3d(0, -2px, 12px);
+    }
+    .call-ctrl-btn.active-off {
+      background: rgba(184, 35, 35, 0.25);
+      border-color: rgba(184, 35, 35, 0.6);
+      color: #FF8585;
+    }
+    .call-leave-btn {
+      background: #B82323;
+      color: #fff;
+      border: 1px solid #941B1B;
+      box-shadow: 0 4px 12px rgba(184, 35, 35, 0.4);
+    }
+    .call-leave-btn:hover {
+      background: #D92B2B;
+      transform: translate3d(0, -2px, 14px);
+    }
   </style>
 </head>
 <body>
@@ -1346,12 +1662,14 @@
       { id: "f_all_1", tab: "Files", scope: "Everyone", op: "scores", dimension: "holds_bytes:ciris-constitution-rc9.pdf", title: "ciris-constitution-rc9.pdf", score: 0.99, confidence: 0.99, subject: "ed25519:ciris_root", attester: "ed25519:viewer_self" },
 
       // CHATS
-      { id: "c_self_1", tab: "Chats", scope: "JustMe", op: "scores", dimension: "message:note_to_self", title: "Note: Remember to rotate backup key on Sunday", score: 0.5, confidence: 1.0, subject: "ed25519:viewer_self", attester: "ed25519:viewer_self" },
-      { id: "c_fam_1", tab: "Chats", scope: "Family", op: "scores", dimension: "message:family_room", title: "Mom: Dinner at 7pm tonight?", score: 0.9, confidence: 1.0, subject: "ed25519:family_group", attester: "ed25519:mom" },
-      { id: "c_fam_2", tab: "Chats", scope: "Family", op: "scores", dimension: "message:family_room", title: "Sam: I'll bring the salad", score: 0.85, confidence: 1.0, subject: "ed25519:family_group", attester: "ed25519:sam" },
-      { id: "c_nei_1", tab: "Chats", scope: "Neighbours", op: "scores", dimension: "message:oak_street", title: "Dan: Borrowed the ladder, returning by 5pm", score: 0.8, confidence: 0.95, subject: "ed25519:oak_street", attester: "ed25519:neighbour_dan" },
-      { id: "c_com_1", tab: "Chats", scope: "CommunitiesAndBusinesses", op: "scores", dimension: "message:solar_coop", title: "Maya: Roof panel inspection passed!", score: 0.95, confidence: 0.98, subject: "ed25519:solar_coop", attester: "ed25519:steward_maya" },
-      { id: "c_all_1", tab: "Chats", scope: "Everyone", op: "scores", dimension: "message:commons_townhall", title: "Townhall: CC rc9 formal verification suite is green", score: 0.92, confidence: 0.96, subject: "ed25519:ciris_root", attester: "ed25519:steward_maya" },
+      { id: "c_self_1", tab: "Chats", scope: "JustMe", op: "scores", dimension: "message:notes_self", title: "Note: Remember to rotate backup key on Sunday", score: 0.5, confidence: 1.0, subject: "community:notes_self", attester: "ed25519:viewer_self" },
+      { id: "c_fam_1", tab: "Chats", scope: "Family", op: "scores", dimension: "message:family_hearth", title: "Mom: Dinner at 7pm tonight?", score: 0.9, confidence: 1.0, subject: "community:family_hearth", attester: "ed25519:mom" },
+      { id: "c_fam_2", tab: "Chats", scope: "Family", op: "scores", dimension: "message:family_hearth", title: "Sam: I'll bring the salad", score: 0.85, confidence: 1.0, subject: "community:family_hearth", attester: "ed25519:sam" },
+      { id: "c_nei_1", tab: "Chats", scope: "Neighbours", op: "scores", dimension: "message:oak_street", title: "Dan: Borrowed the ladder, returning by 5pm", score: 0.8, confidence: 0.95, subject: "community:oak_street", attester: "ed25519:neighbour_dan" },
+      { id: "c_com_1", tab: "Chats", scope: "CommunitiesAndBusinesses", op: "scores", dimension: "message:solar_coop", title: "Maya: Roof panel inspection passed!", score: 0.95, confidence: 0.98, subject: "community:solar_coop", attester: "ed25519:steward_maya" },
+      { id: "c_gen_1", tab: "Chats", scope: "CommunitiesAndBusinesses", op: "scores", dimension: "message:general", title: "Ada: Welcome to the new multi-user chat room!", score: 0.96, confidence: 0.99, subject: "community:general", attester: "ed25519:ada" },
+      { id: "c_gen_2", tab: "Chats", scope: "CommunitiesAndBusinesses", op: "scores", dimension: "message:general", title: "Maya: Video calls are live over Reticulum live_stream too.", score: 0.95, confidence: 0.98, subject: "community:general", attester: "ed25519:steward_maya" },
+      { id: "c_all_1", tab: "Chats", scope: "Everyone", op: "scores", dimension: "message:commons_townhall", title: "Townhall: CC rc9 formal verification suite is green", score: 0.92, confidence: 0.96, subject: "community:commons_townhall", attester: "ed25519:steward_maya" },
 
       // PEOPLE
       { id: "p_self_1", tab: "People", scope: "JustMe", op: "scores", dimension: "self_roster:laptop_key", title: "Founder Laptop A1 (ed25519 + ML-DSA-65)", score: 1.0, confidence: 1.0, subject: "ed25519:viewer_self", attester: "ed25519:viewer_self" },
@@ -1387,7 +1705,7 @@
 
     const CEREMONIES_BY_CIRCLE = {
       JustMe: { title: "Add Mobile Device key to self-roster", policy: "self_roster_add (24h W_self window · quorum or lone path)", need: 2 },
-      Family: { title: "Renew Family Helper AI steward bond", policy: "custodian_replace (2-of-2 cosigned · 365d review)", need: 2 },
+      Family: { title: "Renew Family Storage Custody Agreement", policy: "custodian_replace (2-of-2 cosigned · 365d review)", need: 2 },
       Neighbours: { title: "Invite Priya to Neighbours circle", policy: "community_invite (>2/3 + invitee acceptance · 72h)", need: 3 },
       CommunitiesAndBusinesses: { title: "Approve Q4 Solar Co-op budget", policy: "default_standing (>2/3 enact · >=1/3 brake · 72h)", need: 4 },
       Everyone: { title: "Confirm v4 genesis hardware amend", policy: "default_irreversible (>2/3 after 7d window only)", need: 5 },
@@ -1401,7 +1719,7 @@
       circleId: "JustMe",
       tab: "Files",
       instrumentId: urlParams.get("instrument") || null,
-      hasAgent: true,
+      hasAgent: false,
       halted: false,
       blurEnabled: true,
       expandedIds: {},
@@ -1418,7 +1736,7 @@
       wizard: {
         step: "YOU",                  // YOU | JOIN_FEDERATION | AI | COMPLETE
         identityPath: null,           // null | 'NEW' | 'ADD_THIS_DEVICE' (unbiased at launch!)
-        runWithAi: true,              // true (3 steps) | false (2 steps, CSD-083)
+        runWithAi: false,             // false: pure epistemic client (2 steps, CSD-083)
         fedidLabel: "",               // rejects 'ciris-client-user'
         deviceName: "Personal Device",
         hardwareCustody: true,
@@ -1479,9 +1797,79 @@
       // ── Live v0.5.245 OwnerRequests (`GET /v1/self/owner-requests` — Single-Person Votes) ──
       ownerRequests: [],
 
-      // ── Live v0.5.245 Communities & Chat Rooms (`GET/POST /v1/communities`) ──
-      communities: [],
-      activeCommunityId: null,
+      // ── Live v0.5.245 Communities, Multi-User Chat & Live Calls (`CSD-091`, `CSD-103`, `CSD-110`, `CSD-134`) ──
+      communities: [
+        {
+          id: "general",
+          name: "General Community",
+          tier: "community",
+          kind: "room",
+          scope: "CommunitiesAndBusinesses",
+          founded_at: "2026-09-01T00:00:00Z",
+          members: [
+            { key_id: "ed25519:viewer_self", name: "You", role: "founder", joined_at: "2026-09-01T00:00:00Z" },
+            { key_id: "ed25519:steward_maya", name: "Maya", role: "member", joined_at: "2026-09-01T00:00:00Z" },
+            { key_id: "ed25519:sam", name: "Sam", role: "member", joined_at: "2026-09-02T00:00:00Z" },
+            { key_id: "ed25519:ada", name: "Ada", role: "member", joined_at: "2026-09-05T00:00:00Z" },
+          ],
+          moderator: "ed25519:viewer_self",
+        },
+        {
+          id: "solar_coop",
+          name: "Solar Co-op",
+          tier: "community",
+          kind: "room",
+          scope: "CommunitiesAndBusinesses",
+          founded_at: "2026-09-01T00:00:00Z",
+          members: [
+            { key_id: "ed25519:viewer_self", name: "You", role: "member", joined_at: "2026-09-01T00:00:00Z" },
+            { key_id: "ed25519:steward_maya", name: "Maya", role: "founder", joined_at: "2026-09-01T00:00:00Z" },
+          ],
+          moderator: "ed25519:steward_maya",
+        },
+        {
+          id: "oak_street",
+          name: "Oak Street Neighbours",
+          tier: "community",
+          kind: "room",
+          scope: "Neighbours",
+          founded_at: "2026-09-01T00:00:00Z",
+          members: [
+            { key_id: "ed25519:viewer_self", name: "You", role: "member", joined_at: "2026-09-01T00:00:00Z" },
+            { key_id: "ed25519:neighbour_dan", name: "Dan", role: "founder", joined_at: "2026-09-01T00:00:00Z" },
+          ],
+          moderator: "ed25519:neighbour_dan",
+        },
+        {
+          id: "family_hearth",
+          name: "Family Hearth",
+          tier: "community",
+          kind: "room",
+          scope: "Family",
+          founded_at: "2026-09-01T00:00:00Z",
+          members: [
+            { key_id: "ed25519:viewer_self", name: "You", role: "founder", joined_at: "2026-09-01T00:00:00Z" },
+            { key_id: "ed25519:mom", name: "Mom", role: "member", joined_at: "2026-09-01T00:00:00Z" },
+            { key_id: "ed25519:sam", name: "Sam", role: "member", joined_at: "2026-09-01T00:00:00Z" },
+          ],
+          moderator: "ed25519:mom",
+        },
+        {
+          id: "notes_self",
+          name: "Personal Notes",
+          tier: "community",
+          kind: "pair",
+          scope: "JustMe",
+          founded_at: "2026-09-01T00:00:00Z",
+          members: [
+            { key_id: "ed25519:viewer_self", name: "You", role: "founder", joined_at: "2026-09-01T00:00:00Z" },
+          ],
+          moderator: "ed25519:viewer_self",
+        },
+      ],
+      activeCommunityId: "general",
+      showRosterDrawer: false,
+      activeCall: null,
       newCommunityName: "",
       chatAttachmentId: "",
       lastHamburgerNote: null,
@@ -1541,6 +1929,11 @@
       state.setupMode = false;
       state.circleId = id;
       state.instrumentId = null;
+      state.showRosterDrawer = false;
+      const matchingComm = state.communities.find(c => (c.scope || c.cohort) === id);
+      if (matchingComm) {
+        state.activeCommunityId = matchingComm.id;
+      }
       renderAll();
     }
 
@@ -1548,6 +1941,13 @@
       state.setupMode = false;
       state.tab = tab;
       state.instrumentId = null;
+      state.showRosterDrawer = false;
+      if (tab === "Chats") {
+        const matchingComm = state.communities.find(c => (c.scope || c.cohort) === state.circleId);
+        if (matchingComm && (!state.activeCommunityId || !state.communities.some(c => c.id === state.activeCommunityId && (c.scope || c.cohort) === state.circleId))) {
+          state.activeCommunityId = matchingComm.id;
+        }
+      }
       renderAll();
     }
 
@@ -1589,6 +1989,7 @@
     function openMyThingsSheet() {
       const pendingCount = answerableProposalCount();
       const host = document.getElementById("sheetHost");
+      const availableInstruments = INSTRUMENTS.filter(inst => !inst.requiresAgent);
       host.innerHTML = `
         <div class="sheet-backdrop" onclick="if(event.target===this)closeSheet()">
           <div class="sheet" data-csd-tag="sheet_my_things">
@@ -1597,7 +1998,7 @@
               <button class="btn-ghost" onclick="closeSheet()">&#10005;</button>
             </div>
             <div class="card" style="padding:0 14px;">
-              ${INSTRUMENTS.map(inst => `
+              ${availableInstruments.map(inst => `
                 <div class="item-row" style="cursor:pointer;" data-csd-tag="inst_${inst.id}" onclick="selectInstrument('${inst.id}')">
                   <div>
                     <div class="item-title">
@@ -1613,10 +2014,6 @@
                   <span class="btn-ghost">&rsaquo;</span>
                 </div>
               `).join("")}
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--ink-mute); padding:6px 2px;">
-              <span>Attached node has AI agent (<code>has_agent</code>)</span>
-              <input type="checkbox" ${state.hasAgent ? 'checked' : ''} onchange="state.hasAgent=this.checked; closeSheet(); renderAll();" />
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--ink-mute); padding:6px 2px; border-top:1px solid var(--hairline); margin-top:4px;">
               <span>Fresh node First-Run Wizard</span>
@@ -2134,6 +2531,7 @@
       const step2Settled = w.traceConsent !== null;
       const step3Settled = !w.runWithAi || w.llmStatus === "ok" || w.step === "COMPLETE";
       const step4Settled = w.ownershipState === "claimed" || (w.identityPath === "ADD_THIS_DEVICE" && w.addDeviceStatus === "approved");
+      const totalSteps = w.runWithAi ? 4 : 3;
 
       return [
         {
@@ -2142,7 +2540,7 @@
           canvasTag: "csd_080_holon_wizard_3d",
           stageTag: "wiz_p9_stage_you",
           receiptId: w.identityPath === "ADD_THIS_DEVICE" ? "setup_add_device" : "setup_new_identity",
-          contextTitle: "Choice 1/4 · Identity & Posture",
+          contextTitle: `Choice 1/${totalSteps} · Root Identity`,
           contextSubtitle: `Who is setting up this device? (${handle})`,
           dimension: "deferral:setup:identity_root",
           scope: "JustMe",
@@ -2204,7 +2602,7 @@
           canvasTag: "csd_080_holon_wizard_3d",
           stageTag: "wiz_p9_stage_consent",
           receiptId: "setup_consent_replication",
-          contextTitle: "Choice 2/4 · Federation & Trace Sharing",
+          contextTitle: `Choice 2/${totalSteps} · Federation & Trace Sharing`,
           contextSubtitle: "Nothing leaves Just me without an explicit decision",
           dimension: "deferral:setup:consent_disclosure",
           scope: w.traceConsent ? "Everyone" : "JustMe",
@@ -2242,7 +2640,7 @@
             },
           ],
         },
-        {
+        ...(w.runWithAi ? [{
           deferralId: "wiz_deferral_3_steward_bond",
           stepKey: "AI",
           canvasTag: "csd_080_holon_wizard_3d",
@@ -2285,14 +2683,14 @@
               onClickJs: "wizardCast3DVote('choice_bond_node_only')",
             },
           ],
-        },
+        }] : []),
         {
           deferralId: "wiz_deferral_4_claim_node",
           stepKey: "COMPLETE",
           canvasTag: "csd_080_holon_wizard_3d",
           stageTag: "wiz_p9_stage_complete",
           receiptId: "setup_owner_claim",
-          contextTitle: "Choice 4/4 · Claim Node Ownership",
+          contextTitle: `Choice ${totalSteps}/${totalSteps} · Claim Node Ownership`,
           contextSubtitle: `Bind SYSTEM_ADMIN via 0600 claim_pin (${state.liveNode.keyId})`,
           dimension: "deferral:setup:claim_remote",
           scope: "JustMe",
@@ -2472,13 +2870,14 @@
       // Dynamic lookup for communities, owner requests, or 3D holon orbs
       if (claimId.startsWith("comm_")) {
         const cid = claimId.replace("comm_", "");
-        const comm = state.communities.find(c => c.id === cid) || { id: cid, name: cid, cohort: "CommunitiesAndBusinesses", moderator: "ed25519:viewer_self" };
+        const comm = state.communities.find(c => c.id === cid) || { id: cid, name: cid, scope: "CommunitiesAndBusinesses", moderator: "ed25519:viewer_self" };
         return {
           id: claimId,
+          tab: "Chats",
           title: `Community Room: ${comm.name}`,
           subject: `community:${comm.id}`,
-          attester: comm.moderator,
-          scope: comm.cohort || "CommunitiesAndBusinesses",
+          attester: comm.moderator || "ed25519:viewer_self",
+          scope: comm.scope || comm.cohort || "CommunitiesAndBusinesses",
           dimension: "community:genesis:v1",
           op: "scores",
           score: 1.0,
@@ -3123,7 +3522,9 @@
       // Project the First-Run Wizard as a series of 4 CEWP Choices
       const wizDeferrals = buildWizardDeferralVotes();
       const activeDv = wizDeferrals.find(d => d.stepKey === w.step) || wizDeferrals[0];
-      const stepNames = ["Identity & Posture", "Network & Consent", "AI & Stewardship", "Ownership Claim"];
+      const stepNames = w.runWithAi
+        ? ["Identity & Posture", "Network & Consent", "AI & Stewardship", "Ownership Claim"]
+        : ["Root Identity", "Network & Consent", "Ownership Claim"];
       const deferralStepBarHtml = `
         <div style="display:flex;gap:6px;flex-wrap:wrap;padding:8px 0 14px;border-bottom:1px solid var(--hairline);margin-bottom:14px;" data-csd-tag="wiz_deferral_sequence_bar">
           ${wizDeferrals.map((d, idx) => `
@@ -3394,7 +3795,7 @@
           <div data-csd-tag="setup_step_you">
             ${identityPathChoiceHtml}
             ${lockedBannerHtml}
-            ${nodeModeChoiceHtml}
+            ${w.runWithAi ? nodeModeChoiceHtml : '<div style="display:none;" data-csd-tag="opt_run_with_ai opt_run_without_ai"></div>'}
             ${branchHtml}
             ${step1FooterHtml}
           </div>
@@ -4745,13 +5146,483 @@
       renderAll();
     }
 
+    function selectCommunity(cid) {
+      state.activeCommunityId = cid;
+      state.showRosterDrawer = false;
+      renderAll();
+    }
+
+    function toggleRosterDrawer() {
+      state.showRosterDrawer = !state.showRosterDrawer;
+      renderAll();
+    }
+
+    function openCallLaunchModal(roomId) {
+      const room = state.communities.find(c => c.id === roomId) || state.communities[0];
+      const host = document.getElementById("sheetHost");
+      host.innerHTML = `
+        <div class="sheet-backdrop" onclick="if(event.target===this)closeSheet()">
+          <div class="sheet" data-csd-tag="sheet_call_launch" style="max-width:540px;">
+            <div class="sheet-header">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:18px;">📞</span>
+                <span class="sheet-title">Start Call &middot; ${room.name}</span>
+              </div>
+              <button class="btn-ghost" onclick="closeSheet()">&#10005;</button>
+            </div>
+            <div style="padding:16px 20px;">
+              <div style="font-size:13.5px;color:var(--obsidian);line-height:1.5;margin-bottom:12px;">
+                Start an end-to-end encrypted call with the members of <strong>${room.name}</strong> over Reticulum live streams (<code>CC 5.3.3.2</code>).
+              </div>
+              <div class="call-disclaimer-box" data-csd-tag="proposed:txt_call_room_may_keep" style="margin-bottom:16px;">
+                <span>ℹ️ Others in this room may save their own streams; joining consents only to being in a room where others may keep their own streams (<code>CC 5.3.3.2.5</code>).</span>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;">
+                <button class="p9-selection-tile" data-csd-tag="btn_call_voice" onclick="closeSheet(); startCall('${room.id}', 'voice');">
+                  <div class="p9-tile-top">
+                    <span class="p9-tile-label">🎙️ Voice Call</span>
+                    <span class="chip ok">Audio Only</span>
+                  </div>
+                  <div class="p9-tile-sub">Starts audio stream. Asks for microphone permission at call entry.</div>
+                </button>
+                <button class="p9-selection-tile" data-csd-tag="btn_call_video" onclick="closeSheet(); startCall('${room.id}', 'video');">
+                  <div class="p9-tile-top">
+                    <span class="p9-tile-label">📹 Video Call</span>
+                    <span class="chip brand">Video &amp; Audio</span>
+                  </div>
+                  <div class="p9-tile-sub">Starts video &amp; audio stream. Requests microphone and camera.</div>
+                </button>
+              </div>
+              <div style="display:flex;justify-content:flex-end;margin-top:10px;">
+                <button class="btn" onclick="closeSheet()">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function startCall(roomId, mode) {
+      const room = state.communities.find(c => c.id === roomId) || state.communities[0];
+      const participants = [
+        { id: "self", name: "You (Local)", isSelf: true, audioActive: true, videoActive: mode === "video", color: "#1F5E7A" },
+      ];
+      if (room.members && room.members.length > 1) {
+        room.members.forEach(m => {
+          if (m.key_id !== "ed25519:viewer_self") {
+            participants.push({
+              id: m.key_id,
+              name: m.name,
+              isSelf: false,
+              audioActive: true,
+              videoActive: mode === "video",
+              color: m.name === "Maya" ? "#C96A38" : (m.name === "Sam" ? "#419CA0" : (m.name === "Dan" ? "#7A6FD6" : "#788C5D")),
+            });
+          }
+        });
+      } else {
+        participants.push(
+          { id: "maya", name: "Maya", isSelf: false, audioActive: true, videoActive: mode === "video", color: "#C96A38" },
+          { id: "sam", name: "Sam", isSelf: false, audioActive: true, videoActive: mode === "video", color: "#419CA0" }
+        );
+      }
+
+      if (state.activeCall && state.activeCall.timerInterval) {
+        clearInterval(state.activeCall.timerInterval);
+      }
+      if (state.activeCall && state.activeCall.animFrameId) {
+        cancelAnimationFrame(state.activeCall.animFrameId);
+      }
+
+      state.activeCall = {
+        roomId: room.id,
+        roomName: room.name,
+        mode: mode,
+        muted: false,
+        cameraOff: false,
+        startedAt: Date.now(),
+        participants: participants,
+        timerInterval: null,
+        animFrameId: null,
+      };
+
+      state.activeCall.timerInterval = setInterval(() => {
+        const statusEl = document.querySelector('[data-csd-tag="txt_call_status"]');
+        if (statusEl && state.activeCall) {
+          const elapsed = Math.floor((Date.now() - state.activeCall.startedAt) / 1000);
+          const m = String(Math.floor(elapsed / 60)).padStart(2, "0");
+          const s = String(elapsed % 60).padStart(2, "0");
+          statusEl.innerHTML = `<span class="call-status-dot"></span><span>LIVE CALL &middot; ${m}:${s}</span>`;
+        }
+      }, 1000);
+
+      renderAll();
+      setTimeout(initCallCanvasAnimations, 50);
+    }
+
+    function leaveCall() {
+      if (state.activeCall) {
+        if (state.activeCall.timerInterval) clearInterval(state.activeCall.timerInterval);
+        if (state.activeCall.animFrameId) cancelAnimationFrame(state.activeCall.animFrameId);
+        state.activeCall = null;
+      }
+      renderAll();
+    }
+
+    function toggleCallMute() {
+      if (!state.activeCall) return;
+      state.activeCall.muted = !state.activeCall.muted;
+      renderAll();
+      setTimeout(initCallCanvasAnimations, 50);
+    }
+
+    function toggleCallCamera() {
+      if (!state.activeCall) return;
+      state.activeCall.cameraOff = !state.activeCall.cameraOff;
+      renderAll();
+      setTimeout(initCallCanvasAnimations, 50);
+    }
+
+    let callAnimTime = 0;
+    function initCallCanvasAnimations() {
+      if (!state.activeCall) return;
+      const canvases = document.querySelectorAll(".call-tile-canvas");
+      if (!canvases.length) return;
+
+      function renderFrame() {
+        if (!state.activeCall) return;
+        callAnimTime += 0.05;
+        canvases.forEach(cvs => {
+          const ctx = cvs.getContext("2d");
+          if (!ctx) return;
+          const w = cvs.width;
+          const h = cvs.height;
+          const isSelf = cvs.id.includes("self");
+          const isCamOff = isSelf && state.activeCall.cameraOff;
+          const isMuted = isSelf && state.activeCall.muted;
+
+          ctx.clearRect(0, 0, w, h);
+
+          // Background gradient
+          const grad = ctx.createLinearGradient(0, 0, w, h);
+          if (isSelf) {
+            grad.addColorStop(0, "#0c1820");
+            grad.addColorStop(1, "#182c38");
+          } else {
+            grad.addColorStop(0, "#15181b");
+            grad.addColorStop(1, "#1f2428");
+          }
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, w, h);
+
+          if (isCamOff) {
+            ctx.fillStyle = "rgba(255,255,255,0.15)";
+            ctx.beginPath();
+            ctx.arc(w / 2, h / 2 - 10, 30, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = "#A09C94";
+            ctx.font = "12px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("Video Paused", w / 2, h / 2 + 35);
+            return;
+          }
+
+          // Subtle scanlines
+          ctx.strokeStyle = "rgba(255,255,255,0.03)";
+          ctx.lineWidth = 1;
+          for (let y = 0; y < h; y += 4) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(w, y);
+            ctx.stroke();
+          }
+
+          // Avatar silhouette in center
+          const seed = cvs.id.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
+          ctx.fillStyle = isSelf ? "rgba(31, 94, 122, 0.35)" : "rgba(120, 140, 93, 0.35)";
+          ctx.beginPath();
+          ctx.arc(w / 2, h / 2 - 12, 28, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = isSelf ? "#5BE8A5" : "#E2DDD2";
+          ctx.font = "bold 18px monospace";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          const initials = isSelf ? "YOU" : cvs.id.replace("canvas_call_", "").substring(0, 2).toUpperCase();
+          ctx.fillText(initials, w / 2, h / 2 - 12);
+
+          // Animated Audio Waveform
+          if (!isMuted) {
+            ctx.fillStyle = isSelf ? "rgba(91, 232, 165, 0.7)" : "rgba(201, 106, 56, 0.7)";
+            const bars = 18;
+            const barW = 4;
+            const gap = 3;
+            const startX = (w - (bars * (barW + gap))) / 2;
+            for (let b = 0; b < bars; b++) {
+              const freq = (callAnimTime * 2 + b * 0.4 + seed) % (Math.PI * 2);
+              const barH = 4 + Math.abs(Math.sin(freq)) * 22;
+              const x = startX + b * (barW + gap);
+              const y = h - 22 - barH;
+              ctx.fillRect(x, y, barW, barH);
+            }
+          }
+        });
+        state.activeCall.animFrameId = requestAnimationFrame(renderFrame);
+      }
+      state.activeCall.animFrameId = requestAnimationFrame(renderFrame);
+    }
+
+    function renderActiveCallScreen() {
+      const call = state.activeCall;
+      const elapsed = Math.floor((Date.now() - call.startedAt) / 1000);
+      const m = String(Math.floor(elapsed / 60)).padStart(2, "0");
+      const s = String(elapsed % 60).padStart(2, "0");
+      const participantNames = call.participants.map(p => p.name).join(", ");
+
+      return `
+        <div class="call-stage-card" data-csd-tag="proposed:call_screen">
+          <div class="call-top-bar">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <button class="btn" data-csd-tag="btn_call_back" onclick="leaveCall()">&larr; Room</button>
+              <span style="font-size:15px;font-weight:600;color:#fff;">${call.roomName}</span>
+              <div class="call-status-pill" data-csd-tag="txt_call_status">
+                <span class="call-status-dot"></span>
+                <span>LIVE CALL &middot; ${m}:${s}</span>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="font-size:12px;color:#C0BCB4;" data-csd-tag="proposed:call_participants">
+                👥 <strong>Participants:</strong> ${participantNames}
+              </div>
+              <div class="chip" data-csd-tag="txt_call_save_state" style="background:rgba(255,255,255,0.08);color:#A09C94;">
+                not saved
+              </div>
+            </div>
+          </div>
+
+          <!-- CC 4.5.13 Call Stream Saving Disclaimer Tile -->
+          <div class="call-disclaimer-box">
+            <div>
+              <span>Stream Retention Policy:</span>
+              <span class="mono-hint" data-csd-tag="txt_call_save_unavailable" style="color:#C0BCB4;margin-left:6px;">
+                Saving calls isn't ready yet (CIRISPersist#1067) &middot; Each person keeps only their own stream
+              </span>
+            </div>
+            <button class="btn" data-csd-tag="opt_call_save_mine" disabled style="opacity:0.5;font-size:11.5px;padding:3px 10px;">
+              Save my stream
+            </button>
+          </div>
+
+          <!-- 3D Perspective Video Grid -->
+          <div class="call-video-grid">
+            ${call.participants.map((p, idx) => `
+              <div class="call-video-tile ${!call.muted && p.isSelf ? 'speaking' : (!p.isSelf && idx === 1 ? 'speaking' : '')}" id="call_tile_${p.id}">
+                <canvas class="call-tile-canvas" id="canvas_call_${p.id}" width="320" height="200"></canvas>
+                <div class="call-tile-header">
+                  <span class="call-tile-name">
+                    <span class="circle-dot" style="background:${p.color};width:8px;height:8px;"></span>
+                    <span>${p.name}</span>
+                  </span>
+                  <span class="chip" style="font-size:10px;padding:2px 6px;background:rgba(0,0,0,0.5);color:#fff;">
+                    ${p.isSelf && call.cameraOff ? 'Video paused' : (call.mode === 'video' ? '1080p live' : 'Audio stream')}
+                  </span>
+                </div>
+                <div class="call-tile-footer">
+                  <span>${p.isSelf ? (call.muted ? '🔇 Muted' : '🎙️ Live Mic') : '🔒 ML-DSA-65 encrypted'}</span>
+                  <span>${p.isSelf ? 'This Device' : 'Reticulum peer'}</span>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+
+          <!-- Tactile Floating Control Dock -->
+          <div class="call-controls-dock">
+            <button class="call-ctrl-btn ${call.muted ? 'active-off' : ''}" data-csd-tag="btn_call_mute" onclick="toggleCallMute()">
+              <span>${call.muted ? '🔇' : '🎙️'}</span>
+              <span>${call.muted ? 'Unmute' : 'Mute'}</span>
+            </button>
+            ${call.mode === 'video' ? `
+              <button class="call-ctrl-btn ${call.cameraOff ? 'active-off' : ''}" data-csd-tag="btn_call_camera" onclick="toggleCallCamera()">
+                <span>${call.cameraOff ? '🚫' : '📹'}</span>
+                <span>${call.cameraOff ? 'Camera On' : 'Camera Off'}</span>
+              </button>
+            ` : ''}
+            <button class="call-ctrl-btn call-leave-btn" data-csd-tag="btn_call_leave" onclick="leaveCall()">
+              <span>📞</span>
+              <span>Leave Call</span>
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderChatsSurface() {
+      if (state.activeCall !== null) {
+        return renderActiveCallScreen();
+      }
+
+      const circle = getCircle(state.circleId);
+      const circleRooms = state.communities.filter(c => (c.scope || c.cohort) === state.circleId);
+      const roomsToDisplay = circleRooms.length > 0 ? circleRooms : state.communities;
+      const activeRoom = state.communities.find(c => c.id === state.activeCommunityId) || roomsToDisplay[0];
+
+      const roomMessages = CLAIMS.filter(c =>
+        c.tab === "Chats" &&
+        (c.dimension === `message:${activeRoom.id}` ||
+         c.subject === `community:${activeRoom.id}` ||
+         (activeRoom.id === "notes_self" && c.scope === "JustMe") ||
+         (c.scope === (activeRoom.scope || activeRoom.cohort) && (!c.dimension || c.dimension.includes(activeRoom.id))))
+      );
+
+      return `
+        <div class="chat-container">
+          <!-- Quiet Policy Lens Bar -->
+          <div class="quiet-lens" data-csd-tag="csd_policy_lens_bar">
+            <span>Lens: <strong>my rules</strong> &middot; ${roomMessages.length} messages</span>
+            <button class="btn-ghost" onclick="toggleExpand('lens')">&ctdot;</button>
+          </div>
+          ${state.expandedIds['lens'] ? `
+            <div class="lens-drawer">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span>Blur items with neighbour content notes (<code>cw_class</code>)</span>
+                <button class="btn" onclick="state.blurEnabled=!state.blurEnabled; renderAll();">
+                  ${state.blurEnabled ? 'Blur: On' : 'Blur: Off'}
+                </button>
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Room Navigation Bar (CSD-110: community_chats_list) -->
+          <div class="chat-room-nav" data-csd-tag="community_chats_list">
+            <span style="font-size:12px;color:var(--ink-mute);font-weight:500;margin-right:4px;">Rooms:</span>
+            ${roomsToDisplay.map(r => `
+              <button class="btn ${activeRoom.id === r.id ? 'btn-brand' : ''}"
+                      style="font-size:11.5px;padding:4px 10px;"
+                      data-csd-tag="community_chat_row_${r.id}"
+                      onclick="selectCommunity('${r.id}')">
+                ${r.kind === 'room' ? '👥' : '💬'} ${r.name}
+              </button>
+            `).join("")}
+          </div>
+
+          <!-- Room Header Slab (CSD-091, CSD-103, CSD-134) -->
+          <div class="chat-room-header">
+            <div class="chat-room-info">
+              <div>
+                <div class="chat-room-title">
+                  <span>${activeRoom.name}</span>
+                  ${renderP5ScopePill(activeRoom.scope || activeRoom.cohort || state.circleId, "pill_room_scope", false)}
+                </div>
+                <div style="font-size:12px;color:var(--ink-mute);margin-top:2px;">
+                  ${activeRoom.kind === 'room' ? `${(activeRoom.members || []).length} members &middot; community DEK &middot; Reticulum mesh` : 'Two people &middot; pair DEK'}
+                </div>
+              </div>
+            </div>
+            <div class="chat-room-actions">
+              <!-- Member Roster Toggle (CSD-103) -->
+              <button class="chat-members-btn" data-csd-tag="btn_room_members" onclick="toggleRosterDrawer()">
+                <span>👥</span>
+                <span>${(activeRoom.members || []).length} members</span>
+              </button>
+
+              <!-- Call Action Button (CSD-134) -->
+              ${activeRoom.id !== 'notes_self' ? `
+                <button class="chat-call-btn" data-csd-tag="btn_chat_call" onclick="openCallLaunchModal('${activeRoom.id}')">
+                  <span>📞</span>
+                  <span>Call</span>
+                </button>
+              ` : ''}
+
+              <!-- Room Universal Receipt Hamburger (P4: ReceiptSheet) -->
+              <button class="btn-ghost" data-csd-tag="btn_receipt_room" onclick="openReceiptSheet('comm_${activeRoom.id}')" title="Room Attestation Receipt">
+                &#9776;
+              </button>
+            </div>
+          </div>
+
+          <!-- Member Roster Drawer (CSD-103) -->
+          ${state.showRosterDrawer ? `
+            <div class="chat-roster-drawer" data-csd-tag="community-roster">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <span style="font-size:13px;font-weight:600;color:var(--obsidian);">Room Roster &middot; ${activeRoom.name}</span>
+                <span class="mono-hint" style="font-size:11px;">GET /v1/communities/${activeRoom.id}/members</span>
+              </div>
+              <div class="chat-roster-grid">
+                ${(activeRoom.members || []).map(m => `
+                  <div class="chat-roster-card" data-csd-tag="row_community_member_${m.key_id}">
+                    <div>
+                      <div style="font-weight:600;color:var(--obsidian);">${m.name}</div>
+                      <div class="mono-hint" style="font-size:10.5px;">${m.key_id}</div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                      <span class="chip ${m.role === 'founder' ? 'brand' : ''}" style="font-size:10px;padding:1px 6px;">
+                        ${m.role}
+                      </span>
+                      ${m.joined_at > (activeRoom.founded_at || "2026-09-01T00:00:00Z") ? `
+                        <span class="mono-hint" data-csd-tag="flag_community_member_late_${m.key_id}" style="color:var(--warn);font-size:10px;">
+                          Added after founding
+                        </span>
+                      ` : ''}
+                    </div>
+                  </div>
+                `).join("")}
+              </div>
+              <div style="font-size:11.5px;color:var(--ink-mute);border-top:1px solid var(--hairline);padding-top:6px;margin-top:6px;" data-csd-tag="txt_community_limit_widened_reads">
+                ℹ️ Someone added after a room was founded is listed and sealed to, and cannot read its earlier messages yet (CIRISPersist#907). Group book unavailable (CIRISServer#650).
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Message Stream (CSD-091) -->
+          <div class="card chat-message-list" data-csd-tag="csd_main_card">
+            ${roomMessages.length === 0 ? `
+              <div class="item-row" data-csd-tag="community_chats_empty" style="padding:24px 16px;text-align:center;justify-content:center;">
+                <div style="color:var(--ink-mute);font-size:13px;">
+                  No messages in <strong>${activeRoom.name}</strong> yet.<br>
+                  Every message sent is an immutable, hybrid PQC-signed CEG attestation.
+                </div>
+              </div>
+            ` : roomMessages.map(msg => {
+              const isMine = msg.attester === "ed25519:viewer_self" || msg.title.startsWith("You:");
+              return `
+                <div class="chat-msg-card ${isMine ? 'mine' : ''}" data-csd-tag="chat_msg_${msg.id}">
+                  <div class="chat-msg-top">
+                    <span class="chat-msg-author">
+                      <span>${msg.author || (isMine ? 'You' : msg.title.split(':')[0])}</span>
+                      <span class="mono-hint" style="font-size:11px;">(${msg.attester || 'ed25519:...'})</span>
+                    </span>
+                    <div style="display:flex;align-items:center;gap:6px;">
+                      <span class="chip ${msg.op === 'recants' ? 'danger' : (msg.op === 'supersedes' ? 'warn' : 'ok')}" style="font-size:10px;padding:1px 6px;">
+                        ${msg.op === 'recants' ? 'Recanted' : (msg.op === 'supersedes' ? 'Superseded' : 'Live · op:scores')}
+                      </span>
+                      <button class="btn-ghost" data-csd-tag="btn_receipt_${msg.id}" onclick="openReceiptSheet('${msg.id}')" title="CEG Receipt">&#9776;</button>
+                    </div>
+                  </div>
+                  <div class="chat-msg-body">${isMine ? msg.title.replace(/^You:\s*/, '') : (msg.title.includes(':') ? msg.title.substring(msg.title.indexOf(':') + 1).trim() : msg.title)}</div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+
+          <!-- Message Composer (CSD-091) -->
+          <div class="compose-row">
+            <input id="chatInput" class="compose-input" data-csd-tag="input_chat_body" placeholder="Write a signed message to ${activeRoom.name}&hellip;" onkeydown="if(event.key==='Enter')sendChatMessage()" />
+            <button class="btn btn-brand" data-csd-tag="btn_send_chat" onclick="sendChatMessage()">Send</button>
+          </div>
+        </div>
+      `;
+    }
+
     async function sendChatMessage() {
       const inp = document.getElementById("chatInput");
       if (!inp || !inp.value.trim()) return;
       const text = inp.value.trim();
       const newId = "c_new_" + Date.now();
+      const activeRoom = state.communities.find(c => c.id === state.activeCommunityId) || state.communities[0];
+      const commId = activeRoom ? activeRoom.id : (state.activeCommunityId || "general");
+      const scope = activeRoom ? (activeRoom.scope || activeRoom.cohort) : state.circleId;
+
       if (state.liveNode.connected) {
-        const commId = state.activeCommunityId || "comm-oak-street";
         await fetch(`/v1/chat/${commId}/messages`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -4764,16 +5635,19 @@
       CLAIMS.unshift({
         id: newId,
         tab: "Chats",
-        scope: state.circleId,
+        scope: scope,
         op: "scores",
-        dimension: `message:${state.activeCommunityId || 'room'}`,
+        dimension: `message:${commId}`,
         title: "You: " + text + (state.chatAttachmentId ? ` [blob:${state.chatAttachmentId}]` : ""),
         score: 0.9,
         confidence: 1.0,
-        subject: `community:${state.activeCommunityId || 'room'}`,
+        subject: `community:${commId}`,
         attester: "ed25519:viewer_self",
+        author: "You",
+        created_at: new Date().toISOString(),
       });
       state.chatAttachmentId = "";
+      inp.value = "";
       renderAll();
     }
 
@@ -5014,7 +5888,7 @@
         return `
           ${renderExpandableCard("csd_node_standing", "Trust root standing", `Rooted · v${state.liveNode.version}`, "ok", `
             <div class="kv-row"><span>Local node</span><span class="mono-hint">127.0.0.1:4243 (${state.liveNode.standing} · ${state.liveNode.keyId})</span></div>
-            <div class="kv-row"><span>Agent runtime</span><span class="mono-hint">${state.hasAgent ? '127.0.0.1:8080 (22/22 services · ciris-agent 2.17.0)' : 'Not attached (node-only)'}</span></div>
+            <div class="kv-row"><span>Epistemic client</span><span class="mono-hint">CEWPOS Web Shell (Node mode · port 4243)</span></div>
             <div class="kv-row"><span>Crypto</span><span class="mono-hint">Ed25519 + ML-DSA-65 / X25519 + ML-KEM-768</span></div>
           `)}
           <div class="card" data-csd-tag="csd_080_first_run_launcher">
@@ -5568,10 +6442,16 @@
       // Otherwise render the active `(Circle × Tab)`
       const rows = CLAIMS.filter(c => c.scope === state.circleId && c.tab === state.tab);
 
-      if (state.tab === "Files" || state.tab === "Chats") {
+      if (state.tab === "Chats") {
+        html += renderChatsSurface();
+        setSurfaceHtml(html);
+        return;
+      }
+
+      if (state.tab === "Files") {
         html += `
           <div class="quiet-lens" data-csd-tag="csd_policy_lens_bar">
-            <span>Lens: <strong>my rules</strong> &middot; ${rows.length} ${state.tab.toLowerCase()}</span>
+            <span>Lens: <strong>my rules</strong> &middot; ${rows.length} files</span>
             <button class="btn-ghost" onclick="toggleExpand('lens')">&ctdot;</button>
           </div>
           ${state.expandedIds['lens'] ? `
@@ -5600,30 +6480,7 @@
       }
 
       // Contextual footer action per tab (quiet, 1-line)
-      if (state.tab === "Chats") {
-        const commSelectorHtml = `
-          <div style="display:flex;gap:6px;align-items:center;padding:4px 2px;font-size:12px;color:var(--ink-mute);">
-            <span>Room:</span>
-            ${state.communities.map(cm => `
-              <button class="btn ${state.activeCommunityId === cm.id ? 'btn-brand' : ''}"
-                      style="font-size:11px;padding:3px 9px;"
-                      data-csd-tag="btn_room_${cm.id}"
-                      onclick="state.activeCommunityId='${cm.id}'; renderAll();">
-                ${cm.name}
-              </button>
-              <button class="btn-ghost" style="padding:2px 5px;font-size:11px;"
-                      data-csd-tag="btn_receipt_comm_${cm.id}"
-                      onclick="openReceiptSheet('comm_${cm.id}')">&#9776;</button>
-            `).join("")}
-          </div>
-        `;
-        html += commSelectorHtml + `
-          <div class="compose-row">
-            <input id="chatInput" class="compose-input" data-csd-tag="input_chat_message" placeholder="Write a signed message to ${circle.label}&hellip;" onkeydown="if(event.key==='Enter')sendChatMessage()" />
-            <button class="btn btn-brand" data-csd-tag="btn_send_chat" onclick="sendChatMessage()">Send</button>
-          </div>
-        `;
-      } else if (state.tab === "People" && state.circleId !== "JustMe") {
+      if (state.tab === "People" && state.circleId !== "JustMe") {
         html += `
           <div class="compose-row" style="margin-bottom:6px;" data-csd-tag="bar_create_community">
             <input id="newCommunityInput" class="compose-input" data-csd-tag="input_new_community_name" placeholder="Create new community in ${circle.label} (POST /v1/communities)&hellip;" value="${state.newCommunityName}" oninput="state.newCommunityName=this.value" />
@@ -5738,15 +6595,15 @@
         },
         {
           id: "choice",
-          pill: "PRINCIPLE 4 OF 7 · STEWARDSHIP",
-          title: "CC 4.5.13 ChoiceBlock: Human Stewards the AI",
-          desc: "The AI steward never makes high-stakes decisions silently. Every decision is posed as Context, Options, and derived Consequences before anything is signed.",
+          pill: "PRINCIPLE 4 OF 7 · CHOICE",
+          title: "CC 4.5.13 ChoiceBlock: Context, Options, Consequences",
+          desc: "Every consequential decision is posed as Context, Options, and derived Consequences before anything is signed.",
           spotlight: '[data-csd-tag="csd_choice_motion_access"]',
           duration: 8500,
           run: (sub) => {
             closeSheet();
             state.circleId = "Neighbours"; state.tab = "Decisions"; state.setupMode = false; renderAll();
-            RAIL_TOUR.setActionStatus("Posing high-stakes AI steward deferral decision...");
+            RAIL_TOUR.setActionStatus("Posing decision ChoiceBlock (Context, Options, Consequences)...");
 
             sub(() => {
               const btn1 = document.querySelector('[data-csd-tag="btn_choice_motion_grant"]');
@@ -5765,7 +6622,7 @@
           id: "emergency",
           pill: "PRINCIPLE 5 OF 7 · TOTAL CONTROL",
           title: "Constitutional Emergency Brake (423 Stop)",
-          desc: "Hit 'Stop' anytime. It activates an instant 423 Locked latch freezing all background AI agent autonomy, while keeping your data export doors completely open.",
+          desc: "Hit 'Stop' anytime. It activates an instant 423 Locked latch pausing all outbound network activity, while keeping your data export doors completely open.",
           spotlight: '[data-csd-tag="btn_stop_everything"]',
           duration: 8000,
           run: (sub) => {
@@ -5777,7 +6634,7 @@
               state.expandedIds['halt_detail'] = true;
               renderAll();
               RAIL_TOUR.setSpotlight('[data-csd-tag="p7_halted"]');
-              RAIL_TOUR.setActionStatus("423 Locked active: AI autonomy halted, read/export access preserved");
+              RAIL_TOUR.setActionStatus("423 Locked active: outbound requests paused, read/export access preserved");
             }, 1800);
 
             sub(() => {
@@ -5811,7 +6668,7 @@
           id: "wizard",
           pill: "PRINCIPLE 7 OF 7 · PROVISIONING",
           title: "First-Run Sovereign Provisioning Wizard",
-          desc: "A sequence of 4 simple ChoiceBlocks initializes a sovereign node: identity handle, diagnostic consent, steward bonding, and sealing with an unextractable 0600 PIN.",
+          desc: "A sequence of simple ChoiceBlocks initializes a sovereign node: root identity, diagnostic consent, and sealing with an unextractable 0600 PIN.",
           spotlight: '[data-csd-tag="card_wizard_YOU"]',
           duration: 9000,
           run: (sub) => {
@@ -5820,28 +6677,21 @@
             state.setupMode = true;
             state.wizard.step = "YOU";
             renderAll();
-            RAIL_TOUR.setActionStatus("Wizard Step 1: Root Handle (@alice.ciris) & Posture (Run with AI Steward)");
+            RAIL_TOUR.setActionStatus("Wizard Step 1: Root Handle (@alice.ciris) & Identity Path");
 
             sub(() => {
               state.wizard.step = "JOIN_FEDERATION";
               renderAll();
               RAIL_TOUR.setSpotlight('[data-csd-tag="card_wizard_JOIN_FEDERATION"]');
               RAIL_TOUR.setActionStatus("Wizard Step 2: Explicit Diagnostic Trace Consent Gate");
-            }, 2800);
-
-            sub(() => {
-              state.wizard.step = "AI";
-              renderAll();
-              RAIL_TOUR.setSpotlight('[data-csd-tag="card_wizard_AI"]');
-              RAIL_TOUR.setActionStatus("Wizard Step 3: Inference Engine Selection (Keyless Local Ollama)");
-            }, 5500);
+            }, 3000);
 
             sub(() => {
               state.wizard.step = "COMPLETE";
               renderAll();
               RAIL_TOUR.setSpotlight('[data-csd-tag="card_wizard_COMPLETE"]');
-              RAIL_TOUR.setActionStatus("Wizard Step 4: Ready to seal node ownership with 0600 PIN!");
-            }, 8000);
+              RAIL_TOUR.setActionStatus("Wizard Step 3: Ready to seal node ownership with 0600 PIN!");
+            }, 6500);
           }
         }
       ],
@@ -6066,7 +6916,7 @@
                   </div>
                   <div class="rail-title">You've Experienced the Epistemic Web</div>
                   <div class="rail-desc">
-                    All 7 core principles — concentric circles, universal receipts, directional asymmetry, AI stewardship ChoiceBlocks, 423 halt, hardware sovereignty, and sovereign provisioning — are live in this node.
+                    All 7 core principles — concentric circles, universal receipts, directional asymmetry, ChoiceBlocks, 423 halt, hardware sovereignty, and sovereign provisioning — are live in this client.
                   </div>
                   <div style="display:flex; gap:8px; margin-top:8px;">
                     <button class="btn btn-brand" onclick="RAIL_TOUR.start(0)">Replay Walkthrough</button>
