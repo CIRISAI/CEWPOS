@@ -36,7 +36,7 @@ body {
   flex-direction: column;
 }
 
-/* Top Stage: Full-3D High-Res WebGL2 Scene + holon-draw labels (Zero HTML overlays!) */
+/* Top Stage: 100% holon-draw Full-3D Scene + Screen Plaques (Zero HTML overlays!) */
 #stage-wrap {
   flex: 1 1 auto;
   min-height: 0;
@@ -193,7 +193,7 @@ canvas#c:active {
 <body>
 
 <div id="stage-wrap">
-  <canvas id="c" aria-label="CIRIS Web4 full-3D hardware and protocol scene"></canvas>
+  <canvas id="c" aria-label="CIRIS Web4 full-3D hardware and protocol scene rendered by holon-draw"></canvas>
 </div>
 
 <section id="story-box" aria-label="CIRIS Web4 Story">
@@ -223,10 +223,15 @@ canvas#c:active {
 </section>
 
 <script type="module">
-import { createDrawer, KIND, INSTANCE_BYTES, PARAMS_NEUTRAL } from './holon/draw.js';
+// ═══════════════════════════════════════════════════════════════════════════
+// 100% NATIVE `holon-draw` (`draw.js` + `text.js`) 3D WORLD & SCREEN RENDERER
+// Every 3D Phone, Laptop, Server Tower, Key, Tablet, Kernel Gyro, AI Steward,
+// E-Stop Switch, 3D Fiber-Optic Spline, Floor Grid, and HUD Plaque is packed
+// into 52-byte `holon-draw` instance records and drawn via `drawer.draw(...)`.
+// ═══════════════════════════════════════════════════════════════════════════
+import { createDrawer, KIND, INSTANCE_BYTES, PARAM, PARAMS_NEUTRAL, VARIANT_ROUND } from './holon/draw.js';
 import { createTextProvider, STYLE } from './holon/text.js';
 
-// ── 7 Plain-English Chapters directly from `VISION.md` & `CIRIS Web4` ──
 const STEPS = [
   {
     short: "1. Your Key",
@@ -309,7 +314,7 @@ playBtn.addEventListener('click', () => {
 });
 goToStep(0, false);
 
-// ── WebGL2 Context + Interactive Camera Orbit ──
+// ── WebGL Context & `holon-draw` Initialization ──
 const canvas = document.getElementById('c');
 const stageWrap = document.getElementById('stage-wrap');
 let dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -345,11 +350,98 @@ canvas.addEventListener('pointerup', () => { dragging = false; });
 const gl = canvas.getContext('webgl2', { antialias: true, alpha: false }) ||
            canvas.getContext('webgl', { antialias: true, alpha: false });
 
-// Initialize `holon-draw` for crisp screen-projected labels & callout plaques
 const text = createTextProvider(gl, { dpr });
-const drawer = createDrawer(gl, { text });
+const drawer = createDrawer(gl, { text, sphereSegments: 28, rodSides: 22 });
 
-// ── 4x4 Matrix Math for Hierarchical 3D Hardware Models ──
+// ── 52-Byte Packed `holon-draw` Batch Container (World & Screen Batches) ──
+class HolonBatch {
+  constructor(kind, screen = false, cap = 512) {
+    this.kind = kind;
+    this.offset = [0, 0, 0];
+    this.coarse = false;
+    this.screen = screen;
+    this.count = 0;
+    this.buf = new ArrayBuffer(cap * INSTANCE_BYTES);
+    this.dv = new DataView(this.buf);
+    this.bytes = new Uint8Array(this.buf, 0, 0);
+    this.params = Float32Array.from(PARAMS_NEUTRAL);
+  }
+  clear() {
+    this.count = 0;
+    this.bytes = new Uint8Array(this.buf, 0, 0);
+  }
+  ensure(n) {
+    if ((n + 1) * INSTANCE_BYTES <= this.buf.byteLength) return;
+    const next = new ArrayBuffer(Math.max(this.buf.byteLength * 2, (n + 64) * INSTANCE_BYTES));
+    new Uint8Array(next).set(new Uint8Array(this.buf, 0, this.count * INSTANCE_BYTES));
+    this.buf = next;
+    this.dv = new DataView(this.buf);
+  }
+  add(pos, size, aux, angle, rgba, variant = 0) {
+    this.ensure(this.count + 1);
+    const b = this.count * INSTANCE_BYTES;
+    const dv = this.dv;
+    dv.setFloat32(b + 0, pos[0], true);
+    dv.setFloat32(b + 4, pos[1], true);
+    dv.setFloat32(b + 8, pos[2] || 0, true);
+    dv.setFloat32(b + 12, size[0], true);
+    dv.setFloat32(b + 16, size[1] || 0, true);
+    dv.setFloat32(b + 20, size[2] || 0, true);
+    dv.setFloat32(b + 24, aux ? aux[0] : 0, true);
+    dv.setFloat32(b + 28, aux ? aux[1] : 0, true);
+    dv.setFloat32(b + 32, aux ? aux[2] : 0, true);
+    dv.setFloat32(b + 36, angle || 0, true);
+    dv.setUint8(b + 40, rgba[0]);
+    dv.setUint8(b + 41, rgba[1]);
+    dv.setUint8(b + 42, rgba[2]);
+    dv.setUint8(b + 43, rgba[3] !== undefined ? rgba[3] : 255);
+    dv.setUint32(b + 44, this.count + 1, true);
+    dv.setUint8(b + 48, this.kind);
+    dv.setUint8(b + 49, 0);
+    dv.setUint8(b + 50, 0);
+    dv.setUint8(b + 51, variant);
+    this.count++;
+    this.bytes = new Uint8Array(this.buf, 0, this.count * INSTANCE_BYTES);
+  }
+}
+
+// 3D World Batches (`batch.screen = false`, rendered by `holon-draw` world program)
+const worldPatches = new HolonBatch(KIND.PATCH, false, 16);
+worldPatches.params[PARAM.TEX] = 0.25; // procedural band-limited ground noise from `holon-draw`
+worldPatches.params[PARAM.NOISE + 2] = 1.0;
+worldPatches.params[PARAM.NOISE + 3] = 1.0;
+
+const worldGridLines = new HolonBatch(KIND.LINE, false, 128);
+const worldBoxes     = new HolonBatch(KIND.BOX, false, 4096);
+const worldRods      = new HolonBatch(KIND.ROD, false, 4096);
+const worldSpheres   = new HolonBatch(KIND.SPHERE, false, 2048);
+const worldTubes     = new HolonBatch(KIND.LINE, false, 1024);
+
+// 2D Screen Batches (`batch.screen = true`, rendered by `holon-draw` screen program)
+const bgQuads    = new HolonBatch(KIND.QUAD, true, 128);
+const fgQuads    = new HolonBatch(KIND.QUAD, true, 128);
+const discsBatch = new HolonBatch(KIND.DISC, true, 128);
+const runsBatch  = new HolonBatch(KIND.RUN, true, 256);
+
+const allHolonBatches = [
+  worldPatches,
+  worldGridLines,
+  worldBoxes,
+  worldRods,
+  worldSpheres,
+  worldTubes,
+  bgQuads,
+  fgQuads,
+  discsBatch,
+  runsBatch
+];
+
+// ── 4x4 Matrix Math & Mapping to `holon-draw` Z-Up World Coordinates ──
+// Our modeling builders use (x: right, y: up, z: toward viewer).
+// `holon-draw` world space is right-handed Z-up: (hx = x, hy = -z, hz = y).
+function toHolon(p) {
+  return [p[0], -p[2], p[1]];
+}
 function mat4Identity() {
   return new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]);
 }
@@ -392,9 +484,7 @@ function mat4Perspective(fovy, aspect, near, far) {
 function mat4LookAt(eye, center, up) {
   let zx = eye[0] - center[0], zy = eye[1] - center[1], zz = eye[2] - center[2];
   let len = Math.hypot(zx, zy, zz) || 1; zx /= len; zy /= len; zz /= len;
-  let xx = up[1]*zz - up[2]*zy, xy = up[2]*zx - up[0]*zz, xz = up[0]*zy - up[1]*xx;
-  // recompute xz properly
-  xz = up[0]*zy - up[1]*zx;
+  let xx = up[1]*zz - up[2]*zy, xy = up[2]*zx - up[0]*zz, xz = up[0]*zy - up[1]*zx;
   len = Math.hypot(xx, xy, xz) || 1; xx /= len; xy /= len; xz /= len;
   let yx = zy*xz - zz*xy, yy = zz*xx - zx*xz, yz = zx*xy - zy*xx;
   return new Float32Array([
@@ -407,317 +497,163 @@ function mat4LookAt(eye, center, up) {
     1
   ]);
 }
-function projectToScreen(vp, wx, wy, wz, Wcss, Hcss) {
-  const x = vp[0]*wx + vp[4]*wy + vp[8]*wz + vp[12];
-  const y = vp[1]*wx + vp[5]*wy + vp[9]*wz + vp[13];
-  const w = vp[3]*wx + vp[7]*wy + vp[11]*wz + vp[15];
+function projectHolonToScreen(vp, hx, hy, hz, Wcss, Hcss) {
+  const x = vp[0]*hx + vp[4]*hy + vp[8]*hz + vp[12];
+  const y = vp[1]*hx + vp[5]*hy + vp[9]*hz + vp[13];
+  const w = vp[3]*hx + vp[7]*hy + vp[11]*hz + vp[15];
   if (w <= 0.01) return null;
-  const ndcX = x / w;
-  const ndcY = y / w;
-  return [(ndcX * 0.5 + 0.5) * Wcss, (0.5 - ndcY * 0.5) * Hcss];
+  return [((x / w) * 0.5 + 0.5) * Wcss, (0.5 - (y / w) * 0.5) * Hcss];
 }
 
-// ── Studio PBR 3D Shader Program (3-Point Lighting, Metallic/Roughness, Fresnel Rim, Emissive OLED Glow, Studio Floor Grid) ──
-const VS_3D = `
-attribute vec3 a_pos;
-attribute vec3 a_norm;
-attribute vec4 a_col;
-attribute vec3 a_mat; // x: metallic, y: roughness, z: emissive
-
-uniform mat4 u_vp;
-
-varying vec3 v_pos;
-varying vec3 v_norm;
-varying vec4 v_col;
-varying vec3 v_mat;
-
-void main() {
-  v_pos = a_pos;
-  v_norm = a_norm;
-  v_col = a_col;
-  v_mat = a_mat;
-  gl_Position = u_vp * vec4(a_pos, 1.0);
-}
-`;
-
-const FS_3D = `
-precision highp float;
-varying vec3 v_pos;
-varying vec3 v_norm;
-varying vec4 v_col;
-varying vec3 v_mat;
-
-uniform vec3 u_eye;
-
-void main() {
-  vec3 N = normalize(v_norm);
-  vec3 V = normalize(u_eye - v_pos);
-  float metallic = v_mat.x;
-  float roughness = clamp(v_mat.y, 0.05, 1.0);
-  float emissive = v_mat.z;
-
-  vec3 base = v_col.rgb;
-
-  // Special floor procedural grid when emissive < -0.5
-  if (emissive < -0.5) {
-    float d = length(v_pos.xz);
-    float fade = 1.0 - smoothstep(6.0, 18.0, d);
-    vec2 g1 = abs(fract(v_pos.xz * 0.5 - 0.5) - 0.5);
-    float line1 = 1.0 - smoothstep(0.008, 0.024, min(g1.x, g1.y));
-    vec2 g2 = abs(fract(v_pos.xz * 2.0 - 0.5) - 0.5);
-    float line2 = 1.0 - smoothstep(0.015, 0.045, min(g2.x, g2.y));
-    vec3 floorCol = vec3(0.042, 0.058, 0.088);
-    floorCol += vec3(0.05, 0.11, 0.18) * line2 * 0.30 * fade;
-    floorCol += vec3(0.10, 0.25, 0.38) * line1 * 0.58 * fade;
-    // Soft radial studio spotlight on floor
-    floorCol += vec3(0.035, 0.075, 0.12) * (1.0 - smoothstep(0.0, 9.5, d));
-    gl_FragColor = vec4(floorCol, 1.0);
-    return;
-  }
-
-  // 3-Point Studio Lighting
-  vec3 L1 = normalize(vec3(0.52, 0.88, 0.62));  // Warm Key Light
-  vec3 L2 = normalize(vec3(-0.75, 0.45, -0.52)); // Cool Cyan Rim Light
-  vec3 L3 = normalize(vec3(-0.35, 0.25, 0.85));  // Front Fill Light
-
-  vec3 H1 = normalize(L1 + V);
-  vec3 H2 = normalize(L2 + V);
-
-  float diff1 = max(dot(N, L1), 0.0);
-  float diff2 = max(dot(N, L2), 0.0);
-  float diff3 = max(dot(N, L3), 0.0);
-
-  float shininess = mix(140.0, 10.0, roughness);
-  float spec1 = pow(max(dot(N, H1), 0.0), shininess) * mix(1.2, 0.18, roughness);
-  float spec2 = pow(max(dot(N, H2), 0.0), shininess * 0.7) * mix(0.8, 0.12, roughness);
-
-  // Hemisphere sky/ground ambient
-  vec3 hemi = mix(vec3(0.07, 0.09, 0.14), vec3(0.24, 0.30, 0.42), N.y * 0.5 + 0.5);
-
-  vec3 kd = base * (1.0 - metallic * 0.62);
-  vec3 ks = mix(vec3(0.22), base * 1.15 + vec3(0.18), metallic);
-
-  vec3 color = kd * (hemi * 0.85 + diff1 * vec3(1.05, 1.02, 0.98) * 0.88 + diff2 * vec3(0.45, 0.75, 1.0) * 0.42 + diff3 * vec3(0.65, 0.85, 0.95) * 0.32);
-  color += ks * (spec1 * vec3(1.0, 0.98, 0.95) + spec2 * vec3(0.45, 0.82, 1.0));
-
-  // Crisp Fresnel silhouette rim highlight
-  float fresnel = pow(1.0 - max(dot(N, V), 0.0), 3.0);
-  color += mix(vec3(0.14, 0.26, 0.42), base * 0.75 + vec3(0.2), metallic) * fresnel * 0.55;
-
-  // Emissive OLED screen / LED glow
-  color += base * emissive * 1.35;
-
-  // Subtle filmic tone compression
-  color = color / (color + vec3(0.85)) * 1.62;
-
-  gl_FragColor = vec4(color, v_col.a);
-}
-`;
-
-function compileShader(type, src) {
-  const s = gl.createShader(type);
-  gl.shaderSource(s, src);
-  gl.compileShader(s);
-  if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
-    console.error(gl.getShaderInfoLog(s));
-  }
-  return s;
-}
-const prog3D = gl.createProgram();
-gl.attachShader(prog3D, compileShader(gl.VERTEX_SHADER, VS_3D));
-gl.attachShader(prog3D, compileShader(gl.FRAGMENT_SHADER, FS_3D));
-gl.linkProgram(prog3D);
-gl.getExtension('OES_standard_derivatives');
-
-const aPosLoc = gl.getAttribLocation(prog3D, 'a_pos');
-const aNormLoc = gl.getAttribLocation(prog3D, 'a_norm');
-const aColLoc = gl.getAttribLocation(prog3D, 'a_col');
-const aMatLoc = gl.getAttribLocation(prog3D, 'a_mat');
-const uVpLoc = gl.getUniformLocation(prog3D, 'u_vp');
-const uEyeLoc = gl.getUniformLocation(prog3D, 'u_eye');
-
-const vbo3D = gl.createBuffer();
-
-// ── Streaming High-Res 3D Mesh Builder (13 floats/vertex) ──
-class MeshStream {
-  constructor(maxVerts = 120000) {
-    this.data = new Float32Array(maxVerts * 13);
-    this.vCount = 0;
-  }
+// ── Adapter: Emits 3D Hardware Geometry Directly as `holon-draw` 52-Byte Instance Records ──
+class HolonSceneBuilder {
   clear() {
-    this.vCount = 0;
+    for (const b of allHolonBatches) b.clear();
   }
-  pushVert(px, py, pz, nx, ny, nz, col, mat) {
-    let i = this.vCount * 13;
-    if (i + 13 > this.data.length) return;
-    this.data[i]    = px;
-    this.data[i+1]  = py;
-    this.data[i+2]  = pz;
-    this.data[i+3]  = nx;
-    this.data[i+4]  = ny;
-    this.data[i+5]  = nz;
-    this.data[i+6]  = col[0];
-    this.data[i+7]  = col[1];
-    this.data[i+8]  = col[2];
-    this.data[i+9]  = col[3] !== undefined ? col[3] : 1.0;
-    this.data[i+10] = mat[0]; // metallic
-    this.data[i+11] = mat[1]; // roughness
-    this.data[i+12] = mat[2]; // emissive
-    this.vCount++;
-  }
-  pushTri(M, p0, p1, p2, n0, n1, n2, col, mat) {
-    const tp = (p) => [
+  tp(M, p) {
+    return [
       M[0]*p[0] + M[4]*p[1] + M[8]*p[2] + M[12],
       M[1]*p[0] + M[5]*p[1] + M[9]*p[2] + M[13],
       M[2]*p[0] + M[6]*p[1] + M[10]*p[2] + M[14]
     ];
-    const tn = (n) => {
-      let x = M[0]*n[0] + M[4]*n[1] + M[8]*n[2];
-      let y = M[1]*n[0] + M[5]*n[1] + M[9]*n[2];
-      let z = M[2]*n[0] + M[6]*n[1] + M[10]*n[2];
-      let l = Math.hypot(x, y, z) || 1;
-      return [x/l, y/l, z/l];
-    };
-    const wp0 = tp(p0), wp1 = tp(p1), wp2 = tp(p2);
-    const wn0 = tn(n0), wn1 = tn(n1), wn2 = tn(n2);
-    this.pushVert(wp0[0], wp0[1], wp0[2], wn0[0], wn0[1], wn0[2], col, mat);
-    this.pushVert(wp1[0], wp1[1], wp1[2], wn1[0], wn1[1], wn1[2], col, mat);
-    this.pushVert(wp2[0], wp2[1], wp2[2], wn2[0], wn2[1], wn2[2], col, mat);
   }
-  pushQuad(M, p0, p1, p2, p3, n, col, mat) {
-    this.pushTri(M, p0, p1, p2, n, n, n, col, mat);
-    this.pushTri(M, p0, p2, p3, n, n, n, col, mat);
+  scaleOf(M) {
+    const sx = Math.hypot(M[0], M[1], M[2]);
+    const sy = Math.hypot(M[4], M[5], M[6]);
+    const sz = Math.hypot(M[8], M[9], M[10]);
+    return [sx, sy, sz];
   }
-  // 3D Box centered at (0,0,0) with extents (w, h, d)
+  // Convert normalized [0..1] color + material brightness to u8 [0..255] RGBA for `holon-draw`
+  toRgba(col, mat) {
+    const boost = 1.0 + (mat ? Math.max(0, mat[2]) * 0.32 : 0);
+    return [
+      Math.min(255, Math.round(col[0] * boost * 255)),
+      Math.min(255, Math.round(col[1] * boost * 255)),
+      Math.min(255, Math.round(col[2] * boost * 255)),
+      col[3] !== undefined ? Math.round(col[3] * 255) : 255
+    ];
+  }
+  // Emit a 3D `KIND.BOX` (or tilted box stack when M has pitch) into `holon-draw`'s `worldBoxes`
   addBox(M, w, h, d, col, mat) {
-    const hx = w/2, hy = h/2, hz = d/2;
-    // +Z front
-    this.pushQuad(M, [-hx,-hy,hz], [hx,-hy,hz], [hx,hy,hz], [-hx,hy,hz], [0,0,1], col, mat);
-    // -Z back
-    this.pushQuad(M, [hx,-hy,-hz], [-hx,-hy,-hz], [-hx,hy,-hz], [hx,hy,-hz], [0,0,-1], col, mat);
-    // +Y top
-    this.pushQuad(M, [-hx,hy,hz], [hx,hy,hz], [hx,hy,-hz], [-hx,hy,-hz], [0,1,0], col, mat);
-    // -Y bottom
-    this.pushQuad(M, [-hx,-hy,-hz], [hx,-hy,-hz], [hx,-hy,hz], [-hx,-hy,hz], [0,-1,0], col, mat);
-    // +X right
-    this.pushQuad(M, [hx,-hy,hz], [hx,-hy,-hz], [hx,hy,-hz], [hx,hy,hz], [1,0,0], col, mat);
-    // -X left
-    this.pushQuad(M, [-hx,-hy,-hz], [-hx,-hy,hz], [-hx,hy,hz], [-hx,hy,-hz], [-1,0,0], col, mat);
+    const rgba = this.toRgba(col, mat);
+    const [sx, sy, sz] = this.scaleOf(M);
+    // Check if M has significant X/Z tilt (i.e. local Y axis is tilted away from world +Y)
+    const upX = M[4] / sy, upY = M[5] / sy, upZ = M[6] / sy;
+    const tilt = Math.hypot(upX, upZ);
+    // Yaw angle around vertical axis in holon-draw Z-up space:
+    // Local +X axis in scene is (M[0], M[1], M[2]) -> in holon-draw (M[0], -M[2], M[1])
+    const angleZ = Math.atan2(-M[2], M[0]);
+
+    if (tilt < 0.05) {
+      // Pure upright / yaw-turned 3D box: 1 single `KIND.BOX` instance in `holon-draw`!
+      const c = this.tp(M, [0, -h / 2, 0]);
+      const hc = toHolon(c);
+      worldBoxes.add(hc, [w * sx, d * sz, h * sy], null, angleZ, rgba, 0);
+    } else {
+      // Tilted 3D box (e.g. angled phone/laptop screen): slice along the longer tilted axis into crisp `KIND.BOX` strips
+      if (h >= d) {
+        const slices = Math.max(4, Math.min(18, Math.ceil((h * sy) / 0.08)));
+        const dh = h / slices;
+        for (let i = 0; i < slices; i++) {
+          const ly = -h / 2 + (i + 0.5) * dh;
+          const p = this.tp(M, [0, ly, 0]);
+          const hp = toHolon(p);
+          const sh = dh * sy * 1.18;
+          const sd = Math.max(d * sz, dh * sy * 0.55);
+          worldBoxes.add([hp[0], hp[1], hp[2] - sh * 0.5], [w * sx, sd, sh], null, angleZ, rgba, 0);
+        }
+      } else {
+        const slices = Math.max(4, Math.min(16, Math.ceil((d * sz) / 0.08)));
+        const dd = d / slices;
+        for (let i = 0; i < slices; i++) {
+          const lz = -d / 2 + (i + 0.5) * dd;
+          const p = this.tp(M, [0, 0, lz]);
+          const hp = toHolon(p);
+          const sh = Math.max(h * sy, dd * sz * 0.55);
+          const sd = dd * sz * 1.18;
+          worldBoxes.add([hp[0], hp[1], hp[2] - sh * 0.5], [w * sx, sd, sh], null, angleZ, rgba, 0);
+        }
+      }
+    }
   }
-  // Beveled / Rounded 3D Chassis Slab in XY plane with thickness d along Z and corner radius r
-  addRoundedSlabXY(M, w, h, d, r, col, mat, segs = 5) {
-    const iw = Math.max(0.01, w - 2*r);
-    const ih = Math.max(0.01, h - 2*r);
-    // Center & cross bars
+  // Rounded 3D Chassis Slab in XY plane: central `KIND.BOX`es + 4 vertical corner `KIND.ROD` bevels
+  addRoundedSlabXY(M, w, h, d, r, col, mat) {
+    const rgba = this.toRgba(col, mat);
+    const [sx, sy, sz] = this.scaleOf(M);
+    const rEff = Math.min(r, w * 0.25, h * 0.25);
+    const iw = Math.max(0.02, w - 2 * rEff);
+    const ih = Math.max(0.02, h - 2 * rEff);
+
+    // Core slab body via `KIND.BOX`
     this.addBox(M, iw, h, d, col, mat);
     this.addBox(M, w, ih, d, col, mat);
-    // 4 smooth rounded corner cylinders along Z
-    const corners = [
-      [ iw/2,  ih/2, 0],
-      [-iw/2,  ih/2, Math.PI*0.5],
-      [-iw/2, -ih/2, Math.PI],
-      [ iw/2, -ih/2, Math.PI*1.5]
-    ];
-    const hz = d/2;
-    for (const [cx, cy, a0] of corners) {
-      for (let i = 0; i < segs; i++) {
-        const t0 = a0 + (i / segs) * (Math.PI * 0.5);
-        const t1 = a0 + ((i + 1) / segs) * (Math.PI * 0.5);
-        const c0 = Math.cos(t0), s0 = Math.sin(t0);
-        const c1 = Math.cos(t1), s1 = Math.sin(t1);
-        const x0 = cx + c0 * r, y0 = cy + s0 * r;
-        const x1 = cx + c1 * r, y1 = cy + s1 * r;
-        // Side curved quad
-        this.pushTri(M, [x0,y0,hz], [x1,y1,hz], [x1,y1,-hz], [c0,s0,0], [c1,s1,0], [c1,s1,0], col, mat);
-        this.pushTri(M, [x0,y0,hz], [x1,y1,-hz], [x0,y0,-hz], [c0,s0,0], [c1,s1,0], [c0,s0,0], col, mat);
-        // Front cap fan
-        this.pushTri(M, [cx,cy,hz], [x0,y0,hz], [x1,y1,hz], [0,0,1], [0,0,1], [0,0,1], col, mat);
-        // Back cap fan
-        this.pushTri(M, [cx,cy,-hz], [x1,y1,-hz], [x0,y0,-hz], [0,0,-1], [0,0,-1], [0,0,-1], col, mat);
+
+    if (d > 0.45) {
+      // Deep 3D block (Server Tower / E-Stop Console): 4 vertical corner `KIND.ROD` bevel pillars along Z
+      const rad = rEff * ((sx + sy) * 0.5);
+      const corners = [[-iw/2, ih/2], [iw/2, ih/2], [iw/2, -ih/2], [-iw/2, -ih/2]];
+      for (const [cx, cy] of corners) {
+        const pFront = toHolon(this.tp(M, [cx, cy,  d/2]));
+        const pBack  = toHolon(this.tp(M, [cx, cy, -d/2]));
+        worldRods.add(pBack, [rad, 0, 0], pFront, 0, rgba, 0);
       }
+    } else {
+      // Thin panel (Smartphone / Laptop Lid / Tablet): 4 perimeter `KIND.ROD` rails + 4 corner `KIND.SPHERE`s
+      const rad = Math.min(0.09, Math.max(rEff * sx * 0.42, d * sz * 0.48));
+      const cTL = toHolon(this.tp(M, [-iw/2,  ih/2, 0]));
+      const cTR = toHolon(this.tp(M, [ iw/2,  ih/2, 0]));
+      const cBR = toHolon(this.tp(M, [ iw/2, -ih/2, 0]));
+      const cBL = toHolon(this.tp(M, [-iw/2, -ih/2, 0]));
+
+      worldRods.add(cTL, [rad, 0, 0], cTR, 0, rgba, 0);
+      worldRods.add(cTR, [rad, 0, 0], cBR, 0, rgba, 0);
+      worldRods.add(cBR, [rad, 0, 0], cBL, 0, rgba, 0);
+      worldRods.add(cBL, [rad, 0, 0], cTL, 0, rgba, 0);
+
+      worldSpheres.add(cTL, [rad, 0, 0], null, 0, rgba, 0);
+      worldSpheres.add(cTR, [rad, 0, 0], null, 0, rgba, 0);
+      worldSpheres.add(cBR, [rad, 0, 0], null, 0, rgba, 0);
+      worldSpheres.add(cBL, [rad, 0, 0], null, 0, rgba, 0);
     }
   }
-  // Rounded horizontal slab in XZ plane (for laptop decks, pedestals, tablets) with height h along Y
-  addRoundedSlabXZ(M, w, h, d, r, col, mat, segs = 5) {
+  addRoundedSlabXZ(M, w, h, d, r, col, mat) {
     const MR = mat4RotateX(M, Math.PI * 0.5);
-    this.addRoundedSlabXY(MR, w, d, h, r, col, mat, segs);
+    this.addRoundedSlabXY(MR, w, d, h, r, col, mat);
   }
-  // Cylinder along Y axis centered at (0,0,0), radius rTop, rBot, height h
-  addCylinderY(M, rTop, rBot, h, col, mat, segs = 20, capped = true) {
-    const hy = h / 2;
-    for (let i = 0; i < segs; i++) {
-      const a0 = (i / segs) * Math.PI * 2;
-      const a1 = ((i + 1) / segs) * Math.PI * 2;
-      const c0 = Math.cos(a0), s0 = Math.sin(a0);
-      const c1 = Math.cos(a1), s1 = Math.sin(a1);
-      const p0b = [c0*rBot, -hy, s0*rBot], p1b = [c1*rBot, -hy, s1*rBot];
-      const p0t = [c0*rTop,  hy, s0*rTop], p1t = [c1*rTop,  hy, s1*rTop];
-      const ny = (rBot - rTop) / h;
-      const n0 = [c0, ny, s0], n1 = [c1, ny, s1];
-      this.pushTri(M, p0b, p0t, p1t, n0, n0, n1, col, mat);
-      this.pushTri(M, p0b, p1t, p1b, n0, n1, n1, col, mat);
-      if (capped) {
-        if (rTop > 0.001) this.pushTri(M, [0,hy,0], p1t, p0t, [0,1,0], [0,1,0], [0,1,0], col, mat);
-        if (rBot > 0.001) this.pushTri(M, [0,-hy,0], p0b, p1b, [0,-1,0], [0,-1,0], [0,-1,0], col, mat);
-      }
-    }
+  // 3D Capped Cylinder along local Y axis -> native `KIND.ROD` in `holon-draw`!
+  addCylinderY(M, rTop, rBot, h, col, mat) {
+    const rgba = this.toRgba(col, mat);
+    const [sx, , sz] = this.scaleOf(M);
+    const r = ((rTop + rBot) * 0.5) * ((sx + sz) * 0.5);
+    const p0 = toHolon(this.tp(M, [0, -h / 2, 0]));
+    const p1 = toHolon(this.tp(M, [0,  h / 2, 0]));
+    worldRods.add(p0, [r, 0, 0], p1, 0, rgba, 0);
   }
-  // Torus ring in XY plane (radius R, tube radius r)
-  addTorusXY(M, R, r, col, mat, majSegs = 24, minSegs = 10) {
+  // 3D Torus Ring in local XY plane -> ring of connected `KIND.ROD` cylinders + `KIND.SPHERE` joints in `holon-draw`!
+  addTorusXY(M, R, r, col, mat, majSegs = 22) {
+    const rgba = this.toRgba(col, mat);
+    const [sx, sy] = this.scaleOf(M);
+    const tubeR = r * ((sx + sy) * 0.5);
     for (let i = 0; i < majSegs; i++) {
       const u0 = (i / majSegs) * Math.PI * 2;
       const u1 = ((i + 1) / majSegs) * Math.PI * 2;
-      const cu0 = Math.cos(u0), su0 = Math.sin(u0);
-      const cu1 = Math.cos(u1), su1 = Math.sin(u1);
-      for (let j = 0; j < minSegs; j++) {
-        const v0 = (j / minSegs) * Math.PI * 2;
-        const v1 = ((j + 1) / minSegs) * Math.PI * 2;
-        const cv0 = Math.cos(v0), sv0 = Math.sin(v0);
-        const cv1 = Math.cos(v1), sv1 = Math.sin(v1);
-
-        const p00 = [(R + r*cv0)*cu0, (R + r*cv0)*su0, r*sv0];
-        const p10 = [(R + r*cv0)*cu1, (R + r*cv0)*su1, r*sv0];
-        const p11 = [(R + r*cv1)*cu1, (R + r*cv1)*su1, r*sv1];
-        const p01 = [(R + r*cv1)*cu0, (R + r*cv1)*su0, r*sv1];
-
-        const n00 = [cv0*cu0, cv0*su0, sv0];
-        const n10 = [cv0*cu1, cv0*su1, sv0];
-        const n11 = [cv1*cu1, cv1*su1, sv1];
-        const n01 = [cv1*cu0, cv1*su0, sv1];
-
-        this.pushTri(M, p00, p10, p11, n00, n10, n11, col, mat);
-        this.pushTri(M, p00, p11, p01, n00, n11, n01, col, mat);
-      }
+      const p0 = toHolon(this.tp(M, [R * Math.cos(u0), R * Math.sin(u0), 0]));
+      const p1 = toHolon(this.tp(M, [R * Math.cos(u1), R * Math.sin(u1), 0]));
+      worldRods.add(p0, [tubeR, 0, 0], p1, 0, rgba, 0);
+      worldSpheres.add(p0, [tubeR, 0, 0], null, 0, rgba, 0);
     }
   }
-  // 3D Sphere / Dome
-  addSphere(M, r, col, mat, latSegs = 12, lonSegs = 18, hemiOnly = false) {
-    const latMax = hemiOnly ? Math.PI * 0.5 : Math.PI;
-    for (let i = 0; i < latSegs; i++) {
-      const th0 = (i / latSegs) * latMax;
-      const th1 = ((i + 1) / latSegs) * latMax;
-      const y0 = Math.cos(th0), sr0 = Math.sin(th0);
-      const y1 = Math.cos(th1), sr1 = Math.sin(th1);
-      for (let j = 0; j < lonSegs; j++) {
-        const ph0 = (j / lonSegs) * Math.PI * 2;
-        const ph1 = ((j + 1) / lonSegs) * Math.PI * 2;
-        const c0 = Math.cos(ph0), s0 = Math.sin(ph0);
-        const c1 = Math.cos(ph1), s1 = Math.sin(ph1);
-
-        const n00 = [sr0*c0, y0, sr0*s0], p00 = [r*n00[0], r*n00[1], r*n00[2]];
-        const n10 = [sr1*c0, y1, sr1*s0], p10 = [r*n10[0], r*n10[1], r*n10[2]];
-        const n11 = [sr1*c1, y1, sr1*s1], p11 = [r*n11[0], r*n11[1], r*n11[2]];
-        const n01 = [sr0*c1, y0, sr0*s1], p01 = [r*n01[0], r*n01[1], r*n01[2]];
-
-        this.pushTri(M, p00, p10, p11, n00, n10, n11, col, mat);
-        this.pushTri(M, p00, p11, p01, n00, n11, n01, col, mat);
-      }
-    }
+  // 3D Sphere -> native `KIND.SPHERE` in `holon-draw`!
+  addSphere(M, r, col, mat) {
+    const rgba = this.toRgba(col, mat);
+    const [sx, sy, sz] = this.scaleOf(M);
+    const rad = r * ((sx + sy + sz) / 3);
+    const p = toHolon(this.tp(M, [0, 0, 0]));
+    worldSpheres.add(p, [rad, 0, 0], null, 0, rgba, 0);
   }
-  // 3D Curved Fiber-Optic Spline Tube between two 3D points pA and pB with arc lift & traveling 3D data capsule
+  // 3D Curved Fiber-Optic Spline Tube -> native `KIND.LINE` (`VARIANT_ROUND`) + `KIND.SPHERE` packets in `holon-draw`!
   addCurvedLink3D(pA, pB, liftY, liftZ, radius, col, tPulse) {
-    const segs = 22;
-    const sides = 8;
+    const segs = 20;
     const mid = [
       (pA[0] + pB[0]) * 0.5,
       Math.max(pA[1], pB[1]) + liftY,
@@ -731,56 +667,24 @@ class MeshStream {
         om*om*pA[2] + 2*om*u*mid[2] + u*u*pB[2]
       ];
     };
-    const I = mat4Identity();
-    const tubeMat = [0.3, 0.3, 0.55];
-    const tubeCol = [col[0]*0.65, col[1]*0.65, col[2]*0.65, 1.0];
-
+    const rgbaTube = this.toRgba(col, [0.2, 0.2, 0.15]);
     for (let i = 0; i < segs; i++) {
-      const u0 = i / segs;
-      const u1 = (i + 1) / segs;
-      const c0 = evalBezier(u0);
-      const c1 = evalBezier(u1);
-      let tx = c1[0] - c0[0], ty = c1[1] - c0[1], tz = c1[2] - c0[2];
-      let tl = Math.hypot(tx, ty, tz) || 1; tx /= tl; ty /= tl; tz /= tl;
-      // Orthonormal frame
-      let ux = -tz, uy = 0, uz = tx;
-      let ul = Math.hypot(ux, uy, uz);
-      if (ul < 0.01) { ux = 1; uy = 0; uz = 0; } else { ux /= ul; uz /= ul; }
-      let vx = ty*uz - tz*uy, vy = tz*ux - tx*uz, vz = tx*uy - ty*ux;
-
-      for (let s = 0; s < sides; s++) {
-        const a0 = (s / sides) * Math.PI * 2;
-        const a1 = ((s + 1) / sides) * Math.PI * 2;
-        const ca0 = Math.cos(a0), sa0 = Math.sin(a0);
-        const ca1 = Math.cos(a1), sa1 = Math.sin(a1);
-        const n0 = [ux*ca0 + vx*sa0, uy*ca0 + vy*sa0, uz*ca0 + vz*sa0];
-        const n1 = [ux*ca1 + vx*sa1, uy*ca1 + vy*sa1, uz*ca1 + vz*sa1];
-
-        const p00 = [c0[0] + n0[0]*radius, c0[1] + n0[1]*radius, c0[2] + n0[2]*radius];
-        const p10 = [c1[0] + n0[0]*radius, c1[1] + n0[1]*radius, c1[2] + n0[2]*radius];
-        const p11 = [c1[0] + n1[0]*radius, c1[1] + n1[1]*radius, c1[2] + n1[2]*radius];
-        const p01 = [c0[0] + n1[0]*radius, c0[1] + n1[1]*radius, c0[2] + n1[2]*radius];
-
-        this.pushTri(I, p00, p10, p11, n0, n0, n1, tubeCol, tubeMat);
-        this.pushTri(I, p00, p11, p01, n0, n1, n1, tubeCol, tubeMat);
-      }
+      const c0 = toHolon(evalBezier(i / segs));
+      const c1 = toHolon(evalBezier((i + 1) / segs));
+      worldTubes.add(c0, [radius * 2.0, 0, 0], c1, 0, rgbaTube, VARIANT_ROUND);
     }
-
-    // Traveling glowing 3D Data Packet Sphere along the spline
     if (tPulse !== null && tPulse !== undefined) {
+      const rgbaGlow = this.toRgba(col, [0.1, 0.1, 0.85]);
       for (let k = 0; k < 2; k++) {
         const u = (tPulse + k * 0.5) % 1.0;
-        const pos = evalBezier(u);
-        let MP = mat4Translate(I, pos[0], pos[1], pos[2]);
-        this.addSphere(MP, radius * 2.5, [1.0, 1.0, 1.0, 1.0], [0.1, 0.1, 1.8], 8, 12);
-        this.addSphere(MP, radius * 3.6, col, [0.1, 0.2, 1.4], 8, 12);
+        const hp = toHolon(evalBezier(u));
+        worldSpheres.add(hp, [radius * 2.8, 0, 0], null, 0, rgbaGlow, 0);
       }
     }
-    return mid;
   }
 }
 
-const meshOpaque = new MeshStream(135000);
+const meshOpaque = new HolonSceneBuilder();
 
 // ── Material & Color Palettes (Normalized 0..1 RGB) ──
 const MAT = {
@@ -790,8 +694,8 @@ const MAT = {
   glass:      [0.25, 0.08, 0.04],
   matte:      [0.15, 0.60, 0.0],
   gold:       [0.92, 0.18, 0.12],
-  glow:       [0.15, 0.25, 0.48],
-  brightGlow: [0.15, 0.20, 0.78],
+  glow:       [0.15, 0.25, 0.45],
+  brightGlow: [0.15, 0.20, 0.75],
 };
 
 const COL = {
@@ -799,9 +703,9 @@ const COL = {
   silver:     [0.76, 0.81, 0.88, 1],
   spaceGray:  [0.24, 0.29, 0.37, 1],
   darkChassis:[0.13, 0.17, 0.24, 1],
-  obsidian:   [0.05, 0.07, 0.11, 1],
-  keycap:     [0.10, 0.13, 0.18, 1],
-  screenBg:   [0.05, 0.08, 0.14, 1],
+  obsidian:   [0.06, 0.08, 0.12, 1],
+  keycap:     [0.11, 0.14, 0.20, 1],
+  screenBg:   [0.07, 0.10, 0.16, 1],
   green:      [0.24, 0.82, 0.52, 1],
   blue:       [0.32, 0.66, 0.98, 1],
   amber:      [0.95, 0.66, 0.24, 1],
@@ -809,99 +713,88 @@ const COL = {
   violet:     [0.64, 0.45, 0.96, 1],
   gold:       [0.96, 0.76, 0.26, 1],
   white:      [0.92, 0.95, 1.00, 1],
-  pedestal:   [0.10, 0.14, 0.21, 1],
+  pedestal:   [0.11, 0.15, 0.22, 1],
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// HIGH-RES 3D HARDWARE & PROTOCOL OBJECT BUILDERS
+// HIGH-RES 3D HARDWARE & PROTOCOL OBJECT BUILDERS (100% `holon-draw` Batches)
 // ═══════════════════════════════════════════════════════════════════════════
 
-// 1. Studio Pedestal / Plinth under each 3D Hardware Unit (dark brushed slate with glowing outer torus ring)
 function buildPedestal3D(stream, M, radius, accentCol) {
   let MB = mat4Translate(M, 0, 0.06, 0);
-  stream.addCylinderY(MB, radius, radius * 1.06, 0.12, COL.pedestal, MAT.darkMetal, 32);
+  stream.addCylinderY(MB, radius, radius * 1.04, 0.12, COL.pedestal, MAT.darkMetal);
   let MR = mat4RotateX(mat4Translate(M, 0, 0.12, 0), Math.PI * 0.5);
-  stream.addTorusXY(MR, radius * 0.98, 0.032, accentCol, MAT.brightGlow, 32, 8);
+  stream.addTorusXY(MR, radius * 0.98, 0.035, accentCol, MAT.brightGlow, 28);
 }
 
-// 2. High-Res 3D Smartphone on Desk Stand (`width ~ 1.25, height ~ 2.35`)
+// 1. High-Res 3D Smartphone on Desk Stand
 function buildSmartphone3D(stream, M, accentCol, screenVariant = "key") {
   buildPedestal3D(stream, M, 1.25, accentCol);
 
-  // Sleek aluminum desk dock
-  let MDockBase = mat4Translate(M, 0, 0.17, 0.05);
-  stream.addRoundedSlabXZ(MDockBase, 0.95, 0.08, 0.85, 0.12, COL.spaceGray, MAT.darkMetal, 4);
-  let MDockPillar = mat4RotateX(mat4Translate(M, 0, 0.55, -0.15), 0.25);
-  stream.addBox(MDockPillar, 0.36, 0.82, 0.12, COL.spaceGray, MAT.darkMetal);
+  let MDockBase = mat4Translate(M, 0, 0.16, 0.02);
+  stream.addBox(MDockBase, 0.92, 0.08, 0.82, COL.spaceGray, MAT.darkMetal);
+  let MDockPillar = mat4Translate(M, 0, 0.52, -0.10);
+  stream.addBox(MDockPillar, 0.36, 0.72, 0.14, COL.spaceGray, MAT.darkMetal);
 
-  // Phone Chassis tilted back ergonomically (-16 deg)
-  let MP = mat4RotateX(mat4Translate(M, 0, 1.38, 0.08), -0.26);
+  // Upright 3D Smartphone Chassis (`KIND.BOX` + rounded `KIND.ROD`/`KIND.SPHERE` titanium bezel)
+  let MP = mat4Translate(M, 0, 1.38, 0.06);
 
-  // Outer Titanium Frame (Rounded 3D corners!)
-  stream.addRoundedSlabXY(MP, 1.28, 2.38, 0.15, 0.20, COL.titanium, MAT.titanium, 6);
-  // Dark Anodized Inner Bezel Rim
-  stream.addRoundedSlabXY(mat4Translate(MP, 0, 0, 0.015), 1.20, 2.30, 0.14, 0.17, COL.obsidian, MAT.glass, 6);
-  // Glowing OLED Display Face
-  stream.addRoundedSlabXY(mat4Translate(MP, 0, 0, 0.048), 1.12, 2.20, 0.08, 0.14, COL.screenBg, MAT.glass, 5);
+  stream.addRoundedSlabXY(MP, 1.28, 2.36, 0.16, 0.18, COL.titanium, MAT.titanium);
+  stream.addBox(mat4Translate(MP, 0, 0, 0.03), 1.16, 2.24, 0.12, COL.obsidian, MAT.glass);
+  stream.addBox(mat4Translate(MP, 0, 0, 0.055), 1.08, 2.14, 0.08, COL.screenBg, MAT.glass);
 
-  // Dynamic Island / Earpiece Camera Pill at top of OLED screen
-  stream.addRoundedSlabXY(mat4Translate(MP, 0, 0.95, 0.092), 0.36, 0.085, 0.02, 0.04, COL.obsidian, MAT.matte, 4);
-  stream.addSphere(mat4Translate(MP, 0.11, 0.95, 0.098), 0.025, COL.blue, MAT.glow, 6, 8);
+  // Top Earpiece / Dynamic Island Pill
+  stream.addBox(mat4Translate(MP, 0, 0.92, 0.095), 0.36, 0.08, 0.03, COL.obsidian, MAT.matte);
+  stream.addSphere(mat4Translate(MP, 0.11, 0.92, 0.105), 0.028, COL.blue, MAT.glow);
 
   // Side Titanium Hardware Buttons
-  stream.addBox(mat4Translate(MP, 0.655, 0.42, 0), 0.04, 0.28, 0.06, COL.silver, MAT.titanium);
-  stream.addBox(mat4Translate(MP, -0.655, 0.52, 0), 0.04, 0.20, 0.06, COL.silver, MAT.titanium);
-  stream.addBox(mat4Translate(MP, -0.655, 0.22, 0), 0.04, 0.20, 0.06, COL.silver, MAT.titanium);
+  stream.addBox(mat4Translate(MP, 0.67, 0.42, 0), 0.05, 0.28, 0.06, COL.silver, MAT.titanium);
+  stream.addBox(mat4Translate(MP, -0.67, 0.52, 0), 0.05, 0.20, 0.06, COL.silver, MAT.titanium);
+  stream.addBox(mat4Translate(MP, -0.67, 0.22, 0), 0.05, 0.20, 0.06, COL.silver, MAT.titanium);
 
-  // 3D On-Screen UI Widgets (Raised emissive 3D geometry directly on the phone glass!)
-  // Top App Status Card
-  stream.addRoundedSlabXY(mat4Translate(MP, 0, 0.66, 0.092), 0.94, 0.24, 0.02, 0.05, accentCol, MAT.glow, 3);
+  // Top App Status Card on OLED Screen
+  stream.addBox(mat4Translate(MP, 0, 0.64, 0.095), 0.90, 0.22, 0.03, accentCol, MAT.glow);
 
   if (screenVariant === "key") {
-    // Embossed 3D Golden/Emerald Key Icon on the Smartphone Screen
-    let MK = mat4Translate(MP, 0, 0.10, 0.105);
-    stream.addTorusXY(mat4Translate(MK, 0, 0.18, 0), 0.17, 0.045, COL.gold, MAT.brightGlow, 18, 8);
-    stream.addBox(mat4Translate(MK, 0, -0.14, 0), 0.07, 0.38, 0.04, COL.gold, MAT.brightGlow);
-    stream.addBox(mat4Translate(MK, 0.08, -0.22, 0), 0.12, 0.055, 0.04, COL.gold, MAT.brightGlow);
-    stream.addBox(mat4Translate(MK, 0.06, -0.11, 0), 0.09, 0.055, 0.04, COL.gold, MAT.brightGlow);
+    let MK = mat4Translate(MP, 0, 0.10, 0.108);
+    stream.addTorusXY(mat4Translate(MK, 0, 0.18, 0), 0.17, 0.045, COL.gold, MAT.brightGlow, 18);
+    stream.addBox(mat4Translate(MK, 0, -0.14, 0), 0.075, 0.38, 0.04, COL.gold, MAT.brightGlow);
+    stream.addBox(mat4Translate(MK, 0.08, -0.22, 0), 0.13, 0.06, 0.04, COL.gold, MAT.brightGlow);
+    stream.addBox(mat4Translate(MK, 0.06, -0.11, 0), 0.10, 0.06, 0.04, COL.gold, MAT.brightGlow);
   } else {
-    // 3D Verified Signature Check / Message Cards on Screen
-    stream.addRoundedSlabXY(mat4Translate(MP, 0, 0.26, 0.092), 0.92, 0.32, 0.02, 0.05, [0.14, 0.22, 0.34, 1], MAT.glass, 3);
-    stream.addRoundedSlabXY(mat4Translate(MP, -0.08, 0.30, 0.102), 0.62, 0.065, 0.02, 0.02, COL.white, MAT.glow, 2);
-    stream.addRoundedSlabXY(mat4Translate(MP, -0.14, 0.18, 0.102), 0.50, 0.055, 0.02, 0.02, accentCol, MAT.glow, 2);
-    // Glowing Verification Medallion
-    stream.addTorusXY(mat4Translate(MP, 0, -0.22, 0.102), 0.20, 0.04, accentCol, MAT.brightGlow, 18, 8);
-    stream.addSphere(mat4Translate(MP, 0, -0.22, 0.102), 0.11, accentCol, MAT.brightGlow, 8, 12);
+    stream.addBox(mat4Translate(MP, 0, 0.25, 0.095), 0.88, 0.30, 0.03, [0.14, 0.22, 0.34, 1], MAT.glass);
+    stream.addBox(mat4Translate(MP, -0.08, 0.30, 0.108), 0.60, 0.065, 0.03, COL.white, MAT.glow);
+    stream.addBox(mat4Translate(MP, -0.14, 0.18, 0.108), 0.48, 0.055, 0.03, accentCol, MAT.glow);
+    stream.addTorusXY(mat4Translate(MP, 0, -0.22, 0.108), 0.20, 0.04, accentCol, MAT.brightGlow, 18);
+    stream.addSphere(mat4Translate(MP, 0, -0.22, 0.108), 0.11, accentCol, MAT.brightGlow);
   }
 
-  // Bottom Home Bar & Action Pill
-  stream.addRoundedSlabXY(mat4Translate(MP, 0, -0.68, 0.092), 0.88, 0.22, 0.02, 0.06, accentCol, MAT.glow, 3);
-  stream.addRoundedSlabXY(mat4Translate(MP, 0, -0.98, 0.092), 0.42, 0.035, 0.02, 0.015, COL.white, MAT.glow, 2);
+  stream.addBox(mat4Translate(MP, 0, -0.68, 0.095), 0.86, 0.20, 0.03, accentCol, MAT.glow);
+  stream.addBox(mat4Translate(MP, 0, -0.95, 0.095), 0.42, 0.04, 0.03, COL.white, MAT.glow);
 }
 
-// 3. High-Res 3D Open Laptop (`width ~ 2.45, depth ~ 1.75, tilted screen + 60 3D keycaps + trackpad`)
+// 2. High-Res 3D Open Laptop (Aluminum Base Deck + 60 Individual 3D Keycaps + Trackpad + Display Screen)
 function buildLaptop3D(stream, M, accentCol) {
   buildPedestal3D(stream, M, 1.65, accentCol);
 
   const ML = mat4Translate(M, 0, 0.18, 0.15);
 
   // Unibody Machined Aluminum Base Deck
-  stream.addRoundedSlabXZ(ML, 2.36, 0.11, 1.62, 0.12, COL.titanium, MAT.titanium, 5);
+  stream.addRoundedSlabXZ(ML, 2.36, 0.12, 1.62, 0.12, COL.titanium, MAT.titanium);
   // Recessed Dark Keyboard Tray
-  stream.addRoundedSlabXZ(mat4Translate(ML, 0, 0.04, -0.14), 2.06, 0.05, 0.92, 0.05, COL.obsidian, MAT.matte, 3);
+  stream.addBox(mat4Translate(ML, 0, 0.045, -0.14), 2.06, 0.05, 0.92, COL.obsidian, MAT.matte);
 
-  // 5 Rows x 12 Columns of Individual 3D Sculpted Keycaps!
+  // 5 Rows x 12 Columns of Individual 3D Sculpted Keycaps (`KIND.BOX`)
   const rows = 5, cols = 12;
   const startX = -0.92, startZ = -0.50;
   const stepX = 1.84 / (cols - 1);
   const stepZ = 0.72 / (rows - 1);
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
-      // Spacebar wide key on bottom row
       if (r === rows - 1 && c >= 4 && c <= 7) {
         if (c === 5) {
-          let MK = mat4Translate(ML, 0, 0.07, startZ + r * stepZ);
-          stream.addBox(MK, stepX * 3.6, 0.035, 0.12, COL.keycap, MAT.darkMetal);
+          let MK = mat4Translate(ML, 0, 0.075, startZ + r * stepZ);
+          stream.addBox(MK, stepX * 3.6, 0.04, 0.12, COL.keycap, MAT.darkMetal);
         }
         continue;
       }
@@ -910,281 +803,188 @@ function buildLaptop3D(stream, M, accentCol) {
       const isEnter = (r === 2 && c === cols - 1);
       const kCol = isEnter ? accentCol : COL.keycap;
       const kMat = isEnter ? MAT.glow : MAT.darkMetal;
-      stream.addBox(mat4Translate(ML, kx, 0.07, kz), 0.13, 0.035, 0.12, kCol, kMat);
+      stream.addBox(mat4Translate(ML, kx, 0.075, kz), 0.13, 0.04, 0.12, kCol, kMat);
     }
   }
 
   // Glass Multi-Touch Trackpad at front of deck
-  stream.addRoundedSlabXZ(mat4Translate(ML, 0, 0.052, 0.52), 0.74, 0.02, 0.42, 0.04, COL.spaceGray, MAT.glass, 3);
+  stream.addBox(mat4Translate(ML, 0, 0.058, 0.52), 0.74, 0.025, 0.42, COL.spaceGray, MAT.glass);
 
-  // Cylindrical Display Hinge Barrel at rear of base deck
-  let MHinge = mat4RotateZ(mat4Translate(ML, 0, 0.07, -0.76), Math.PI * 0.5);
-  stream.addCylinderY(MHinge, 0.055, 0.055, 1.85, COL.obsidian, MAT.darkMetal, 14);
+  // Cylindrical Display Hinge Barrel (`KIND.ROD`)
+  let MHinge = mat4RotateZ(mat4Translate(ML, 0, 0.08, -0.76), Math.PI * 0.5);
+  stream.addCylinderY(MHinge, 0.06, 0.06, 1.85, COL.obsidian, MAT.darkMetal);
 
-  // Tilted Display Assembly (opened at 106 degrees -> tilted back by -16 deg from vertical)
-  let MPivot = mat4RotateX(mat4Translate(ML, 0, 0.07, -0.76), -0.24);
-  let MScreen = mat4Translate(MPivot, 0, 0.80, 0);
+  // Open Display Screen Assembly
+  let MScreen = mat4Translate(ML, 0, 0.86, -0.78);
 
-  // Aluminum Outer Lid Shell
-  stream.addRoundedSlabXY(MScreen, 2.34, 1.54, 0.07, 0.11, COL.titanium, MAT.titanium, 5);
-  // Glossy Obsidian Screen Bezel
-  stream.addRoundedSlabXY(mat4Translate(MScreen, 0, 0, 0.025), 2.24, 1.44, 0.04, 0.08, COL.obsidian, MAT.glass, 4);
-  // Illuminated High-Contrast Display Canvas
-  stream.addRoundedSlabXY(mat4Translate(MScreen, 0, 0.02, 0.038), 2.12, 1.30, 0.025, 0.05, COL.screenBg, MAT.glass, 4);
+  stream.addRoundedSlabXY(MScreen, 2.34, 1.54, 0.10, 0.11, COL.titanium, MAT.titanium);
+  stream.addBox(mat4Translate(MScreen, 0, 0, 0.03), 2.20, 1.40, 0.06, COL.obsidian, MAT.glass);
+  stream.addBox(mat4Translate(MScreen, 0, 0.01, 0.048), 2.10, 1.28, 0.04, COL.screenBg, MAT.glass);
 
-  // Top Window Chrome & Traffic Light Dots on Laptop Screen
-  stream.addBox(mat4Translate(MScreen, 0, 0.56, 0.052), 2.02, 0.12, 0.015, [0.12, 0.17, 0.26, 1], MAT.matte);
-  stream.addSphere(mat4Translate(MScreen, -0.90, 0.56, 0.06), 0.028, COL.red, MAT.glow, 6, 8);
-  stream.addSphere(mat4Translate(MScreen, -0.81, 0.56, 0.06), 0.028, COL.amber, MAT.glow, 6, 8);
-  stream.addSphere(mat4Translate(MScreen, -0.72, 0.56, 0.06), 0.028, COL.green, MAT.glow, 6, 8);
+  // Top Window Chrome & 3 Traffic Light Spheres
+  stream.addBox(mat4Translate(MScreen, 0, 0.55, 0.068), 2.00, 0.12, 0.02, [0.12, 0.17, 0.26, 1], MAT.matte);
+  stream.addSphere(mat4Translate(MScreen, -0.88, 0.55, 0.082), 0.032, COL.red, MAT.glow);
+  stream.addSphere(mat4Translate(MScreen, -0.78, 0.55, 0.082), 0.032, COL.amber, MAT.glow);
+  stream.addSphere(mat4Translate(MScreen, -0.68, 0.55, 0.082), 0.032, COL.green, MAT.glow);
 
   // Left Pane: 3D Code / Attestation Rows on Laptop Display
-  stream.addRoundedSlabXY(mat4Translate(MScreen, -0.46, -0.05, 0.052), 1.04, 0.96, 0.015, 0.04, [0.09, 0.14, 0.22, 1], MAT.matte, 3);
-  stream.addBox(mat4Translate(MScreen, -0.54, 0.26, 0.062), 0.72, 0.07, 0.015, accentCol, MAT.glow);
-  stream.addBox(mat4Translate(MScreen, -0.48, 0.11, 0.062), 0.84, 0.055, 0.015, COL.white, MAT.glow);
-  stream.addBox(mat4Translate(MScreen, -0.58, -0.03, 0.062), 0.64, 0.055, 0.015, COL.blue, MAT.glow);
-  stream.addBox(mat4Translate(MScreen, -0.50, -0.17, 0.062), 0.78, 0.055, 0.015, COL.green, MAT.glow);
-  stream.addBox(mat4Translate(MScreen, -0.60, -0.31, 0.062), 0.58, 0.055, 0.015, accentCol, MAT.glow);
+  stream.addBox(mat4Translate(MScreen, -0.46, -0.05, 0.065), 1.02, 0.94, 0.02, [0.09, 0.14, 0.22, 1], MAT.matte);
+  stream.addBox(mat4Translate(MScreen, -0.54, 0.26, 0.078), 0.72, 0.07, 0.02, accentCol, MAT.glow);
+  stream.addBox(mat4Translate(MScreen, -0.48, 0.11, 0.078), 0.84, 0.055, 0.02, COL.white, MAT.glow);
+  stream.addBox(mat4Translate(MScreen, -0.58, -0.03, 0.078), 0.64, 0.055, 0.02, COL.blue, MAT.glow);
+  stream.addBox(mat4Translate(MScreen, -0.50, -0.17, 0.078), 0.78, 0.055, 0.02, COL.green, MAT.glow);
+  stream.addBox(mat4Translate(MScreen, -0.60, -0.31, 0.078), 0.58, 0.055, 0.02, accentCol, MAT.glow);
 
   // Right Pane: 3D Cryptographic Verification Seal Badge on Laptop Display
-  stream.addRoundedSlabXY(mat4Translate(MScreen, 0.54, -0.05, 0.052), 0.82, 0.96, 0.015, 0.04, [0.09, 0.15, 0.23, 1], MAT.matte, 3);
-  stream.addTorusXY(mat4Translate(MScreen, 0.54, 0.05, 0.065), 0.24, 0.042, accentCol, MAT.brightGlow, 20, 8);
-  stream.addSphere(mat4Translate(MScreen, 0.54, 0.05, 0.065), 0.12, accentCol, MAT.brightGlow, 8, 12);
-  stream.addRoundedSlabXY(mat4Translate(MScreen, 0.54, -0.34, 0.065), 0.62, 0.11, 0.015, 0.03, accentCol, MAT.glow, 2);
+  stream.addBox(mat4Translate(MScreen, 0.54, -0.05, 0.065), 0.80, 0.94, 0.02, [0.09, 0.15, 0.23, 1], MAT.matte);
+  stream.addTorusXY(mat4Translate(MScreen, 0.54, 0.05, 0.085), 0.23, 0.042, accentCol, MAT.brightGlow, 18);
+  stream.addSphere(mat4Translate(MScreen, 0.54, 0.05, 0.085), 0.11, accentCol, MAT.brightGlow);
+  stream.addBox(mat4Translate(MScreen, 0.54, -0.34, 0.078), 0.60, 0.11, 0.02, accentCol, MAT.glow);
 }
 
-// 4. High-Res 3D Home Server / Mesh Node Tower (`width ~ 1.4, height ~ 2.4, depth ~ 1.5`)
+// 3. High-Res 3D Home Server / Mesh Node Tower
 function buildServerTower3D(stream, M, accentCol) {
   buildPedestal3D(stream, M, 1.35, accentCol);
 
   const MT = mat4Translate(M, 0, 1.32, 0);
-  // Main Brushed Metal Chassis Tower
-  stream.addRoundedSlabXY(MT, 1.38, 2.28, 1.42, 0.16, COL.spaceGray, MAT.darkMetal, 5);
-  // Dark Tempered Glass Front Panel
-  stream.addRoundedSlabXY(mat4Translate(MT, 0, 0, 0.68), 1.18, 2.08, 0.12, 0.10, COL.obsidian, MAT.glass, 4);
+  stream.addRoundedSlabXY(MT, 1.38, 2.28, 1.42, 0.15, COL.spaceGray, MAT.darkMetal);
+  stream.addBox(mat4Translate(MT, 0, 0, 0.66), 1.16, 2.06, 0.14, COL.obsidian, MAT.glass);
 
-  // Vertical Glowing Telemetry Light-Pipe along left front edge
-  stream.addBox(mat4Translate(MT, -0.46, 0, 0.745), 0.06, 1.84, 0.04, accentCol, MAT.brightGlow);
+  // Vertical Glowing Telemetry Light-Pipe
+  stream.addBox(mat4Translate(MT, -0.45, 0, 0.745), 0.065, 1.82, 0.04, accentCol, MAT.brightGlow);
 
-  // 4 Hot-Swap NVMe / Mesh Storage Blades with individual glowing status LEDs
+  // 4 Hot-Swap Drive Blades with Status LEDs
   for (let i = 0; i < 4; i++) {
     const by = 0.62 - i * 0.42;
-    stream.addRoundedSlabXY(mat4Translate(MT, 0.08, by, 0.74), 0.86, 0.28, 0.04, 0.04, COL.darkChassis, MAT.titanium, 3);
-    // Drive handle bar
-    stream.addBox(mat4Translate(MT, 0.02, by, 0.765), 0.56, 0.06, 0.025, COL.titanium, MAT.titanium);
-    // Activity LEDs
+    stream.addBox(mat4Translate(MT, 0.08, by, 0.73), 0.84, 0.28, 0.05, COL.darkChassis, MAT.titanium);
+    stream.addBox(mat4Translate(MT, 0.02, by, 0.76), 0.54, 0.065, 0.03, COL.titanium, MAT.titanium);
     const ledCol = (i === 0) ? accentCol : (i === 1 ? COL.green : COL.blue);
-    stream.addSphere(mat4Translate(MT, 0.40, by + 0.04, 0.768), 0.035, ledCol, MAT.brightGlow, 6, 8);
-    stream.addSphere(mat4Translate(MT, 0.40, by - 0.05, 0.768), 0.025, COL.green, MAT.glow, 6, 8);
+    stream.addSphere(mat4Translate(MT, 0.39, by + 0.04, 0.77), 0.038, ledCol, MAT.brightGlow);
+    stream.addSphere(mat4Translate(MT, 0.39, by - 0.05, 0.77), 0.028, COL.green, MAT.glow);
   }
 
-  // Dual High-Gain Mesh Antennas on top of the tower
+  // Dual High-Gain Mesh Antennas (`KIND.ROD` + `KIND.SPHERE`)
   let MA1 = mat4RotateZ(mat4Translate(MT, -0.42, 1.35, -0.35), 0.12);
   let MA2 = mat4RotateZ(mat4Translate(MT,  0.42, 1.35, -0.35), -0.12);
-  stream.addCylinderY(MA1, 0.025, 0.045, 0.55, COL.titanium, MAT.titanium, 10);
-  stream.addCylinderY(MA2, 0.025, 0.045, 0.55, COL.titanium, MAT.titanium, 10);
-  stream.addSphere(mat4Translate(MA1, 0, 0.28, 0), 0.05, accentCol, MAT.brightGlow, 6, 8);
-  stream.addSphere(mat4Translate(MA2, 0, 0.28, 0), 0.05, accentCol, MAT.brightGlow, 6, 8);
+  stream.addCylinderY(MA1, 0.035, 0.045, 0.55, COL.titanium, MAT.titanium);
+  stream.addCylinderY(MA2, 0.035, 0.045, 0.55, COL.titanium, MAT.titanium);
+  stream.addSphere(mat4Translate(MA1, 0, 0.28, 0), 0.055, accentCol, MAT.brightGlow);
+  stream.addSphere(mat4Translate(MA2, 0, 0.28, 0), 0.055, accentCol, MAT.brightGlow);
 }
 
-// 5. High-Res 3D Sculpted Cryptographic Key (`bow ring + glowing crystal core + key shaft + teeth`)
+// 4. High-Res 3D Sculpted Cryptographic Key
 function buildCryptoKey3D(stream, M, accentCol, t) {
-  let MK = mat4RotateY(mat4RotateZ(M, 0.22), Math.sin(t * 1.4) * 0.25);
-  // Sculpted Bow Ring
-  stream.addTorusXY(mat4Translate(MK, -0.58, 0, 0), 0.36, 0.085, COL.gold, MAT.gold, 24, 12);
-  // Inner Glowing Key Core
-  stream.addSphere(mat4Translate(MK, -0.58, 0, 0), 0.16, accentCol, MAT.brightGlow, 10, 14);
-  // Forged Key Shaft along +X
+  let MK = mat4RotateY(mat4RotateZ(M, 0.18), Math.sin(t * 1.4) * 0.22);
+  stream.addTorusXY(mat4Translate(MK, -0.58, 0, 0), 0.36, 0.085, COL.gold, MAT.gold, 22);
+  stream.addSphere(mat4Translate(MK, -0.58, 0, 0), 0.16, accentCol, MAT.brightGlow);
   let MShaft = mat4RotateZ(mat4Translate(MK, 0.18, 0, 0), Math.PI * 0.5);
-  stream.addCylinderY(MShaft, 0.068, 0.068, 0.92, COL.gold, MAT.gold, 14);
-  // Precision Bit Teeth
-  stream.addBox(mat4Translate(MK, 0.32, -0.16, 0), 0.11, 0.22, 0.07, COL.gold, MAT.gold);
-  stream.addBox(mat4Translate(MK, 0.52, -0.20, 0), 0.11, 0.28, 0.07, COL.gold, MAT.gold);
-  stream.addBox(mat4Translate(MK, 0.42, -0.11, 0), 0.09, 0.14, 0.07, accentCol, MAT.brightGlow);
+  stream.addCylinderY(MShaft, 0.068, 0.068, 0.92, COL.gold, MAT.gold);
+  stream.addBox(mat4Translate(MK, 0.32, -0.16, 0), 0.11, 0.22, 0.08, COL.gold, MAT.gold);
+  stream.addBox(mat4Translate(MK, 0.52, -0.20, 0), 0.11, 0.28, 0.08, COL.gold, MAT.gold);
+  stream.addBox(mat4Translate(MK, 0.42, -0.11, 0), 0.09, 0.14, 0.08, accentCol, MAT.brightGlow);
 }
 
-// 6. High-Res 3D Signed Consent Tablet / Contract Slate (`beveled glass tablet + 3D text bars + glowing signature seal`)
+// 5. High-Res 3D Signed Consent Tablet / Contract Slate
 function buildConsentTablet3D(stream, M, accentCol) {
   buildPedestal3D(stream, M, 1.15, accentCol);
 
-  let MT = mat4RotateX(mat4Translate(M, 0, 1.28, 0), -0.22);
-  // Beveled Titanium & Glass Document Slate
-  stream.addRoundedSlabXY(MT, 1.54, 1.96, 0.14, 0.16, COL.titanium, MAT.titanium, 5);
-  stream.addRoundedSlabXY(mat4Translate(MT, 0, 0, 0.04), 1.40, 1.82, 0.09, 0.12, COL.obsidian, MAT.glass, 4);
+  let MT = mat4Translate(M, 0, 1.28, 0);
+  stream.addRoundedSlabXY(MT, 1.54, 1.96, 0.15, 0.15, COL.titanium, MAT.titanium);
+  stream.addBox(mat4Translate(MT, 0, 0, 0.035), 1.38, 1.80, 0.10, COL.obsidian, MAT.glass);
 
-  // Header Banner
-  stream.addRoundedSlabXY(mat4Translate(MT, 0, 0.64, 0.092), 1.16, 0.22, 0.03, 0.05, accentCol, MAT.glow, 3);
-  // Raised 3D Document Clause Lines
-  stream.addBox(mat4Translate(MT, -0.10, 0.32, 0.092), 0.96, 0.07, 0.025, COL.white, MAT.glow);
-  stream.addBox(mat4Translate(MT, -0.18, 0.14, 0.092), 0.80, 0.07, 0.025, COL.silver, MAT.titanium);
-  stream.addBox(mat4Translate(MT, -0.06, -0.04, 0.092), 1.02, 0.07, 0.025, COL.silver, MAT.titanium);
+  stream.addBox(mat4Translate(MT, 0, 0.62, 0.095), 1.14, 0.22, 0.03, accentCol, MAT.glow);
+  stream.addBox(mat4Translate(MT, -0.10, 0.30, 0.095), 0.94, 0.07, 0.03, COL.white, MAT.glow);
+  stream.addBox(mat4Translate(MT, -0.18, 0.12, 0.095), 0.78, 0.07, 0.03, COL.silver, MAT.titanium);
+  stream.addBox(mat4Translate(MT, -0.06, -0.06, 0.095), 1.00, 0.07, 0.03, COL.silver, MAT.titanium);
 
-  // Embossed 3D Cryptographic Wax/Laser Signature Medallion
   let MSeal = mat4Translate(MT, 0.28, -0.48, 0.105);
-  stream.addTorusXY(MSeal, 0.26, 0.055, accentCol, MAT.brightGlow, 22, 10);
-  stream.addCylinderY(mat4RotateX(MSeal, Math.PI * 0.5), 0.21, 0.21, 0.05, accentCol, MAT.glow, 20);
-  stream.addSphere(mat4Translate(MSeal, 0, 0, 0.03), 0.09, COL.white, MAT.brightGlow, 8, 12);
+  stream.addTorusXY(MSeal, 0.25, 0.055, accentCol, MAT.brightGlow, 20);
+  stream.addSphere(mat4Translate(MSeal, 0, 0, 0.02), 0.14, accentCol, MAT.glow);
+  stream.addSphere(mat4Translate(MSeal, 0, 0, 0.06), 0.08, COL.white, MAT.brightGlow);
 }
 
-// 7. High-Res 3D Causal Kernel Gyro-Processor (`multi-gimbal rotating 3D rings + crystalline core on stepped pedestal`)
+// 6. High-Res 3D Causal Kernel Gyro-Processor
 function buildCausalKernel3D(stream, M, t) {
   buildPedestal3D(stream, M, 1.55, COL.green);
-  let MB = mat4Translate(M, 0, 0.26, 0);
-  stream.addCylinderY(MB, 1.15, 1.28, 0.18, COL.darkChassis, MAT.titanium, 8);
+  let MB = mat4Translate(M, 0, 0.24, 0);
+  stream.addBox(MB, 1.75, 0.20, 1.45, COL.darkChassis, MAT.titanium);
 
-  // 2 Vertical Gimbal Support Pillars
-  stream.addCylinderY(mat4Translate(M, -1.12, 1.35, 0), 0.08, 0.10, 2.1, COL.titanium, MAT.titanium, 12);
-  stream.addCylinderY(mat4Translate(M,  1.12, 1.35, 0), 0.08, 0.10, 2.1, COL.titanium, MAT.titanium, 12);
+  stream.addCylinderY(mat4Translate(M, -1.12, 1.35, 0), 0.085, 0.095, 2.1, COL.titanium, MAT.titanium);
+  stream.addCylinderY(mat4Translate(M,  1.12, 1.35, 0), 0.085, 0.095, 2.1, COL.titanium, MAT.titanium);
 
   let MC = mat4Translate(M, 0, 1.52, 0);
-  // Outer Precision Gimbal Ring
   let MR1 = mat4RotateY(mat4RotateX(MC, 0.35), t * 0.65);
-  stream.addTorusXY(MR1, 1.02, 0.075, COL.titanium, MAT.titanium, 28, 10);
-  // Middle Causal Clock Ring
+  stream.addTorusXY(MR1, 1.02, 0.075, COL.titanium, MAT.titanium, 24);
   let MR2 = mat4RotateX(mat4RotateY(MC, -t * 0.9), Math.sin(t * 0.7) * 0.55);
-  stream.addTorusXY(MR2, 0.78, 0.065, COL.blue, MAT.glow, 24, 10);
-  // Inner Kernel Convergence Ring
+  stream.addTorusXY(MR2, 0.78, 0.065, COL.blue, MAT.glow, 22);
   let MR3 = mat4RotateZ(mat4RotateY(MC, t * 1.1), 0.8);
-  stream.addTorusXY(MR3, 0.54, 0.055, COL.green, MAT.brightGlow, 22, 10);
+  stream.addTorusXY(MR3, 0.54, 0.055, COL.green, MAT.brightGlow, 20);
 
-  // Crystalline Deterministic Core
-  stream.addSphere(MC, 0.30, COL.green, MAT.brightGlow, 14, 18);
+  stream.addSphere(MC, 0.30, COL.green, MAT.brightGlow);
 }
 
-// 8. High-Res 3D Bonded AI Steward Agent (`articulated metallic head + glowing visor + torso with 4 orbiting Conscience Rings`)
+// 7. High-Res 3D Bonded AI Steward Agent
 function buildAiSteward3D(stream, M, t, isPaused = false) {
   const accent = isPaused ? COL.red : COL.green;
   buildPedestal3D(stream, M, 1.45, accent);
 
-  const bob = isPaused ? 0 : Math.sin(t * 2.2) * 0.06;
+  const bob = isPaused ? 0 : Math.sin(t * 2.2) * 0.05;
   const MA = mat4Translate(M, 0, bob, 0);
 
-  // Base Support Column
-  stream.addCylinderY(mat4Translate(MA, 0, 0.45, 0), 0.24, 0.42, 0.65, COL.spaceGray, MAT.darkMetal, 18);
+  stream.addCylinderY(mat4Translate(MA, 0, 0.45, 0), 0.28, 0.38, 0.65, COL.spaceGray, MAT.darkMetal);
 
-  // Sculpted Torso Chassis
   let MTorso = mat4Translate(MA, 0, 1.18, 0);
-  stream.addRoundedSlabXY(MTorso, 1.24, 1.12, 0.68, 0.22, COL.titanium, MAT.titanium, 5);
-  // Shoulder Pauldrons
-  stream.addSphere(mat4Translate(MTorso, -0.74, 0.32, 0), 0.24, COL.spaceGray, MAT.titanium, 10, 14);
-  stream.addSphere(mat4Translate(MTorso,  0.74, 0.32, 0), 0.24, COL.spaceGray, MAT.titanium, 10, 14);
+  stream.addRoundedSlabXY(MTorso, 1.24, 1.12, 0.68, 0.18, COL.titanium, MAT.titanium);
+  stream.addSphere(mat4Translate(MTorso, -0.74, 0.32, 0), 0.24, COL.spaceGray, MAT.titanium);
+  stream.addSphere(mat4Translate(MTorso,  0.74, 0.32, 0), 0.24, COL.spaceGray, MAT.titanium);
 
-  // Recessed Conscience Heart Chamber on Chest
-  stream.addRoundedSlabXY(mat4Translate(MTorso, 0, 0.04, 0.31), 0.82, 0.72, 0.12, 0.14, COL.obsidian, MAT.glass, 4);
-  // 4 Rotating Conscience Faculty Rings inside the Chest Chamber (CC 3.1.5.3)
-  let MHeart = mat4Translate(MTorso, 0, 0.04, 0.38);
+  stream.addBox(mat4Translate(MTorso, 0, 0.04, 0.32), 0.80, 0.70, 0.10, COL.obsidian, MAT.glass);
+  let MHeart = mat4Translate(MTorso, 0, 0.04, 0.39);
   const spin = isPaused ? 0 : t * 1.4;
-  stream.addTorusXY(mat4RotateY(MHeart, spin), 0.28, 0.035, accent, MAT.brightGlow, 18, 8);
-  stream.addTorusXY(mat4RotateX(MHeart, -spin * 0.8 + 0.6), 0.21, 0.032, isPaused ? COL.red : COL.blue, MAT.brightGlow, 16, 8);
-  stream.addSphere(MHeart, 0.10, isPaused ? COL.red : COL.white, MAT.brightGlow, 10, 12);
+  stream.addTorusXY(mat4RotateY(MHeart, spin), 0.27, 0.038, accent, MAT.brightGlow, 16);
+  stream.addTorusXY(mat4RotateX(MHeart, -spin * 0.8 + 0.6), 0.20, 0.034, isPaused ? COL.red : COL.blue, MAT.brightGlow, 16);
+  stream.addSphere(MHeart, 0.10, isPaused ? COL.red : COL.white, MAT.brightGlow);
 
-  // Neck Joint
-  stream.addCylinderY(mat4Translate(MA, 0, 1.85, 0), 0.15, 0.18, 0.24, COL.darkChassis, MAT.darkMetal, 14);
+  stream.addCylinderY(mat4Translate(MA, 0, 1.85, 0), 0.16, 0.18, 0.24, COL.darkChassis, MAT.darkMetal);
 
-  // Articulated Sculpted AI Head + Glowing Visor Eyes
-  let MHead = mat4RotateY(mat4Translate(MA, 0, 2.24, 0), isPaused ? 0 : Math.sin(t * 1.1) * 0.16);
-  stream.addRoundedSlabXY(MHead, 0.92, 0.64, 0.68, 0.20, COL.titanium, MAT.titanium, 5);
-  // Curved Obsidian Visor Faceplate
-  stream.addRoundedSlabXY(mat4Translate(MHead, 0, 0.02, 0.31), 0.76, 0.34, 0.10, 0.10, COL.obsidian, MAT.glass, 4);
-  // Left & Right Glowing Optical Sensors
-  stream.addRoundedSlabXY(mat4Translate(MHead, -0.18, 0.02, 0.365), 0.18, 0.09, 0.02, 0.03, accent, MAT.brightGlow, 3);
-  stream.addRoundedSlabXY(mat4Translate(MHead,  0.18, 0.02, 0.365), 0.18, 0.09, 0.02, 0.03, accent, MAT.brightGlow, 3);
-  // Side Ear Transceivers
-  stream.addCylinderY(mat4RotateZ(mat4Translate(MHead, -0.50, 0.02, 0), Math.PI*0.5), 0.14, 0.14, 0.10, COL.spaceGray, MAT.titanium, 12);
-  stream.addCylinderY(mat4RotateZ(mat4Translate(MHead,  0.50, 0.02, 0), Math.PI*0.5), 0.14, 0.14, 0.10, COL.spaceGray, MAT.titanium, 12);
+  let MHead = mat4RotateY(mat4Translate(MA, 0, 2.24, 0), isPaused ? 0 : Math.sin(t * 1.1) * 0.14);
+  stream.addRoundedSlabXY(MHead, 0.92, 0.64, 0.66, 0.16, COL.titanium, MAT.titanium);
+  stream.addBox(mat4Translate(MHead, 0, 0.02, 0.31), 0.74, 0.32, 0.10, COL.obsidian, MAT.glass);
+  stream.addBox(mat4Translate(MHead, -0.18, 0.02, 0.365), 0.18, 0.09, 0.03, accent, MAT.brightGlow);
+  stream.addBox(mat4Translate(MHead,  0.18, 0.02, 0.365), 0.18, 0.09, 0.03, accent, MAT.brightGlow);
+  stream.addSphere(mat4Translate(MHead, -0.50, 0.02, 0), 0.13, COL.spaceGray, MAT.titanium);
+  stream.addSphere(mat4Translate(MHead,  0.50, 0.02, 0), 0.13, COL.spaceGray, MAT.titanium);
 
-  // If paused by Human Stop (Step 7), surround the AI agent with 3D Glowing Crimson Laser Containment Rings!
   if (isPaused) {
     for (let k = 0; k < 3; k++) {
       let MRing = mat4RotateX(mat4Translate(M, 0, 0.65 + k * 0.78, 0), Math.PI * 0.5);
-      stream.addTorusXY(MRing, 1.18, 0.045, COL.red, MAT.brightGlow, 24, 8);
+      stream.addTorusXY(MRing, 1.18, 0.048, COL.red, MAT.brightGlow, 24);
     }
   }
 }
 
-// 9. High-Res 3D Industrial Emergency Stop Console (`hazard collar + depressing crimson mushroom E-Stop pushbutton`)
+// 8. High-Res 3D Industrial Emergency Stop Console
 function buildEmergencyStop3D(stream, M, t) {
   buildPedestal3D(stream, M, 1.35, COL.red);
 
-  // Angled Control Console Housing
   let MBox = mat4Translate(M, 0, 0.62, 0);
-  stream.addRoundedSlabXZ(MBox, 1.56, 0.92, 1.42, 0.16, COL.amber, MAT.anodized, 5);
-  // Dark Top Switch Plate
-  stream.addRoundedSlabXZ(mat4Translate(MBox, 0, 0.48, 0), 1.32, 0.08, 1.18, 0.12, COL.obsidian, MAT.darkMetal, 4);
+  stream.addRoundedSlabXZ(MBox, 1.56, 0.92, 1.42, 0.14, COL.amber, MAT.anodized);
+  stream.addBox(mat4Translate(MBox, 0, 0.48, 0), 1.28, 0.08, 1.14, COL.obsidian, MAT.darkMetal);
 
   // Protective Yellow Safety Collar Ring
-  stream.addCylinderY(mat4Translate(MBox, 0, 0.58, 0), 0.54, 0.58, 0.18, COL.gold, MAT.gold, 24);
-  // Inner Stainless Shaft
+  stream.addCylinderY(mat4Translate(MBox, 0, 0.58, 0), 0.54, 0.56, 0.18, COL.gold, MAT.gold);
   const pressOffset = Math.sin(t * 2.5) * 0.04 - 0.04;
-  stream.addCylinderY(mat4Translate(MBox, 0, 0.74 + pressOffset, 0), 0.24, 0.24, 0.32, COL.silver, MAT.titanium, 20);
+  stream.addCylinderY(mat4Translate(MBox, 0, 0.74 + pressOffset, 0), 0.24, 0.24, 0.32, COL.silver, MAT.titanium);
 
-  // Iconic High-Gloss Crimson Mushroom E-Stop Button Head
+  // Iconic Crimson Mushroom E-Stop Button Head (`KIND.ROD` + `KIND.SPHERE` + `KIND.ROD` torus inlay)
   let MBtn = mat4Translate(MBox, 0, 0.92 + pressOffset, 0);
   const redCapMat = [0.25, 0.14, 0.25];
-  stream.addCylinderY(MBtn, 0.52, 0.46, 0.22, COL.red, redCapMat, 28);
-  stream.addSphere(mat4Scale(mat4Translate(MBtn, 0, 0.08, 0), 1.0, 0.42, 1.0), 0.52, COL.red, redCapMat, 10, 24, true);
-  // White Stop Ring Inlay on top of Mushroom Cap
-  stream.addTorusXY(mat4RotateX(mat4Translate(MBtn, 0, 0.26, 0), Math.PI * 0.5), 0.25, 0.035, COL.white, MAT.brightGlow, 20, 8);
+  stream.addCylinderY(MBtn, 0.52, 0.50, 0.24, COL.red, redCapMat);
+  stream.addSphere(mat4Translate(MBtn, 0, 0.02, 0), 0.50, COL.red, redCapMat);
+  stream.addTorusXY(mat4RotateX(mat4Translate(MBtn, 0, 0.38, 0), Math.PI * 0.5), 0.24, 0.036, COL.white, MAT.brightGlow, 20);
 }
 
-// ── Setup `holon-draw` Screen Batches for Razor-Sharp Projected 3D Callout Plaques ──
-class ScreenBatch {
-  constructor(kind) {
-    this.kind = kind;
-    this.offset = [0, 0, 0];
-    this.coarse = false;
-    this.screen = true;
-    this.count = 0;
-    this.buf = new ArrayBuffer(256 * INSTANCE_BYTES);
-    this.dv = new DataView(this.buf);
-    this.bytes = new Uint8Array(this.buf, 0, 0);
-    this.params = Float32Array.from(PARAMS_NEUTRAL);
-  }
-  clear() {
-    this.count = 0;
-    this.bytes = new Uint8Array(this.buf, 0, 0);
-  }
-  ensure(n) {
-    if ((n + 1) * INSTANCE_BYTES <= this.buf.byteLength) return;
-    const next = new ArrayBuffer(Math.max(this.buf.byteLength * 2, (n + 16) * INSTANCE_BYTES));
-    new Uint8Array(next).set(new Uint8Array(this.buf, 0, this.count * INSTANCE_BYTES));
-    this.buf = next;
-    this.dv = new DataView(this.buf);
-  }
-  add(pos, size, aux, angle, rgba, variant = 0) {
-    this.ensure(this.count + 1);
-    const b = this.count * INSTANCE_BYTES;
-    const dv = this.dv;
-    dv.setFloat32(b + 0, pos[0], true);
-    dv.setFloat32(b + 4, pos[1], true);
-    dv.setFloat32(b + 8, pos[2] || 0, true);
-    dv.setFloat32(b + 12, size[0], true);
-    dv.setFloat32(b + 16, size[1] || 0, true);
-    dv.setFloat32(b + 20, size[2] || 0, true);
-    dv.setFloat32(b + 24, aux ? aux[0] : 0, true);
-    dv.setFloat32(b + 28, aux ? aux[1] : 0, true);
-    dv.setFloat32(b + 32, aux ? aux[2] : 0, true);
-    dv.setFloat32(b + 36, angle || 0, true);
-    dv.setUint8(b + 40, rgba[0]);
-    dv.setUint8(b + 41, rgba[1]);
-    dv.setUint8(b + 42, rgba[2]);
-    dv.setUint8(b + 43, rgba[3] !== undefined ? rgba[3] : 255);
-    dv.setUint32(b + 44, this.count + 1, true);
-    dv.setUint8(b + 48, this.kind);
-    dv.setUint8(b + 49, 0);
-    dv.setUint8(b + 50, 0);
-    dv.setUint8(b + 51, variant);
-    this.count++;
-    this.bytes = new Uint8Array(this.buf, 0, this.count * INSTANCE_BYTES);
-  }
-}
-
-const bgQuads = new ScreenBatch(KIND.QUAD);
-const fgQuads = new ScreenBatch(KIND.QUAD);
-const discsBatch = new ScreenBatch(KIND.DISC);
-const runsBatch = new ScreenBatch(KIND.RUN);
-const allScreenBatches = [bgQuads, fgQuads, discsBatch, runsBatch];
-
+// ── `holon-draw` Screen Plaque Helpers ──
 const RGBA = {
   green:  [78, 208, 139, 255],
   blue:   [101, 178, 255, 255],
@@ -1208,7 +1008,6 @@ function drawTextScreen(str, style, x, cy, align, rgba) {
   runsBatch.add([cx, cy * dpr, 0], [e.w, e.h, 0], [e.u0, e.v0, e.u1], e.v1, rgba, e.page);
   return e.w / dpr;
 }
-// Compact, high-contrast label plaque anchored to a 3D object's projected screen position (sx, sy)
 function drawLabelPlaque(sx, sy, title, sub, accentRgba) {
   const wTitle = measureTextCss(title, STYLE.HEADING) + 34;
   const wSub = sub ? measureTextCss(sub, STYLE.SMALL) + 28 : 0;
@@ -1217,7 +1016,6 @@ function drawLabelPlaque(sx, sy, title, sub, accentRgba) {
   const x = sx - w / 2;
   const y = sy - h / 2;
 
-  // Outer border + dark glass fill
   bgQuads.add([(x + w/2)*dpr, (y + h/2)*dpr, 0], [w*dpr, h*dpr, 0], [9*dpr, 0, 0], 0, accentRgba, 0);
   fgQuads.add([(x + w/2)*dpr, (y + h/2)*dpr, 0], [(w - 3)*dpr, (h - 3)*dpr, 0], [7.5*dpr, 0, 0], 0, RGBA.plaque, 0);
 
@@ -1230,48 +1028,39 @@ function drawLabelPlaque(sx, sy, title, sub, accentRgba) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// BUILD THE 7 FULL-3D HARDWARE & PROTOCOL SCENES
+// BUILD THE 7 FULL-3D HARDWARE & PROTOCOL SCENES (100% `holon-draw`)
 // ═══════════════════════════════════════════════════════════════════════════
 
 function buildScene3D(stepIdx, t, vp, Wcss, Hcss) {
   meshOpaque.clear();
-  for (const b of allScreenBatches) b.clear();
-
   const I = mat4Identity();
 
-  // Studio Architectural Floor Plane (Y = 0, procedural shader grid when emissive = -1)
-  meshOpaque.pushQuad(
-    I,
-    [-24, 0,  24],
-    [ 24, 0,  24],
-    [ 24, 0, -24],
-    [-24, 0, -24],
-    [0, 1, 0],
-    [0.05, 0.07, 0.11, 1.0],
-    [0.0, 0.8, -1.0]
-  );
+  // Studio Architectural Floor Patch (`KIND.PATCH` with `holon-draw` value noise field) + 3D `KIND.LINE` Grid
+  worldPatches.add([0, 0, -0.02], [44, 44, 0], [0.2, 0, 0], 0, [11, 16, 25, 255], 0);
+  const gridColMajor = [28, 62, 94, 165];
+  const gridColMinor = [18, 38, 62, 110];
+  for (let g = -16; g <= 16; g += 2) {
+    const col = (g % 4 === 0) ? gridColMajor : gridColMinor;
+    const w = (g % 4 === 0) ? 0.035 : 0.02;
+    worldGridLines.add([g, -14, 0], [w, 0, 0], [g, 14, 0], 0, col, 0);
+    if (g >= -14 && g <= 14) {
+      worldGridLines.add([-16, g, 0], [w, 0, 0], [16, g, 0], 0, col, 0);
+    }
+  }
 
-  const labelAnchors = []; // { pos3d: [x,y,z], dyScreen: px, title, sub, col }
+  const labelAnchors = [];
 
   if (stepIdx === 0) {
-    // ── STEP 1: Your Key is Yours (3D Smartphone + Floating 3D Key -> Bob's 3D Laptop + Optional Server Tower Exit) ──
     const pAlice = [-4.6, 0, 0.2];
     const pBob   = [ 4.6, 0, 0.2];
     const pRoot  = [ 0.0, 0, -2.5];
 
     buildSmartphone3D(meshOpaque, mat4Translate(I, pAlice[0], pAlice[1], pAlice[2]), COL.green, "key");
-    // Floating 3D Cryptographic Key hovering above Alice's Smartphone
     buildCryptoKey3D(meshOpaque, mat4Translate(I, pAlice[0], 3.35, pAlice[2]), COL.green, t);
-
-    // Bob's 3D Open Laptop on the right
     buildLaptop3D(meshOpaque, mat4RotateY(mat4Translate(I, pBob[0], pBob[1], pBob[2]), -0.22), COL.blue);
-
-    // Optional Default Directory Server Tower at rear-center
     buildServerTower3D(meshOpaque, mat4Translate(I, pRoot[0], pRoot[1], pRoot[2]), COL.amber);
 
-    // 3D Fiber-Optic Tube from Alice's Phone directly to Bob's Laptop
     meshOpaque.addCurvedLink3D([pAlice[0]+0.9, 1.5, pAlice[2]+0.4], [pBob[0]-1.2, 1.1, pBob[2]+0.4], 1.25, 0.6, 0.055, COL.green, (t * 0.42) % 1.0);
-    // 3D 1-Step Exit Tube from Default Root
     meshOpaque.addCurvedLink3D([pAlice[0]+0.7, 0.9, pAlice[2]-0.3], [pRoot[0]-0.9, 1.1, pRoot[2]+0.4], 0.65, 0.0, 0.045, COL.amber, (t * 0.32) % 1.0);
 
     labelAnchors.push(
@@ -1282,7 +1071,6 @@ function buildScene3D(stepIdx, t, vp, Wcss, Hcss) {
   }
 
   else if (stepIdx === 1) {
-    // ── STEP 2: Five Private Circles — 5 Distinct 3D Hardware Setups in a Clean Non-Overlapping 3D Arc ──
     const nodes = [
       { x: -6.2, z:  1.1, kind: "phone",  col: COL.green,  rgba: RGBA.green,  title: "1. JUST ME",      sub: "Your Phone & Key" },
       { x: -3.1, z: -0.5, kind: "laptop", col: COL.green,  rgba: RGBA.green,  title: "2. FAMILY",       sub: "Household Laptops" },
@@ -1301,9 +1089,7 @@ function buildScene3D(stepIdx, t, vp, Wcss, Hcss) {
 
       if (idx < nodes.length - 1) {
         const nx = nodes[idx + 1];
-        // Outward confirm arc (top)
         meshOpaque.addCurvedLink3D([n.x + 0.65, 1.4, n.z], [nx.x - 0.65, 1.4, nx.z], 0.75, 0, 0.042, COL.amber, ((t * 0.38) + idx * 0.2) % 1.0);
-        // Inward 1-step pull-back arc (bottom)
         meshOpaque.addCurvedLink3D([nx.x - 0.65, 0.55, nx.z + 0.3], [n.x + 0.65, 0.55, n.z + 0.3], 0.25, 0.35, 0.042, COL.green, ((t * 0.5) + idx * 0.2) % 1.0);
       }
 
@@ -1318,14 +1104,12 @@ function buildScene3D(stepIdx, t, vp, Wcss, Hcss) {
   }
 
   else if (stepIdx === 2) {
-    // ── STEP 3: Two Consents (Alice's 3D Phone + Invitation Tablet + Bob's 3D Laptop -> Shared 3D Relationship Seat) ──
     const pAlice = [-4.8, 0, -0.4];
     const pBob   = [ 4.8, 0, -0.4];
     const pSeat  = [ 0.0, 0,  1.25];
 
     buildSmartphone3D(meshOpaque, mat4RotateY(mat4Translate(I, pAlice[0], 0, pAlice[2]), 0.25), COL.blue, "chat");
     buildLaptop3D(meshOpaque, mat4RotateY(mat4Translate(I, pBob[0], 0, pBob[2]), -0.25), COL.green);
-    // Center: Dual-Sealed 3D Relationship Tablet
     buildConsentTablet3D(meshOpaque, mat4Translate(I, pSeat[0], 0, pSeat[2]), COL.green);
     buildCryptoKey3D(meshOpaque, mat4Translate(I, pSeat[0], 3.15, pSeat[2]), COL.green, t);
 
@@ -1341,7 +1125,6 @@ function buildScene3D(stepIdx, t, vp, Wcss, Hcss) {
   }
 
   else if (stepIdx === 3) {
-    // ── STEP 4: Causal Kernel — Staggered 3D Tablets on Left -> 3D Gyro Causal Kernel -> Staggered Phone & Laptop on Right ──
     const pRecA   = [-6.2, 0, -0.5];
     const pRecBC  = [-3.4, 0,  0.9];
     const pKernel = [ 0.0, 0, -0.5];
@@ -1350,9 +1133,7 @@ function buildScene3D(stepIdx, t, vp, Wcss, Hcss) {
 
     buildConsentTablet3D(meshOpaque, mat4Scale(mat4RotateY(mat4Translate(I, pRecA[0], 0, pRecA[2]), 0.28), 0.80, 0.80, 0.80), COL.blue);
     buildConsentTablet3D(meshOpaque, mat4Scale(mat4RotateY(mat4Translate(I, pRecBC[0], 0, pRecBC[2]), 0.22), 0.80, 0.80, 0.80), COL.amber);
-
     buildCausalKernel3D(meshOpaque, mat4Scale(mat4Translate(I, pKernel[0], 0, pKernel[2]), 0.92, 0.92, 0.92), t);
-
     buildSmartphone3D(meshOpaque, mat4Scale(mat4RotateY(mat4Translate(I, pPhone[0], 0, pPhone[2]), -0.20), 0.84, 0.84, 0.84), COL.green, "chat");
     buildLaptop3D(meshOpaque, mat4Scale(mat4RotateY(mat4Translate(I, pLaptop[0], 0, pLaptop[2]), -0.25), 0.82, 0.82, 0.82), COL.green);
 
@@ -1371,22 +1152,16 @@ function buildScene3D(stepIdx, t, vp, Wcss, Hcss) {
   }
 
   else if (stepIdx === 4) {
-    // ── STEP 5: Fair Decisions — One Person Counts Once (Alice's Phone + Laptop side-by-side = 1 Voice, Bob's Server = 1 Voice -> Settled) ──
     const pAlicePhone  = [-6.2, 0,  0.2];
     const pAliceLaptop = [-3.2, 0,  0.4];
     const pBobServer   = [ 0.8, 0, -0.7];
     const pFinalTablet = [ 5.3, 0,  0.2];
 
-    // Alice owns TWO devices (a 3D Smartphone AND a 3D Laptop) side-by-side -> still counts as ONE voice!
     buildSmartphone3D(meshOpaque, mat4Scale(mat4RotateY(mat4Translate(I, pAlicePhone[0], 0, pAlicePhone[2]), 0.22), 0.84, 0.84, 0.84), COL.green, "key");
     buildLaptop3D(meshOpaque, mat4Scale(mat4RotateY(mat4Translate(I, pAliceLaptop[0], 0, pAliceLaptop[2]), 0.16), 0.84, 0.84, 0.84), COL.green);
-    // Golden identity arc uniting Alice's Phone and Alice's Laptop into 1 Voice
     meshOpaque.addCurvedLink3D([pAlicePhone[0]+0.65, 1.3, pAlicePhone[2]], [pAliceLaptop[0]-0.95, 1.0, pAliceLaptop[2]], 0.65, 0, 0.045, COL.gold, (t*0.5)%1.0);
 
-    // Bob's 3D Home Server Node (Member 2)
     buildServerTower3D(meshOpaque, mat4Scale(mat4Translate(I, pBobServer[0], 0, pBobServer[2]), 0.88, 0.88, 0.88), COL.blue);
-
-    // Settled Decision Tablet on the right
     buildConsentTablet3D(meshOpaque, mat4Scale(mat4RotateY(mat4Translate(I, pFinalTablet[0], 0, pFinalTablet[2]), -0.22), 0.92, 0.92, 0.92), COL.green);
 
     meshOpaque.addCurvedLink3D([pAliceLaptop[0]+1.0, 1.1, pAliceLaptop[2]], [pFinalTablet[0]-0.85, 1.2, pFinalTablet[2]+0.2], 1.2, 0.4, 0.052, COL.green, (t*0.42)%1.0);
@@ -1400,7 +1175,6 @@ function buildScene3D(stepIdx, t, vp, Wcss, Hcss) {
   }
 
   else if (stepIdx === 5) {
-    // ── STEP 6: Accountable AI — Alice's 3D Laptop (Steward) -> 3D Bonded AI Steward Agent -> Staggered Action Tablet & Human Phone ──
     const pSteward = [-5.3, 0,  0.3];
     const pAgent   = [-0.7, 0, -0.2];
     const pClear   = [ 3.2, 0, -0.9];
@@ -1408,13 +1182,8 @@ function buildScene3D(stepIdx, t, vp, Wcss, Hcss) {
 
     buildLaptop3D(meshOpaque, mat4Scale(mat4RotateY(mat4Translate(I, pSteward[0], 0, pSteward[2]), 0.24), 0.92, 0.92, 0.92), COL.blue);
     buildCryptoKey3D(meshOpaque, mat4Translate(I, pSteward[0], 2.75, pSteward[2]), COL.blue, t);
-
-    // Center: 3D Articulated AI Steward with Rotating Conscience Rings
     buildAiSteward3D(meshOpaque, mat4Translate(I, pAgent[0], 0, pAgent[2]), t, false);
-
-    // Right Center-Back: Signed Action Tablet (when clear)
     buildConsentTablet3D(meshOpaque, mat4Scale(mat4RotateY(mat4Translate(I, pClear[0], 0, pClear[2]), -0.20), 0.82, 0.82, 0.82), COL.green);
-    // Far Right: Human Wisdom Smartphone (when unsure -> defers to human!)
     buildSmartphone3D(meshOpaque, mat4Scale(mat4RotateY(mat4Translate(I, pDefer[0], 0, pDefer[2]), -0.25), 0.86, 0.86, 0.86), COL.amber, "chat");
 
     meshOpaque.addCurvedLink3D([pSteward[0]+1.1, 1.1, pSteward[2]], [pAgent[0]-1.0, 1.3, pAgent[2]], 0.85, 0, 0.055, COL.blue, (t*0.42)%1.0);
@@ -1430,20 +1199,16 @@ function buildScene3D(stepIdx, t, vp, Wcss, Hcss) {
   }
 
   else if (stepIdx === 6) {
-    // ── STEP 7: The Human Stop — 4 Staggered Horizontal Lanes (E-Stop Console | Paused AI Agent | Open Laptop | Open Phone & Key) ──
     const pStop   = [-6.1, 0, -0.3];
     const pAgent  = [-2.1, 0, -0.6];
     const pLaptop = [ 2.2, 0,  0.5];
     const pPhone  = [ 6.1, 0,  0.3];
 
-    // Lane 1 (Far Left): 3D Crimson Mushroom Emergency Stop Console
     buildEmergencyStop3D(meshOpaque, mat4Scale(mat4Translate(I, pStop[0], 0, pStop[2]), 0.90, 0.90, 0.90), t);
-    // Lane 2 (Center-Left): 3D Bonded AI Agent PAUSED inside 3D Red Laser Containment Rings
     buildAiSteward3D(meshOpaque, mat4Scale(mat4Translate(I, pAgent[0], 0, pAgent[2]), 0.90, 0.90, 0.90), t, true);
 
     meshOpaque.addCurvedLink3D([pStop[0]+0.9, 1.1, pStop[2]], [pAgent[0]-0.95, 1.3, pAgent[2]], 0.85, 0, 0.058, COL.red, (t*0.65)%1.0);
 
-    // Lane 3 (Center-Right) & Lane 4 (Far Right): Alice's 3D Laptop, Floating Key, and Bob's 3D Phone communicating freely!
     buildLaptop3D(meshOpaque, mat4Scale(mat4RotateY(mat4Translate(I, pLaptop[0], 0, pLaptop[2]), 0.14), 0.84, 0.84, 0.84), COL.green);
     buildSmartphone3D(meshOpaque, mat4Scale(mat4RotateY(mat4Translate(I, pPhone[0], 0, pPhone[2]), -0.22), 0.84, 0.84, 0.84), COL.green, "key");
     buildCryptoKey3D(meshOpaque, mat4Translate(I, 4.15, 2.55, 0.4), COL.green, t);
@@ -1458,18 +1223,18 @@ function buildScene3D(stepIdx, t, vp, Wcss, Hcss) {
     );
   }
 
-  // Project 3D label anchors to 2D screen plaques via `holon-draw`
   for (const lbl of labelAnchors) {
-    const sc = projectToScreen(vp, lbl.pos[0], lbl.pos[1], lbl.pos[2], Wcss, Hcss);
+    const hp = toHolon(lbl.pos);
+    const sc = projectHolonToScreen(vp, hp[0], hp[1], hp[2], Wcss, Hcss);
     if (sc) {
       drawLabelPlaque(sc[0], sc[1] + lbl.dy, lbl.title, lbl.sub, lbl.col);
     }
   }
 }
 
-// ── Main Render Loop (Pass 1: Full-3D Studio PBR Hardware Scene; Pass 2: `holon-draw` Crisp Screen Plaques) ──
-const IDENTITY_VP = new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]);
-const LIGHT_DIR = new Float32Array([0.4, -0.5, 0.76]);
+// ── Single-Pass `holon-draw` Render Loop (World Batches + Screen Batches in one `drawer.draw(...)`) ──
+// In `holon-draw` Z-up coordinates: light comes from front-right-above (+x, -y, +z)
+const LIGHT_DIR = new Float32Array([0.42, -0.58, 0.69]);
 let lastTms = performance.now();
 
 function frame(tms) {
@@ -1489,18 +1254,19 @@ function frame(tms) {
   const Wcss = W / dpr;
   const Hcss = H / dpr;
 
-  // Gentle studio camera sway + user drag orbit
+  // Camera in `holon-draw` Z-up world coordinates (`toHolon([x, y, z]) = [x, -z, y]`)
   const yaw = userYaw + Math.sin(tSec * 0.28) * 0.08;
   const pitch = 0.36 + userPitch;
   const dist = 14.2;
-  const eye = [
+  const eyeScene = [
     Math.sin(yaw) * Math.cos(pitch) * dist,
     Math.sin(pitch) * dist + 0.65,
     Math.cos(yaw) * Math.cos(pitch) * dist
   ];
-  const center = [0, 1.05, 0.1];
+  const eyeHolon = toHolon(eyeScene);
+  const centerHolon = toHolon([0, 1.05, 0.1]);
   const proj = mat4Perspective(0.56, W / H, 0.2, 60.0);
-  const view = mat4LookAt(eye, center, [0, 1, 0]);
+  const view = mat4LookAt(eyeHolon, centerHolon, [0, 0, 1]);
   const vp = mat4Mul(proj, view);
 
   text.beginFrame();
@@ -1508,52 +1274,20 @@ function frame(tms) {
   buildScene3D(currentStep, tSec, vp, Wcss, Hcss);
   if (text.epoch !== e0) buildScene3D(currentStep, tSec, vp, Wcss, Hcss);
 
-  // ── PASS 1: Render High-Res Full-3D Studio PBR Mesh Scene ──
   gl.viewport(0, 0, W, H);
   gl.clearColor(0.038, 0.052, 0.082, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-  gl.enable(gl.DEPTH_TEST);
-  gl.depthFunc(gl.LEQUAL);
-  gl.depthMask(true);
-  gl.disable(gl.CULL_FACE);
-  gl.enable(gl.BLEND);
-  gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
-  gl.useProgram(prog3D);
-  gl.uniformMatrix4fv(uVpLoc, false, vp);
-  gl.uniform3f(uEyeLoc, eye[0], eye[1], eye[2]);
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, vbo3D);
-  gl.bufferData(gl.ARRAY_BUFFER, meshOpaque.data.subarray(0, meshOpaque.vCount * 13), gl.DYNAMIC_DRAW);
-
-  const stride = 13 * 4;
-  gl.enableVertexAttribArray(aPosLoc);
-  gl.vertexAttribPointer(aPosLoc, 3, gl.FLOAT, false, stride, 0);
-  gl.enableVertexAttribArray(aNormLoc);
-  gl.vertexAttribPointer(aNormLoc, 3, gl.FLOAT, false, stride, 12);
-  gl.enableVertexAttribArray(aColLoc);
-  gl.vertexAttribPointer(aColLoc, 4, gl.FLOAT, false, stride, 24);
-  gl.enableVertexAttribArray(aMatLoc);
-  gl.vertexAttribPointer(aMatLoc, 3, gl.FLOAT, false, stride, 40);
-
-  gl.drawArrays(gl.TRIANGLES, 0, meshOpaque.vCount);
-
-  gl.disableVertexAttribArray(aPosLoc);
-  gl.disableVertexAttribArray(aNormLoc);
-  gl.disableVertexAttribArray(aColLoc);
-  gl.disableVertexAttribArray(aMatLoc);
-  gl.bindBuffer(gl.ARRAY_BUFFER, null);
-
-  // ── PASS 2: Render `holon-draw` Screen-Space Callout Plaques ──
+  // 100% rendered by `holon-draw` (`docs/holon/draw.js`)!
   drawer.draw(
-    allScreenBatches,
-    IDENTITY_VP,
+    allHolonBatches,
+    vp,
     LIGHT_DIR,
     {
-      eye: [0, 0, 1],
+      eye: [eyeHolon[0], eyeHolon[1], eyeHolon[2], 1],
       viewport: [0, 0, W, H],
-      depthTest: false,
-      shade: 0
+      depthTest: true,
+      shade: 0.45
     }
   );
 
