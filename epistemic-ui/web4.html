@@ -1,0 +1,1370 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0d12">
+<title>CIRIS Web4 Constitutional Mesh — Animated holon-draw Story &amp; CEWPOS Entry</title>
+<meta name="description" content="Animated holon-draw explanation of CIRIS Web4 Constitutional Mesh (Draft 0.5): cooperation without surrender, for people and the agents they hold. Backed by the CIRIS Constitution (1.0-rc20 / rc21-wire), CIRISKernel (602 Lean theorems), and CEWPOS (24 CSD/5 UX primitives).">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%2214%22 fill=%22%230b1724%22 stroke=%22%235ad38f%22 stroke-width=%222.5%22/%3E%3Cpath d=%22M4 16h24M16 2c-6 7-6 21 0 28M16 2c6 7 6 21 0 28%22 fill=%22none%22 stroke=%22%236cb6ff%22 stroke-width=%221.6%22/%3E%3C/svg%3E">
+<style>
+:root {
+  --bg: #0b0d12;
+  --panel: #12151c;
+  --line: #242a36;
+  --ink: #dfe3ea;
+  --mute: #8a93a3;
+  --ok: #5ad38f;
+  --warm: #ffb15c;
+  --hot: #ff6a5c;
+  --cool: #6cb6ff;
+  --violet: #c68aff;
+  --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html, body {
+  height: 100%;
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 13.5px/1.45 var(--mono);
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-text-size-adjust: 100%;
+}
+canvas#c {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  display: block;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+canvas#c:active { cursor: grabbing; }
+
+/* Top-left and top-right FABs & Navigation Strip (cewp-twin aesthetic) */
+.fab {
+  position: fixed;
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 7px 13px;
+  font: 600 12px/1 var(--mono);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0,0,0,.38);
+  transition: border-color .18s, background .18s, color .18s;
+  text-decoration: none;
+}
+.fab:hover, .fab.open {
+  border-color: var(--ok);
+  color: #fff;
+  background: color-mix(in srgb, var(--panel) 96%, transparent);
+}
+.fab .badge { color: var(--ok); font-weight: 700; font-variant-numeric: tabular-nums; }
+#btn-hud { left: 12px; top: 12px; }
+#btn-stats { right: 12px; top: 12px; }
+#btn-first-run-fab {
+  left: 12px;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  border-color: var(--ok);
+  background: color-mix(in srgb, var(--ok) 20%, var(--panel));
+  color: #fff;
+}
+#btn-first-run-fab:hover {
+  background: var(--ok);
+  color: #080b10;
+}
+
+.nav-strip {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: calc(100vw - 440px);
+}
+.nav-pill {
+  background: color-mix(in srgb, var(--panel) 86%, transparent);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font: 500 11px/1 var(--mono);
+  text-decoration: none;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(0,0,0,.35);
+  transition: border-color .18s, color .18s, background .18s;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.nav-pill:hover {
+  border-color: var(--cool);
+  color: #fff;
+  background: color-mix(in srgb, var(--panel) 96%, transparent);
+}
+.nav-pill.active, .nav-story-btn {
+  border-color: var(--ok);
+  color: #fff;
+  background: color-mix(in srgb, var(--ok) 25%, var(--panel));
+  font-weight: 700;
+}
+.nav-pill.cta-first-run {
+  border-color: var(--cool);
+  background: color-mix(in srgb, var(--cool) 24%, var(--panel));
+  color: #fff;
+  font-weight: 700;
+}
+
+/* Evidence grading badges (Implemented [IM], Specified [SP], Research thesis [RT] from CIRIS Web4 Appendix C) */
+.fig {
+  cursor: pointer;
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  border-radius: 3px;
+}
+.fig::after {
+  content: attr(data-code);
+  display: inline-block;
+  margin-left: 3px;
+  padding: 0 3px;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  font: 700 8px/1.2 var(--mono);
+  vertical-align: super;
+  opacity: .9;
+}
+.fig-IM { text-decoration-style: solid; text-decoration-color: var(--ok); color: #e9fcef; }
+.fig-IM::after { color: var(--ok); }
+.fig-SP { text-decoration-style: dashed; text-decoration-color: var(--cool); color: #e6f2ff; }
+.fig-SP::after { color: var(--cool); }
+.fig-RT { text-decoration-style: dotted; text-decoration-color: var(--warm); color: #fff4e5; }
+.fig-RT::after { color: var(--warm); }
+.fig:hover { background: rgba(108,182,255,.15); }
+
+/* Live Citation Strip */
+#live-strip {
+  position: fixed;
+  top: 52px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 24;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px 10px;
+  max-width: min(920px, calc(100vw - 20px));
+  padding: 5px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+  backdrop-filter: blur(8px);
+  font: 500 10.5px/1.35 var(--mono);
+  color: var(--mute);
+  text-align: center;
+}
+#live-strip b { color: var(--ink); }
+#live-strip code { color: #7ee2a8; background: rgba(126,226,168,.09); padding: 1px 5px; border-radius: 4px; }
+#live-strip a { color: #8ec5ff; text-decoration: underline; }
+
+/* Act Step Selector Strip */
+#act-strip {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 138px;
+  z-index: 26;
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: min(860px, calc(100vw - 24px));
+}
+.act-dot-btn {
+  background: rgba(14, 18, 26, 0.84);
+  border: 1px solid var(--line);
+  color: var(--mute);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font: 600 10.5px/1.2 var(--mono);
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: all .16s ease;
+}
+.act-dot-btn:hover { color: #fff; border-color: var(--cool); }
+.act-dot-btn.active {
+  background: color-mix(in srgb, var(--ok) 22%, #121722);
+  border-color: var(--ok);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(90, 211, 143, 0.35);
+}
+
+/* cewp-twin Story HUD dock at bottom */
+#story-hud {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(820px, calc(100vw - 28px));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  background: rgba(10, 14, 22, 0.90);
+  border: 1px solid rgba(108, 182, 255, 0.32);
+  border-radius: 16px;
+  padding: 12px 18px 14px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 28;
+  box-shadow: 0 8px 32px rgba(0,0,0,.55);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "head ctls" "line line";
+  align-items: center;
+  gap: 8px 12px;
+}
+.story-head {
+  grid-area: head;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+}
+.story-act-badge {
+  background: rgba(90, 211, 143, 0.18);
+  color: var(--ok);
+  border: 1px solid rgba(90, 211, 143, 0.48);
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+.story-title {
+  font: 700 13.5px/1.3 var(--mono);
+  color: #fff;
+}
+.story-sec-ref {
+  font-size: 10.5px;
+  color: var(--cool);
+  background: rgba(108, 182, 255, 0.12);
+  border: 1px solid rgba(108, 182, 255, 0.3);
+  border-radius: 6px;
+  padding: 1px 6px;
+}
+.story-mini-ctls {
+  grid-area: ctls;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.story-hdr-btn {
+  min-width: 34px;
+  min-height: 32px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: rgba(225, 232, 245, 0.92);
+  border-radius: 10px;
+  padding: 0 9px;
+  font: 600 13px/1 var(--mono);
+  cursor: pointer;
+}
+.story-hdr-btn:hover {
+  color: #fff;
+  border-color: var(--cool);
+  background: rgba(108, 182, 255, 0.16);
+}
+.story-line {
+  grid-area: line;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(242, 246, 252, 0.96);
+  max-height: 28dvh;
+  overflow-y: auto;
+}
+.story-line b { color: var(--ok); font-weight: 600; }
+.story-line code {
+  color: var(--cool);
+  background: rgba(20, 28, 42, 0.72);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+.story-progress-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 16px 16px 0 0;
+  overflow: hidden;
+}
+.story-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--cool), var(--ok));
+  transition: width .1s linear;
+}
+
+/* Side Panels & Claim Modal */
+.side-panel {
+  position: fixed;
+  top: 90px;
+  width: min(410px, calc(100vw - 24px));
+  max-height: calc(100dvh - 230px);
+  overflow-y: auto;
+  background: color-mix(in srgb, var(--panel) 94%, transparent);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  backdrop-filter: blur(10px);
+  z-index: 27;
+  box-shadow: 0 8px 28px rgba(0,0,0,.5);
+  font-size: 12px;
+}
+#panel-promises { left: 12px; }
+#panel-tests { right: 12px; }
+.panel-hidden { display: none !important; }
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+}
+.panel-head h2 {
+  margin: 0;
+  font: 700 13px/1.2 var(--mono);
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.panel-close {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--mute);
+  border-radius: 6px;
+  padding: 2px 8px;
+  font: 12px var(--mono);
+  cursor: pointer;
+}
+.panel-close:hover { color: #fff; border-color: var(--ink); }
+.promise-row {
+  padding: 7px 0;
+  border-bottom: 1px dashed #1e2430;
+}
+.promise-row:last-child { border-bottom: 0; }
+.promise-title { color: #fff; font-weight: 600; display: flex; justify-content: space-between; gap: 6px; }
+.promise-sub { color: var(--mute); font-size: 11px; margin-top: 2px; }
+
+#claim-modal {
+  position: fixed;
+  z-index: 42;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: min(430px, calc(100vw - 24px));
+  max-height: 76dvh;
+  overflow-y: auto;
+  background: color-mix(in srgb, var(--panel) 97%, transparent);
+  border: 1px solid var(--cool);
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 12px 36px rgba(0,0,0,.65);
+  backdrop-filter: blur(10px);
+}
+.ev-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  font: 700 10px/1.2 var(--mono);
+}
+.ev-IM { color: var(--ok); }
+.ev-SP { color: var(--cool); }
+.ev-RT { color: var(--warm); }
+
+#zoomctl {
+  position: fixed;
+  right: 12px;
+  bottom: 145px;
+  z-index: 22;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+  backdrop-filter: blur(8px);
+}
+#zoomctl button {
+  width: 38px;
+  height: 36px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: 600 16px/1 var(--mono);
+  cursor: pointer;
+}
+#zoomctl button + button { border-top: 1px solid var(--line); }
+#zoomctl button:hover { background: rgba(108,182,255,.15); color: #fff; }
+
+@media (max-width: 900px) {
+  .nav-strip { top: 48px; max-width: calc(100vw - 16px); overflow-x: auto; flex-wrap: nowrap; justify-content: flex-start; }
+  #live-strip { display: none; }
+  #act-strip { bottom: 158px; }
+  #btn-first-run-fab { display: none; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="c" aria-label="CIRIS Web4 Constitutional Mesh holon-draw 3D scene"></canvas>
+
+<button id="btn-hud" class="fab" type="button" title="Inspect the 7 Promises &amp; 24 CSD/5 Primitives">
+  ☰ Promises &amp; CSD/5 · <span class="badge" id="badge-prims">24 prims · 60 slots</span>
+</button>
+
+<button id="btn-stats" class="fab" type="button" title="Inspect the 8 Maturity Standard Tests &amp; Reference Stack">
+  ☰ Evidence &amp; Tests · <span class="badge" id="badge-theorems">602 Lean thms</span>
+</button>
+
+<a id="btn-first-run-fab" class="fab" href="app.html?mode=setup" title="Launch CEWPOS directly into the First-Run Setup Wizard (T0)">
+  🚀 Start CEWPOS First-Run (T0) &rarr;
+</a>
+
+<nav class="nav-strip" aria-label="CIRIS Web4 &amp; CEWPOS navigation">
+  <button id="btn-story-toggle" class="nav-pill nav-story-btn" type="button">❚❚ Playing Story</button>
+  <a class="nav-pill cta-first-run" href="app.html?mode=setup">🚀 Launch First-Run Wizard</a>
+  <a class="nav-pill" href="app.html?mode=circles">🧭 Explore 5 Circles OS</a>
+  <a class="nav-pill" href="app.html?demo=1">🎬 Dual-Node Video Demo</a>
+  <a class="nav-pill" href="CIRIS_Web4_Draft_0.5.pdf" target="_blank" rel="noopener">📄 Web4 White Paper (PDF)</a>
+  <a class="nav-pill" href="CIRIS_Web4.md" target="_blank" rel="noopener">📝 Draft 0.5 Markdown</a>
+  <a class="nav-pill" href="ui_primitives.json" target="_blank" rel="noopener">🧩 CSD/5 Registry</a>
+</nav>
+
+<div id="live-strip" role="note">
+  <span>
+    <b>CIRIS Web4 Constitutional Mesh (Draft 0.5 · 2026-11-19):</b>
+    <i>"Cooperation without surrender, for people and the agents they hold."</i>
+    Rendered live in WebGL by <code>CIRISHolon/holon-draw</code> (52-byte instanced records + 2D shelf atlas).
+    Click any badge (<span class="fig fig-IM" data-claim="kernel-determinism" data-code="IM">Implemented</span>,
+    <span class="fig fig-SP" data-claim="cbor-cose-wire" data-code="SP">Specified</span>,
+    <span class="fig fig-RT" data-claim="capture-resistance" data-code="RT">Research thesis</span>) to inspect its evidence.
+  </span>
+</div>
+
+<div id="act-strip" aria-label="8 Story Acts from CIRIS Web4 Constitutional Mesh"></div>
+
+<div id="story-hud" role="region" aria-label="Story narration and playback controls">
+  <div class="story-progress-track"><div class="story-progress-bar" id="story-progress-bar"></div></div>
+  <div class="story-head">
+    <span class="story-act-badge" id="story-act-badge">Act 1 / 8</span>
+    <span class="story-title" id="story-title">Sovereignty Through Cooperation</span>
+    <span class="story-sec-ref" id="story-sec-ref">Part I · §1–§3</span>
+  </div>
+  <div class="story-mini-ctls">
+    <button id="story-btn-prev" class="story-hdr-btn" type="button" title="Previous Act">‹</button>
+    <button id="story-btn-play" class="story-hdr-btn" type="button" title="Pause / Resume Auto-Advance">❚❚</button>
+    <button id="story-btn-next" class="story-hdr-btn" type="button" title="Next Act">›</button>
+  </div>
+  <div class="story-line" id="story-line">Loading CIRIS Web4 holon-draw scene…</div>
+</div>
+
+<div id="zoomctl" aria-label="Camera controls">
+  <button id="z-in" type="button" title="Zoom in">+</button>
+  <button id="z-out" type="button" title="Zoom out">&minus;</button>
+  <button id="z-reset" type="button" title="Reset orbit">⌂</button>
+</div>
+
+<!-- Left Drawer: The 7 Promises (§2) & 24 CSD/5 Primitives -->
+<aside id="panel-promises" class="side-panel panel-hidden" aria-label="Seven Promises and CSD/5 Primitives">
+  <div class="panel-head">
+    <h2>§2 · Seven Promises to a Person</h2>
+    <button class="panel-close" id="close-promises" type="button">✕</button>
+  </div>
+  <div class="promise-row">
+    <div class="promise-title"><span>1. Your key is yours</span><span class="ev-badge ev-IM">IM</span></div>
+    <div class="promise-sub">Nothing happens in your name without it; exit is one act (<code>CLM-exit-one-step</code>).</div>
+  </div>
+  <div class="promise-row">
+    <div class="promise-title"><span>2. Nothing private leaves without consent</span><span class="ev-badge ev-IM">IM / SP</span></div>
+    <div class="promise-sub">Content lives in 5 circles and leaves one only by its signer's act (<code>Carry.lean</code> proved).</div>
+  </div>
+  <div class="promise-row">
+    <div class="promise-title"><span>3. Every act of power is signed &amp; contestable</span><span class="ev-badge ev-IM">IM</span></div>
+    <div class="promise-sub">If a claim names you, you can contest it on the record and the contest travels with the claim.</div>
+  </div>
+  <div class="promise-row">
+    <div class="promise-title"><span>4. No one buys standing; no hand bans a community</span><span class="ev-badge ev-IM">IM</span></div>
+    <div class="promise-sub">One person counts once (<code>RosterHead.lean</code>); a root can only restrict (<code>Prop_NoBan</code>).</div>
+  </div>
+  <div class="promise-row">
+    <div class="promise-title"><span>5. Agents decide by published principles</span><span class="ev-badge ev-IM">IM</span></div>
+    <div class="promise-sub">No agent may trade a principle away; uncertainty defers to a named human (CC 1.3, 1.9).</div>
+  </div>
+  <div class="promise-row">
+    <div class="promise-title"><span>6. Named humans can pause every agent under a root</span><span class="ev-badge ev-IM">IM</span></div>
+    <div class="promise-sub">One signed row pauses; a lone halt lapses in 24h unless confirmed by majority (<code>formal/accord_halt</code>).</div>
+  </div>
+  <div class="promise-row">
+    <div class="promise-title"><span>7. Everything on the wire is encrypted &amp; signed</span><span class="ev-badge ev-IM">IM</span></div>
+    <div class="promise-sub">Hybrid post-quantum <code>ML-DSA-65 + Ed25519</code> under COSE / deterministic CBOR.</div>
+  </div>
+  <div class="panel-head" style="margin-top:12px;">
+    <h2>CSD/5 Draft 3 · 24 Primitives (`holon-draw` Profile B)</h2>
+  </div>
+  <div style="font-size:11px; color:var(--mute); line-height:1.45;">
+    <code>CardShell</code> · <code>FieldRow</code> · <code>ItemRow</code> · <code>ScopePill</code> ·
+    <code>Chip</code> · <code>Action</code> · <code>ReceiptSheet</code> · <code>StateBlock</code> (17 states) ·
+    <code>Metric</code> · <code>ConfirmSheet</code> · <code>Choice</code> · <code>DestinationPicker</code> ·
+    <code>Field</code> · <code>StepFlow</code> · <code>Ceremony</code> · <code>LineageChain</code> ·
+    <code>CodeCompare</code> · <code>QrCode</code> · <code>Transcript</code> · <code>ConscienceStep</code> ·
+    <code>PolicyLens</code> · <code>GraphView</code> · <code>Document</code> · <code>Media</code>
+    — 60 closed slots, 12 laws (<code>L1</code>–<code>L12</code>), tag grammar <code>prefix_surface_instance[__slot][.key]</code>.
+  </div>
+</aside>
+
+<!-- Right Drawer: §12 Maturity Standard (8 Tests) & Appendix B Reference Stack -->
+<aside id="panel-tests" class="side-panel panel-hidden" aria-label="Maturity Standard and Reference Components">
+  <div class="panel-head">
+    <h2>§12 · The 8-Test Maturity Standard</h2>
+    <button class="panel-close" id="close-tests" type="button">✕</button>
+  </div>
+  <div class="promise-row">
+    <div class="promise-title"><span>T1. Independent derivation</span><span class="ev-badge ev-IM">7.14M cases</span></div>
+    <div class="promise-sub">Rust crate &amp; Python models agree on 7,148,733 cases (needs external 2nd builder).</div>
+  </div>
+  <div class="promise-row">
+    <div class="promise-title"><span>T2. No hidden coordinator</span><span class="ev-badge ev-IM">Proved</span></div>
+    <div class="promise-sub">Proved for the causal kernel (<code>Settled.lean</code>, CC 2.7).</div>
+  </div>
+  <div class="promise-row">
+    <div class="promise-title"><span>T3. Partition and recovery</span><span class="ev-badge ev-IM">Proved</span></div>
+    <div class="promise-sub">One answer per set in every arrival order (<code>Causal.lean</code>; 2,182,671 orders run).</div>
+  </div>
+  <div class="promise-row">
+    <div class="promise-title"><span>T4. Authority correctness</span><span class="ev-badge ev-IM">Proved</span></div>
+    <div class="promise-sub">A seat is two consents; one signature never removes (<code>Consent.lean</code>, <code>RosterHead.lean</code>).</div>
+  </div>
+  <div class="promise-row">
+    <div class="promise-title"><span>T5. Capture resistance</span><span class="ev-badge ev-RT">34 attacks</span></div>
+    <div class="promise-sub">34 attack classes run, 0 broken, 15 conceded limits (CC 6.1.2.3 <code>n_eff</code>).</div>
+  </div>
+  <div class="promise-row">
+    <div class="promise-title"><span>T6. Privacy-preserving verification</span><span class="ev-badge ev-IM">1,270 + 59 thms</span></div>
+    <div class="promise-sub"><code>CIRISOntology</code> view/fibre closure + <code>formal/audience_view</code> + <code>Carry.lean</code>.</div>
+  </div>
+  <div class="promise-row">
+    <div class="promise-title"><span>T7. Human control (Halt)</span><span class="ev-badge ev-IM">8.18M states</span></div>
+    <div class="promise-sub">Halt as one row; agent latch live; <code>AccordHaltRow.tla</code> model-checked.</div>
+  </div>
+  <div class="promise-row">
+    <div class="promise-title"><span>T8. Independent operation</span><span class="ev-badge ev-RT">Proved walk</span></div>
+    <div class="promise-sub">Reader's trust walk proved (<code>formal/trust_set</code>); exit is one act.</div>
+  </div>
+  <div class="panel-head" style="margin-top:12px;">
+    <h2>Appendix B · Reference Stack</h2>
+  </div>
+  <div style="font-size:11px; color:var(--mute); line-height:1.5;">
+    <b>Constitution:</b> <code>v1.0-rc20</code> / <code>v1.0-rc21-wire</code><br>
+    <b>Causal Kernel:</b> <code>CIRISKernel kernel-v0.2.0</code> (<code>no_std</code>, 602 Lean theorems)<br>
+    <b>Fabric Node:</b> <code>CIRISServer v0.5.250</code> (<code>ciris-persist v61.4.2</code>, <code>ciris-edge v45.1.7</code>, <code>ciris-verify v22.2.0</code>)<br>
+    <b>Draw Engine:</b> <code>CIRISHolon holon-draw v0.1.0</code> (zero-dep 52B instanced core)<br>
+    <b>Epistemic OS:</b> <code>CEWPOS</code> (Attestation Calculus + WASM view-forms + 24 CSD/5 primitives)
+  </div>
+</aside>
+
+<!-- Claim Evidence Inspector Modal -->
+<div id="claim-modal" class="panel-hidden" role="dialog" aria-label="Claim Evidence Ledger Entry"></div>
+
+<script type="module">
+import {
+  createDrawer,
+  KIND,
+  INSTANCE_BYTES,
+  PARAMS_NEUTRAL,
+  COLOUR,
+  PARAM,
+  VARIANT_CASING,
+  DISC_CASING,
+  DISC_CANOPY_FIELD,
+  VARIANT_ROUND,
+} from './holon/draw.js';
+import { createTextProvider, STYLE } from './holon/text.js';
+
+// ── Appendix C Evidence Ledger (Implemented [IM], Specified [SP], Research thesis [RT]) ──
+const CLAIMS_LEDGER = {
+  "sovereignty-cooperation": {
+    title: "Sovereignty through cooperation (§1)",
+    tier: "IM",
+    status: "Implemented foundation",
+    what: "Distribute the capacity to act while preventing the authority to govern everyone from accumulating in one place. Every act is a signed statement under published rules, and every device works out for itself what those statements mean.",
+    evidence: "CIRISConstitution v1.0-rc20 / v1.0-rc21-wire; CLM-exit-one-step; CIRISKernel kernel-v0.2.0."
+  },
+  "seven-promises": {
+    title: "Eleven Constitutional Promises, Seven Load-Bearing (§2)",
+    tier: "IM",
+    status: "Implemented (with private-room wire Specified)",
+    what: "1. Your key is yours. 2. Nothing private leaves a circle without your act. 3. Every act of power is signed and contestable. 4. No one buys standing, and no hand bans a community. 5. Agents decide by published principles. 6. Named humans can pause every agent under a root. 7. Everything on the wire is encrypted and signed.",
+    evidence: "Carry.lean (proved); RosterHead.lean; formal/mesh_net Prop_NoBan; formal/accord_halt."
+  },
+  "kernel-determinism": {
+    title: "The Causal Kernel: A_i = K(R_i, k_i, t_i; C) (§4, CC 2.7)",
+    tier: "IM",
+    status: "Implemented & Proved",
+    what: "Two nodes holding the same signed rows reach the same answers in every arrival order. No leader, no sequencer, no global log. Every answer is graded: Final by form, Final by acknowledgement (n - t + 1 blocking quorum receipts), or Provisional.",
+    evidence: "CIRISKernel kernel-v0.2.0 (no_std, 0 deps, 0 unsafe); 26 Lean 4 files, 602 theorems, 0 sorry; tested across 6,606 sets in 2,182,671 arrival orders and 7,148,733 differential cases."
+  },
+  "five-layers": {
+    title: "The Five Layers & Screen-Enforced Authority (§5, CSD/5)",
+    tier: "IM",
+    status: "Implemented (384 established rules, 24 CSD/5 primitives)",
+    what: "Layer 1: Transport (Reticulum/LoRa + Internet). Layer 2: Signed Row (COSE_Sign1 CBOR + ML-DSA-65 + Ed25519). Layer 3: Grammar (1+4 operators, 186 families). Layer 4: Governance (384 rules). Layer 5: Screen-enforced Agency (what a person may do, its preview, and the admitting rule are one answer).",
+    evidence: "formal/event_lifecycle (proved); formal/screen (6 properties, 720 worlds, 11 breaks caught); manifests/ui_primitives.json (CSD/5 draft 3, 24 primitives, 60 slots, 12 laws)."
+  },
+  "holons-views": {
+    title: "Holonic Composition & Machine-Checked View Theory (§6)",
+    tier: "IM",
+    status: "Implemented & Proved (1,270 + 59 Lean theorems)",
+    what: "People, families, communities, affiliations, and federation form a holarchy across 5 concentric circles (Carry.lean). A reader's view v decides what it must and hides what it must not learn; any failure of closure normal-forms to a witness pair.",
+    evidence: "CIRISOntology Core/ (1,270 Lean 4 theorems, 0 sorry); formal/audience_view (59 bridge theorems); formal/mesh_life (9,802,021 states)."
+  },
+  "ceg-1plus4": {
+    title: "Closed 1+4 CEG Grammar & Forward COSE/CBOR Wire (§7, CC 2.6.1)",
+    tier: "IM",
+    status: "Implemented (1+4 grammar) / Specified (Edition-2 COSE/CBOR wire)",
+    what: "Every row is one of 5 closed types: scores (claim) or 4 structural composers (delegates_to, supersedes, withdraws, recants). In rc20/rc21-wire, each row is deterministic CBOR under COSE_Sign1 with composite ML-DSA-65 + Ed25519 (-70100) and 4-way step-8 key ownership verification.",
+    evidence: "CIRISVerify v22.2.0 / v23.2.0; draft-moore-scitt-ciris-ceg-01 / -02; manifests/signed_object_v2.cddl; manifests/family_payloads_v2.cddl."
+  },
+  "capture-resistance": {
+    title: "Capture Resistance, Correlation Discounting & 1-Row Halt (§8)",
+    tier: "RT",
+    status: "Components Implemented & Proved; Whole is Research Thesis",
+    what: "Multi-root exit (formal/trust_set), standing by consent rather than stake, correlation discounting k_eff = k / (1 + rho*(k-1)) (CC 6.1.2.3), and a 1-holder signed halt row with a 24h fuse and no rate bound (because a missed halt is the one unrecoverable failure).",
+    evidence: "formal/accord_halt (8,186,704 states); formal/accord_roster; CIRISOntology pairwise_blind_to_parity; 34 attack classes evaluated."
+  },
+  "machine-conscience": {
+    title: "Machine Conscience, Admission (CC 2.7.11) & First-Run Entry (§9)",
+    tier: "IM",
+    status: "Implemented in CIRISAgent, CIRISServer v0.5.250 & CEWPOS",
+    what: "Conscience (what should this agent do?), Governance (who may permit it?), and Coordination (how can participants verify it?) stay distinct. Unified admission (CC 2.7.11) binds code (admission:unit + SCITT receipt), profile (CEG-profile/2), and action (CEG-call/2).",
+    evidence: "CIRISAgent v2.22.0 (H3ERE, WBD, G17 refusal); CIRISServer v0.5.250 (split-home video calls CSD-134, OTLP metrics); CEWPOS start_first_run.py."
+  }
+};
+
+window.showClaimModal = function(claimKey) {
+  const entry = CLAIMS_LEDGER[claimKey];
+  const modal = document.getElementById('claim-modal');
+  if (!entry || !modal) return;
+  modal.classList.remove('panel-hidden');
+  modal.innerHTML = `
+    <div class="panel-head">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span class="ev-badge ev-${entry.tier}">${entry.tier}</span>
+        <b style="color:#fff;font-size:12.5px;">${entry.title}</b>
+      </div>
+      <button class="panel-close" onclick="document.getElementById('claim-modal').classList.add('panel-hidden')">✕</button>
+    </div>
+    <div style="color:var(--ok);font-size:11px;margin-bottom:6px;">Status: ${entry.status}</div>
+    <p style="margin:4px 0 8px;color:var(--ink);line-height:1.48;">${entry.what}</p>
+    <div style="border-top:1px dashed #242a36;padding-top:6px;font-size:11px;color:var(--mute);">
+      <span style="text-transform:uppercase;letter-spacing:.05em;font-size:9.5px;display:block;margin-bottom:2px;">Pinned Evidence &amp; Formal Artifacts</span>
+      <code style="color:#7ee2a8;">${entry.evidence}</code>
+    </div>
+  `;
+};
+
+document.addEventListener('click', (e) => {
+  const fig = e.target.closest('.fig[data-claim]');
+  if (fig) {
+    window.showClaimModal(fig.dataset.claim);
+  }
+});
+
+// ── The 8 Animated Story Acts from `CIRIS Web4 Constitutional Mesh` (Draft 0.5) ──
+const STORY_ACTS = [
+  {
+    badge: "Act 1 / 8",
+    shortLabel: "1 · Sovereignty",
+    title: "Sovereignty Through Cooperation",
+    secRef: "Part I · §1",
+    cam: { az: 28, el: 24, dist: 21, map: false },
+    hudTitle: "PART I · §1 SOVEREIGNTY THROUGH COOPERATION",
+    hudRows: [
+      ["problem", "power follows coordination"],
+      ["open models", "spread act, not coordinate"],
+      ["answer", "constitutional mesh (no middleman)"],
+      ["rule", "cooperation without surrender"],
+      ["status", "LIVE · 6 platforms · 5 row kinds"]
+    ],
+    hudVerdict: "COOPERATION WITHOUT SURRENDER",
+    html: `Power follows infrastructure. Open models and local computers spread the capacity to <i>act</i>, not the capacity to <i>coordinate</i>. CIRIS builds a <span class="fig fig-IM" data-claim="sovereignty-cooperation" data-code="IM">constitutional mesh</span> where people, communities, and the AI agents they hold coordinate under published rules — with no operator in the middle who can buy, block, or break the arrangement.`
+  },
+  {
+    badge: "Act 2 / 8",
+    shortLabel: "2 · 7 Promises",
+    title: "What It Promises a Person",
+    secRef: "Part I · §2–§3",
+    cam: { az: -35, el: 62, dist: 18, map: true },
+    hudTitle: "PART I · §2 SEVEN PROMISES TO A PERSON",
+    hudRows: [
+      ["1. your key", "exit in 1 act (CLM-exit-one-step)"],
+      ["2. privacy", "5 circles (Carry.lean proved)"],
+      ["3. power", "signed & contestable on record"],
+      ["4. standing", "1 person once · Prop_NoBan"],
+      ["5. AI halt", "1-row pause · 24h fuse"]
+    ],
+    hudVerdict: "11 PROMISES · 7 LOAD-BEARING",
+    html: `Here on the generated <span class="fig fig-IM" data-claim="seven-promises" data-code="IM">holon-draw neighbourhood</span>, Alice and Bob hold their own keys on their own devices. Content starts in <b>Just me</b> and crosses outward only by its signer's act (<code>Carry.lean</code>). One person counts once however many devices sign (<code>RosterHead.lean</code>), and leaving any trust root takes one immediate step.`
+  },
+  {
+    badge: "Act 3 / 8",
+    shortLabel: "3 · Causal Kernel",
+    title: "Coordination Without a Coordinator",
+    secRef: "Part II · §4 (CC 2.7)",
+    cam: { az: 52, el: 22, dist: 17, map: false },
+    hudTitle: "PART II · §4 THE CAUSAL KERNEL (CC 2.7)",
+    hudRows: [
+      ["function", "A_i = K(R_i, k_i, t_i; C)"],
+      ["crate", "CIRISKernel kernel-v0.2.0 (no_std)"],
+      ["proofs", "602 Lean 4 theorems (0 sorry)"],
+      ["order test", "2,182,671 arrival orders = 1 answer"],
+      ["finality", "Form | Ack (n-t+1) | Provisional"]
+    ],
+    hudVerdict: "602 LEAN THEOREMS · NO SEQUENCER",
+    html: `A node holds signed rows and nothing else. Every answer is computed locally by the <span class="fig fig-IM" data-claim="kernel-determinism" data-code="IM">causal kernel</span>: <code>A_i = K(R_i, k_i, t_i; C)</code>. Two nodes holding the same rows reach the exact same conclusion in <b>every arrival order</b> (<code>Causal.door_any_order</code>). Under the <code>rc21-wire</code> door/fold rule, a row waits for what it names and is never refused because of another row.`
+  },
+  {
+    badge: "Act 4 / 8",
+    shortLabel: "4 · Five Layers & CSD/5",
+    title: "The Five Layers & 24 CSD/5 Screen Primitives",
+    secRef: "Part II · §5 (Issue #3)",
+    cam: { az: 110, el: 28, dist: 19, map: false },
+    hudTitle: "PART II · §5 FIVE LAYERS & CSD/5 (24 PRIMS)",
+    hudRows: [
+      ["L1 transport", "CIRISEdge v45.1.7 (Reticulum/LoRa)"],
+      ["L2 signed row", "COSE_Sign1 CBOR + ML-DSA-65"],
+      ["L3 grammar", "1+4 types · 186 families"],
+      ["L4 governance", "384 established rules · 16 models"],
+      ["L5 screen", "CSD/5 draft 3 · 24 prims · 60 slots"]
+    ],
+    hudVerdict: "SHOWN IS SENT (L12) · MODAL PICK (L6)",
+    html: `Applications cannot manufacture authority the lower layers do not recognise. In <span class="fig fig-IM" data-claim="five-layers" data-code="IM">Layer 5 (CEWPOS + CSD/5 draft 3)</span>, every screen is composed from <b>24 closed UX primitives and 60 slots</b> drawn through <code>holon-draw</code> Profile B: what a person may do, its 3-fact <code>ConfirmSheet</code> preview (<code>L6</code>/<code>L7</code>), and its <code>shown_digest</code> (<code>L12</code>) are one kernel answer.`
+  },
+  {
+    badge: "Act 5 / 8",
+    shortLabel: "5 · Holons & Views",
+    title: "Whole and Part: Holons & Formal Views",
+    secRef: "Part II · §6",
+    cam: { az: 165, el: 34, dist: 20, map: false },
+    hudTitle: "PART II · §6 HOLONS & AUDIENCE VIEWS",
+    hudRows: [
+      ["holarchy", "Just me -> Family -> Community -> Fed"],
+      ["view theory", "CIRISOntology Core/ (1,270 thms)"],
+      ["bridge", "formal/audience_view (59 thms)"],
+      ["normal form", "failure of closure = witness pair"],
+      ["mesh life", "9,802,021 finite states checked"]
+    ],
+    hudVerdict: "VERIFIABLE TRANSPARENCY + PRIVACY",
+    html: `People, households, communities, and steward-bound agents are <b>holons</b> — wholes that are also parts. Composition is not subordination. <span class="fig fig-IM" data-claim="holons-views" data-code="IM">CIRISOntology (1,270 theorems) and audience_view (59 theorems)</span> prove that for every audience rule, a reader's view decides what it must decide and cannot factor what it must not learn.`
+  },
+  {
+    badge: "Act 6 / 8",
+    shortLabel: "6 · 1+4 CEG & RC21 Wire",
+    title: "A Common Language: 1+4 CEG & RC21 Wire",
+    secRef: "Part II · §7 (v1.0-rc21-wire)",
+    cam: { az: 215, el: 25, dist: 16.5, map: false },
+    hudTitle: "PART II · §7 1+4 CEG & RC21-WIRE",
+    hudRows: [
+      ["5 row kinds", "scores | delegates | supersedes | withdraws | recants"],
+      ["cose / cbor", "COSE_Sign1 · label -70100 PQC hybrid"],
+      ["step 8 (rc21)", "4 ways kid belongs to iss + guard"],
+      ["room leaves", "people, not nodes, are MLS leaves"],
+      ["decimals", "CBOR tag-4 normalized (no floats)"]
+    ],
+    hudVerdict: "1+4 CLOSED GRAMMAR · 186 FAMILIES",
+    html: `Every consequential act is one of <span class="fig fig-IM" data-claim="ceg-1plus4" data-code="IM">five closed row kinds</span>: a claim (<code>scores</code>) or four structural composers (<code>delegates_to</code>, <code>supersedes</code>, <code>withdraws</code>, <code>recants</code>). At <code>v1.0-rc21-wire</code>, step 8 verifies <code>kid</code> belongs to <code>iss</code> in four ways (thumbprint, rotation chain, accord bundle in force, or live occurrence with the person/machine guard).`
+  },
+  {
+    badge: "Act 7 / 8",
+    shortLabel: "7 · Capture & Halt",
+    title: "Capture Resistance & The Human Halt",
+    secRef: "Part II · §8",
+    cam: { az: 265, el: 29, dist: 18.5, map: false },
+    hudTitle: "PART II · §8 CAPTURE RESISTANCE & HALT",
+    hudRows: [
+      ["roots", "many roots · 1-step exit (trust_set)"],
+      ["standing", "by consent, never bought by stake"],
+      ["correlation", "k_eff = k / (1 + rho*(k-1)) (CC 6.1.2.3)"],
+      ["human halt", "1 holder row pauses · 24h fuse"],
+      ["attacks", "34 classes run · 0 broken · 15 conceded"]
+    ],
+    hudVerdict: "1-HOLDER HALT · NO RATE BOUND",
+    html: `Capture resistance is a property to be tested, not a label. Correlated sources are discounted by <span class="fig fig-RT" data-claim="capture-resistance" data-code="RT">k_eff = k / (1 + ρ(k−1))</span>. And one root holder's signed <b>halt row</b> pauses every subscribed agent immediately on receipt (lapsing at 24h unless confirmed by majority) while keeping all user data and withdrawal doors open.`
+  },
+  {
+    badge: "Act 8 / 8",
+    shortLabel: "8 · Conscience & First-Run",
+    title: "Machine Conscience, Server 0.5.250 & CEWPOS First-Run",
+    secRef: "Part II–III · §9–§14",
+    cam: { az: 315, el: 26, dist: 17.5, map: false },
+    hudTitle: "§9–§14 CONSCIENCE, SERVER 0.5.250 & FIRST-RUN",
+    hudRows: [
+      ["conscience", "H3ERE + WBD deferral + G17 refusal"],
+      ["admission", "CC 2.7.11 code + profile + action"],
+      ["server 250", "split-home video calls (CSD-134)"],
+      ["acuity rule", "pixel error bound eps_px = 1.0"],
+      ["entry point", "python3 start_first_run.py (T0)"]
+    ],
+    hudVerdict: "WEB4 CONNECTS ACCOUNTABLE AGENCY",
+    html: `<i>"The first web connected information. The second connected people and institutions. The agentic web connects capabilities. <b>Web4 connects accountable agency.</b>"</i> With <span class="fig fig-IM" data-claim="machine-conscience" data-code="IM">CIRISServer v0.5.250 and CC 2.7.11 admission</span>, click <a href="app.html?mode=setup" style="color:var(--ok);font-weight:700;">🚀 Launch First-Run Wizard</a> (or run <code>python3 start_first_run.py</code>) to initialize your own node.`
+  }
+];
+
+// ── Build Act Strip Buttons ──
+const actStrip = document.getElementById('act-strip');
+STORY_ACTS.forEach((act, idx) => {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'act-dot-btn' + (idx === 0 ? ' active' : '');
+  btn.textContent = act.shortLabel;
+  btn.addEventListener('click', () => selectAct(idx, true));
+  actStrip.appendChild(btn);
+});
+
+// ── Setup WebGL & holon-draw (`draw.js` + `text.js`) ──
+const canvas = document.getElementById('c');
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+function resizeCanvas() {
+  canvas.width = Math.round(window.innerWidth * dpr);
+  canvas.height = Math.round(window.innerHeight * dpr);
+}
+resizeCanvas();
+
+const gl = canvas.getContext('webgl2', { antialias: true, alpha: false }) ||
+           canvas.getContext('webgl', { antialias: true, alpha: false });
+if (!gl) throw new Error('WebGL not available');
+
+const text = createTextProvider(gl, { dpr });
+const drawer = createDrawer(gl, { text });
+
+// ── 52-byte Packed Instance Batch Builder (`holon-draw` binary layout) ──
+class Batch {
+  constructor(kind, offset, coarse, screen) {
+    this.kind = kind;
+    this.offset = offset || [0, 0, 0];
+    this.coarse = !!coarse;
+    this.screen = !!screen;
+    this.count = 0;
+    this.buf = new ArrayBuffer(128 * INSTANCE_BYTES);
+    this.dv = new DataView(this.buf);
+    this.bytes = new Uint8Array(this.buf, 0, 0);
+    this.params = Float32Array.from(PARAMS_NEUTRAL);
+  }
+  clear() {
+    this.count = 0;
+    this.bytes = new Uint8Array(this.buf, 0, 0);
+    return this;
+  }
+  add(pos, size, aux, angle, rgba, flags, variant, tag) {
+    if ((this.count + 1) * INSTANCE_BYTES > this.buf.byteLength) {
+      const nb = new ArrayBuffer(this.buf.byteLength * 2);
+      new Uint8Array(nb).set(new Uint8Array(this.buf));
+      this.buf = nb;
+      this.dv = new DataView(nb);
+    }
+    const o = this.count * INSTANCE_BYTES;
+    const dv = this.dv;
+    for (let i = 0; i < 3; i++) {
+      dv.setFloat32(o + 4 * i, pos[i] || 0, true);
+      dv.setFloat32(o + 12 + 4 * i, size ? (size[i] || 0) : 0, true);
+      dv.setFloat32(o + 24 + 4 * i, aux ? (aux[i] || 0) : 0, true);
+    }
+    dv.setFloat32(o + 36, angle || 0, true);
+    for (let i = 0; i < 4; i++) dv.setUint8(o + 40 + i, rgba[i]);
+    dv.setUint32(o + 44, tag || 0, true);
+    dv.setUint8(o + 48, this.kind);
+    dv.setUint8(o + 49, 0);
+    dv.setUint8(o + 50, flags || 0);
+    dv.setUint8(o + 51, variant || 0);
+    this.count++;
+    this.bytes = new Uint8Array(this.buf, 0, this.count * INSTANCE_BYTES);
+    return this;
+  }
+}
+
+// ── Screen Tile Panel (`holon-draw::ui` style immediate-mode screen batches) ──
+class ScreenPanel {
+  constructor() {
+    this.o = [0, 0, 0];
+    this.quads = new Batch(KIND.QUAD, this.o, false, true);
+    this.lines = new Batch(KIND.LINE, this.o, false, true);
+    this.discs = new Batch(KIND.DISC, this.o, false, true);
+    this.runs = new Batch(KIND.RUN, this.o, false, true);
+    this.batches = [this.quads, this.lines, this.discs, this.runs];
+  }
+  begin(x, y, w, h) {
+    this.o[0] = x; this.o[1] = y; this.w = w; this.h = h;
+    for (const b of this.batches) b.clear();
+    const r = 10 * dpr;
+    this.rect(-dpr, -dpr, w + 2 * dpr, h + 2 * dpr, r + dpr, [72, 98, 136, 220]);
+    this.rect(0, 0, w, h, r, [14, 19, 28, 228]);
+  }
+  rect(x, y, w, h, r, rgba) {
+    this.quads.add([x + w / 2, y + h / 2, 0], [w, h, 0], [r, 0, 0], 0, rgba);
+  }
+  line(x0, y0, x1, y1, w, rgba) {
+    this.lines.add([x0, y0, 0], [w, 0, 0], [x1, y1, 0], 0, rgba);
+  }
+  disc(x, y, r, rgba) {
+    this.discs.add([x, y, 0], [r, 0, 0], null, 0, rgba);
+  }
+  text(str, style, x, cy, align, rgba) {
+    const e = text.place(str, style);
+    if (e.w === 0) return e;
+    const cx = align < 0 ? x + e.w / 2 - 1 : align > 0 ? x - e.w / 2 + 1 : x;
+    this.runs.add([cx, cy, 0], [e.w, e.h, 0], [e.u0, e.v0, e.u1], e.v1, rgba, 0, e.page);
+    return e;
+  }
+}
+
+const hudLeft = new ScreenPanel();
+const hudRight = new ScreenPanel();
+
+// ── Build the 3D Constitutional Mesh & cewp-twin Street Neighbourhood in `holon-draw` ──
+const OFF = [100, 200, 0];
+const OFFB = [OFF[0] + 8, OFF[1], OFF[2]];
+const M = 20;
+
+const groundA = new Batch(KIND.PATCH, OFF);
+const groundB = new Batch(KIND.PATCH, OFFB);
+groundA.params.set([0.13, 0.25, 0.16, 1], 4);
+groundA.params.set([0.36, 0.38, 0.37, 1], 8);
+groundA.params.set([0, 0, M, M], 16);
+groundA.params[PARAM.TEX] = 1;
+
+groundB.params.set([0.85, 0.74, 0.58, 1], 12);
+groundB.params.set([8 * M, 0, M, M], 16);
+groundB.params[PARAM.TEX] = 1;
+
+for (let i = 0; i < 4; i++) {
+  for (let j = 0; j < 6; j++) {
+    const t = Math.min(1, Math.max(0, (j + 0.5) / 6 + 0.12 * ((i * 7 + j * 3) % 5 - 2) / 2));
+    groundA.add([-7 + 2 * i, -5 + 2 * j, -0.04], [2, 2, 0], [t, 0, 0], 0, [255, 0, 255, 255], 0, COLOUR.RAMP);
+    const g = 110 + ((i * 5 + j * 11) % 4) * 20;
+    groundB.add([-7 + 2 * i, -5 + 2 * j, -0.04], [2, 2, 0], null, 0, [g, g, g, 255], 0, COLOUR.TINT);
+  }
+}
+
+// Street tier (cewp-twin style casings, roads, canopies, and roofs)
+const streetLines = new Batch(KIND.LINE, OFF);
+const canopyDiscs = new Batch(KIND.DISC, OFF);
+const buildingBoxes = new Batch(KIND.BOX, OFF);
+const buildingPrisms = new Batch(KIND.PRISM, OFF);
+
+const streets = [
+  [-7.5, 0, 7.5, 0, 0.52, 2],
+  [-3.8, -5.5, -3.8, 5.5, 0.34, 1],
+  [3.2, -5.5, 3.2, 5.5, 0.34, 1],
+  [-7.5, 3.0, 7.5, 3.0, 0.22, 0],
+  [-7.5, -3.2, 7.5, -3.2, 0.22, 0],
+];
+const roadCol = [[110, 118, 132, 255], [156, 164, 172, 255], [214, 194, 142, 255]];
+for (const [x0, y0, x1, y1, w] of streets) {
+  streetLines.add([x0, y0, 0.01], [w + 0.15, 0, 0], [x1, y1, 0.01], 0, [16, 20, 28, 235], 0, VARIANT_CASING | VARIANT_ROUND);
+}
+for (const [x0, y0, x1, y1, w, r] of streets) {
+  streetLines.add([x0, y0, 0.02], [w, 0, 0], [x1, y1, 0.02], 0, roadCol[r], 0, VARIANT_ROUND);
+}
+
+// Household buildings & trees on the generated neighbourhood
+const households = [
+  { pos: [-5.5, -1.6, 0], size: [1.1, 0.9, 0.85], col: [182, 140, 108, 255], label: "Alice's Home (Just me)" },
+  { pos: [-1.8, 1.4, 0], size: [1.2, 1.0, 1.15], col: [130, 172, 146, 255], label: "Bob's Home (Family)" },
+  { pos: [1.4, -1.5, 0], size: [1.3, 1.1, 1.45], col: [138, 148, 208, 255], label: "Oak St Co-op (Community)" },
+  { pos: [5.0, 1.6, 0], size: [1.5, 1.2, 1.9], col: [204, 146, 98, 255], label: "Solar Affiliation" },
+  { pos: [-5.2, 4.2, 0], size: [1.2, 1.0, 1.3], col: [175, 162, 118, 255], label: "SCITT Witness Seat" },
+  { pos: [5.2, -4.2, 0], size: [1.3, 1.1, 1.6], col: [116, 178, 196, 255], label: "Directory & Relay Seat" },
+];
+households.forEach((h, i) => {
+  if (i % 2 === 0) {
+    buildingBoxes.add(h.pos, h.size, null, i * 0.25, h.col);
+  } else {
+    buildingPrisms.add(h.pos, h.size, null, -i * 0.2, h.col);
+  }
+  canopyDiscs.add([h.pos[0] + 1.0, h.pos[1] + 0.6, 0.02], [0.35, 0, 0], null, 0, [42, 88, 52, 225], 0, DISC_CASING | DISC_CANOPY_FIELD);
+});
+
+// Dynamic animated batches: 5 Concentric Circle Rings, Holon Nodes (Spheres), Causal Edges (Rods), and Signed Row Pulses
+const dynDiscs = new Batch(KIND.DISC, OFF);
+const dynSpheres = new Batch(KIND.SPHERE, OFF);
+const dynRods = new Batch(KIND.ROD, OFF);
+const dynQuads = new Batch(KIND.QUAD, OFF);
+
+const CIRCLE_COLORS = [
+  [34, 192, 232, 255],  // Just me (#22C0E8)
+  [90, 211, 143, 255],  // Family (#5AD38F)
+  [138, 127, 224, 255], // Neighbours (#8A7FE0)
+  [255, 177, 92, 255],  // Affiliations (#FFB15C)
+  [212, 175, 95, 255],  // Everyone / Federation
+];
+
+function buildDynamicMeshBatches(actIdx, tSec) {
+  dynDiscs.clear();
+  dynSpheres.clear();
+  dynRods.clear();
+  dynQuads.clear();
+
+  // 1. Five Concentric Circle Pads on the ground plane
+  for (let c = 4; c >= 0; c--) {
+    const rad = 1.6 + c * 1.45 + 0.05 * Math.sin(tSec * 1.5 + c);
+    const col = CIRCLE_COLORS[c];
+    const alpha = actIdx === 1 || actIdx === 4 ? 58 : 32;
+    dynDiscs.add([0, 0, 0.03 + (4 - c) * 0.005], [rad, 0, 0], null, 0, [col[0], col[1], col[2], alpha]);
+  }
+
+  // 2. Central Causal Kernel / Root Holon Anchor floating at [0, 0, 2.2]
+  const rootZ = 2.1 + 0.14 * Math.sin(tSec * 1.8);
+  const isHaltAct = actIdx === 6;
+  const rootCol = isHaltAct && Math.sin(tSec * 4) > 0
+    ? [255, 106, 92, 255]
+    : [108, 182, 255, 255];
+  dynSpheres.add([0, 0, rootZ], [0.68, 0, 0], null, 0, rootCol);
+
+  // 3. Six Household / Community Holon Nodes connected to the ground buildings and central kernel
+  households.forEach((h, i) => {
+    const phase = tSec * 1.4 + i * 1.05;
+    const nodePos = [h.pos[0], h.pos[1], h.size[2] + 0.55 + 0.1 * Math.sin(phase)];
+    const cCol = CIRCLE_COLORS[i % CIRCLE_COLORS.length];
+
+    // Vertical column from household roof to its key/node sphere
+    dynRods.add([h.pos[0], h.pos[1], h.size[2]], [0.06, 0, 0], nodePos, 0, [140, 165, 195, 200]);
+    dynSpheres.add(nodePos, [0.38, 0, 0], null, 0, cCol);
+
+    // Causal attestation link to the central kernel or neighbour
+    const nextH = households[(i + 1) % households.length];
+    const nextPos = [nextH.pos[0], nextH.pos[1], nextH.size[2] + 0.55 + 0.1 * Math.sin(tSec * 1.4 + ((i + 1) % households.length) * 1.05)];
+    dynRods.add(nodePos, [0.055, 0, 0], nextPos, 0, [90, 211, 143, 185]);
+    dynRods.add(nodePos, [0.045, 0, 0], [0, 0, rootZ], 0, [108, 182, 255, 165]);
+
+    // Animated Signed CEG Row Packet (`COSE_Sign1` pulse traveling along the rod)
+    const u = (tSec * 0.48 + i * 0.17) % 1.0;
+    const pktPos = [
+      nodePos[0] + (0 - nodePos[0]) * u,
+      nodePos[1] + (0 - nodePos[1]) * u,
+      nodePos[2] + (rootZ - nodePos[2]) * u,
+    ];
+    const pktCol = isHaltAct ? [255, 106, 92, 255] : [120, 245, 175, 255];
+    dynSpheres.add(pktPos, [0.17, 0, 0], null, 0, pktCol);
+  });
+
+  // 4. Act-Specific 3D Visual Highlights
+  if (actIdx === 2 || actIdx === 5) {
+    // Act 3 (Causal Kernel) & Act 6 (1+4 CEG Operators): 5 orbiting operator satellites around the kernel
+    for (let k = 0; k < 5; k++) {
+      const ang = tSec * 0.9 + (k * Math.PI * 2) / 5;
+      const r = 2.6;
+      const opPos = [r * Math.cos(ang), r * Math.sin(ang), rootZ + 0.45 * Math.cos(ang * 2)];
+      const opCol = k === 0 ? [90, 211, 143, 255] : CIRCLE_COLORS[k];
+      dynSpheres.add(opPos, [0.32, 0, 0], null, 0, opCol);
+      dynRods.add([0, 0, rootZ], [0.05, 0, 0], opPos, 0, opCol);
+    }
+  } else if (actIdx === 3 || actIdx === 7) {
+    // Act 4 (Five Layers & 24 CSD/5 Primitives) & Act 8 (Conscience & First-Run):
+    // 3D Spatial Question & Choice Slabs floating above the mesh
+    for (let s = 0; s < 3; s++) {
+      const sx = -2.6 + s * 2.6;
+      const sy = -0.5;
+      const sz = 3.4 + 0.12 * Math.sin(tSec * 2 + s);
+      const selected = s === 1;
+      dynQuads.add([sx, sy, sz], [2.1, 1.25, 0], null, 0.15 * Math.sin(tSec + s), selected ? [38, 138, 98, 240] : [45, 68, 104, 225]);
+      dynRods.add([0, 0, rootZ], [0.06, 0, 0], [sx, sy, sz], 0, selected ? [90, 211, 143, 255] : [108, 182, 255, 190]);
+    }
+  }
+}
+
+// ── Camera Math (Column-Major 4x4, matching `holon-draw/web/test.html`) ──
+function mul(a, b) {
+  const o = new Float32Array(16);
+  for (let c = 0; c < 4; c++) {
+    for (let r = 0; r < 4; r++) {
+      let s = 0;
+      for (let k = 0; k < 4; k++) s += a[k * 4 + r] * b[c * 4 + k];
+      o[c * 4 + r] = s;
+    }
+  }
+  return o;
+}
+function lookAt(eye, at, up) {
+  const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+  const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  const norm = (a) => { const l = Math.hypot(...a); return [a[0] / l, a[1] / l, a[2] / l]; };
+  const f = norm(sub(at, eye)), s = norm(cross(f, up)), u = cross(s, f);
+  return new Float32Array([
+    s[0], u[0], -f[0], 0,
+    s[1], u[1], -f[1], 0,
+    s[2], u[2], -f[2], 0,
+    -dot(s, eye), -dot(u, eye), dot(f, eye), 1
+  ]);
+}
+function perspective(fovy, aspect, n, f) {
+  const t = 1 / Math.tan(fovy / 2);
+  return new Float32Array([
+    t / aspect, 0, 0, 0,
+    0, t, 0, 0,
+    0, 0, (f + n) / (n - f), -1,
+    0, 0, (2 * f * n) / (n - f), 0
+  ]);
+}
+
+// ── Build `holon-draw` Screen Tile Overlay Panels (drawn in WebGL via `Kind::Quad` + `Kind::Run`) ──
+const INK = [226, 233, 244, 255];
+const DIM = [142, 155, 176, 255];
+const HEAD = [108, 182, 255, 255];
+const OK_COL = [90, 211, 143, 255];
+
+function buildScreenOverlay(act, statsObj) {
+  const W = canvas.width, H = canvas.height, d = dpr;
+  const narrow = W / d < 920;
+  const pad = 11 * d, rowH = 19 * d;
+  const pw = Math.min(340 * d, W - 24 * d);
+
+  // Left WebGL Screen Tile: Current Act's Key Facts from CIRIS Web4 PDF
+  const topY = narrow ? 92 * d : 88 * d;
+  hudLeft.begin(12 * d, topY, pw, pad * 2 + 24 * d + act.hudRows.length * rowH + 30 * d);
+  hudLeft.text(act.hudTitle, STYLE.HEADING, pad, pad + 7 * d, -1, HEAD);
+  hudLeft.line(pad, pad + 18 * d, pw - pad, pad + 18 * d, d, [52, 66, 90, 255]);
+  let y = pad + 23 * d + rowH / 2;
+  for (const [k, v] of act.hudRows) {
+    hudLeft.text(k, STYLE.SMALL, pad, y, -1, DIM);
+    hudLeft.text(v, STYLE.BODY, pw - pad, y, 1, INK);
+    y += rowH;
+  }
+  hudLeft.disc(pad + 7 * d, y + 10 * d, 6 * d, OK_COL);
+  hudLeft.text(act.hudVerdict, STYLE.SMALL, pad + 20 * d, y + 10 * d, -1, OK_COL);
+
+  // Right WebGL Screen Tile: Live `holon-draw` & Acuity Telemetry
+  if (!narrow) {
+    const engineRows = [
+      ["engine", "CIRISHolon / holon-draw 0.1.0"],
+      ["record", "52-byte packed instances"],
+      ["acuity", "eps_px = 1.0 (greedy opt)"],
+      ["draw calls", `${statsObj.drawCalls} instanced batches`],
+      ["instances", `${statsObj.instances} marks drawn`],
+      ["glyph atlas", `${statsObj.pages} page · ${statsObj.entries} shaped runs`],
+    ];
+    hudRight.begin(W - pw - 12 * d, topY, pw, pad * 2 + 24 * d + engineRows.length * rowH + 28 * d);
+    hudRight.text("HOLON-DRAW PROFILE B · TELEMETRY", STYLE.HEADING, pad, pad + 7 * d, -1, HEAD);
+    hudRight.line(pad, pad + 18 * d, pw - pad, pad + 18 * d, d, [52, 66, 90, 255]);
+    let ry = pad + 23 * d + rowH / 2;
+    for (const [k, v] of engineRows) {
+      hudRight.text(k, STYLE.SMALL, pad, ry, -1, DIM);
+      hudRight.text(v, STYLE.BODY, pw - pad, ry, 1, INK);
+      ry += rowH;
+    }
+    hudRight.disc(pad + 7 * d, ry + 9 * d, 6 * d, OK_COL);
+    hudRight.text("PASS  L1-L12 · 24 CSD/5 PRIMS", STYLE.SMALL, pad + 20 * d, ry + 9 * d, -1, OK_COL);
+  } else {
+    for (const b of hudRight.batches) b.clear();
+  }
+}
+
+// ── Story State & Camera Interpolation ──
+const ACT_DURATION_MS = 11000;
+let currentActIdx = 0;
+let playing = true;
+let actElapsedMs = 0;
+let lastFrameTms = performance.now();
+
+const camState = {
+  az: (28 * Math.PI) / 180,
+  el: (24 * Math.PI) / 180,
+  dist: 21,
+  targetAz: (28 * Math.PI) / 180,
+  targetEl: (24 * Math.PI) / 180,
+  targetDist: 21,
+  userDragging: false,
+  dragLastX: 0,
+  dragLastY: 0,
+};
+
+function selectAct(idx, manual) {
+  currentActIdx = (idx + STORY_ACTS.length) % STORY_ACTS.length;
+  actElapsedMs = 0;
+  const act = STORY_ACTS[currentActIdx];
+  document.getElementById('story-act-badge').textContent = act.badge;
+  document.getElementById('story-title').textContent = act.title;
+  document.getElementById('story-sec-ref').textContent = act.secRef;
+  document.getElementById('story-line').innerHTML = act.html;
+  document.getElementById('story-progress-bar').style.width = '0%';
+
+  camState.targetAz = (act.cam.az * Math.PI) / 180;
+  camState.targetEl = (act.cam.el * Math.PI) / 180;
+  camState.targetDist = act.cam.dist;
+
+  document.querySelectorAll('.act-dot-btn').forEach((b, i) => {
+    b.classList.toggle('active', i === currentActIdx);
+  });
+}
+
+function setPlaying(nextState) {
+  playing = nextState;
+  document.getElementById('story-btn-play').textContent = playing ? '❚❚' : '▶';
+  const navBtn = document.getElementById('btn-story-toggle');
+  navBtn.textContent = playing ? '❚❚ Playing Story' : '▶ Resume Story';
+  navBtn.classList.toggle('active', playing);
+}
+
+document.getElementById('story-btn-prev').addEventListener('click', () => selectAct(currentActIdx - 1, true));
+document.getElementById('story-btn-next').addEventListener('click', () => selectAct(currentActIdx + 1, true));
+document.getElementById('story-btn-play').addEventListener('click', () => setPlaying(!playing));
+document.getElementById('btn-story-toggle').addEventListener('click', () => setPlaying(!playing));
+
+// Side drawers & zoom buttons
+const panelPromises = document.getElementById('panel-promises');
+const panelTests = document.getElementById('panel-tests');
+document.getElementById('btn-hud').addEventListener('click', () => {
+  panelPromises.classList.toggle('panel-hidden');
+  document.getElementById('btn-hud').classList.toggle('open', !panelPromises.classList.contains('panel-hidden'));
+});
+document.getElementById('close-promises').addEventListener('click', () => {
+  panelPromises.classList.add('panel-hidden');
+  document.getElementById('btn-hud').classList.remove('open');
+});
+document.getElementById('btn-stats').addEventListener('click', () => {
+  panelTests.classList.toggle('panel-hidden');
+  document.getElementById('btn-stats').classList.toggle('open', !panelTests.classList.contains('panel-hidden'));
+});
+document.getElementById('close-tests').addEventListener('click', () => {
+  panelTests.classList.add('panel-hidden');
+  document.getElementById('btn-stats').classList.remove('open');
+});
+
+document.getElementById('z-in').addEventListener('click', () => { camState.targetDist = Math.max(9, camState.targetDist - 2.5); });
+document.getElementById('z-out').addEventListener('click', () => { camState.targetDist = Math.min(34, camState.targetDist + 2.5); });
+document.getElementById('z-reset').addEventListener('click', () => { selectAct(currentActIdx, true); });
+
+// Pointer orbit drag & wheel zoom
+canvas.addEventListener('pointerdown', (e) => {
+  camState.userDragging = true;
+  camState.dragLastX = e.clientX;
+  camState.dragLastY = e.clientY;
+  canvas.setPointerCapture(e.pointerId);
+});
+canvas.addEventListener('pointermove', (e) => {
+  if (!camState.userDragging) return;
+  const dx = e.clientX - camState.dragLastX;
+  const dy = e.clientY - camState.dragLastY;
+  camState.dragLastX = e.clientX;
+  camState.dragLastY = e.clientY;
+  camState.targetAz -= dx * 0.007;
+  camState.az = camState.targetAz;
+  camState.targetEl = Math.max(0.12, Math.min(1.42, camState.targetEl + dy * 0.006));
+  camState.el = camState.targetEl;
+});
+canvas.addEventListener('pointerup', () => { camState.userDragging = false; });
+canvas.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  camState.targetDist = Math.max(8, Math.min(36, camState.targetDist + e.deltaY * 0.012));
+}, { passive: false });
+window.addEventListener('resize', resizeCanvas);
+
+// Initialize Act 1
+selectAct(0, false);
+
+let lastStats = { drawCalls: 12, instances: 184, pages: 1, entries: 36 };
+
+function renderLoop(tms) {
+  const dt = Math.min(100, Math.max(0, tms - lastFrameTms));
+  lastFrameTms = tms;
+  const tSec = tms * 0.001;
+
+  if (playing && !camState.userDragging) {
+    actElapsedMs += dt;
+    const pct = Math.min(100, (actElapsedMs / ACT_DURATION_MS) * 100);
+    document.getElementById('story-progress-bar').style.width = `${pct.toFixed(1)}%`;
+    camState.targetAz += dt * 0.00012;
+    if (actElapsedMs >= ACT_DURATION_MS) {
+      selectAct(currentActIdx + 1, false);
+    }
+  }
+
+  // Smooth camera damping
+  camState.az += (camState.targetAz - camState.az) * 0.06;
+  camState.el += (camState.targetEl - camState.el) * 0.06;
+  camState.dist += (camState.targetDist - camState.dist) * 0.08;
+
+  buildDynamicMeshBatches(currentActIdx, tSec);
+
+  const act = STORY_ACTS[currentActIdx];
+  text.beginFrame();
+  let e0 = text.epoch;
+  buildScreenOverlay(act, lastStats);
+  if (text.epoch !== e0) buildScreenOverlay(act, lastStats);
+
+  const at = [OFF[0], OFF[1], OFF[2] + 1.1];
+  const eye = [
+    at[0] + camState.dist * Math.cos(camState.el) * Math.sin(camState.az),
+    at[1] - camState.dist * Math.cos(camState.el) * Math.cos(camState.az),
+    at[2] + camState.dist * Math.sin(camState.el),
+  ];
+  const aspect = canvas.width / Math.max(1, canvas.height);
+  const fov = ((38 * Math.PI) / 180) * (aspect < 1 ? 1.55 : 1);
+  const vp = mul(perspective(fov, aspect, 0.1, 120), lookAt(eye, at, [0, 0, 1]));
+
+  const viewport = [0, 0, canvas.width, canvas.height];
+  gl.viewport(0, 0, canvas.width, canvas.height);
+  gl.clearColor(0.043, 0.051, 0.071, 1);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+  const allBatches = [
+    groundA,
+    groundB,
+    canopyDiscs,
+    streetLines,
+    dynDiscs,
+    buildingBoxes,
+    buildingPrisms,
+    dynRods,
+    dynSpheres,
+    dynQuads,
+    ...hudLeft.batches,
+    ...hudRight.batches,
+  ];
+
+  drawer.draw(allBatches, vp, { light: [0.35, -0.5, 0.8], ambient: 0.28, viewport });
+  const s = drawer.stats();
+  const ts = text.stats();
+  lastStats = {
+    drawCalls: s.drawCalls,
+    instances: s.instances,
+    pages: ts.pages,
+    entries: ts.entries,
+  };
+  document.body.dataset.ready = '1';
+  document.body.dataset.act = String(currentActIdx + 1);
+
+  requestAnimationFrame(renderLoop);
+}
+
+requestAnimationFrame(renderLoop);
+</script>
+</body>
+</html>

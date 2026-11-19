@@ -108,7 +108,17 @@ class CewposRequestHandler(http.server.SimpleHTTPRequestHandler):
                 },
             )
             return
-        if self.path == "/health" or self.path.startswith("/v1/") or self.path.startswith("/cewpos/v1/"):
+        if self.path == "/first-run" or self.path.startswith("/first-run?"):
+            self.send_response(302)
+            self.send_header("Location", "/index.html?mode=setup")
+            self.end_headers()
+            return
+        if (
+            self.path == "/health"
+            or self.path.startswith("/v1/")
+            or self.path.startswith("/cewpos/v1/")
+            or self.path.startswith("/lens/")
+        ):
             self._proxy_to_node("GET")
             return
         super().do_GET()

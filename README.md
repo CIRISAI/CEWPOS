@@ -303,7 +303,17 @@ cargo test --manifest-path view-forms-spike/Cargo.toml --no-default-features
 
 ### 3. Launching CEWPOS
 
-You can start the full CEWPOS stack in either single-node mode or automated multi-occurrence mode:
+You can start the full CEWPOS stack in First-Run mode (`T0`), single-node mode, or automated multi-occurrence mode:
+
+#### Option A0: Single-Command First-Run Entry Point (`T0`)
+To start a fresh, unowned CEWPOS node (`ciris-server v0.5.250` on `:4243` + Epistemic UI proxy on `:8787`) directly into the **First-Run Setup Wizard** (`http://127.0.0.1:8787/index.html?mode=setup`):
+```bash
+python3 start_first_run.py
+
+# Or run the automated non-interactive First-Run verification check:
+python3 start_first_run.py --check
+```
+And on the GitHub Pages `.io` site (`docs/index.html`), the landing page is now an interactive **`holon-draw` animated explanation of *CIRIS Web4 Constitutional Mesh* (Draft 0.5)** inspired by `cewp-twin`, with a one-click **`🚀 Launch First-Run Wizard`** (`app.html?mode=setup`) button.
 
 #### Option A: Start a Local Node and Live Epistemic UI
 ```bash

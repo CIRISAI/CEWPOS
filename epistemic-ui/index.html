@@ -1906,10 +1906,10 @@
     const urlParams = new URLSearchParams(window.location.search);
 
     let state = {
-      // Check URL param `?mode=setup` or `?setup=1` to boot directly into First-Run Wizard on a fresh node (`T0`)
-      setupMode: urlParams.get("mode") === "setup" || urlParams.get("setup") === "1" || urlParams.get("setup") === "true",
-      circleId: "JustMe",
-      tab: "Files",
+      // Boot directly into First-Run Wizard (`T0`) by default unless explicitly viewing Circles/Instruments (`?circle=...`, `?tab=...`, `?instrument=...`, or `?setup=0`)
+      setupMode: urlParams.get("setup") !== "0" && urlParams.get("setup") !== "false" && urlParams.get("mode") !== "circles" && !urlParams.get("circle") && !urlParams.get("tab") && !urlParams.get("instrument"),
+      circleId: urlParams.get("circle") || "JustMe",
+      tab: urlParams.get("tab") || "Files",
       instrumentId: urlParams.get("instrument") || null,
       hasAgent: false,
       halted: false,
@@ -1950,11 +1950,11 @@
         ownershipState: "unclaimed",  // unclaimed | claiming | claimed | error
       },
 
-      // ── Live CIRISServer v0.5.245 Full-Stack Crate Bridge State ──
+      // ── Live CIRISServer v0.5.250 Full-Stack Crate Bridge State ──
       liveNode: {
         connected: false,
-        version: "0.5.244",
-        keyId: "qa-244-node",
+        version: "0.5.250",
+        keyId: "cewpos-250-node",
         standing: "identified",
         nodeCode: null,
         isFirstRun: null,

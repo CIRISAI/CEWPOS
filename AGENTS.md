@@ -124,19 +124,28 @@ If an item on screen has a `☰` hamburger button, it is a signed CEG attestatio
 
 ---
 
-## 4. Full-Stack `ciris-server` (`v0.5.245`) Crate Consumption & Verification
+## 4. Full-Stack `ciris-server` (`v0.5.250` on `release/0.5.250`) Crate Consumption & First-Run Entry
 
-CEWPOS consumes [`CIRISServer`](https://github.com/CIRISAI/CIRISServer) directly as a Rust crate at **`tag = "v0.5.245"`** (`ciris-server` and `ciris-Select-core` in `view-forms-spike/Cargo.toml` and `attestation-calculus-spike/Cargo.toml`).
+CEWPOS consumes [`CIRISServer`](https://github.com/CIRISAI/CIRISServer) directly as a Rust crate at **`branch = "release/0.5.250"`** (`v0.5.250`, bundling `ciris-persist v61.4.2`, `ciris-edge v45.1.7`, and `ciris-verify v22.2.0` in `view-forms-spike/Cargo.toml` and `attestation-calculus-spike/Cargo.toml`).
 
-### 4.1 Building the Full-Stack `cewpos-node` Binary & Running Rust Tests
+### 4.1 Starting CEWPOS Directly into First-Run (`T0`)
 ```bash
-# 1. Run the 30 Attestation Calculus tests (including live ciris-server v0.5.245 router integration)
+# Single-command First-Run entry point (wipes/initializes fresh CIRIS_HOME, boots cewpos-node :4243 & UI :8787 into First-Run Wizard)
+python3 start_first_run.py
+
+# Verify First-Run boot, 0600 claim_pin, is_first_run=true, and CSD/5 holon-draw endpoints non-interactively
+python3 start_first_run.py --check
+```
+
+### 4.2 Building the Full-Stack `cewpos-node` Binary & Running Rust Tests
+```bash
+# 1. Run the 30 Attestation Calculus tests (with ciris-verify v22.2.0)
 cargo test --manifest-path attestation-calculus-spike/Cargo.toml
 
-# 2. Run the 24 View-Forms & P1-P12 Epistemic Scene tests (GPU-free & wasm-portable)
+# 2. Run the 33 View-Forms, CSD/5 (24 Primitives) & holon-draw Profile B tests (GPU-free & wasm-portable)
 cargo test --manifest-path view-forms-spike/Cargo.toml --no-default-features
 
-# 3. Build the unified full-stack cewpos-node binary (CIRISServer v0.5.245 + Bevy P1-P12 Spatial Scene)
+# 3. Build the unified full-stack cewpos-node binary (CIRISServer v0.5.250 + holon-draw CSD/5 Spatial Scene)
 cargo build --manifest-path view-forms-spike/Cargo.toml --no-default-features --features fullstack --bin cewpos-node
 ```
 
