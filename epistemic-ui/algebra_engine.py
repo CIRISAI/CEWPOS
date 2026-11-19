@@ -1603,7 +1603,55 @@ def verify_all_invariants() -> None:
     promise_cards = build_all_11_promise_cards()
     (ui_out / "all_promise_cards.json").write_text(json.dumps(promise_cards, indent=2) + "\n")
 
-    print("== CC rc9 Constitutional UI Algebra & CSD/4 Verification Suite ==")
+    # 6. CSD/5 Draft 3 (manifests/ui_primitives.json @ v1.0-rc21-wire) & holon-draw Profile B Verification (Issue #3)
+    ui_prims_path = Path("/home/emoore/CEWPOS/epistemic-ui/ui_primitives.json")
+    assert ui_prims_path.exists(), "Vendored ui_primitives.json must exist"
+    ui_prims = json.loads(ui_prims_path.read_text(encoding="utf-8"))
+    assert ui_prims["_meta"]["standard"] == "CSD/5"
+    assert ui_prims["_meta"]["draft"] == 3
+    assert len(ui_prims["primitives"]) == 24
+    assert len(ui_prims["states"]) == 17
+    assert len(ui_prims["laws"]) == 12
+    assert len(ui_prims["shell_prefixes"]) == 4
+    assert len(ui_prims["write_verbs"]) == 5
+
+    # Verify L1 prefix ownership uniqueness across all 24 primitives + 4 shell prefixes
+    prefix_owners: Dict[str, str] = {sp: "the shell" for sp in ui_prims["shell_prefixes"]}
+    total_slots = 0
+    for prim_name, prim_spec in ui_prims["primitives"].items():
+        for pfx in prim_spec["prefixes"]:
+            assert pfx not in prefix_owners, f"L1 duplicate prefix {pfx}"
+            prefix_owners[pfx] = prim_name
+        total_slots += len(prim_spec.get("slots", []))
+    assert len(prefix_owners) == 31, f"Expected 31 unique prefixes (4 shell + 27 primitive), got {len(prefix_owners)}"
+    assert total_slots == 60, f"Expected 60 closed slots across the 24 CSD/5 primitives, got {total_slots}"
+
+    # Verify CSD/5 tag grammar builder (`prefix '_' surface '_' instance [ '__' slot ] [ '.' key ]` — slot BEFORE key)
+    def derive_csd5_tag(prim_name: str, surface: str, instance: str, slot: Optional[str] = None, key: Optional[str] = None, prefix: Optional[str] = None) -> str:
+        spec = ui_prims["primitives"][prim_name]
+        pfx = prefix if prefix is not None else spec["prefixes"][0]
+        assert pfx in spec["prefixes"], f"{pfx} not owned by {prim_name}"
+        norm_s = surface.replace("-", "_")
+        norm_i = instance.replace("-", "_")
+        if slot is not None:
+            if prim_name == "StateBlock":
+                assert slot in ("@states", "freshness") or slot in ui_prims["states"]
+            else:
+                assert slot in spec["slots"], f"Illegal slot {slot} for {prim_name}"
+        if key is not None:
+            assert spec["keyed"], f"{prim_name} is not keyed"
+        tag = f"{pfx}_{norm_s}_{norm_i}"
+        if slot is not None:
+            tag += f"__{slot}"
+        if key is not None:
+            tag += f".{key}"
+        return tag
+
+    assert derive_csd5_tag("ItemRow", "my-surface", "claims", slot="flag", key="row:42") == "row_my_surface_claims__flag.row:42"
+    assert derive_csd5_tag("ReceiptSheet", "circles", "env", slot="open", key="claim1") == "receipt_circles_env__open.claim1"
+    assert derive_csd5_tag("StateBlock", "circles", "feed", slot="gone") == "state_circles_feed__gone"
+
+    print("== CC rc9 / rc21 Constitutional UI Algebra, CSD/5 (24 Primitives) & CSD/4 Verification Suite ==")
     print(f"[PASS] Closed 1+4 CEG Operator Gate: admits {CLOSED_OPS}, rejects eval/exec/lambda/setf")
     print(f"[PASS] 12 × 6 (ChangeKind × Verb) Occupancy Matrix: {occupied} / 72 legal cells verified")
     print("[PASS] Directional Asymmetry Law: outward -> 3-fact ConfirmSheet; inward/halt/exit -> 1-step")
@@ -1612,6 +1660,7 @@ def verify_all_invariants() -> None:
     print("[PASS] Inv_X1_LatchDoesNotBlockServing: 423 Locked freezes agent gate while data doors stay open")
     print(f"[PASS] Hamburger Epistemic Invariant (CSD-006): verified on {len(tree)} CSD/4 tree nodes")
     print(f"[PASS] 11 Reserved Promise Cards (CSD-111..128): {len(promise_cards)} cards composed from P1..P12")
+    print(f"[PASS] CSD/5 Draft 3 (v1.0-rc21-wire) & holon-draw Profile B: 24 primitives, {total_slots} slots, {len(prefix_owners)} unique prefixes, 17 states, 12 laws")
     print(f"[WROTE] {spike_out / 'epistemic-scene.json'}")
     print(f"[WROTE] {spike_out / 'csd4-tree.json'}")
     print(f"[WROTE] {ui_out / 'all_promise_cards.json'}")

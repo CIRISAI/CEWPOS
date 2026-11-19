@@ -13,9 +13,15 @@ use ciris_server::{
 };
 use view_forms_spike::{
     algebra::{FirstRunWizardState, ViewerContext},
+    csd5::{
+        build_all_24_primitives_showcase_screen, compile_csd5_screen,
+        compile_epistemic_scene_with_holon_draw, CSD5_DRAFT, CSD5_PINNED_COMMIT, CSD5_PINNED_TAG,
+        CSD5_STANDARD,
+    },
     epistemic_scene::{project_epistemic_scene, project_first_run_wizard_scene},
     view_form::view_deferral_vote,
 };
+use holon_draw::{ui::FakeText, Camera};
 
 pub struct CewposFullStackAdapter;
 
@@ -65,9 +71,40 @@ impl Adapter for CewposFullStackAdapter {
                     let wiz = FirstRunWizardState::default();
                     let wiz_scene = project_first_run_wizard_scene(&wiz, &viewer);
                     let app_scene = project_epistemic_scene(&viewer, &[], &[]);
+                    let (wiz_csd5, wiz_holon) =
+                        compile_epistemic_scene_with_holon_draw(&wiz_scene, "wizard", 1, 1.0);
+                    let cam = Camera::orbit([0.0, 0.0, 0.0], 0.5, 0.35, 18.0, 0.8, 1280.0, 900.0);
+                    let wiz_frame = wiz_holon
+                        .evaluate_frame(&cam, 1.0, u64::MAX)
+                        .expect("finite holon-draw frame");
                     Json(serde_json::json!({
                         "wizard_scene": wiz_scene,
                         "epistemic_scene": app_scene,
+                        "csd5_wizard_nodes": wiz_csd5,
+                        "holon_draw_summary": wiz_holon.export_summary(&wiz_frame),
+                    }))
+                }),
+            )
+            .route(
+                "/cewpos/v1/csd5-holon-draw",
+                get(|| async move {
+                    let showcase = build_all_24_primitives_showcase_screen("showcase");
+                    let mut text = FakeText {
+                        dpr: 1.0,
+                        placed: 0,
+                    };
+                    let compiled = compile_csd5_screen(&showcase, &mut text, 1);
+                    let cam =
+                        Camera::orbit([0.0, 0.0, 0.0], 0.6, 0.4, 15.0, 0.8, 1280.0, 2200.0);
+                    let frame = compiled
+                        .evaluate_frame(&cam, 1.0, u64::MAX)
+                        .expect("finite showcase frame");
+                    Json(serde_json::json!({
+                        "standard": CSD5_STANDARD,
+                        "draft": CSD5_DRAFT,
+                        "pinned_tag": CSD5_PINNED_TAG,
+                        "pinned_commit": CSD5_PINNED_COMMIT,
+                        "showcase_summary": compiled.export_summary(&frame),
                     }))
                 }),
             );

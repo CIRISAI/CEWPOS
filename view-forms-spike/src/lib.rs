@@ -26,6 +26,7 @@
 
 pub mod algebra;
 pub mod choice_item;
+pub mod csd5;
 pub mod epistemic_scene;
 pub mod scene;
 pub mod view_form;
@@ -43,6 +44,14 @@ pub use choice_item::{
     AnswerState, ChoiceAnswer, ChoiceCircle, ChoiceContext, ChoiceFact, ChoiceItem, ChoiceKind,
     ChoiceOption, ChoiceRole, ChoiceWrite, DerivedImpact, EntrySpec, ImpactDestination,
     ImpactDirection, TextRef, UndoSpec,
+};
+pub use csd5::{
+    build_all_24_primitives_showcase_screen, compile_csd5_screen,
+    compile_epistemic_scene_with_holon_draw, derive_csd5_tag, derive_shell_tag,
+    lift_epistemic_scene_to_csd5, CompiledHolonScreen, Csd5ChoiceOption, Csd5Law, Csd5Node,
+    Csd5Primitive, Csd5State, Csd5WriteVerb, DocumentClaimSpec, GraphMarkSpec, HandleEntry,
+    HandleTable, HolonDrawFrameExport, LawViolation, ReadOutcome, ShellPrefix, TagError,
+    CSD5_DRAFT, CSD5_PINNED_COMMIT, CSD5_PINNED_TAG, CSD5_STANDARD, UI_PRIMITIVES_JSON,
 };
 pub use attestation_calculus_spike::forms;
 pub use epistemic_scene::{

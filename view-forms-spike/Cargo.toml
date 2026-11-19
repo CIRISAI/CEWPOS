@@ -43,6 +43,9 @@ required-features = ["fullstack"]
 # forms::read_form. default-features = false keeps it to the pure calculus
 # (no real-persist / real-edge git trees).
 attestation-calculus-spike = { path = "../attestation-calculus-spike", default-features = false }
+# CIRISHolon's zero-dependency `holon-draw` core (INTERFACE.md Profile B: 24 CSD/5 UX primitives,
+# 60 slots, 17 states, 12 laws, 52-byte packed instances, Acuity allocator, pure pick & report).
+holon-draw = { path = "../../CIRISHolon/engine/crates/holon-draw" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 

@@ -7550,33 +7550,6 @@
       "verified_detail": "state="
     },
     {
-      "step_num": 4,
-      "csd_ids": "CSD-085, CSD-118",
-      "name": "First-Run Unclaimed Status & 0600 claim_pin File",
-      "method_path": "GET /v1/setup/status (cached from initial boot)",
-      "status_code": 200,
-      "passed": true,
-      "verified_detail": "is_first_run=True, claim_pin_mode=0o600, pin=6BS9-KYQR"
-    },
-    {
-      "step_num": 5,
-      "csd_ids": "CSD-082, CSD-037",
-      "name": "Mint Hybrid PQC User Identity (Ed25519 + ML-DSA-65)",
-      "method_path": "POST /v1/self/identity",
-      "status_code": 200,
-      "passed": true,
-      "verified_detail": "key_id=wizard-node-user-25a277grwt, fedcode=CIRIS-V3-AMAZ-YUYO-DUPQ-..."
-    },
-    {
-      "step_num": 6,
-      "csd_ids": "CSD-085",
-      "name": "Claim Node Ownership & Consume One-Time 0600 PIN",
-      "method_path": "POST /v1/setup/claim-remote",
-      "status_code": 200,
-      "passed": true,
-      "verified_detail": "role=SYSTEM_ADMIN, wa_id=wa-root-wizard-node-user-25a277grwt, attestation=9480bf00-5466-4629-9398-4bd062d34ec8, pin_consumed_deleted=True"
-    },
-    {
       "step_num": 7,
       "csd_ids": "CSD-085, CSD-118",
       "name": "Post-Claim Node Status & Owned-Nodes Binding",
@@ -7589,7 +7562,7 @@
       "step_num": 8,
       "csd_ids": "CSD-037",
       "name": "Enrolled Devices Roster (My Identity)",
-      "method_path": "GET /v1/self/occurrences?identity_key_id=wizard-node-user-25a277grwt",
+      "method_path": "GET /v1/self/occurrences?identity_key_id=",
       "status_code": 0,
       "passed": false,
       "verified_detail": "identity_key_id=None, audience=None, occurrences=0"

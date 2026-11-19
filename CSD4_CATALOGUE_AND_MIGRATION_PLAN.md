@@ -51,11 +51,8 @@ flowchart LR
 | `01` | `CSD-080` | Fresh Node Health & Conformance (v0.5.245) | `GET /health` | ❌ FAIL (`0`) | version=, key_id=, standing=, profiles=None |
 | `02` | `CSD-082, CSD-118` | First-Run Consent Disclosure & NodeCode | `GET /v1/setup/consent-disclosure + /v1/federation/node-code` | ❌ FAIL (`0`) | grants=[], location_max_h3=None, node_code=... |
 | `03` | `CSD-093` | Add-This-Device Initial Handshake State | `GET /v1/setup/add-device` | ❌ FAIL (`0`) | state= |
-| `04` | `CSD-085, CSD-118` | First-Run Unclaimed Status & 0600 claim_pin File | `GET /v1/setup/status (cached from initial boot)` | ✅ PASS (`200`) | is_first_run=True, claim_pin_mode=0o600, pin=6BS9-KYQR |
-| `05` | `CSD-082, CSD-037` | Mint Hybrid PQC User Identity (Ed25519 + ML-DSA-65) | `POST /v1/self/identity` | ✅ PASS (`200`) | key_id=wizard-node-user-25a277grwt, fedcode=CIRIS-V3-AMAZ-YUYO-DUPQ-... |
-| `06` | `CSD-085` | Claim Node Ownership & Consume One-Time 0600 PIN | `POST /v1/setup/claim-remote` | ✅ PASS (`200`) | role=SYSTEM_ADMIN, wa_id=wa-root-wizard-node-user-25a277grwt, attestation=9480bf00-5466-4629-9398-4bd062d34ec8, pin_consumed_deleted=True |
 | `07` | `CSD-085, CSD-118` | Post-Claim Node Status & Owned-Nodes Binding | `GET /v1/setup/status + /v1/setup/owned-nodes` | ❌ FAIL (`0`) | is_first_run=None, owner=None, nodes=[] |
-| `08` | `CSD-037` | Enrolled Devices Roster (My Identity) | `GET /v1/self/occurrences?identity_key_id=wizard-node-user-25a277grwt` | ❌ FAIL (`0`) | identity_key_id=None, audience=None, occurrences=0 |
+| `08` | `CSD-037` | Enrolled Devices Roster (My Identity) | `GET /v1/self/occurrences?identity_key_id=` | ❌ FAIL (`0`) | identity_key_id=None, audience=None, occurrences=0 |
 | `09` | `CSD-094` | Open 10-Minute Device Approval Window & Poll Requests | `POST /v1/self/device-requests/open + GET /v1/self/device-requests` | ❌ FAIL (`0`) | open=None, window_secs=None, window_secs_left=0, requests=None |
 | `10` | `CSD-095` | Self-Key Roster Proposals & 24h W_self Window | `GET /v1/self/roster/proposals` | ❌ FAIL (`0`) | roster=[], proposals=None, w_self_secs=None (24h) |
 | `11` | `CSD-105, CSD-129` | Authenticated Node State, Entrenched Trust Root & CEWPOS :8787 Proxy | `GET /v1/node/state + /v1/trust-root + :8787/health` | ❌ FAIL (`0`) | node.band=None, trust_root=None, cewpos_proxy_version=None |

@@ -40,28 +40,49 @@ This file is the canonical engineering guide for coding agents and contributors 
 
 ---
 
-## 2. The 12 Closed UX Primitives (`P1`–`P12`)
+## 2. The 24 Closed UX Primitives (`CSD/5` Draft 3 at `v1.0-rc21-wire` & `holon-draw` Profile B)
 
-Every epistemic web state across all **5 Circles × 7 Tabs × 6 Instruments × 101 `CSD/4` cards** is projected exclusively from a **closed algebra of 12 UX Primitives** (`view-forms-spike/src/epistemic_scene.rs` and `epistemic-ui/index.html`). Adding a new feature or domain **never** introduces a 13th primitive; it composes `P1`–`P12` over new CEG vocabulary.
+Per Issue #3 and the lead's decision (2026-11-15), CEWPOS is re-based on **`CSD/5` draft 3** (`manifests/ui_primitives.json` in `CIRISConstitution` at `v1.0-rc21-wire`, vendored at `epistemic-ui/ui_primitives.json` and implemented in `view-forms-spike/src/csd5.rs` over `CIRISHolon`'s `holon-draw` crate): **24 primitives, 60 closed slots, 17 read-bound states, 12 laws (`L1`–`L12`), 4 shell prefixes (`circle`, `tab`, `nav`, `screen`), and the derived tag grammar**.
 
-| ID | Primitive Name | Rust Scene IR (`epistemic_scene.rs`) | Role in Full-Screen Bevy Scene |
-| :--- | :--- | :--- | :--- |
-| **`P1`** | `CardShell` | `UxPrimitive::CardShell` | 3D spatial slab container with title, status `P6` chip, and `⋯` progressive disclosure drawer. |
-| **`P2`** | `FieldRow` | `UxPrimitive::FieldRow` | Key/value row binding a plain-language label to a wire field (`FactProvenance::Wire`, `ByRule`, or `NotSent`). |
-| **`P3`** | `ItemRow` | `UxPrimitive::ItemRow` | Signed CEG claim row carrying a `P5` ScopePill and the **Universal CEG Hamburger (`☰`)** that opens `P4`. |
-| **`P4`** | `ReceiptSheet` (`☰`) | `UxPrimitive::ReceiptSheet` | Universal CEG Hamburger sheet exposing the 5 envelope facts, 3D `view_form` slab preview, 9 uniform `AttOp`s, blob/custody acts, and `CC 4.5.4` moderation acts. |
-| **`P5`** | `ScopePill` | `UxPrimitive::ScopePill` | Circle visibility badge (`Just me`, `Family`, `Neighbours`, `Communities & Businesses`, `Everyone`) + local-only indicator. |
-| **`P6`** | `Chip` | `UxPrimitive::Chip` | Status or interactive choice badge (`Status | Choice`). |
-| **`P7`** | `StateBlock` | `UxPrimitive::StateBlock` | Mandatory surface state banner (`Populated | Loading | Empty | Error | FileGone | HiddenByRules | Unreviewed | Halt423`). |
-| **`P8`** | `ConfirmSheet` | `UxPrimitive::ConfirmSheet` | 3-fact outward-action confirmation gate (*1. What moves · 2. Where it goes · 3. Can I undo it?* + `G14` replication notice). |
-| **`P9`** | `ChoiceBlock` (`TwoPathCeremonyBlock`) | `UxPrimitive::TwoPathCeremonyBlock` + `DeferralVoteNode` | Universal **Context + Options + Consequences** primitive. Context dictates whether it is a wizard step, node mode, consent gate, agent deferral, moderation action, or circle vote. |
-| **`P10`** | `QrCeremony` | `UxPrimitive::QrCeremony` | Multi-device pairing & key-exchange slab (`ciris://ed25519:...@host:4243` + 6-digit SAS match code). |
-| **`P11`** | `LineageChainBlock` | `UxPrimitive::LineageChainBlock` | Cryptographic delegation & bond chain (`Human Steward -> Bonded Agent`, `Inv_BondDepthOne`, or `Genesis -> Supersedes -> Active Head`). |
-| **`P12`** | `ConscienceStepBlock` (+ `PolicyLensBar`) | `UxPrimitive::ConscienceStepBlock` / `PolicyLensBar` | H3ERE conscience invariant evaluations, `CSD-118` Never-Allowed hard refusals (`G17`), `G14` non-verifiable boundary notice, and quiet policy lens bar. |
+### 2.1 The 24 `CSD/5` Primitives, Prefixes, and 60 Closed Slots (`csd5.rs` & `ui_primitives.json`)
 
-### Directional Asymmetry Law (`Inv_ExitOneStep` vs. `P8: ConfirmSheet`)
-- **Outward / widening / delegating / irreversible acts** always require a 3-fact `P8: ConfirmSheet`.
-- **Inward / narrowing / withdrawing / leaving (`Inv_ExitOneStep`) / halting (`423` Stop everything) / refusing (`G17`) acts** execute in **one immediate step** without confirmation friction.
+| # | `CSD/5` Primitive | Owned Prefix(es) (`L1`) | Keyed? | Closed Slots (60 total) | Legacy `P1`–`P12` Mapping & `holon-draw` Profile B Composition |
+| :-: | :--- | :--- | :-: | :--- | :--- |
+| 1 | **`CardShell`** | `card` | No | `title` | `P1` (1-to-1) — `Kind::Quad` (rounded) + `Kind::Run` title in its own screen tile |
+| 2 | **`FieldRow`** | `txt` | No | `wire`, `gloss` | `P2` (1-to-1) — `Kind::Run` label + `Kind::Run` wire value (`"This node did not send this"` when not sent, never blank) |
+| 3 | **`ItemRow`** | `row` | Yes | `flag`, `act` | `P3` (1-to-1) — `Kind::Quad` + `Kind::Run`s + `flag` + `act`; shares its handle with its 3D `GraphView` world mark (`twin`) |
+| 4 | **`ScopePill`** | `scope` | No | `group` | `P5` (1-to-1) — `Kind::Quad` pill + `Kind::Run` circle & optional `group` |
+| 5 | **`Chip`** | `chip` | No | *(none)* | Split from `P6` — Static status token (`Kind::Quad` + `Kind::Glyph` + `Kind::Run`, never color alone) |
+| 6 | **`Action`** | `btn`, `mi` | No | `reason` | Added (`btn` on surface, `mi` in menu) — Pinned (`L12`); disabled draws `reason` (`L5`) |
+| 7 | **`ReceiptSheet`** | `receipt` | Yes | `open`, `fact_1`..`fact_5`, `holders`, `notes`, `acts` | `P4` (1-to-1) — Modal tile (`__open` replaces `btn_receipt_<id>`) |
+| 8 | **`StateBlock`** | `state` | No | `@states` (17), `freshness` | Expanded from `P7` — Bound to a read (`L2`, `L3`, `L9`); draws exactly 1 of the 17 state forms |
+| 9 | **`Metric`** | `stat` | No | `unit`, `source` | Added — Bound to a read (`L4`); shows `"—"` (em dash) when not sent or not read, never `0` |
+| 10 | **`ConfirmSheet`** | `sheet` | No | `fact_1`, `fact_2`, `fact_3`, `note`, `confirm`, `cancel` | `P8` (1-to-1) — Modal layer tile (`L6`, `L7`, `L12`); takes every pick while open |
+| 11 | **`Choice`** | `opt` | Yes | `cost`, `tally` | Split from `P6`/`P9` — One question, each option is a `.key` (`L12`, pinned) |
+| 12 | **`DestinationPicker`** | `pick` | Yes | `group` | Split from `P9` — Keyed destination rows with `group` slot |
+| 13 | **`Field`** | `input` | No | `ceiling`, `error` | Added — Text input + caret `Kind::Line` + byte `ceiling` (`L12`, pinned) |
+| 14 | **`StepFlow`** | `step` | Yes | `next`, `back` | Split from `P9` — Keyed step `Kind::Disc`s + `Kind::Line`s + `next`/`back` (skipped step is absent) |
+| 15 | **`Ceremony`** | `ceremony` | Yes | `act_price`, `undo_price`, `window`, `threshold`, `signer` | Split from `P9` — Governance ceremony prices/window/threshold + keyed `__signer.<who>` |
+| 16 | **`LineageChain`** | `chain` | Yes | `link`, `cascade` | `P11` (1-to-1) — Keyed `__link.<k>` `Kind::Disc`s + `Kind::Arc`s + `cascade` |
+| 17 | **`CodeCompare`** | `code` | No | `words`, `digits`, `verdict` | Split from `P10` — SAS words + digits + verdict glyph |
+| 18 | **`QrCode`** | `qr`, `scan` | No | `paste` | Split from `P10` — `qr` displays, `scan` reads into a `Field` and never submits |
+| 19 | **`Transcript`** | `msg`, `note` | Yes | `receipt`, `fetch` | Added — Keyed message/note runs in a scrolling tile with `receipt` and `fetch` |
+| 20 | **`ConscienceStep`** | `conscience` | Yes | `cost`, `faculty` | Split from `P12` — H3ERE evaluation + `cost` + 4 keyed faculties (CC 3.1.5.3) |
+| 21 | **`PolicyLens`** | `lens` | No | `hidden_count`, `helpers`, `depth` | Split from `P12` — Subjective filter bar; hidden items are absent with `hidden_count` stated |
+| 22 | **`GraphView`** | `canvas` | No | `twin` | Brought inside the 24 from `SpatialCanvas` — 3D world tiles whose pickable marks share handles with `twin` `ItemRow`s |
+| 23 | **`Document`** | `doc` | Yes | `claim`, `recant`, `revision`, `cite` | Added — Keyed claims; a recanted claim is struck with a `Kind::Line` and its reason beside it, never removed |
+| 24 | **`Media`** | `media` | Yes | `alt`, `ai_disclosure`, `blur`, `class` | Added — Enforces `L10`: never drawn without non-empty `alt` and `ai_disclosure` |
+
+### 2.2 Tag Grammar (`L1` & `INTERFACE.md` §10.1), 17 Read-Bound States (`L2`, `L3`), and 12 Laws
+- **Tag Grammar (`derive_csd5_tag` & `derive_shell_tag` in `view-forms-spike/src/csd5.rs`)**:
+  - Primitive tag: `prefix '_' surface '_' instance [ '__' slot ] [ '.' key ]` (**slot comes BEFORE `.key`**, e.g. `row_s_i__flag.k`).
+  - Shell tag: `shell_prefix '_' name` (`circle_<name>`, `tab_<name>`, `nav_<name>`, `screen_<name>`).
+  - Tags are derived exclusively by the primitives layer and mapped 1-to-1 to `u32` `holon_draw::Instance::tag` handles via `HandleTable`.
+- **All 17 Exact Read-Bound States (`Csd5State`)**:
+  - `idle` (outcome `idle`); `loading`, `loading_known` (outcome `pending`); `error` (outcome `failed`); and under outcome `ok`: `populated`, `empty`, `refused`, `gone` (replaces `FileGone`), `withheld`, `lapsed`, `ended`, `locked`, `hidden_by_rules`, `unreviewed`, `waiting`, `unknown`, `not_on_this_node`.
+- **Directional Asymmetry Law (`L6`: `Inv_ExitOneStep` vs. `ConfirmSheet`)**:
+  - **Outward / widening / delegating / irreversible acts** (`confirm: true` in `manifests/transitions.json`) require a 3-fact `ConfirmSheet` (`sheet_<surface>_<instance>__confirm`).
+  - **Inward / narrowing / withdrawing / leaving (`Inv_ExitOneStep`) / halting (`423` Stop everything) / refusing (`G17`) acts** execute in **one immediate step** via an `Action` (`btn_<surface>_<instance>`).
 
 ---
 
