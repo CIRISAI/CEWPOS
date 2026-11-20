@@ -4,9 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0e16">
-<title>CIRIS Web4 — Cooperation Without Surrender</title>
-<meta name="description" content="CIRIS is building the infrastructure for a world where no one has to surrender their agency to participate in something greater than themselves.">
+<title>CIRIS Web4 — Your Devices, Your Friends, Your Community</title>
+<meta name="description" content="Connect your phone and laptop directly, share video, files, and chat with friends and family, control your own feed, and run your church, town, or club without Big Tech or a tech guy.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%2214%22 fill=%22%230a0e16%22 stroke=%22%235ad38f%22 stroke-width=%222.5%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
 <style>
 :root {
   --bg: #090d14;
@@ -18,8 +21,8 @@
   --blue: #65b2ff;
   --amber: #f5b358;
   --red: #f26d5b;
-  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 }
 * { box-sizing: border-box; }
 html, body {
@@ -49,22 +52,23 @@ canvas#c {
   height: 100%;
   display: block;
   cursor: grab;
+  touch-action: none;
 }
 canvas#c:active {
   cursor: grabbing;
 }
 
-/* Bottom Story Box: Clear, simple English based on VISION.md & CIRIS Web4 */
+/* Bottom Story Box: Clear, simple English focused on practical human outcomes */
 #story-box {
   flex: 0 0 auto;
   width: 100%;
   background: var(--card);
   border-top: 1px solid var(--border);
-  padding: 15px 24px 17px;
+  padding: 14px 24px 16px;
   z-index: 10;
 }
 .story-inner {
-  max-width: 980px;
+  max-width: 1000px;
   width: 100%;
   margin: 0 auto;
   display: flex;
@@ -75,12 +79,13 @@ canvas#c:active {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 .story-title-group {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 .step-pill {
@@ -92,10 +97,11 @@ canvas#c:active {
   border: 1px solid rgba(78, 208, 139, 0.4);
   border-radius: 999px;
   padding: 3px 10px;
+  white-space: nowrap;
 }
 .story-heading {
   margin: 0;
-  font-size: 19px;
+  font-size: 18.5px;
   font-weight: 700;
   color: #ffffff;
   letter-spacing: -0.01em;
@@ -107,11 +113,12 @@ canvas#c:active {
   white-space: nowrap;
 }
 .story-body {
-  margin: 6px 0 4px;
-  font-size: 15.2px;
+  margin: 4px 0 4px;
+  font-size: 15px;
   line-height: 1.5;
   color: #d8e0ee;
-  max-width: 940px;
+  max-width: 960px;
+  min-height: 3em; /* two lines: the panel keeps its height between chapters */
 }
 .story-body strong {
   color: #ffffff;
@@ -122,24 +129,26 @@ canvas#c:active {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 .step-dots {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
+  flex-wrap: wrap;
 }
 .step-btn {
   background: #1a2332;
   color: var(--muted);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 6px 11px;
-  font-size: 12.5px;
+  padding: 6px 10px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
+  white-space: nowrap;
 }
 .step-btn:hover {
   color: #fff;
@@ -153,21 +162,23 @@ canvas#c:active {
 .nav-controls {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
+  flex-wrap: wrap;
 }
 .ctrl-btn {
   background: #1b2434;
   color: var(--ink);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 7px 14px;
-  font-size: 13px;
+  padding: 6px 12px;
+  font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
+  white-space: nowrap;
 }
 .ctrl-btn:hover {
   border-color: var(--blue);
@@ -183,17 +194,22 @@ canvas#c:active {
   background: #64df9e;
 }
 
-@media (max-width: 760px) {
-  .story-heading { font-size: 16px; }
-  .story-body { font-size: 13.5px; line-height: 1.45; }
+@media (max-width: 820px) {
+  #story-box { padding: 11px 14px 13px; }
+  .story-inner { gap: 6px; }
+  .story-heading { font-size: 15.5px; }
+  .story-status { display: none; }
+  .story-body { font-size: 13px; line-height: 1.42; margin: 2px 0; min-height: 5.68em; }
+  .step-btn { padding: 5px 8px; font-size: 11.5px; }
   .step-btn span.lbl { display: none; }
+  .ctrl-btn { padding: 5px 9px; font-size: 11.5px; }
 }
 </style>
 </head>
 <body>
 
 <div id="stage-wrap">
-  <canvas id="c" aria-label="CIRIS Web4 full-3D hardware and protocol scene rendered by holon-draw"></canvas>
+  <canvas id="c" aria-label="CIRIS Web4 full-3D hardware and community scene rendered by holon-draw"></canvas>
 </div>
 
 <section id="story-box" aria-label="CIRIS Web4 Story">
@@ -202,9 +218,9 @@ canvas#c:active {
       <div class="story-top">
         <div class="story-title-group">
           <span class="step-pill" id="step-pill">1 of 7</span>
-          <h1 class="story-heading" id="story-heading">Your key is yours</h1>
+          <h1 class="story-heading" id="story-heading">Start with you, your phone, and your laptop</h1>
         </div>
-        <span class="story-status" id="story-status">Status: Works today</span>
+        <span class="story-status" id="story-status">Direct peer-to-peer</span>
       </div>
       <p class="story-body" id="story-body"></p>
     </div>
@@ -215,8 +231,8 @@ canvas#c:active {
         <button class="ctrl-btn" id="btn-prev" type="button">&larr; Back</button>
         <button class="ctrl-btn" id="btn-play" type="button">Pause</button>
         <button class="ctrl-btn" id="btn-next" type="button">Next &rarr;</button>
-        <a class="ctrl-btn" href="CIRIS_Web4_Draft_0.5.pdf" target="_blank" rel="noopener">Read White Paper (PDF)</a>
-        <a class="ctrl-btn primary" href="app.html?mode=setup">Start CEWPOS First-Run &rarr;</a>
+        <a class="ctrl-btn" href="CIRIS_Web4_Draft_0.5.pdf" target="_blank" rel="noopener">White Paper (PDF)</a>
+        <a class="ctrl-btn primary" href="app.html?mode=setup">Try it &rarr;</a>
       </div>
     </div>
   </div>
@@ -225,55 +241,62 @@ canvas#c:active {
 <script type="module">
 // ═══════════════════════════════════════════════════════════════════════════
 // 100% NATIVE `holon-draw` (`draw.js` + `text.js`) 3D WORLD & SCREEN RENDERER
-// Every 3D Phone, Laptop, Server Tower, Key, Tablet, Kernel Gyro, AI Steward,
-// E-Stop Switch, 3D Fiber-Optic Spline, Floor Grid, and HUD Plaque is packed
-// into 52-byte `holon-draw` instance records and drawn via `drawer.draw(...)`.
+// Every 3D Person, Phone, Laptop, Media Console, Algorithm Equalizer,
+// Church/Town/Club Hall, Server Tower, Key, AI Helper, E-Stop Switch, and
+// Screen Plaque is packed into 52-byte `holon-draw` records.
 // ═══════════════════════════════════════════════════════════════════════════
-import { createDrawer, KIND, INSTANCE_BYTES, PARAM, PARAMS_NEUTRAL, VARIANT_ROUND } from './holon/draw.js';
-import { createTextProvider, STYLE } from './holon/text.js';
+import { createDrawer, KIND, INSTANCE_BYTES, PARAM, PARAMS_NEUTRAL, VARIANT_ROUND, VARIANT_ORIENT } from './holon/draw.js';
+import { createTextProvider } from './holon/text.js';
 
+// ── Practical, Human-Centered 7-Chapter Story ──
 const STEPS = [
   {
-    short: "1. Your Key",
-    title: "Your key is yours — cooperation without surrender",
-    status: "Works today (CLM-exit-one-step)",
-    text: `Power follows infrastructure: whoever runs your login and your messages comes to decide if you can take part. In CIRIS, <strong>your key lives on your own devices</strong>. Nothing happens in your name without your signature, and you can walk away from any server or trust root in <strong>one step</strong>.`
+    short: "1. Your Devices",
+    title: "Your phone and laptop, talking straight to each other",
+    status: "Your key · Your name",
+    text: `Today a company stands between your own devices, holding your login and your copies. With CIRIS <strong>your key lives on your devices</strong>, and they recognise each other directly, wherever you are. Nothing happens in your name without you.`
   },
   {
-    short: "2. Private Circles",
-    title: "Keep private things private across five circles",
-    status: "Works today (Carry.lean proved)",
-    text: `Everything you create starts close to you in <strong>Just me</strong>. It moves outward to your <strong>Family</strong>, <strong>Neighbours</strong>, <strong>Affiliations</strong>, or <strong>Everyone</strong> only when you sign it out. Sharing outward always asks a 3-fact confirmation; pulling back to Just me takes one immediate step.`
+    short: "2. Files",
+    title: "Your files follow you, not a company's cloud",
+    status: "Same files everywhere",
+    text: `Save a photo on your phone and find it on your laptop, <strong>without renting space from a company that can change the terms</strong>. When your devices reconnect they settle on the same files, and say plainly what they are still waiting for.`
   },
   {
-    short: "3. Two Consents",
-    title: "Every relationship takes two signatures",
-    status: "Works today (Consent.lean proved)",
-    text: `No one can add you to a group, make you a moderator, or bind an AI agent to you by their signature alone. <strong>A seat is two consents</strong>: Alice signs an invitation on her phone, and Bob signs his acceptance on his laptop. Until both signed records meet, the seat does not stand.`
+    short: "3. Friends & Family",
+    title: "Share with the people you love, on your terms",
+    status: "Two yeses to connect",
+    text: `Send the birthday video to Grandma, the photos to the family chat. Everything starts as <strong>yours alone</strong>, and reaches others only when you share and they accept. No one scans it, and no one can pull you in without your yes.`
   },
   {
-    short: "4. Causal Kernel",
-    title: "Everyone holding the same records reaches the same answer",
-    status: "Works today (602 Lean theorems · kernel-v0.2.0)",
-    text: `There is no central server or blockchain deciding the order of events. Even when signed records arrive at Alice's phone, Bob's laptop, and Carol's home server in <strong>completely different orders</strong>, the causal kernel computes the <strong>exact same conclusion</strong> on every device.`
+    short: "4. Your Feed",
+    title: "A feed that serves you, not advertisers",
+    status: "Your lens · Your rules",
+    text: `<strong>You choose whose voices you hear</strong> — family, neighbours, your club, the wider world — and what you filter out. No hidden engine tuned to keep you angry. Two people can read the same network and each see it their own way.`
   },
   {
-    short: "5. Fair Decisions",
-    title: "People decide together — one person counts once",
-    status: "Proved in RosterHead.lean (602 theorems)",
-    text: `A community decides by its own members' count, and <strong>no amount of money buys a vote</strong>. One person counts once, even when Alice owns both a phone and a laptop. A decision becomes final without a central authority as soon as enough members acknowledge it.`
+    short: "5. Community",
+    title: "Your church, town or club, deciding together fairly",
+    status: "One person, one voice",
+    text: `Propose, discuss and vote from the phone in your pocket. CIRIS is built so <strong>one person counts once</strong>, however many devices they own; no donor buys a louder voice, no outside company can ban your group, and every member can check the count.`
   },
   {
-    short: "6. Accountable AI",
-    title: "AI agents answer to a named human and check their conscience",
-    status: "Works today in CIRISAgent",
-    text: `An AI agent is not a person and never acts on its own authority. It is held in stewardship by a <strong>named human</strong>, checks every action against published ethical principles (its conscience), shows its reasoning, and <strong>stops to ask a human</strong> whenever it is unsure.`
+    short: "6. Members Own It",
+    title: "Your community belongs to its members, not its host",
+    status: "No tech guy · No landlord",
+    text: `No one rents the server or holds the master password. <strong>The group lives on its members' own phones and laptops</strong>, under rules everyone can read — including the people who wrote them. If one member stops showing up, the group carries on.`
   },
   {
-    short: "7. Human Stop",
-    title: "Named humans can pause every agent with one signed record",
-    status: "Works today (AccordHaltRow · 8.18M states checked)",
-    text: `Consent to a relationship you cannot stop was never consent. A single root holder can press the <strong>Human Stop</strong> to sign one Halt record that immediately pauses every subscribed AI agent's action gate — while <strong>all your laptops, phones, keys, files, and peer links stay wide open</strong>.`
+    short: "7. AI Can Stop",
+    title: "AI that helps, answers to a person, and can stop",
+    status: "A human can always say stop",
+    text: `Want help sorting files or summarising club notes? An optional AI helper <strong>works by published principles</strong>, shows its reasoning, and asks a human when unsure. Named people can pause it with one signed act — and your files and chats keep running.`
+  },
+  {
+    short: "8. Together",
+    title: "Taking part, without giving yourself away",
+    status: "Early · Open · Honest",
+    text: `The first web connected information. The next connected people through platforms. This one lets <strong>people, communities and the AI they hold act together without any one of them owning the rest</strong>. It's early, it's open, and it says plainly what isn't proven yet.`
   }
 ];
 
@@ -290,7 +313,7 @@ STEPS.forEach((s, idx) => {
 let currentStep = 0;
 let playing = true;
 let stepTime = 0;
-const STEP_DURATION = 10.0;
+const STEP_DURATION = 10.5;
 
 function goToStep(idx, manual) {
   currentStep = (idx + STEPS.length) % STEPS.length;
@@ -319,14 +342,36 @@ const canvas = document.getElementById('c');
 const stageWrap = document.getElementById('stage-wrap');
 let dpr = Math.min(window.devicePixelRatio || 1, 2);
 
+// MSAA only below 2x density: on a 2x screen its cost is real and its gain hard to see.
+const GL_OPTS = { antialias: dpr < 1.75, alpha: false };
+const gl = canvas.getContext('webgl2', GL_OPTS) || canvas.getContext('webgl', GL_OPTS);
+
+// Label typography: IBM Plex Sans through holon-draw's host styles (numbered from 5).
+const PLEX = '"IBM Plex Sans", -apple-system, "Segoe UI", sans-serif';
+const LSTYLE = { TITLE_COMPACT: 5, TITLE: 6, SUB: 7 };
+const text = createTextProvider(gl, {
+  dpr,
+  styles: [
+    { px: 11, weight: '600 ', family: PLEX, upper: true, spacing: 0.07 },
+    { px: 12.5, weight: '600 ', family: PLEX, upper: true, spacing: 0.07 },
+    { px: 12, weight: '', family: PLEX, upper: false, spacing: 0 },
+  ],
+});
+// Re-rasterise the labels once the webfont has arrived.
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => text.setDpr(dpr));
+const drawer = createDrawer(gl, { text, sphereSegments: 28, rodSides: 22 });
+
 function resize() {
   dpr = Math.min(window.devicePixelRatio || 1, 2);
+  if (text.dpr !== dpr) text.setDpr(dpr);
   const rect = stageWrap.getBoundingClientRect();
   canvas.width = Math.max(320, Math.round(rect.width * dpr));
-  canvas.height = Math.max(240, Math.round(rect.height * dpr));
+  canvas.height = Math.max(220, Math.round(rect.height * dpr));
 }
 resize();
 window.addEventListener('resize', resize);
+// The story box changes height between chapters: follow the stage, not only the window.
+if (typeof ResizeObserver !== 'undefined') new ResizeObserver(resize).observe(stageWrap);
 
 let userYaw = 0;
 let userPitch = 0;
@@ -347,15 +392,10 @@ canvas.addEventListener('pointermove', (e) => {
 });
 canvas.addEventListener('pointerup', () => { dragging = false; });
 
-const gl = canvas.getContext('webgl2', { antialias: true, alpha: false }) ||
-           canvas.getContext('webgl', { antialias: true, alpha: false });
-
-const text = createTextProvider(gl, { dpr });
-const drawer = createDrawer(gl, { text, sphereSegments: 28, rodSides: 22 });
-
-// ── 52-Byte Packed `holon-draw` Batch Container (World & Screen Batches) ──
+// ── 52-Byte Packed `holon-draw` Batch Container ──
+// add() writes records; seal() publishes the byte view once, after a build (no per-record views).
 class HolonBatch {
-  constructor(kind, screen = false, cap = 512) {
+  constructor(kind, screen = false, cap = 256) {
     this.kind = kind;
     this.offset = [0, 0, 0];
     this.coarse = false;
@@ -365,100 +405,78 @@ class HolonBatch {
     this.dv = new DataView(this.buf);
     this.bytes = new Uint8Array(this.buf, 0, 0);
     this.params = Float32Array.from(PARAMS_NEUTRAL);
+    this.shade = null;
   }
   clear() {
     this.count = 0;
-    this.bytes = new Uint8Array(this.buf, 0, 0);
+    if (this.bytes.byteLength) this.bytes = new Uint8Array(this.buf, 0, 0);
+  }
+  seal() {
+    const n = this.count * INSTANCE_BYTES;
+    if (this.bytes.buffer !== this.buf || this.bytes.byteLength !== n) this.bytes = new Uint8Array(this.buf, 0, n);
   }
   ensure(n) {
-    if ((n + 1) * INSTANCE_BYTES <= this.buf.byteLength) return;
+    if (n * INSTANCE_BYTES <= this.buf.byteLength) return;
     const next = new ArrayBuffer(Math.max(this.buf.byteLength * 2, (n + 64) * INSTANCE_BYTES));
     new Uint8Array(next).set(new Uint8Array(this.buf, 0, this.count * INSTANCE_BYTES));
     this.buf = next;
     this.dv = new DataView(this.buf);
   }
-  add(pos, size, aux, angle, rgba, variant = 0) {
+  add(px, py, pz, s0, s1, s2, a0, a1, a2, angle, rgba, variant) {
     this.ensure(this.count + 1);
     const b = this.count * INSTANCE_BYTES;
     const dv = this.dv;
-    dv.setFloat32(b + 0, pos[0], true);
-    dv.setFloat32(b + 4, pos[1], true);
-    dv.setFloat32(b + 8, pos[2] || 0, true);
-    dv.setFloat32(b + 12, size[0], true);
-    dv.setFloat32(b + 16, size[1] || 0, true);
-    dv.setFloat32(b + 20, size[2] || 0, true);
-    dv.setFloat32(b + 24, aux ? aux[0] : 0, true);
-    dv.setFloat32(b + 28, aux ? aux[1] : 0, true);
-    dv.setFloat32(b + 32, aux ? aux[2] : 0, true);
-    dv.setFloat32(b + 36, angle || 0, true);
+    dv.setFloat32(b + 0, px, true);
+    dv.setFloat32(b + 4, py, true);
+    dv.setFloat32(b + 8, pz, true);
+    dv.setFloat32(b + 12, s0, true);
+    dv.setFloat32(b + 16, s1, true);
+    dv.setFloat32(b + 20, s2, true);
+    dv.setFloat32(b + 24, a0, true);
+    dv.setFloat32(b + 28, a1, true);
+    dv.setFloat32(b + 32, a2, true);
+    dv.setFloat32(b + 36, angle, true);
     dv.setUint8(b + 40, rgba[0]);
     dv.setUint8(b + 41, rgba[1]);
     dv.setUint8(b + 42, rgba[2]);
-    dv.setUint8(b + 43, rgba[3] !== undefined ? rgba[3] : 255);
+    dv.setUint8(b + 43, rgba[3]);
     dv.setUint32(b + 44, this.count + 1, true);
     dv.setUint8(b + 48, this.kind);
     dv.setUint8(b + 49, 0);
     dv.setUint8(b + 50, 0);
     dv.setUint8(b + 51, variant);
     this.count++;
-    this.bytes = new Uint8Array(this.buf, 0, this.count * INSTANCE_BYTES);
   }
 }
 
-// 3D World Batches (`batch.screen = false`, rendered by `holon-draw` world program)
-const worldPatches = new HolonBatch(KIND.PATCH, false, 16);
-worldPatches.params[PARAM.TEX] = 0.25; // procedural band-limited ground noise from `holon-draw`
-worldPatches.params[PARAM.NOISE + 2] = 1.0;
-worldPatches.params[PARAM.NOISE + 3] = 1.0;
-
-const worldGridLines = new HolonBatch(KIND.LINE, false, 128);
-const worldBoxes     = new HolonBatch(KIND.BOX, false, 4096);
-const worldRods      = new HolonBatch(KIND.ROD, false, 4096);
-const worldSpheres   = new HolonBatch(KIND.SPHERE, false, 2048);
-const worldTubes     = new HolonBatch(KIND.LINE, false, 1024);
-
-// 2D Screen Batches (`batch.screen = true`, rendered by `holon-draw` screen program)
-const bgQuads    = new HolonBatch(KIND.QUAD, true, 128);
-const fgQuads    = new HolonBatch(KIND.QUAD, true, 128);
-const discsBatch = new HolonBatch(KIND.DISC, true, 128);
-const runsBatch  = new HolonBatch(KIND.RUN, true, 256);
-
-const allHolonBatches = [
-  worldPatches,
-  worldGridLines,
-  worldBoxes,
-  worldRods,
-  worldSpheres,
-  worldTubes,
-  bgQuads,
-  fgQuads,
-  discsBatch,
-  runsBatch
-];
-
-// ── 4x4 Matrix Math & Mapping to `holon-draw` Z-Up World Coordinates ──
-// Our modeling builders use (x: right, y: up, z: toward viewer).
-// `holon-draw` world space is right-handed Z-up: (hx = x, hy = -z, hz = y).
+// ── 4x4 Matrix Math (scene frame: y up) & Mapping to `holon-draw` Z-Up World ──
+// Scene builds run once per chapter; only animated parts run per frame, so the math stays plain.
 function toHolon(p) {
   return [p[0], -p[2], p[1]];
 }
 function mat4Identity() {
   return new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]);
 }
-function mat4Mul(a, b) {
-  const out = new Float32Array(16);
+function mat4Mul(a, b, out = new Float32Array(16)) {
   for (let c = 0; c < 4; c++) {
+    const b0 = b[c*4], b1 = b[c*4+1], b2 = b[c*4+2], b3 = b[c*4+3];
     for (let r = 0; r < 4; r++) {
-      out[c*4+r] = a[0*4+r]*b[c*4+0] + a[1*4+r]*b[c*4+1] + a[2*4+r]*b[c*4+2] + a[3*4+r]*b[c*4+3];
+      out[c*4+r] = a[r]*b0 + a[4+r]*b1 + a[8+r]*b2 + a[12+r]*b3;
     }
   }
   return out;
 }
 function mat4Translate(m, x, y, z) {
-  return mat4Mul(m, new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, x,y,z,1]));
+  const o = Float32Array.from(m);
+  o[12] = m[0]*x + m[4]*y + m[8]*z + m[12];
+  o[13] = m[1]*x + m[5]*y + m[9]*z + m[13];
+  o[14] = m[2]*x + m[6]*y + m[10]*z + m[14];
+  return o;
 }
 function mat4Scale(m, sx, sy, sz) {
-  return mat4Mul(m, new Float32Array([sx,0,0,0, 0,sy,0,0, 0,0,sz,0, 0,0,0,1]));
+  const o = Float32Array.from(m);
+  for (let i = 0; i < 3; i++) { o[i] *= sx; o[4+i] *= sy; o[8+i] *= sz; }
+  return o;
 }
 function mat4RotateX(m, rad) {
   const c = Math.cos(rad), s = Math.sin(rad);
@@ -497,19 +515,50 @@ function mat4LookAt(eye, center, up) {
     1
   ]);
 }
-function projectHolonToScreen(vp, hx, hy, hz, Wcss, Hcss) {
-  const x = vp[0]*hx + vp[4]*hy + vp[8]*hz + vp[12];
-  const y = vp[1]*hx + vp[5]*hy + vp[9]*hz + vp[13];
-  const w = vp[3]*hx + vp[7]*hy + vp[11]*hz + vp[15];
+// Scene point -> CSS pixels (y down), or null behind the eye.
+function projectScene(vp, x, y, z, Wcss, Hcss, out) {
+  const hx = x, hy = -z, hz = y;
+  const cx = vp[0]*hx + vp[4]*hy + vp[8]*hz + vp[12];
+  const cy = vp[1]*hx + vp[5]*hy + vp[9]*hz + vp[13];
+  const w  = vp[3]*hx + vp[7]*hy + vp[11]*hz + vp[15];
   if (w <= 0.01) return null;
-  return [((x / w) * 0.5 + 0.5) * Wcss, (0.5 - (y / w) * 0.5) * Hcss];
+  out[0] = ((cx / w) * 0.5 + 0.5) * Wcss;
+  out[1] = (0.5 - (cy / w) * 0.5) * Hcss;
+  return out;
 }
 
-// ── Adapter: Emits 3D Hardware Geometry Directly as `holon-draw` 52-Byte Instance Records ──
-class HolonSceneBuilder {
-  clear() {
-    for (const b of allHolonBatches) b.clear();
+// ── A Scene Set: one group of world batches that is built, faded and dimmed together ──
+// Thin spheres and rods go to COARSE batches (holon-draw's 10x6 sphere, 8-sided rod), which
+// is most of a scene's beads and joints; heads, domes and pulses keep the fine mesh.
+const SHADE_METAL = [0.22, 0.10];
+class SceneSet {
+  constructor() {
+    this.shadows   = new HolonBatch(KIND.DISC);
+    this.boxes     = new HolonBatch(KIND.BOX, false, 1024);
+    this.rods      = new HolonBatch(KIND.ROD);
+    this.rodsC     = new HolonBatch(KIND.ROD, false, 1024);
+    this.spheres   = new HolonBatch(KIND.SPHERE);
+    this.spheresC  = new HolonBatch(KIND.SPHERE, false, 512);
+    this.tubes     = new HolonBatch(KIND.LINE);
+    this.rodsC.coarse = true;
+    this.spheresC.coarse = true;
+    this.boxes.shade = SHADE_METAL;
+    this.batches = [this.shadows, this.boxes, this.rods, this.rodsC, this.spheres, this.spheresC, this.tubes];
+    this.stream = new HolonSceneBuilder(this);
   }
+  clear() { for (const b of this.batches) b.clear(); }
+  seal() { for (const b of this.batches) b.seal(); }
+  look(fade, dim) {
+    for (const b of this.batches) {
+      b.params[PARAM.FADE] = fade;
+      b.params[PARAM.DIM] = dim; b.params[PARAM.DIM + 1] = dim; b.params[PARAM.DIM + 2] = dim;
+    }
+  }
+}
+
+// ── Emits 3D Hardware, People & Community Models as `holon-draw` 52-Byte Records ──
+class HolonSceneBuilder {
+  constructor(set) { this.S = set; }
   tp(M, p) {
     return [
       M[0]*p[0] + M[4]*p[1] + M[8]*p[2] + M[12],
@@ -518,12 +567,12 @@ class HolonSceneBuilder {
     ];
   }
   scaleOf(M) {
-    const sx = Math.hypot(M[0], M[1], M[2]);
-    const sy = Math.hypot(M[4], M[5], M[6]);
-    const sz = Math.hypot(M[8], M[9], M[10]);
-    return [sx, sy, sz];
+    return [
+      Math.hypot(M[0], M[1], M[2]),
+      Math.hypot(M[4], M[5], M[6]),
+      Math.hypot(M[8], M[9], M[10])
+    ];
   }
-  // Convert normalized [0..1] color + material brightness to u8 [0..255] RGBA for `holon-draw`
   toRgba(col, mat) {
     const boost = 1.0 + (mat ? Math.max(0, mat[2]) * 0.32 : 0);
     return [
@@ -533,160 +582,131 @@ class HolonSceneBuilder {
       col[3] !== undefined ? Math.round(col[3] * 255) : 255
     ];
   }
-  // Emit a 3D `KIND.BOX` (or tilted box stack when M has pitch) into `holon-draw`'s `worldBoxes`
+  // One record per box, at any orientation (holon-draw VARIANT_ORIENT): no stacked slices.
   addBox(M, w, h, d, col, mat) {
     const rgba = this.toRgba(col, mat);
     const [sx, sy, sz] = this.scaleOf(M);
-    // Check if M has significant X/Z tilt (i.e. local Y axis is tilted away from world +Y)
-    const upX = M[4] / sy, upY = M[5] / sy, upZ = M[6] / sy;
-    const tilt = Math.hypot(upX, upZ);
-    // Yaw angle around vertical axis in holon-draw Z-up space:
-    // Local +X axis in scene is (M[0], M[1], M[2]) -> in holon-draw (M[0], -M[2], M[1])
-    const angleZ = Math.atan2(-M[2], M[0]);
-
-    if (tilt < 0.05) {
-      // Pure upright / yaw-turned 3D box: 1 single `KIND.BOX` instance in `holon-draw`!
-      const c = this.tp(M, [0, -h / 2, 0]);
-      const hc = toHolon(c);
-      worldBoxes.add(hc, [w * sx, d * sz, h * sy], null, angleZ, rgba, 0);
-    } else {
-      // Tilted 3D box (e.g. angled phone/laptop screen): slice along the longer tilted axis into crisp `KIND.BOX` strips
-      if (h >= d) {
-        const slices = Math.max(4, Math.min(18, Math.ceil((h * sy) / 0.08)));
-        const dh = h / slices;
-        for (let i = 0; i < slices; i++) {
-          const ly = -h / 2 + (i + 0.5) * dh;
-          const p = this.tp(M, [0, ly, 0]);
-          const hp = toHolon(p);
-          const sh = dh * sy * 1.18;
-          const sd = Math.max(d * sz, dh * sy * 0.55);
-          worldBoxes.add([hp[0], hp[1], hp[2] - sh * 0.5], [w * sx, sd, sh], null, angleZ, rgba, 0);
-        }
-      } else {
-        const slices = Math.max(4, Math.min(16, Math.ceil((d * sz) / 0.08)));
-        const dd = d / slices;
-        for (let i = 0; i < slices; i++) {
-          const lz = -d / 2 + (i + 0.5) * dd;
-          const p = this.tp(M, [0, 0, lz]);
-          const hp = toHolon(p);
-          const sh = Math.max(h * sy, dd * sz * 0.55);
-          const sd = dd * sz * 1.18;
-          worldBoxes.add([hp[0], hp[1], hp[2] - sh * 0.5], [w * sx, sd, sh], null, angleZ, rgba, 0);
-        }
-      }
+    const hb = toHolon(this.tp(M, [0, -h / 2, 0]));
+    const ez = [M[4] / sy, -M[6] / sy, M[5] / sy];     // the box's height axis, in holon
+    if (ez[2] > 0.9995) {
+      this.S.boxes.add(hb[0], hb[1], hb[2], w * sx, d * sz, h * sy, 0, 0, 0, Math.atan2(-M[2], M[0]), rgba, 0);
+      return;
     }
+    const ex = [M[0] / sx, -M[2] / sx, M[1] / sx];
+    // x0: world x laid across ez (world y when ez is along x); y0 = ez × x0
+    let r = Math.abs(ez[0]) < 0.999 ? [1, 0, 0] : [0, 1, 0];
+    const k = r[0] * ez[0] + r[1] * ez[1];
+    let x0 = [r[0] - ez[0] * k, r[1] - ez[1] * k, -ez[2] * k];
+    const l = Math.hypot(x0[0], x0[1], x0[2]);
+    x0 = [x0[0] / l, x0[1] / l, x0[2] / l];
+    const y0 = [ez[1]*x0[2] - ez[2]*x0[1], ez[2]*x0[0] - ez[0]*x0[2], ez[0]*x0[1] - ez[1]*x0[0]];
+    const ang = Math.atan2(ex[0]*y0[0] + ex[1]*y0[1] + ex[2]*y0[2], ex[0]*x0[0] + ex[1]*x0[1] + ex[2]*x0[2]);
+    this.S.boxes.add(hb[0], hb[1], hb[2], w * sx, d * sz, h * sy, ez[0], ez[1], ez[2], ang, rgba, VARIANT_ORIENT);
   }
-  // Rounded 3D Chassis Slab in XY plane: central `KIND.BOX`es + 4 vertical corner `KIND.ROD` bevels
+  rod(a, b, rad, rgba) {
+    (rad < 0.07 ? this.S.rodsC : this.S.rods).add(a[0], a[1], a[2], rad, 0, 0, b[0], b[1], b[2], 0, rgba, 0);
+  }
+  ball(p, rad, rgba, fine = false) {
+    (fine || rad >= 0.11 ? this.S.spheres : this.S.spheresC).add(p[0], p[1], p[2], rad, 0, 0, 0, 0, 0, 0, rgba, 0);
+  }
   addRoundedSlabXY(M, w, h, d, r, col, mat) {
     const rgba = this.toRgba(col, mat);
     const [sx, sy, sz] = this.scaleOf(M);
     const rEff = Math.min(r, w * 0.25, h * 0.25);
     const iw = Math.max(0.02, w - 2 * rEff);
     const ih = Math.max(0.02, h - 2 * rEff);
-
-    // Core slab body via `KIND.BOX`
     this.addBox(M, iw, h, d, col, mat);
     this.addBox(M, w, ih, d, col, mat);
-
     if (d > 0.45) {
-      // Deep 3D block (Server Tower / E-Stop Console): 4 vertical corner `KIND.ROD` bevel pillars along Z
       const rad = rEff * ((sx + sy) * 0.5);
-      const corners = [[-iw/2, ih/2], [iw/2, ih/2], [iw/2, -ih/2], [-iw/2, -ih/2]];
-      for (const [cx, cy] of corners) {
-        const pFront = toHolon(this.tp(M, [cx, cy,  d/2]));
-        const pBack  = toHolon(this.tp(M, [cx, cy, -d/2]));
-        worldRods.add(pBack, [rad, 0, 0], pFront, 0, rgba, 0);
+      for (const [cx, cy] of [[-iw/2, ih/2], [iw/2, ih/2], [iw/2, -ih/2], [-iw/2, -ih/2]]) {
+        this.rod(toHolon(this.tp(M, [cx, cy, -d/2])), toHolon(this.tp(M, [cx, cy, d/2])), rad, rgba);
       }
     } else {
-      // Thin panel (Smartphone / Laptop Lid / Tablet): 4 perimeter `KIND.ROD` rails + 4 corner `KIND.SPHERE`s
       const rad = Math.min(0.09, Math.max(rEff * sx * 0.42, d * sz * 0.48));
-      const cTL = toHolon(this.tp(M, [-iw/2,  ih/2, 0]));
-      const cTR = toHolon(this.tp(M, [ iw/2,  ih/2, 0]));
-      const cBR = toHolon(this.tp(M, [ iw/2, -ih/2, 0]));
-      const cBL = toHolon(this.tp(M, [-iw/2, -ih/2, 0]));
-
-      worldRods.add(cTL, [rad, 0, 0], cTR, 0, rgba, 0);
-      worldRods.add(cTR, [rad, 0, 0], cBR, 0, rgba, 0);
-      worldRods.add(cBR, [rad, 0, 0], cBL, 0, rgba, 0);
-      worldRods.add(cBL, [rad, 0, 0], cTL, 0, rgba, 0);
-
-      worldSpheres.add(cTL, [rad, 0, 0], null, 0, rgba, 0);
-      worldSpheres.add(cTR, [rad, 0, 0], null, 0, rgba, 0);
-      worldSpheres.add(cBR, [rad, 0, 0], null, 0, rgba, 0);
-      worldSpheres.add(cBL, [rad, 0, 0], null, 0, rgba, 0);
+      const c = [[-iw/2, ih/2], [iw/2, ih/2], [iw/2, -ih/2], [-iw/2, -ih/2]].map(([x, y]) => toHolon(this.tp(M, [x, y, 0])));
+      for (let i = 0; i < 4; i++) {
+        this.rod(c[i], c[(i + 1) % 4], rad, rgba);
+        this.ball(c[i], rad, rgba);
+      }
     }
   }
   addRoundedSlabXZ(M, w, h, d, r, col, mat) {
-    const MR = mat4RotateX(M, Math.PI * 0.5);
-    this.addRoundedSlabXY(MR, w, d, h, r, col, mat);
+    this.addRoundedSlabXY(mat4RotateX(M, Math.PI * 0.5), w, d, h, r, col, mat);
   }
-  // 3D Capped Cylinder along local Y axis -> native `KIND.ROD` in `holon-draw`!
   addCylinderY(M, rTop, rBot, h, col, mat) {
-    const rgba = this.toRgba(col, mat);
     const [sx, , sz] = this.scaleOf(M);
     const r = ((rTop + rBot) * 0.5) * ((sx + sz) * 0.5);
-    const p0 = toHolon(this.tp(M, [0, -h / 2, 0]));
-    const p1 = toHolon(this.tp(M, [0,  h / 2, 0]));
-    worldRods.add(p0, [r, 0, 0], p1, 0, rgba, 0);
+    this.rod(toHolon(this.tp(M, [0, -h / 2, 0])), toHolon(this.tp(M, [0, h / 2, 0])), r, this.toRgba(col, mat));
   }
-  // 3D Torus Ring in local XY plane -> ring of connected `KIND.ROD` cylinders + `KIND.SPHERE` joints in `holon-draw`!
+  addRodBetween(M, pA, pB, r, col, mat) {
+    const rgba = this.toRgba(col, mat);
+    const [sx, sy, sz] = this.scaleOf(M);
+    const rad = r * ((sx + sy + sz) / 3);
+    const hA = toHolon(this.tp(M, pA)), hB = toHolon(this.tp(M, pB));
+    this.rod(hA, hB, rad, rgba);
+    this.ball(hA, rad, rgba);
+    this.ball(hB, rad, rgba);
+  }
+  // A ring as capped rod segments (no bead per joint).
   addTorusXY(M, R, r, col, mat, majSegs = 22) {
     const rgba = this.toRgba(col, mat);
     const [sx, sy] = this.scaleOf(M);
     const tubeR = r * ((sx + sy) * 0.5);
-    for (let i = 0; i < majSegs; i++) {
-      const u0 = (i / majSegs) * Math.PI * 2;
-      const u1 = ((i + 1) / majSegs) * Math.PI * 2;
-      const p0 = toHolon(this.tp(M, [R * Math.cos(u0), R * Math.sin(u0), 0]));
-      const p1 = toHolon(this.tp(M, [R * Math.cos(u1), R * Math.sin(u1), 0]));
-      worldRods.add(p0, [tubeR, 0, 0], p1, 0, rgba, 0);
-      worldSpheres.add(p0, [tubeR, 0, 0], null, 0, rgba, 0);
+    let prev = toHolon(this.tp(M, [R, 0, 0]));
+    for (let i = 1; i <= majSegs; i++) {
+      const u = (i / majSegs) * Math.PI * 2;
+      const p = toHolon(this.tp(M, [R * Math.cos(u), R * Math.sin(u), 0]));
+      this.rod(prev, p, tubeR, rgba);
+      prev = p;
     }
   }
-  // 3D Sphere -> native `KIND.SPHERE` in `holon-draw`!
-  addSphere(M, r, col, mat) {
-    const rgba = this.toRgba(col, mat);
+  addSphere(M, r, col, mat, fine = false) {
     const [sx, sy, sz] = this.scaleOf(M);
-    const rad = r * ((sx + sy + sz) / 3);
-    const p = toHolon(this.tp(M, [0, 0, 0]));
-    worldSpheres.add(p, [rad, 0, 0], null, 0, rgba, 0);
+    this.ball(toHolon(this.tp(M, [0, 0, 0])), r * ((sx + sy + sz) / 3), this.toRgba(col, mat), fine);
   }
-  // 3D Curved Fiber-Optic Spline Tube -> native `KIND.LINE` (`VARIANT_ROUND`) + `KIND.SPHERE` packets in `holon-draw`!
-  addCurvedLink3D(pA, pB, liftY, liftZ, radius, col, tPulse) {
-    const segs = 20;
-    const mid = [
-      (pA[0] + pB[0]) * 0.5,
-      Math.max(pA[1], pB[1]) + liftY,
-      (pA[2] + pB[2]) * 0.5 + liftZ
-    ];
-    const evalBezier = (u) => {
-      const om = 1 - u;
-      return [
-        om*om*pA[0] + 2*om*u*mid[0] + u*u*pB[0],
-        om*om*pA[1] + 2*om*u*mid[1] + u*u*pB[1],
-        om*om*pA[2] + 2*om*u*mid[2] + u*u*pB[2]
-      ];
-    };
-    const rgbaTube = this.toRgba(col, [0.2, 0.2, 0.15]);
-    for (let i = 0; i < segs; i++) {
-      const c0 = toHolon(evalBezier(i / segs));
-      const c1 = toHolon(evalBezier((i + 1) / segs));
-      worldTubes.add(c0, [radius * 2.0, 0, 0], c1, 0, rgbaTube, VARIANT_ROUND);
-    }
-    if (tPulse !== null && tPulse !== undefined) {
-      const rgbaGlow = this.toRgba(col, [0.1, 0.1, 0.85]);
-      for (let k = 0; k < 2; k++) {
-        const u = (tPulse + k * 0.5) % 1.0;
-        const hp = toHolon(evalBezier(u));
-        worldSpheres.add(hp, [radius * 2.8, 0, 0], null, 0, rgbaGlow, 0);
-      }
-    }
+  // A soft contact shadow: two translucent discs on the floor (the pedestal hides the middle).
+  addShadow(M, radius) {
+    const [sx, , sz] = this.scaleOf(M);
+    const c = toHolon(this.tp(M, [0, 0, 0]));
+    const r = radius * (sx + sz) * 0.5;
+    this.S.shadows.add(c[0], c[1], 0.006, r * 1.14, 0, 0, 0, 0, 0, 0, [0, 0, 0, 82], 0);
+    this.S.shadows.add(c[0], c[1], 0.008, r * 1.40, 0, 0, 0, 0, 0, 0, [0, 0, 0, 36], 0);
   }
 }
 
-const meshOpaque = new HolonSceneBuilder();
+// A curved link between two scene points: the tube is static, the pulse beads are per frame.
+function linkPoint(L, u, out) {
+  const om = 1 - u, a = L.a, b = L.b, m = L.mid;
+  out[0] = om*om*a[0] + 2*om*u*m[0] + u*u*b[0];
+  out[1] = om*om*a[1] + 2*om*u*m[1] + u*u*b[1];
+  out[2] = om*om*a[2] + 2*om*u*m[2] + u*u*b[2];
+  return out;
+}
+function makeLink(a, b, liftY, liftZ, radius, col, speed) {
+  return { a, b, mid: [(a[0] + b[0]) * 0.5, Math.max(a[1], b[1]) + liftY, (a[2] + b[2]) * 0.5 + liftZ], radius, col, speed };
+}
+function emitLinkTube(stream, L) {
+  const rgba = stream.toRgba(L.col, [0.2, 0.2, 0.15]);
+  rgba[3] = 215;
+  const p = [0, 0, 0];
+  let prev = toHolon(linkPoint(L, 0, p));
+  for (let i = 1; i <= 24; i++) {
+    const cur = toHolon(linkPoint(L, i / 24, p));
+    stream.S.tubes.add(prev[0], prev[1], prev[2], L.radius * 2.0, 0, 0, cur[0], cur[1], cur[2], 0, rgba, VARIANT_ROUND);
+    prev = cur;
+  }
+}
+const _lp = [0, 0, 0];
+function emitLinkPulses(stream, L, t) {
+  const rgba = stream.toRgba(L.col, [0.1, 0.1, 0.85]);
+  for (let k = 0; k < 2; k++) {
+    const u = (t * L.speed + k * 0.5) % 1.0;
+    linkPoint(L, u, _lp);
+    stream.S.spheres.add(_lp[0], -_lp[2], _lp[1], L.radius * 2.8, 0, 0, 0, 0, 0, 0, rgba, 0);
+  }
+}
 
-// ── Material & Color Palettes (Normalized 0..1 RGB) ──
 const MAT = {
   titanium:   [0.85, 0.22, 0.0],
   darkMetal:  [0.78, 0.28, 0.0],
@@ -698,65 +718,79 @@ const MAT = {
   brightGlow: [0.15, 0.20, 0.75],
 };
 
+// One hero accent (green, "you"), warm off-white devices, a desaturated blue for others,
+// red only for stop and for what is bypassed.
 const COL = {
-  titanium:   [0.60, 0.66, 0.75, 1],
-  silver:     [0.76, 0.81, 0.88, 1],
-  spaceGray:  [0.24, 0.29, 0.37, 1],
-  darkChassis:[0.13, 0.17, 0.24, 1],
-  obsidian:   [0.06, 0.08, 0.12, 1],
-  keycap:     [0.11, 0.14, 0.20, 1],
-  screenBg:   [0.07, 0.10, 0.16, 1],
-  green:      [0.24, 0.82, 0.52, 1],
-  blue:       [0.32, 0.66, 0.98, 1],
-  amber:      [0.95, 0.66, 0.24, 1],
-  red:        [0.92, 0.26, 0.24, 1],
-  violet:     [0.64, 0.45, 0.96, 1],
-  gold:       [0.96, 0.76, 0.26, 1],
-  white:      [0.92, 0.95, 1.00, 1],
-  pedestal:   [0.11, 0.15, 0.22, 1],
+  titanium:   [0.80, 0.79, 0.76, 1],
+  silver:     [0.88, 0.87, 0.84, 1],
+  spaceGray:  [0.30, 0.33, 0.38, 1],
+  darkChassis:[0.17, 0.19, 0.24, 1],
+  obsidian:   [0.06, 0.07, 0.10, 1],
+  keycap:     [0.16, 0.17, 0.21, 1],
+  screenBg:   [0.07, 0.10, 0.15, 1],
+  green:      [0.30, 0.82, 0.55, 1],
+  blue:       [0.46, 0.62, 0.84, 1],
+  amber:      [0.93, 0.70, 0.36, 1],
+  red:        [0.92, 0.30, 0.26, 1],
+  violet:     [0.62, 0.55, 0.86, 1],
+  gold:       [0.94, 0.77, 0.36, 1],
+  white:      [0.95, 0.95, 0.93, 1],
+  skin:       [0.90, 0.76, 0.64, 1],
+  skin2:      [0.62, 0.45, 0.34, 1],
+  hair:       [0.20, 0.16, 0.14, 1],
+  pedestal:   [0.13, 0.15, 0.20, 1],
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// HIGH-RES 3D HARDWARE & PROTOCOL OBJECT BUILDERS (100% `holon-draw` Batches)
+// 3D PEOPLE, HARDWARE & COMMUNITY BUILDERS (100% `holon-draw`)
+// Static builders take a stream; animated parts are separate per-frame emitters.
 // ═══════════════════════════════════════════════════════════════════════════
 
 function buildPedestal3D(stream, M, radius, accentCol) {
-  let MB = mat4Translate(M, 0, 0.06, 0);
-  stream.addCylinderY(MB, radius, radius * 1.04, 0.12, COL.pedestal, MAT.darkMetal);
-  let MR = mat4RotateX(mat4Translate(M, 0, 0.12, 0), Math.PI * 0.5);
-  stream.addTorusXY(MR, radius * 0.98, 0.035, accentCol, MAT.brightGlow, 28);
+  stream.addShadow(M, radius);
+  stream.addCylinderY(mat4Translate(M, 0, 0.06, 0), radius, radius * 1.04, 0.12, COL.pedestal, MAT.darkMetal);
+  const MR = mat4RotateX(mat4Translate(M, 0, 0.125, 0), Math.PI * 0.5);
+  stream.addTorusXY(MR, radius * 0.985, 0.022, accentCol, MAT.glow, 32);
 }
 
-// 1. High-Res 3D Smartphone on Desk Stand
+function buildPerson3D(stream, M, jacketCol, skin = COL.skin) {
+  buildPedestal3D(stream, M, 0.95, jacketCol);
+  stream.addBox(mat4Translate(M, -0.18, 0.18, 0.05), 0.18, 0.10, 0.28, COL.obsidian, MAT.matte);
+  stream.addBox(mat4Translate(M,  0.18, 0.18, 0.05), 0.18, 0.10, 0.28, COL.obsidian, MAT.matte);
+  stream.addCylinderY(mat4Translate(M, -0.18, 0.54, 0), 0.10, 0.09, 0.68, COL.spaceGray, MAT.matte);
+  stream.addCylinderY(mat4Translate(M,  0.18, 0.54, 0), 0.10, 0.09, 0.68, COL.spaceGray, MAT.matte);
+  const MTorso = mat4Translate(M, 0, 1.24, 0);
+  stream.addRoundedSlabXY(MTorso, 0.68, 0.78, 0.36, 0.14, jacketCol, MAT.anodized);
+  stream.addBox(mat4Translate(MTorso, 0, 0.26, 0.17), 0.22, 0.18, 0.04, COL.white, MAT.matte);
+  stream.addRodBetween(M, [-0.38, 1.50, 0], [-0.48, 0.96, 0.22], 0.095, jacketCol, MAT.anodized);
+  stream.addRodBetween(M, [ 0.38, 1.50, 0], [ 0.48, 0.96, 0.22], 0.095, jacketCol, MAT.anodized);
+  stream.addSphere(mat4Translate(M, -0.48, 0.92, 0.24), 0.085, skin, MAT.matte);
+  stream.addSphere(mat4Translate(M,  0.48, 0.92, 0.24), 0.085, skin, MAT.matte);
+  stream.addCylinderY(mat4Translate(M, 0, 1.70, 0), 0.09, 0.10, 0.18, skin, MAT.matte);
+  const MHead = mat4Translate(M, 0, 1.98, 0.02);
+  stream.addSphere(MHead, 0.26, skin, MAT.matte, true);
+  stream.addSphere(mat4Translate(MHead, 0, 0.06, -0.04), 0.255, COL.hair, MAT.matte, true);
+  stream.addSphere(mat4Translate(MHead, -0.09, 0.02, 0.23), 0.028, COL.obsidian, MAT.glass);
+  stream.addSphere(mat4Translate(MHead,  0.09, 0.02, 0.23), 0.028, COL.obsidian, MAT.glass);
+}
+
 function buildSmartphone3D(stream, M, accentCol, screenVariant = "key") {
-  buildPedestal3D(stream, M, 1.25, accentCol);
-
-  let MDockBase = mat4Translate(M, 0, 0.16, 0.02);
-  stream.addBox(MDockBase, 0.92, 0.08, 0.82, COL.spaceGray, MAT.darkMetal);
-  let MDockPillar = mat4Translate(M, 0, 0.52, -0.10);
-  stream.addBox(MDockPillar, 0.36, 0.72, 0.14, COL.spaceGray, MAT.darkMetal);
-
-  // Upright 3D Smartphone Chassis (`KIND.BOX` + rounded `KIND.ROD`/`KIND.SPHERE` titanium bezel)
-  let MP = mat4Translate(M, 0, 1.38, 0.06);
-
+  buildPedestal3D(stream, M, 1.20, accentCol);
+  stream.addBox(mat4Translate(M, 0, 0.16, 0.02), 0.92, 0.08, 0.82, COL.spaceGray, MAT.darkMetal);
+  stream.addBox(mat4Translate(M, 0, 0.52, -0.10), 0.36, 0.72, 0.14, COL.spaceGray, MAT.darkMetal);
+  // Leaned back on its stand, as a phone rests: one oriented record per layer.
+  const MP = mat4RotateX(mat4Translate(M, 0, 1.38, 0.06), -0.12);
   stream.addRoundedSlabXY(MP, 1.28, 2.36, 0.16, 0.18, COL.titanium, MAT.titanium);
   stream.addBox(mat4Translate(MP, 0, 0, 0.03), 1.16, 2.24, 0.12, COL.obsidian, MAT.glass);
   stream.addBox(mat4Translate(MP, 0, 0, 0.055), 1.08, 2.14, 0.08, COL.screenBg, MAT.glass);
-
-  // Top Earpiece / Dynamic Island Pill
   stream.addBox(mat4Translate(MP, 0, 0.92, 0.095), 0.36, 0.08, 0.03, COL.obsidian, MAT.matte);
   stream.addSphere(mat4Translate(MP, 0.11, 0.92, 0.105), 0.028, COL.blue, MAT.glow);
-
-  // Side Titanium Hardware Buttons
   stream.addBox(mat4Translate(MP, 0.67, 0.42, 0), 0.05, 0.28, 0.06, COL.silver, MAT.titanium);
   stream.addBox(mat4Translate(MP, -0.67, 0.52, 0), 0.05, 0.20, 0.06, COL.silver, MAT.titanium);
   stream.addBox(mat4Translate(MP, -0.67, 0.22, 0), 0.05, 0.20, 0.06, COL.silver, MAT.titanium);
-
-  // Top App Status Card on OLED Screen
   stream.addBox(mat4Translate(MP, 0, 0.64, 0.095), 0.90, 0.22, 0.03, accentCol, MAT.glow);
-
   if (screenVariant === "key") {
-    let MK = mat4Translate(MP, 0, 0.10, 0.108);
+    const MK = mat4Translate(MP, 0, 0.10, 0.108);
     stream.addTorusXY(mat4Translate(MK, 0, 0.18, 0), 0.17, 0.045, COL.gold, MAT.brightGlow, 18);
     stream.addBox(mat4Translate(MK, 0, -0.14, 0), 0.075, 0.38, 0.04, COL.gold, MAT.brightGlow);
     stream.addBox(mat4Translate(MK, 0.08, -0.22, 0), 0.13, 0.06, 0.04, COL.gold, MAT.brightGlow);
@@ -768,23 +802,15 @@ function buildSmartphone3D(stream, M, accentCol, screenVariant = "key") {
     stream.addTorusXY(mat4Translate(MP, 0, -0.22, 0.108), 0.20, 0.04, accentCol, MAT.brightGlow, 18);
     stream.addSphere(mat4Translate(MP, 0, -0.22, 0.108), 0.11, accentCol, MAT.brightGlow);
   }
-
   stream.addBox(mat4Translate(MP, 0, -0.68, 0.095), 0.86, 0.20, 0.03, accentCol, MAT.glow);
   stream.addBox(mat4Translate(MP, 0, -0.95, 0.095), 0.42, 0.04, 0.03, COL.white, MAT.glow);
 }
 
-// 2. High-Res 3D Open Laptop (Aluminum Base Deck + 60 Individual 3D Keycaps + Trackpad + Display Screen)
 function buildLaptop3D(stream, M, accentCol) {
-  buildPedestal3D(stream, M, 1.65, accentCol);
-
+  buildPedestal3D(stream, M, 1.60, accentCol);
   const ML = mat4Translate(M, 0, 0.18, 0.15);
-
-  // Unibody Machined Aluminum Base Deck
   stream.addRoundedSlabXZ(ML, 2.36, 0.12, 1.62, 0.12, COL.titanium, MAT.titanium);
-  // Recessed Dark Keyboard Tray
   stream.addBox(mat4Translate(ML, 0, 0.045, -0.14), 2.06, 0.05, 0.92, COL.obsidian, MAT.matte);
-
-  // 5 Rows x 12 Columns of Individual 3D Sculpted Keycaps (`KIND.BOX`)
   const rows = 5, cols = 12;
   const startX = -0.92, startZ = -0.50;
   const stepX = 1.84 / (cols - 1);
@@ -792,450 +818,541 @@ function buildLaptop3D(stream, M, accentCol) {
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       if (r === rows - 1 && c >= 4 && c <= 7) {
-        if (c === 5) {
-          let MK = mat4Translate(ML, 0, 0.075, startZ + r * stepZ);
-          stream.addBox(MK, stepX * 3.6, 0.04, 0.12, COL.keycap, MAT.darkMetal);
-        }
+        if (c === 5) stream.addBox(mat4Translate(ML, 0, 0.075, startZ + r * stepZ), stepX * 3.6, 0.04, 0.12, COL.keycap, MAT.darkMetal);
         continue;
       }
-      const kx = startX + c * stepX;
-      const kz = startZ + r * stepZ;
       const isEnter = (r === 2 && c === cols - 1);
-      const kCol = isEnter ? accentCol : COL.keycap;
-      const kMat = isEnter ? MAT.glow : MAT.darkMetal;
-      stream.addBox(mat4Translate(ML, kx, 0.075, kz), 0.13, 0.04, 0.12, kCol, kMat);
+      stream.addBox(mat4Translate(ML, startX + c * stepX, 0.075, startZ + r * stepZ), 0.13, 0.04, 0.12,
+        isEnter ? accentCol : COL.keycap, isEnter ? MAT.glow : MAT.darkMetal);
     }
   }
-
-  // Glass Multi-Touch Trackpad at front of deck
   stream.addBox(mat4Translate(ML, 0, 0.058, 0.52), 0.74, 0.025, 0.42, COL.spaceGray, MAT.glass);
-
-  // Cylindrical Display Hinge Barrel (`KIND.ROD`)
-  let MHinge = mat4RotateZ(mat4Translate(ML, 0, 0.08, -0.76), Math.PI * 0.5);
-  stream.addCylinderY(MHinge, 0.06, 0.06, 1.85, COL.obsidian, MAT.darkMetal);
-
-  // Open Display Screen Assembly
-  let MScreen = mat4Translate(ML, 0, 0.86, -0.78);
-
+  stream.addCylinderY(mat4RotateZ(mat4Translate(ML, 0, 0.08, -0.76), Math.PI * 0.5), 0.06, 0.06, 1.85, COL.obsidian, MAT.darkMetal);
+  // The lid opens back past upright, as a real one does.
+  const MScreen = mat4Translate(mat4RotateX(mat4Translate(ML, 0, 0.08, -0.78), -0.22), 0, 0.78, 0);
   stream.addRoundedSlabXY(MScreen, 2.34, 1.54, 0.10, 0.11, COL.titanium, MAT.titanium);
   stream.addBox(mat4Translate(MScreen, 0, 0, 0.03), 2.20, 1.40, 0.06, COL.obsidian, MAT.glass);
   stream.addBox(mat4Translate(MScreen, 0, 0.01, 0.048), 2.10, 1.28, 0.04, COL.screenBg, MAT.glass);
-
-  // Top Window Chrome & 3 Traffic Light Spheres
-  stream.addBox(mat4Translate(MScreen, 0, 0.55, 0.068), 2.00, 0.12, 0.02, [0.12, 0.17, 0.26, 1], MAT.matte);
+  stream.addBox(mat4Translate(MScreen, 0, 0.55, 0.068), 2.00, 0.12, 0.02, [0.12, 0.15, 0.22, 1], MAT.matte);
   stream.addSphere(mat4Translate(MScreen, -0.88, 0.55, 0.082), 0.032, COL.red, MAT.glow);
   stream.addSphere(mat4Translate(MScreen, -0.78, 0.55, 0.082), 0.032, COL.amber, MAT.glow);
   stream.addSphere(mat4Translate(MScreen, -0.68, 0.55, 0.082), 0.032, COL.green, MAT.glow);
-
-  // Left Pane: 3D Code / Attestation Rows on Laptop Display
-  stream.addBox(mat4Translate(MScreen, -0.46, -0.05, 0.065), 1.02, 0.94, 0.02, [0.09, 0.14, 0.22, 1], MAT.matte);
+  stream.addBox(mat4Translate(MScreen, -0.46, -0.05, 0.065), 1.02, 0.94, 0.02, [0.09, 0.12, 0.18, 1], MAT.matte);
   stream.addBox(mat4Translate(MScreen, -0.54, 0.26, 0.078), 0.72, 0.07, 0.02, accentCol, MAT.glow);
   stream.addBox(mat4Translate(MScreen, -0.48, 0.11, 0.078), 0.84, 0.055, 0.02, COL.white, MAT.glow);
   stream.addBox(mat4Translate(MScreen, -0.58, -0.03, 0.078), 0.64, 0.055, 0.02, COL.blue, MAT.glow);
   stream.addBox(mat4Translate(MScreen, -0.50, -0.17, 0.078), 0.78, 0.055, 0.02, COL.green, MAT.glow);
   stream.addBox(mat4Translate(MScreen, -0.60, -0.31, 0.078), 0.58, 0.055, 0.02, accentCol, MAT.glow);
-
-  // Right Pane: 3D Cryptographic Verification Seal Badge on Laptop Display
-  stream.addBox(mat4Translate(MScreen, 0.54, -0.05, 0.065), 0.80, 0.94, 0.02, [0.09, 0.15, 0.23, 1], MAT.matte);
+  stream.addBox(mat4Translate(MScreen, 0.54, -0.05, 0.065), 0.80, 0.94, 0.02, [0.09, 0.12, 0.18, 1], MAT.matte);
   stream.addTorusXY(mat4Translate(MScreen, 0.54, 0.05, 0.085), 0.23, 0.042, accentCol, MAT.brightGlow, 18);
   stream.addSphere(mat4Translate(MScreen, 0.54, 0.05, 0.085), 0.11, accentCol, MAT.brightGlow);
   stream.addBox(mat4Translate(MScreen, 0.54, -0.34, 0.078), 0.60, 0.11, 0.02, accentCol, MAT.glow);
 }
 
-// 3. High-Res 3D Home Server / Mesh Node Tower
-function buildServerTower3D(stream, M, accentCol) {
-  buildPedestal3D(stream, M, 1.35, accentCol);
-
+// A server tower. `cross` (another stream, undimmed) draws the red X when it is bypassed.
+function buildServerTower3D(stream, M, accentCol, cross = null) {
+  buildPedestal3D(stream, M, 1.30, accentCol);
   const MT = mat4Translate(M, 0, 1.32, 0);
   stream.addRoundedSlabXY(MT, 1.38, 2.28, 1.42, 0.15, COL.spaceGray, MAT.darkMetal);
   stream.addBox(mat4Translate(MT, 0, 0, 0.66), 1.16, 2.06, 0.14, COL.obsidian, MAT.glass);
-
-  // Vertical Glowing Telemetry Light-Pipe
-  stream.addBox(mat4Translate(MT, -0.45, 0, 0.745), 0.065, 1.82, 0.04, accentCol, MAT.brightGlow);
-
-  // 4 Hot-Swap Drive Blades with Status LEDs
+  stream.addBox(mat4Translate(MT, -0.45, 0, 0.745), 0.065, 1.82, 0.04, accentCol, MAT.glow);
   for (let i = 0; i < 4; i++) {
     const by = 0.62 - i * 0.42;
     stream.addBox(mat4Translate(MT, 0.08, by, 0.73), 0.84, 0.28, 0.05, COL.darkChassis, MAT.titanium);
     stream.addBox(mat4Translate(MT, 0.02, by, 0.76), 0.54, 0.065, 0.03, COL.titanium, MAT.titanium);
-    const ledCol = (i === 0) ? accentCol : (i === 1 ? COL.green : COL.blue);
-    stream.addSphere(mat4Translate(MT, 0.39, by + 0.04, 0.77), 0.038, ledCol, MAT.brightGlow);
-    stream.addSphere(mat4Translate(MT, 0.39, by - 0.05, 0.77), 0.028, COL.green, MAT.glow);
+    stream.addSphere(mat4Translate(MT, 0.39, by + 0.04, 0.77), 0.038, cross ? COL.red : COL.blue, MAT.glow);
   }
-
-  // Dual High-Gain Mesh Antennas (`KIND.ROD` + `KIND.SPHERE`)
-  let MA1 = mat4RotateZ(mat4Translate(MT, -0.42, 1.35, -0.35), 0.12);
-  let MA2 = mat4RotateZ(mat4Translate(MT,  0.42, 1.35, -0.35), -0.12);
-  stream.addCylinderY(MA1, 0.035, 0.045, 0.55, COL.titanium, MAT.titanium);
-  stream.addCylinderY(MA2, 0.035, 0.045, 0.55, COL.titanium, MAT.titanium);
-  stream.addSphere(mat4Translate(MA1, 0, 0.28, 0), 0.055, accentCol, MAT.brightGlow);
-  stream.addSphere(mat4Translate(MA2, 0, 0.28, 0), 0.055, accentCol, MAT.brightGlow);
+  stream.addCylinderY(mat4RotateZ(mat4Translate(MT, -0.42, 1.35, -0.35), 0.12), 0.035, 0.045, 0.55, COL.titanium, MAT.titanium);
+  stream.addCylinderY(mat4RotateZ(mat4Translate(MT,  0.42, 1.35, -0.35), -0.12), 0.035, 0.045, 0.55, COL.titanium, MAT.titanium);
+  if (cross) {
+    cross.addRodBetween(MT, [-0.72, -0.88, 0.88], [0.72, 0.88, 0.88], 0.075, COL.red, MAT.brightGlow);
+    cross.addRodBetween(MT, [-0.72,  0.88, 0.88], [0.72,-0.88, 0.88], 0.075, COL.red, MAT.brightGlow);
+  }
 }
 
-// 4. High-Res 3D Sculpted Cryptographic Key
-function buildCryptoKey3D(stream, M, accentCol, t) {
-  let MK = mat4RotateY(mat4RotateZ(M, 0.18), Math.sin(t * 1.4) * 0.22);
+function buildMediaHub3D(stream, M) {
+  buildPedestal3D(stream, M, 1.55, COL.green);
+  stream.addCylinderY(mat4Translate(M, 0, 0.45, 0), 0.16, 0.24, 0.65, COL.spaceGray, MAT.darkMetal);
+  const MScreen = mat4Translate(M, 0, 1.48, 0);
+  stream.addRoundedSlabXY(MScreen, 2.56, 1.68, 0.14, 0.14, COL.titanium, MAT.titanium);
+  stream.addBox(mat4Translate(MScreen, 0, 0, 0.04), 2.40, 1.52, 0.08, COL.obsidian, MAT.glass);
+  const MVid = mat4Translate(MScreen, -0.46, 0.08, 0.09);
+  stream.addBox(MVid, 1.24, 1.06, 0.03, [0.10, 0.15, 0.23, 1], MAT.glass);
+  stream.addTorusXY(mat4Translate(MVid, 0, 0.06, 0.03), 0.28, 0.04, COL.green, MAT.brightGlow, 20);
+  stream.addRodBetween(MVid, [-0.10,  0.19, 0.04], [-0.10, -0.07, 0.04], 0.035, COL.white, MAT.brightGlow);
+  stream.addRodBetween(MVid, [-0.10,  0.19, 0.04], [ 0.14,  0.06, 0.04], 0.035, COL.white, MAT.brightGlow);
+  stream.addRodBetween(MVid, [-0.10, -0.07, 0.04], [ 0.14,  0.06, 0.04], 0.035, COL.white, MAT.brightGlow);
+  stream.addBox(mat4Translate(MVid, 0, -0.38, 0.03), 1.02, 0.05, 0.02, COL.spaceGray, MAT.matte);
+  const MChat = mat4Translate(MScreen, 0.68, 0.08, 0.09);
+  stream.addBox(MChat, 0.88, 1.06, 0.03, [0.08, 0.12, 0.19, 1], MAT.matte);
+  stream.addBox(mat4Translate(MChat, -0.08, 0.34, 0.03), 0.62, 0.14, 0.03, COL.blue, MAT.glow);
+  stream.addBox(mat4Translate(MChat,  0.08, 0.12, 0.03), 0.62, 0.14, 0.03, COL.green, MAT.glow);
+  stream.addBox(mat4Translate(MChat, -0.06,-0.10, 0.03), 0.66, 0.14, 0.03, COL.amber, MAT.glow);
+  stream.addBox(mat4Translate(MChat,  0.04,-0.32, 0.03), 0.56, 0.14, 0.03, COL.green, MAT.glow);
+}
+function animMediaHub(stream, M, t) {
+  const MVid = mat4Translate(M, -0.46, 1.56, 0.09);
+  stream.addSphere(mat4Translate(MVid, -0.45 + ((t * 0.25) % 1.0) * 0.90, -0.38, 0.05), 0.055, COL.green, MAT.brightGlow, true);
+}
+
+function buildAlgorithmSliders3D(stream, M) {
+  buildPedestal3D(stream, M, 1.45, COL.green);
+  const MBoard = mat4Translate(M, 0, 1.32, 0);
+  stream.addRoundedSlabXY(MBoard, 2.15, 2.10, 0.18, 0.16, COL.titanium, MAT.titanium);
+  stream.addBox(mat4Translate(MBoard, 0, 0, 0.05), 1.96, 1.90, 0.12, COL.obsidian, MAT.glass);
+  stream.addBox(mat4Translate(MBoard, 0, 0.74, 0.12), 1.72, 0.20, 0.03, COL.green, MAT.glow);
+  for (let i = 0; i < 4; i++) {
+    const sx = -0.66 + i * 0.44;
+    stream.addRodBetween(MBoard, [sx, -0.68, 0.13], [sx, 0.46, 0.13], 0.035, COL.spaceGray, MAT.darkMetal);
+  }
+}
+const SLIDER_COLS = [COL.green, COL.blue, COL.violet, COL.amber];
+function animSliders(stream, M, t) {
+  const MBoard = mat4Translate(M, 0, 1.32, 0);
+  const phases = [0.75, 0.45, 0.65, 0.25];
+  for (let i = 0; i < 4; i++) {
+    const sx = -0.66 + i * 0.44;
+    const ky = -0.60 + (phases[i] + Math.sin(t * 1.4 + i * 1.3) * 0.16) * 0.96;
+    stream.addRodBetween(MBoard, [sx, -0.68, 0.135], [sx, ky, 0.135], 0.045, SLIDER_COLS[i], MAT.brightGlow);
+    stream.addBox(mat4Translate(MBoard, sx, ky, 0.17), 0.28, 0.16, 0.10, SLIDER_COLS[i], MAT.brightGlow);
+    stream.addBox(mat4Translate(MBoard, sx, ky, 0.22), 0.22, 0.04, 0.03, COL.white, MAT.brightGlow);
+  }
+}
+
+function buildCommunityHall3D(stream, M) {
+  buildPedestal3D(stream, M, 1.65, COL.amber);
+  stream.addBox(mat4Translate(M, 0, 0.20, 0), 2.35, 0.16, 1.85, COL.spaceGray, MAT.darkMetal);
+  stream.addBox(mat4Translate(M, 0, 0.34, 0), 2.10, 0.12, 1.65, COL.titanium, MAT.titanium);
+  stream.addBox(mat4Translate(M, 0, 0.95, -0.05), 1.86, 1.12, 1.36, COL.silver, MAT.titanium);
+  for (let i = 0; i < 4; i++) {
+    stream.addCylinderY(mat4Translate(M, -0.69 + i * 0.46, 0.95, 0.70), 0.065, 0.075, 1.10, COL.white, MAT.titanium);
+  }
+  stream.addBox(mat4Translate(M, 0, 0.76, 0.65), 0.36, 0.72, 0.05, COL.amber, MAT.brightGlow);
+  stream.addBox(mat4Translate(M, -0.58, 0.96, 0.65), 0.24, 0.38, 0.05, COL.amber, MAT.glow);
+  stream.addBox(mat4Translate(M,  0.58, 0.96, 0.65), 0.24, 0.38, 0.05, COL.amber, MAT.glow);
+  // A true pitched roof: two oriented slabs meeting at the ridge, with gable ends.
+  const pitch = 0.62, half = 1.12, ridgeY = 1.51 + Math.tan(pitch) * half;
+  for (const side of [-1, 1]) {
+    const MR = mat4RotateZ(mat4Translate(M, side * half * 0.5, 1.51 + Math.tan(pitch) * half * 0.5 + 0.04, 0), -side * pitch);
+    stream.addBox(mat4Translate(MR, 0, 0.05, 0), half / Math.cos(pitch) + 0.06, 0.10, 1.70, COL.darkChassis, MAT.darkMetal);
+  }
+  for (const zf of [0.62, -0.72]) {
+    for (let k = 0; k < 4; k++) {
+      const h = (ridgeY - 1.51) * (1 - k / 4);
+      stream.addBox(mat4Translate(M, 0, 1.51 + (ridgeY - 1.51) * (k / 4) + h * 0.125, zf), 1.86 * (1 - (k + 0.5) / 4), (ridgeY - 1.51) / 4, 0.05, COL.silver, MAT.titanium);
+    }
+  }
+  stream.addBox(mat4Translate(M, 0, ridgeY + 0.30, 0), 0.40, 0.46, 0.40, COL.white, MAT.titanium);
+  stream.addBox(mat4Translate(M, 0, ridgeY + 0.32, 0.21), 0.18, 0.24, 0.04, COL.amber, MAT.brightGlow);
+  stream.addCylinderY(mat4Translate(M, 0, ridgeY + 0.84, 0), 0.03, 0.20, 0.60, COL.gold, MAT.gold);
+  stream.addSphere(mat4Translate(M, 0, ridgeY + 1.17, 0), 0.08, COL.gold, MAT.brightGlow);
+}
+
+function animCryptoKey(stream, M, accentCol, t) {
+  const MK = mat4RotateY(mat4RotateZ(M, 0.18), Math.sin(t * 1.4) * 0.22);
   stream.addTorusXY(mat4Translate(MK, -0.58, 0, 0), 0.36, 0.085, COL.gold, MAT.gold, 22);
-  stream.addSphere(mat4Translate(MK, -0.58, 0, 0), 0.16, accentCol, MAT.brightGlow);
-  let MShaft = mat4RotateZ(mat4Translate(MK, 0.18, 0, 0), Math.PI * 0.5);
-  stream.addCylinderY(MShaft, 0.068, 0.068, 0.92, COL.gold, MAT.gold);
+  stream.addSphere(mat4Translate(MK, -0.58, 0, 0), 0.16, accentCol, MAT.brightGlow, true);
+  stream.addCylinderY(mat4RotateZ(mat4Translate(MK, 0.18, 0, 0), Math.PI * 0.5), 0.068, 0.068, 0.92, COL.gold, MAT.gold);
   stream.addBox(mat4Translate(MK, 0.32, -0.16, 0), 0.11, 0.22, 0.08, COL.gold, MAT.gold);
   stream.addBox(mat4Translate(MK, 0.52, -0.20, 0), 0.11, 0.28, 0.08, COL.gold, MAT.gold);
   stream.addBox(mat4Translate(MK, 0.42, -0.11, 0), 0.09, 0.14, 0.08, accentCol, MAT.brightGlow);
 }
 
-// 5. High-Res 3D Signed Consent Tablet / Contract Slate
 function buildConsentTablet3D(stream, M, accentCol) {
   buildPedestal3D(stream, M, 1.15, accentCol);
-
-  let MT = mat4Translate(M, 0, 1.28, 0);
+  stream.addBox(mat4Translate(M, 0, 0.20, 0.0), 0.70, 0.12, 0.60, COL.spaceGray, MAT.darkMetal);
+  const MT = mat4RotateX(mat4Translate(M, 0, 1.28, 0), -0.10);
   stream.addRoundedSlabXY(MT, 1.54, 1.96, 0.15, 0.15, COL.titanium, MAT.titanium);
   stream.addBox(mat4Translate(MT, 0, 0, 0.035), 1.38, 1.80, 0.10, COL.obsidian, MAT.glass);
-
   stream.addBox(mat4Translate(MT, 0, 0.62, 0.095), 1.14, 0.22, 0.03, accentCol, MAT.glow);
   stream.addBox(mat4Translate(MT, -0.10, 0.30, 0.095), 0.94, 0.07, 0.03, COL.white, MAT.glow);
   stream.addBox(mat4Translate(MT, -0.18, 0.12, 0.095), 0.78, 0.07, 0.03, COL.silver, MAT.titanium);
   stream.addBox(mat4Translate(MT, -0.06, -0.06, 0.095), 1.00, 0.07, 0.03, COL.silver, MAT.titanium);
-
-  let MSeal = mat4Translate(MT, 0.28, -0.48, 0.105);
+  const MSeal = mat4Translate(MT, 0.28, -0.48, 0.105);
   stream.addTorusXY(MSeal, 0.25, 0.055, accentCol, MAT.brightGlow, 20);
   stream.addSphere(mat4Translate(MSeal, 0, 0, 0.02), 0.14, accentCol, MAT.glow);
   stream.addSphere(mat4Translate(MSeal, 0, 0, 0.06), 0.08, COL.white, MAT.brightGlow);
 }
 
-// 6. High-Res 3D Causal Kernel Gyro-Processor
-function buildCausalKernel3D(stream, M, t) {
-  buildPedestal3D(stream, M, 1.55, COL.green);
-  let MB = mat4Translate(M, 0, 0.24, 0);
-  stream.addBox(MB, 1.75, 0.20, 1.45, COL.darkChassis, MAT.titanium);
-
-  stream.addCylinderY(mat4Translate(M, -1.12, 1.35, 0), 0.085, 0.095, 2.1, COL.titanium, MAT.titanium);
-  stream.addCylinderY(mat4Translate(M,  1.12, 1.35, 0), 0.085, 0.095, 2.1, COL.titanium, MAT.titanium);
-
-  let MC = mat4Translate(M, 0, 1.52, 0);
-  let MR1 = mat4RotateY(mat4RotateX(MC, 0.35), t * 0.65);
-  stream.addTorusXY(MR1, 1.02, 0.075, COL.titanium, MAT.titanium, 24);
-  let MR2 = mat4RotateX(mat4RotateY(MC, -t * 0.9), Math.sin(t * 0.7) * 0.55);
-  stream.addTorusXY(MR2, 0.78, 0.065, COL.blue, MAT.glow, 22);
-  let MR3 = mat4RotateZ(mat4RotateY(MC, t * 1.1), 0.8);
-  stream.addTorusXY(MR3, 0.54, 0.055, COL.green, MAT.brightGlow, 20);
-
-  stream.addSphere(MC, 0.30, COL.green, MAT.brightGlow);
-}
-
-// 7. High-Res 3D Bonded AI Steward Agent
-function buildAiSteward3D(stream, M, t, isPaused = false) {
+// The AI helper. Paused: static and ringed in red. Active: built per frame (it breathes).
+function buildAiSteward3D(stream, M, t, isPaused) {
   const accent = isPaused ? COL.red : COL.green;
-  buildPedestal3D(stream, M, 1.45, accent);
-
-  const bob = isPaused ? 0 : Math.sin(t * 2.2) * 0.05;
-  const MA = mat4Translate(M, 0, bob, 0);
-
+  buildPedestal3D(stream, M, 1.40, accent);
+  const MA = mat4Translate(M, 0, isPaused ? 0 : Math.sin(t * 2.2) * 0.05, 0);
   stream.addCylinderY(mat4Translate(MA, 0, 0.45, 0), 0.28, 0.38, 0.65, COL.spaceGray, MAT.darkMetal);
-
-  let MTorso = mat4Translate(MA, 0, 1.18, 0);
+  const MTorso = mat4Translate(MA, 0, 1.18, 0);
   stream.addRoundedSlabXY(MTorso, 1.24, 1.12, 0.68, 0.18, COL.titanium, MAT.titanium);
   stream.addSphere(mat4Translate(MTorso, -0.74, 0.32, 0), 0.24, COL.spaceGray, MAT.titanium);
   stream.addSphere(mat4Translate(MTorso,  0.74, 0.32, 0), 0.24, COL.spaceGray, MAT.titanium);
-
   stream.addBox(mat4Translate(MTorso, 0, 0.04, 0.32), 0.80, 0.70, 0.10, COL.obsidian, MAT.glass);
-  let MHeart = mat4Translate(MTorso, 0, 0.04, 0.39);
+  const MHeart = mat4Translate(MTorso, 0, 0.04, 0.39);
   const spin = isPaused ? 0 : t * 1.4;
   stream.addTorusXY(mat4RotateY(MHeart, spin), 0.27, 0.038, accent, MAT.brightGlow, 16);
   stream.addTorusXY(mat4RotateX(MHeart, -spin * 0.8 + 0.6), 0.20, 0.034, isPaused ? COL.red : COL.blue, MAT.brightGlow, 16);
-  stream.addSphere(MHeart, 0.10, isPaused ? COL.red : COL.white, MAT.brightGlow);
-
+  stream.addSphere(MHeart, 0.10, isPaused ? COL.red : COL.white, MAT.brightGlow, true);
   stream.addCylinderY(mat4Translate(MA, 0, 1.85, 0), 0.16, 0.18, 0.24, COL.darkChassis, MAT.darkMetal);
-
-  let MHead = mat4RotateY(mat4Translate(MA, 0, 2.24, 0), isPaused ? 0 : Math.sin(t * 1.1) * 0.14);
+  const MHead = mat4RotateY(mat4Translate(MA, 0, 2.24, 0), isPaused ? 0 : Math.sin(t * 1.1) * 0.14);
   stream.addRoundedSlabXY(MHead, 0.92, 0.64, 0.66, 0.16, COL.titanium, MAT.titanium);
   stream.addBox(mat4Translate(MHead, 0, 0.02, 0.31), 0.74, 0.32, 0.10, COL.obsidian, MAT.glass);
   stream.addBox(mat4Translate(MHead, -0.18, 0.02, 0.365), 0.18, 0.09, 0.03, accent, MAT.brightGlow);
   stream.addBox(mat4Translate(MHead,  0.18, 0.02, 0.365), 0.18, 0.09, 0.03, accent, MAT.brightGlow);
   stream.addSphere(mat4Translate(MHead, -0.50, 0.02, 0), 0.13, COL.spaceGray, MAT.titanium);
   stream.addSphere(mat4Translate(MHead,  0.50, 0.02, 0), 0.13, COL.spaceGray, MAT.titanium);
-
   if (isPaused) {
     for (let k = 0; k < 3; k++) {
-      let MRing = mat4RotateX(mat4Translate(M, 0, 0.65 + k * 0.78, 0), Math.PI * 0.5);
-      stream.addTorusXY(MRing, 1.18, 0.048, COL.red, MAT.brightGlow, 24);
+      stream.addTorusXY(mat4RotateX(mat4Translate(M, 0, 0.65 + k * 0.78, 0), Math.PI * 0.5), 1.18, 0.04, COL.red, MAT.glow, 28);
     }
   }
 }
 
-// 8. High-Res 3D Industrial Emergency Stop Console
-function buildEmergencyStop3D(stream, M, t) {
-  buildPedestal3D(stream, M, 1.35, COL.red);
-
-  let MBox = mat4Translate(M, 0, 0.62, 0);
+function buildEmergencyStop3D(stream, M) {
+  buildPedestal3D(stream, M, 1.30, COL.red);
+  const MBox = mat4Translate(M, 0, 0.62, 0);
   stream.addRoundedSlabXZ(MBox, 1.56, 0.92, 1.42, 0.14, COL.amber, MAT.anodized);
   stream.addBox(mat4Translate(MBox, 0, 0.48, 0), 1.28, 0.08, 1.14, COL.obsidian, MAT.darkMetal);
-
-  // Protective Yellow Safety Collar Ring
   stream.addCylinderY(mat4Translate(MBox, 0, 0.58, 0), 0.54, 0.56, 0.18, COL.gold, MAT.gold);
-  const pressOffset = Math.sin(t * 2.5) * 0.04 - 0.04;
-  stream.addCylinderY(mat4Translate(MBox, 0, 0.74 + pressOffset, 0), 0.24, 0.24, 0.32, COL.silver, MAT.titanium);
-
-  // Iconic Crimson Mushroom E-Stop Button Head (`KIND.ROD` + `KIND.SPHERE` + `KIND.ROD` torus inlay)
-  let MBtn = mat4Translate(MBox, 0, 0.92 + pressOffset, 0);
-  const redCapMat = [0.25, 0.14, 0.25];
-  stream.addCylinderY(MBtn, 0.52, 0.50, 0.24, COL.red, redCapMat);
-  stream.addSphere(mat4Translate(MBtn, 0, 0.02, 0), 0.50, COL.red, redCapMat);
+}
+function animEmergencyStop(stream, M, t) {
+  const MBox = mat4Translate(M, 0, 0.62, 0);
+  const press = Math.sin(t * 2.5) * 0.04 - 0.04;
+  stream.addCylinderY(mat4Translate(MBox, 0, 0.74 + press, 0), 0.24, 0.24, 0.32, COL.silver, MAT.titanium);
+  const MBtn = mat4Translate(MBox, 0, 0.92 + press, 0);
+  const redCap = [0.25, 0.14, 0.25];
+  stream.addCylinderY(MBtn, 0.52, 0.50, 0.24, COL.red, redCap);
+  stream.addSphere(mat4Translate(MBtn, 0, 0.02, 0), 0.50, COL.red, redCap, true);
   stream.addTorusXY(mat4RotateX(mat4Translate(MBtn, 0, 0.38, 0), Math.PI * 0.5), 0.24, 0.036, COL.white, MAT.brightGlow, 20);
 }
 
-// ── `holon-draw` Screen Plaque Helpers ──
+// ── Screen Plaques (holon-draw QUAD/DISC/RUN) kept clear of each other AND of the models ──
 const RGBA = {
-  green:  [78, 208, 139, 255],
-  blue:   [101, 178, 255, 255],
-  amber:  [245, 179, 88, 255],
-  red:    [242, 109, 91, 255],
-  violet: [174, 130, 255, 255],
-  gold:   [250, 204, 85, 255],
-  white:  [242, 246, 252, 255],
-  muted:  [165, 178, 198, 255],
-  plaque: [14, 20, 31, 238],
+  green:  [92, 214, 150, 255],
+  blue:   [128, 166, 220, 255],
+  amber:  [238, 182, 100, 255],
+  red:    [238, 104, 90, 255],
+  white:  [244, 244, 240, 255],
+  muted:  [168, 178, 194, 255],
+  plaque: [13, 17, 25, 232],
 };
 
-function measureTextCss(str, style) {
-  const e = text.place(str, style);
-  return e ? e.w / dpr : 0;
-}
-function drawTextScreen(str, style, x, cy, align, rgba) {
-  const e = text.place(str, style);
-  if (!e || e.w === 0) return 0;
-  const cx = align < 0 ? x * dpr + e.w / 2 : align > 0 ? x * dpr - e.w / 2 : x * dpr;
-  runsBatch.add([cx, cy * dpr, 0], [e.w, e.h, 0], [e.u0, e.v0, e.u1], e.v1, rgba, e.page);
-  return e.w / dpr;
-}
-function drawLabelPlaque(sx, sy, title, sub, accentRgba) {
-  const wTitle = measureTextCss(title, STYLE.HEADING) + 34;
-  const wSub = sub ? measureTextCss(sub, STYLE.SMALL) + 28 : 0;
-  const w = Math.max(136, wTitle, wSub);
-  const h = sub ? 46 : 30;
-  const x = sx - w / 2;
-  const y = sy - h / 2;
+const screenBg   = new HolonBatch(KIND.QUAD, true, 32);
+const screenFg   = new HolonBatch(KIND.QUAD, true, 32);
+const screenDots = new HolonBatch(KIND.DISC, true, 32);
+const screenRuns = new HolonBatch(KIND.RUN, true, 64);
+const screenBatches = [screenBg, screenFg, screenDots, screenRuns];
 
-  bgQuads.add([(x + w/2)*dpr, (y + h/2)*dpr, 0], [w*dpr, h*dpr, 0], [9*dpr, 0, 0], 0, accentRgba, 0);
-  fgQuads.add([(x + w/2)*dpr, (y + h/2)*dpr, 0], [(w - 3)*dpr, (h - 3)*dpr, 0], [7.5*dpr, 0, 0], 0, RGBA.plaque, 0);
-
-  const ty = sub ? y + 15 : y + 15;
-  discsBatch.add([(x + 14)*dpr, ty*dpr, 0], [4*dpr, 0, 0], null, 0, accentRgba, 0);
-  drawTextScreen(title, STYLE.HEADING, sx + 5, ty, 0, RGBA.white);
-  if (sub) {
-    drawTextScreen(sub, STYLE.SMALL, sx, y + 33, 0, RGBA.muted);
-  }
+function placeRun(str, style) { return text.place(str, style); }
+function drawRun(e, cxCss, cyCss, rgba) {
+  if (!e || e.w === 0) return;
+  screenRuns.add(cxCss * dpr, cyCss * dpr, 0, e.w, e.h, 0, e.u0, e.v0, e.u1, e.v1, rgba, e.page);
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// BUILD THE 7 FULL-3D HARDWARE & PROTOCOL SCENES (100% `holon-draw`)
-// ═══════════════════════════════════════════════════════════════════════════
-
-function buildScene3D(stepIdx, t, vp, Wcss, Hcss) {
-  meshOpaque.clear();
-  const I = mat4Identity();
-
-  // Studio Architectural Floor Patch (`KIND.PATCH` with `holon-draw` value noise field) + 3D `KIND.LINE` Grid
-  worldPatches.add([0, 0, -0.02], [44, 44, 0], [0.2, 0, 0], 0, [11, 16, 25, 255], 0);
-  const gridColMajor = [28, 62, 94, 165];
-  const gridColMinor = [18, 38, 62, 110];
-  for (let g = -16; g <= 16; g += 2) {
-    const col = (g % 4 === 0) ? gridColMajor : gridColMinor;
-    const w = (g % 4 === 0) ? 0.035 : 0.02;
-    worldGridLines.add([g, -14, 0], [w, 0, 0], [g, 14, 0], 0, col, 0);
-    if (g >= -14 && g <= 14) {
-      worldGridLines.add([-16, g, 0], [w, 0, 0], [16, g, 0], 0, col, 0);
+const _pp = [0, 0];
+function obstacleRects(obstacles, vp, Wcss, Hcss) {
+  const rects = [];
+  for (const o of obstacles) {
+    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9, any = false;
+    for (const dx of [-o.r, o.r]) for (const dz of [-o.r, o.r]) for (const y of [0.15, o.h]) {
+      if (!projectScene(vp, o.x + dx * 0.72, y, o.z + dz * 0.72, Wcss, Hcss, _pp)) continue;
+      any = true;
+      x0 = Math.min(x0, _pp[0]); x1 = Math.max(x1, _pp[0]);
+      y0 = Math.min(y0, _pp[1]); y1 = Math.max(y1, _pp[1]);
     }
+    if (any) rects.push({ x0, y0, x1, y1 });
   }
+  return rects;
+}
 
-  const labelAnchors = [];
-
-  if (stepIdx === 0) {
-    const pAlice = [-4.6, 0, 0.2];
-    const pBob   = [ 4.6, 0, 0.2];
-    const pRoot  = [ 0.0, 0, -2.5];
-
-    buildSmartphone3D(meshOpaque, mat4Translate(I, pAlice[0], pAlice[1], pAlice[2]), COL.green, "key");
-    buildCryptoKey3D(meshOpaque, mat4Translate(I, pAlice[0], 3.35, pAlice[2]), COL.green, t);
-    buildLaptop3D(meshOpaque, mat4RotateY(mat4Translate(I, pBob[0], pBob[1], pBob[2]), -0.22), COL.blue);
-    buildServerTower3D(meshOpaque, mat4Translate(I, pRoot[0], pRoot[1], pRoot[2]), COL.amber);
-
-    meshOpaque.addCurvedLink3D([pAlice[0]+0.9, 1.5, pAlice[2]+0.4], [pBob[0]-1.2, 1.1, pBob[2]+0.4], 1.25, 0.6, 0.055, COL.green, (t * 0.42) % 1.0);
-    meshOpaque.addCurvedLink3D([pAlice[0]+0.7, 0.9, pAlice[2]-0.3], [pRoot[0]-0.9, 1.1, pRoot[2]+0.4], 0.65, 0.0, 0.045, COL.amber, (t * 0.32) % 1.0);
-
-    labelAnchors.push(
-      { pos: [pAlice[0], 0, pAlice[2] + 1.35], dy: 24, title: "ALICE'S PHONE + PRIVATE KEY", sub: "Key lives on your device", col: RGBA.green },
-      { pos: [pBob[0],   0, pBob[2] + 1.35],   dy: 24, title: "BOB'S LAPTOP (PEER)", sub: "Verifies Alice's signature directly", col: RGBA.blue },
-      { pos: [pRoot[0],  3.25, pRoot[2]],      dy: -18, title: "OPTIONAL DIRECTORY SERVER", sub: "1-Step Exit: Walk away anytime", col: RGBA.amber }
-    );
+function emitPlaques(labels, obstacles, vp, Wcss, Hcss) {
+  const compact = Wcss < 680;
+  const titleStyle = compact ? LSTYLE.TITLE_COMPACT : LSTYLE.TITLE;
+  const items = [];
+  for (const l of labels) {
+    if (!projectScene(vp, l.pos[0], l.pos[1], l.pos[2], Wcss, Hcss, _pp)) continue;
+    const et = placeRun(l.title, titleStyle);
+    const es = !compact && l.sub ? placeRun(l.sub, LSTYLE.SUB) : null;
+    const wt = et.w / dpr + 30, ws = es ? es.w / dpr + 24 : 0;
+    const w = Math.max(compact ? 84 : 120, wt, ws);
+    const h = es ? 46 : (compact ? 25 : 30);
+    items.push({ sx: _pp[0], sy: _pp[1] + l.dy, w, h, et, es, col: l.col });
   }
-
-  else if (stepIdx === 1) {
-    const nodes = [
-      { x: -6.2, z:  1.1, kind: "phone",  col: COL.green,  rgba: RGBA.green,  title: "1. JUST ME",      sub: "Your Phone & Key" },
-      { x: -3.1, z: -0.5, kind: "laptop", col: COL.green,  rgba: RGBA.green,  title: "2. FAMILY",       sub: "Household Laptops" },
-      { x:  0.0, z: -1.3, kind: "server", col: COL.blue,   rgba: RGBA.blue,   title: "3. NEIGHBOURS",   sub: "Local Community Node" },
-      { x:  3.1, z: -0.5, kind: "tablet", col: COL.violet, rgba: RGBA.violet, title: "4. AFFILIATIONS", sub: "Work & Co-op Slates" },
-      { x:  6.2, z:  1.1, kind: "kernel", col: COL.amber,  rgba: RGBA.amber,  title: "5. EVERYONE",     sub: "Public Mesh Relay" },
-    ];
-
-    nodes.forEach((n, idx) => {
-      let MN = mat4Scale(mat4Translate(I, n.x, 0, n.z), 0.78, 0.78, 0.78);
-      if (n.kind === "phone")  buildSmartphone3D(meshOpaque, MN, n.col, "key");
-      if (n.kind === "laptop") buildLaptop3D(meshOpaque, MN, n.col);
-      if (n.kind === "server") buildServerTower3D(meshOpaque, MN, n.col);
-      if (n.kind === "tablet") buildConsentTablet3D(meshOpaque, MN, n.col);
-      if (n.kind === "kernel") buildCausalKernel3D(meshOpaque, MN, t);
-
-      if (idx < nodes.length - 1) {
-        const nx = nodes[idx + 1];
-        meshOpaque.addCurvedLink3D([n.x + 0.65, 1.4, n.z], [nx.x - 0.65, 1.4, nx.z], 0.75, 0, 0.042, COL.amber, ((t * 0.38) + idx * 0.2) % 1.0);
-        meshOpaque.addCurvedLink3D([nx.x - 0.65, 0.55, nx.z + 0.3], [n.x + 0.65, 0.55, n.z + 0.3], 0.25, 0.35, 0.042, COL.green, ((t * 0.5) + idx * 0.2) % 1.0);
+  const rects = obstacleRects(obstacles, vp, Wcss, Hcss);
+  const clampItem = (p) => {
+    p.sx = Math.max(p.w / 2 + 6, Math.min(Wcss - p.w / 2 - 6, p.sx));
+    p.sy = Math.max(p.h / 2 + 6, Math.min(Hcss - p.h / 2 - 6, p.sy));
+  };
+  for (let pass = 0; pass < 5; pass++) {
+    for (const p of items) {
+      clampItem(p);
+      // Off any model: out the nearer of its top or bottom edge.
+      for (const r of rects) {
+        const ox = Math.min(p.sx + p.w / 2, r.x1) - Math.max(p.sx - p.w / 2, r.x0);
+        const oy = Math.min(p.sy + p.h / 2, r.y1) - Math.max(p.sy - p.h / 2, r.y0);
+        if (ox > 10 && oy > 0) {
+          const up = p.sy - (r.y0 - p.h / 2 - 5), down = (r.y1 + p.h / 2 + 5) - p.sy;
+          const canDown = r.y1 + p.h + 10 < Hcss, canUp = r.y0 - p.h - 10 > 0;
+          p.sy = (down <= up && canDown) || !canUp ? p.sy + down : p.sy - up;
+        }
       }
-
-      labelAnchors.push({
-        pos: [n.x, 0, n.z + 1.15],
-        dy: 22,
-        title: n.title,
-        sub: n.sub,
-        col: n.rgba
-      });
-    });
-  }
-
-  else if (stepIdx === 2) {
-    const pAlice = [-4.8, 0, -0.4];
-    const pBob   = [ 4.8, 0, -0.4];
-    const pSeat  = [ 0.0, 0,  1.25];
-
-    buildSmartphone3D(meshOpaque, mat4RotateY(mat4Translate(I, pAlice[0], 0, pAlice[2]), 0.25), COL.blue, "chat");
-    buildLaptop3D(meshOpaque, mat4RotateY(mat4Translate(I, pBob[0], 0, pBob[2]), -0.25), COL.green);
-    buildConsentTablet3D(meshOpaque, mat4Translate(I, pSeat[0], 0, pSeat[2]), COL.green);
-    buildCryptoKey3D(meshOpaque, mat4Translate(I, pSeat[0], 3.15, pSeat[2]), COL.green, t);
-
-    const u = (t * 0.42) % 1.0;
-    meshOpaque.addCurvedLink3D([pAlice[0]+0.9, 1.35, pAlice[2]+0.3], [pSeat[0]-0.85, 1.35, pSeat[2]], 0.95, 0.3, 0.055, COL.blue, u);
-    meshOpaque.addCurvedLink3D([pBob[0]-1.1, 1.15, pBob[2]+0.3], [pSeat[0]+0.85, 1.35, pSeat[2]], 0.95, 0.3, 0.055, COL.green, u);
-
-    labelAnchors.push(
-      { pos: [pAlice[0], 0, pAlice[2] + 1.35], dy: 22, title: "1. ALICE'S PHONE", sub: "Signs Invitation Card", col: RGBA.blue },
-      { pos: [pSeat[0],  0, pSeat[2] + 1.35],  dy: 24, title: "ACTIVE RELATIONSHIP SEAT", sub: "Stands only with both signatures", col: RGBA.green },
-      { pos: [pBob[0],   0, pBob[2] + 1.35],   dy: 22, title: "2. BOB'S LAPTOP", sub: "Signs Acceptance Card", col: RGBA.green }
-    );
-  }
-
-  else if (stepIdx === 3) {
-    const pRecA   = [-6.2, 0, -0.5];
-    const pRecBC  = [-3.4, 0,  0.9];
-    const pKernel = [ 0.0, 0, -0.5];
-    const pPhone  = [ 3.3, 0,  0.9];
-    const pLaptop = [ 6.1, 0, -0.4];
-
-    buildConsentTablet3D(meshOpaque, mat4Scale(mat4RotateY(mat4Translate(I, pRecA[0], 0, pRecA[2]), 0.28), 0.80, 0.80, 0.80), COL.blue);
-    buildConsentTablet3D(meshOpaque, mat4Scale(mat4RotateY(mat4Translate(I, pRecBC[0], 0, pRecBC[2]), 0.22), 0.80, 0.80, 0.80), COL.amber);
-    buildCausalKernel3D(meshOpaque, mat4Scale(mat4Translate(I, pKernel[0], 0, pKernel[2]), 0.92, 0.92, 0.92), t);
-    buildSmartphone3D(meshOpaque, mat4Scale(mat4RotateY(mat4Translate(I, pPhone[0], 0, pPhone[2]), -0.20), 0.84, 0.84, 0.84), COL.green, "chat");
-    buildLaptop3D(meshOpaque, mat4Scale(mat4RotateY(mat4Translate(I, pLaptop[0], 0, pLaptop[2]), -0.25), 0.82, 0.82, 0.82), COL.green);
-
-    meshOpaque.addCurvedLink3D([pRecA[0]+0.7, 1.3, pRecA[2]], [pKernel[0]-1.0, 1.6, pKernel[2]], 1.0, 0, 0.045, COL.blue, (t*0.45)%1.0);
-    meshOpaque.addCurvedLink3D([pRecBC[0]+0.7, 1.1, pRecBC[2]], [pKernel[0]-0.9, 1.2, pKernel[2]+0.3], 0.65, 0, 0.045, COL.amber, ((t*0.45)+0.35)%1.0);
-    meshOpaque.addCurvedLink3D([pKernel[0]+0.9, 1.2, pKernel[2]+0.3], [pPhone[0]-0.7, 1.1, pPhone[2]], 0.65, 0, 0.045, COL.green, (t*0.45)%1.0);
-    meshOpaque.addCurvedLink3D([pKernel[0]+1.0, 1.6, pKernel[2]], [pLaptop[0]-1.0, 1.1, pLaptop[2]], 1.05, 0, 0.045, COL.green, (t*0.45)%1.0);
-
-    labelAnchors.push(
-      { pos: [pRecA[0],   2.55, pRecA[2]],         dy: -16, title: "RECORD A", sub: "Create Room", col: RGBA.blue },
-      { pos: [pRecBC[0],  0,    pRecBC[2] + 1.05], dy: 22,  title: "RECORDS B & C", sub: "Join & Post Note", col: RGBA.amber },
-      { pos: [pKernel[0], 2.95, pKernel[2]],       dy: -18, title: "THE CAUSAL KERNEL", sub: "K(Rows, Key, Clock)", col: RGBA.green },
-      { pos: [pPhone[0],  0,    pPhone[2] + 1.05], dy: 22,  title: "ALICE'S PHONE (A, B, C)", sub: "Same Final Answer", col: RGBA.green },
-      { pos: [pLaptop[0], 2.45, pLaptop[2]],       dy: -16, title: "BOB'S LAPTOP (C, A, B)", sub: "Same Final Answer", col: RGBA.green }
-    );
-  }
-
-  else if (stepIdx === 4) {
-    const pAlicePhone  = [-6.2, 0,  0.2];
-    const pAliceLaptop = [-3.2, 0,  0.4];
-    const pBobServer   = [ 0.8, 0, -0.7];
-    const pFinalTablet = [ 5.3, 0,  0.2];
-
-    buildSmartphone3D(meshOpaque, mat4Scale(mat4RotateY(mat4Translate(I, pAlicePhone[0], 0, pAlicePhone[2]), 0.22), 0.84, 0.84, 0.84), COL.green, "key");
-    buildLaptop3D(meshOpaque, mat4Scale(mat4RotateY(mat4Translate(I, pAliceLaptop[0], 0, pAliceLaptop[2]), 0.16), 0.84, 0.84, 0.84), COL.green);
-    meshOpaque.addCurvedLink3D([pAlicePhone[0]+0.65, 1.3, pAlicePhone[2]], [pAliceLaptop[0]-0.95, 1.0, pAliceLaptop[2]], 0.65, 0, 0.045, COL.gold, (t*0.5)%1.0);
-
-    buildServerTower3D(meshOpaque, mat4Scale(mat4Translate(I, pBobServer[0], 0, pBobServer[2]), 0.88, 0.88, 0.88), COL.blue);
-    buildConsentTablet3D(meshOpaque, mat4Scale(mat4RotateY(mat4Translate(I, pFinalTablet[0], 0, pFinalTablet[2]), -0.22), 0.92, 0.92, 0.92), COL.green);
-
-    meshOpaque.addCurvedLink3D([pAliceLaptop[0]+1.0, 1.1, pAliceLaptop[2]], [pFinalTablet[0]-0.85, 1.2, pFinalTablet[2]+0.2], 1.2, 0.4, 0.052, COL.green, (t*0.42)%1.0);
-    meshOpaque.addCurvedLink3D([pBobServer[0]+0.8, 1.3, pBobServer[2]+0.3], [pFinalTablet[0]-0.85, 1.4, pFinalTablet[2]-0.2], 0.85, 0, 0.052, COL.blue, ((t*0.42)+0.3)%1.0);
-
-    labelAnchors.push(
-      { pos: [-4.7, 0, 1.65], dy: 24, title: "ALICE'S PHONE + LAPTOP (1 VOICE)", sub: "2 devices owned by 1 person = 1 vote", col: RGBA.green },
-      { pos: [pBobServer[0], 2.95, pBobServer[2]], dy: -16, title: "BOB'S HOME SERVER (1 VOICE)", sub: "No money or stake buys a vote", col: RGBA.blue },
-      { pos: [pFinalTablet[0], 0, pFinalTablet[2] + 1.25], dy: 22, title: "SETTLED DECISION SLATE", sub: "Final by member acknowledgement", col: RGBA.green }
-    );
-  }
-
-  else if (stepIdx === 5) {
-    const pSteward = [-5.3, 0,  0.3];
-    const pAgent   = [-0.7, 0, -0.2];
-    const pClear   = [ 3.2, 0, -0.9];
-    const pDefer   = [ 6.1, 0,  0.7];
-
-    buildLaptop3D(meshOpaque, mat4Scale(mat4RotateY(mat4Translate(I, pSteward[0], 0, pSteward[2]), 0.24), 0.92, 0.92, 0.92), COL.blue);
-    buildCryptoKey3D(meshOpaque, mat4Translate(I, pSteward[0], 2.75, pSteward[2]), COL.blue, t);
-    buildAiSteward3D(meshOpaque, mat4Translate(I, pAgent[0], 0, pAgent[2]), t, false);
-    buildConsentTablet3D(meshOpaque, mat4Scale(mat4RotateY(mat4Translate(I, pClear[0], 0, pClear[2]), -0.20), 0.82, 0.82, 0.82), COL.green);
-    buildSmartphone3D(meshOpaque, mat4Scale(mat4RotateY(mat4Translate(I, pDefer[0], 0, pDefer[2]), -0.25), 0.86, 0.86, 0.86), COL.amber, "chat");
-
-    meshOpaque.addCurvedLink3D([pSteward[0]+1.1, 1.1, pSteward[2]], [pAgent[0]-1.0, 1.3, pAgent[2]], 0.85, 0, 0.055, COL.blue, (t*0.42)%1.0);
-    meshOpaque.addCurvedLink3D([pAgent[0]+1.0, 1.5, pAgent[2]-0.2], [pClear[0]-0.75, 1.2, pClear[2]], 0.75, 0, 0.05, COL.green, (t*0.45)%1.0);
-    meshOpaque.addCurvedLink3D([pAgent[0]+1.0, 1.2, pAgent[2]+0.3], [pDefer[0]-0.75, 1.2, pDefer[2]], 1.05, 0.3, 0.05, COL.amber, ((t*0.45)+0.5)%1.0);
-
-    labelAnchors.push(
-      { pos: [pSteward[0], 0, pSteward[2] + 1.35], dy: 24, title: "NAMED HUMAN STEWARD", sub: "Alice's Laptop & Steward Bond", col: RGBA.blue },
-      { pos: [pAgent[0],   0, pAgent[2] + 1.45],   dy: 24, title: "BONDED AI AGENT", sub: "Checks 4 Conscience Faculties", col: RGBA.green },
-      { pos: [pClear[0],   2.55, pClear[2]],       dy: -16, title: "WHEN CLEAR: SIGNED ACT", sub: "Auditable on the record", col: RGBA.green },
-      { pos: [pDefer[0],   0, pDefer[2] + 1.15],   dy: 22, title: "WHEN UNSURE: ASK HUMAN", sub: "Defers to human phone", col: RGBA.amber }
-    );
-  }
-
-  else if (stepIdx === 6) {
-    const pStop   = [-6.1, 0, -0.3];
-    const pAgent  = [-2.1, 0, -0.6];
-    const pLaptop = [ 2.2, 0,  0.5];
-    const pPhone  = [ 6.1, 0,  0.3];
-
-    buildEmergencyStop3D(meshOpaque, mat4Scale(mat4Translate(I, pStop[0], 0, pStop[2]), 0.90, 0.90, 0.90), t);
-    buildAiSteward3D(meshOpaque, mat4Scale(mat4Translate(I, pAgent[0], 0, pAgent[2]), 0.90, 0.90, 0.90), t, true);
-
-    meshOpaque.addCurvedLink3D([pStop[0]+0.9, 1.1, pStop[2]], [pAgent[0]-0.95, 1.3, pAgent[2]], 0.85, 0, 0.058, COL.red, (t*0.65)%1.0);
-
-    buildLaptop3D(meshOpaque, mat4Scale(mat4RotateY(mat4Translate(I, pLaptop[0], 0, pLaptop[2]), 0.14), 0.84, 0.84, 0.84), COL.green);
-    buildSmartphone3D(meshOpaque, mat4Scale(mat4RotateY(mat4Translate(I, pPhone[0], 0, pPhone[2]), -0.22), 0.84, 0.84, 0.84), COL.green, "key");
-    buildCryptoKey3D(meshOpaque, mat4Translate(I, 4.15, 2.55, 0.4), COL.green, t);
-
-    meshOpaque.addCurvedLink3D([pLaptop[0]+1.0, 0.95, pLaptop[2]], [pPhone[0]-0.8, 1.15, pPhone[2]], 0.75, 0.2, 0.052, COL.green, (t*0.48)%1.0);
-
-    labelAnchors.push(
-      { pos: [pStop[0],   0,   pStop[2] + 1.25],   dy: 22,  title: "1 SIGNED HALT RECORD", sub: "3D Human Stop Switch · 24h fuse", col: RGBA.red },
-      { pos: [pAgent[0],  2.9, pAgent[2]],         dy: -16, title: "AI AGENT PAUSED (423)", sub: "Locked inside red containment barrier", col: RGBA.red },
-      { pos: [pLaptop[0], 0,   pLaptop[2] + 1.25], dy: 22,  title: "YOUR LAPTOP & FILES STAY OPEN", sub: "Halt touches zero personal data", col: RGBA.green },
-      { pos: [pPhone[0],  0,   pPhone[2] + 1.15],  dy: 22,  title: "YOUR PHONE & KEYS STAY OPEN", sub: "Peer links & 1-step withdraw open", col: RGBA.green }
-    );
-  }
-
-  for (const lbl of labelAnchors) {
-    const hp = toHolon(lbl.pos);
-    const sc = projectHolonToScreen(vp, hp[0], hp[1], hp[2], Wcss, Hcss);
-    if (sc) {
-      drawLabelPlaque(sc[0], sc[1] + lbl.dy, lbl.title, lbl.sub, lbl.col);
     }
+    for (let i = 0; i < items.length; i++) {
+      for (let j = i + 1; j < items.length; j++) {
+        const A = items[i], B = items[j];
+        const ox = (A.w + B.w) * 0.5 + 8 - Math.abs(A.sx - B.sx);
+        const oy = (A.h + B.h) * 0.5 + 6 - Math.abs(A.sy - B.sy);
+        if (ox > 0 && oy > 0) {
+          if (ox < oy) {
+            const dir = A.sx <= B.sx ? -1 : 1;
+            A.sx += dir * (ox * 0.5 + 2); B.sx -= dir * (ox * 0.5 + 2);
+          } else {
+            const dir = A.sy <= B.sy ? -1 : 1;
+            A.sy += dir * (oy * 0.5 + 2); B.sy -= dir * (oy * 0.5 + 2);
+          }
+        }
+      }
+    }
+  }
+  for (const p of items) {
+    clampItem(p);
+    const x = p.sx - p.w / 2, y = p.sy - p.h / 2;
+    const edge = [p.col[0], p.col[1], p.col[2], 150];
+    screenBg.add(p.sx * dpr, p.sy * dpr, 0, p.w * dpr, p.h * dpr, 0, 9 * dpr, 0, 0, 0, edge, 0);
+    screenFg.add(p.sx * dpr, p.sy * dpr, 0, (p.w - 2) * dpr, (p.h - 2) * dpr, 0, 8 * dpr, 0, 0, 0, RGBA.plaque, 0);
+    const ty = p.es ? y + 16 : y + p.h * 0.5;
+    screenDots.add((x + 12) * dpr, ty * dpr, 0, 3.5 * dpr, 0, 0, 0, 0, 0, 0, p.col, 0);
+    drawRun(p.et, p.sx + 5, ty, RGBA.white);
+    if (p.es) drawRun(p.es, p.sx, y + 33, RGBA.muted);
   }
 }
 
-// ── Single-Pass `holon-draw` Render Loop (World Batches + Screen Batches in one `drawer.draw(...)`) ──
-// In `holon-draw` Z-up coordinates: light comes from front-right-above (+x, -y, +z)
-const LIGHT_DIR = new Float32Array([0.42, -0.58, 0.69]);
+// ═══════════════════════════════════════════════════════════════════════════
+// THE 8 CHAPTERS. Each: build (static, once per chapter), anim (per frame),
+// links (tube static, pulses per frame), labels, and obstacles for the labels.
+// ═══════════════════════════════════════════════════════════════════════════
+const I = mat4Identity();
+const at = (x, z, yaw = 0, s = 1) => mat4Scale(mat4RotateY(mat4Translate(I, x, 0, z), yaw), s, s, s);
+const ob = (x, z, r, h) => ({ x, z, r, h });
+
+const CHAPTERS = [
+  // 1. You -> your phone -> your laptop; the company in the middle is bypassed.
+  {
+    build(S, Sdim, X) {
+      buildPerson3D(S, at(-6.2, 0.3, 0.35), COL.green);
+      buildSmartphone3D(S, at(-3.4, 0.6, 0.15, 0.9), COL.green, "key");
+      buildServerTower3D(Sdim, at(0.2, -2.2, 0, 0.85), COL.red, X);
+      buildLaptop3D(S, at(4.8, 0.5, -0.22), COL.green);
+    },
+    anim(D, t) { animCryptoKey(D, mat4Translate(I, -3.4, 3.15, 0.6), COL.green, t); },
+    links: [
+      makeLink([-5.7, 1.3, 0.3], [-4.1, 1.3, 0.6], 0.45, 0, 0.045, COL.green, 0.5),
+      makeLink([-2.6, 1.4, 0.9], [3.6, 1.1, 0.8], 1.35, 0.7, 0.06, COL.green, 0.42),
+    ],
+    labels: [
+      { pos: [-6.2, 0, 1.4], dy: 22, title: "1. You", sub: "Your own key, your own name", col: RGBA.green },
+      { pos: [-3.4, 0, 1.85], dy: 24, title: "2. Your phone", sub: "Recognises your laptop directly", col: RGBA.green },
+      { pos: [0.2, 3.0, -2.2], dy: -16, title: "No company in the middle", sub: "No corporate login holding your devices", col: RGBA.red },
+      { pos: [4.8, 0, 1.85], dy: 24, title: "3. Your laptop", sub: "Your own key, your own copy", col: RGBA.green },
+    ],
+    obstacles: [ob(-6.2, 0.3, 0.7, 2.3), ob(-3.4, 0.6, 0.7, 3.6), ob(0.2, -2.2, 0.9, 2.7), ob(4.8, 0.5, 1.3, 1.9)],
+  },
+  // 2. Files on all your devices.
+  {
+    build(S) {
+      buildPerson3D(S, at(-6.2, 0.3, 0.32), COL.green);
+      buildSmartphone3D(S, at(-3.3, 0.4, 0.16, 0.88), COL.green, "chat");
+      buildConsentTablet3D(S, at(0.6, -0.4, 0, 0.92), COL.blue);
+      buildLaptop3D(S, at(5.0, 0.4, -0.22), COL.green);
+    },
+    links: [
+      makeLink([-5.7, 1.3, 0.3], [-4.0, 1.3, 0.4], 0.4, 0, 0.045, COL.green, 0.5),
+      makeLink([-2.6, 1.4, 0.4], [-0.2, 1.4, -0.4], 0.85, 0, 0.052, COL.blue, 0.45),
+      makeLink([1.4, 1.4, -0.4], [3.9, 1.1, 0.4], 0.95, 0, 0.052, COL.green, 0.45),
+    ],
+    labels: [
+      { pos: [-6.2, 0, 1.4], dy: 22, title: "You", sub: "No cloud landlord", col: RGBA.green },
+      { pos: [-3.3, 0, 1.6], dy: 22, title: "Your phone", sub: "Photos and notes on the go", col: RGBA.green },
+      { pos: [0.6, 2.9, -0.4], dy: -16, title: "Your files & photos", sub: "Settle on the same files when reconnected", col: RGBA.blue },
+      { pos: [5.0, 0, 1.75], dy: 24, title: "Your laptop", sub: "Every file, ready", col: RGBA.green },
+    ],
+    obstacles: [ob(-6.2, 0.3, 0.7, 2.3), ob(-3.3, 0.4, 0.7, 2.6), ob(0.6, -0.4, 0.8, 2.4), ob(5.0, 0.4, 1.3, 1.9)],
+  },
+  // 3. Video, files and chat with friends and family.
+  {
+    build(S) {
+      buildPerson3D(S, at(-6.1, 0.4, 0.35), COL.green);
+      buildSmartphone3D(S, at(-3.6, 0.4, 0.18, 0.84), COL.green, "chat");
+      buildMediaHub3D(S, at(0.2, -0.4));
+      buildPerson3D(S, at(3.8, 0.4, -0.25), COL.blue, COL.skin2);
+      buildLaptop3D(S, at(6.1, 0.2, -0.28, 0.78), COL.blue);
+    },
+    anim(D, t) { animMediaHub(D, at(0.2, -0.4), t); },
+    links: [
+      makeLink([-2.9, 1.3, 0.4], [-1.0, 1.4, -0.4], 0.85, 0, 0.052, COL.green, 0.42),
+      makeLink([1.4, 1.4, -0.4], [3.3, 1.4, 0.4], 0.85, 0, 0.052, COL.blue, 0.42),
+    ],
+    labels: [
+      { pos: [-4.85, 0, 1.65], dy: 22, title: "You & your phone", sub: "Everything starts as yours alone", col: RGBA.green },
+      { pos: [0.2, 2.9, -0.4], dy: -16, title: "Video, files & group chat", sub: "Shared only when you share and they accept", col: RGBA.green },
+      { pos: [4.95, 0, 1.65], dy: 22, title: "Friends & family", sub: "Two yeses to connect", col: RGBA.blue },
+    ],
+    obstacles: [ob(-6.1, 0.4, 0.7, 2.3), ob(-3.6, 0.4, 0.7, 2.5), ob(0.2, -0.4, 1.3, 2.4), ob(3.8, 0.4, 0.7, 2.3), ob(6.1, 0.2, 1.0, 1.5)],
+  },
+  // 4. A feed that serves you.
+  {
+    build(S) {
+      buildPerson3D(S, at(-6.0, 0.3, 0.30), COL.green);
+      buildAlgorithmSliders3D(S, at(-2.0, -0.2));
+      buildLaptop3D(S, at(2.5, 0.4, -0.15, 0.9), COL.green);
+      buildSmartphone3D(S, at(6.0, 0.2, -0.25, 0.84), COL.blue, "chat");
+    },
+    anim(D, t) { animSliders(D, at(-2.0, -0.2), t); },
+    links: [
+      makeLink([-5.5, 1.3, 0.3], [-3.0, 1.3, -0.2], 0.65, 0, 0.048, COL.green, 0.45),
+      makeLink([-1.0, 1.4, -0.2], [1.4, 1.1, 0.4], 0.85, 0, 0.052, COL.green, 0.45),
+      makeLink([3.6, 1.1, 0.4], [5.3, 1.3, 0.2], 0.75, 0, 0.048, COL.blue, 0.45),
+    ],
+    labels: [
+      { pos: [-6.0, 0, 1.4], dy: 22, title: "You choose", sub: "No hidden engine tuned for anger", col: RGBA.green },
+      { pos: [-2.0, 2.9, -0.2], dy: -16, title: "Your lens", sub: "Family, neighbours, clubs, the wider world", col: RGBA.green },
+      { pos: [2.5, 0, 1.75], dy: 24, title: "Your feed", sub: "What matters to you, on every device", col: RGBA.blue },
+    ],
+    obstacles: [ob(-6.0, 0.3, 0.7, 2.3), ob(-2.0, -0.2, 1.1, 2.5), ob(2.5, 0.4, 1.2, 1.8), ob(6.0, 0.2, 0.7, 2.5)],
+  },
+  // 5. Church, town or club deciding together.
+  {
+    build(S) {
+      buildPerson3D(S, at(-6.2, 0.4, 0.30), COL.green);
+      buildSmartphone3D(S, at(-4.1, 0.6, 0.18, 0.80), COL.green, "chat");
+      buildCommunityHall3D(S, at(0.0, -0.5));
+      buildPerson3D(S, at(3.6, 0.5, -0.20), COL.blue, COL.skin2);
+      buildConsentTablet3D(S, at(6.1, 0.2, -0.25, 0.88), COL.green);
+    },
+    links: [
+      makeLink([-3.5, 1.2, 0.6], [-1.1, 1.3, -0.1], 0.85, 0, 0.05, COL.green, 0.42),
+      makeLink([3.1, 1.3, 0.5], [1.1, 1.3, -0.1], 0.85, 0, 0.05, COL.blue, 0.42),
+      makeLink([1.1, 1.5, -0.5], [5.3, 1.3, 0.2], 1.15, 0, 0.052, COL.amber, 0.45),
+    ],
+    labels: [
+      { pos: [-5.15, 0, 1.70], dy: 22, title: "Neighbours & members", sub: "Vote from your phone or laptop", col: RGBA.green },
+      { pos: [0.0, 3.6, -0.5], dy: -16, title: "Your church, town or club", sub: "One person, one voice · No outside ban", col: RGBA.amber },
+      { pos: [6.1, 0, 1.4], dy: 22, title: "A count anyone can check", sub: "Every member can verify the result", col: RGBA.green },
+    ],
+    obstacles: [ob(-6.2, 0.4, 0.7, 2.3), ob(-4.1, 0.6, 0.7, 2.4), ob(0.0, -0.5, 1.3, 3.4), ob(3.6, 0.5, 0.7, 2.3), ob(6.1, 0.2, 0.8, 2.3)],
+  },
+  // 6. Owned by members, not a host.
+  {
+    build(S, Sdim, X) {
+      buildServerTower3D(Sdim, at(-5.6, -0.3, 0, 0.88), COL.red, X);
+      buildPerson3D(S, at(-1.4, 0.5, 0.25), COL.green);
+      buildSmartphone3D(S, at(0.8, 0.6, 0.12, 0.84), COL.green, "key");
+      buildPerson3D(S, at(3.4, -0.7, -0.15), COL.blue, COL.skin2);
+      buildLaptop3D(S, at(5.8, 0.4, -0.25, 0.84), COL.blue);
+    },
+    links: [
+      makeLink([-0.9, 1.3, 0.5], [0.2, 1.3, 0.6], 0.45, 0, 0.045, COL.green, 0.45),
+      makeLink([1.5, 1.4, 0.6], [4.8, 1.1, 0.4], 1.1, 0.4, 0.055, COL.green, 0.42),
+      makeLink([1.3, 1.2, 0.4], [2.9, 1.3, -0.7], 0.75, 0, 0.048, COL.blue, 0.42),
+    ],
+    labels: [
+      { pos: [-5.6, 0, 1.05], dy: 24, title: "No landlord server", sub: "No master password, no hosting bill", col: RGBA.red },
+      { pos: [-0.3, 0, 1.75], dy: 22, title: "Member phones", sub: "Carry the community together", col: RGBA.green },
+      { pos: [4.6, 0, 1.65], dy: 22, title: "Member laptops", sub: "The group carries on if one leaves", col: RGBA.blue },
+    ],
+    obstacles: [ob(-5.6, -0.3, 0.9, 2.9), ob(-1.4, 0.5, 0.7, 2.3), ob(0.8, 0.6, 0.7, 2.5), ob(3.4, -0.7, 0.7, 2.3), ob(5.8, 0.4, 1.1, 1.7)],
+  },
+  // 7. AI that helps, answers to a person, and can stop.
+  {
+    build(S, Sdim) {
+      buildEmergencyStop3D(S, at(-6.1, -0.3, 0, 0.88));
+      buildAiSteward3D(S, at(-2.3, -0.5, 0, 0.88), 0, true);
+      buildPerson3D(S, at(1.2, 0.5, 0.20), COL.green);
+      buildLaptop3D(S, at(3.7, 0.5, 0.08, 0.78), COL.green);
+      buildSmartphone3D(S, at(6.3, 0.3, -0.22, 0.78), COL.green, "key");
+    },
+    anim(D, t) { animEmergencyStop(D, at(-6.1, -0.3, 0, 0.88), t); },
+    links: [
+      makeLink([-5.2, 1.1, -0.3], [-3.25, 1.3, -0.5], 0.85, 0, 0.058, COL.red, 0.65),
+      makeLink([4.6, 0.95, 0.5], [5.6, 1.15, 0.3], 0.75, 0.2, 0.052, COL.green, 0.48),
+    ],
+    labels: [
+      { pos: [-6.1, 0, 0.95], dy: 22, title: "Human stop", sub: "Named people pause it with one signed act", col: RGBA.red },
+      { pos: [-2.3, 3.0, -0.5], dy: -16, title: "AI helper, paused", sub: "Published principles · Asks when unsure", col: RGBA.red },
+      { pos: [3.8, 0, 1.70], dy: 22, title: "Your files & chats keep running", sub: "Pausing AI never locks your life", col: RGBA.green },
+    ],
+    obstacles: [ob(-6.1, -0.3, 0.9, 1.9), ob(-2.3, -0.5, 1.0, 2.9), ob(1.2, 0.5, 0.7, 2.3), ob(3.7, 0.5, 1.1, 1.6), ob(6.3, 0.3, 0.7, 2.3)],
+  },
+  // 8. Together: people, their community, and the AI they hold, none owning the rest.
+  {
+    build(S) {
+      buildCommunityHall3D(S, at(0.0, -2.6, 0, 0.95));
+      buildPerson3D(S, at(-5.6, 0.2, 0.45), COL.green);
+      buildPerson3D(S, at(-2.8, 1.2, 0.20), COL.blue, COL.skin2);
+      buildPerson3D(S, at(2.8, 1.2, -0.20), COL.green, COL.skin2);
+      buildPerson3D(S, at(5.6, 0.2, -0.45), COL.blue);
+    },
+    anim(D, t) { buildAiSteward3D(D, at(0.0, 1.0, 0, 0.62), t, false); },
+    links: [
+      makeLink([-5.1, 1.3, 0.3], [-3.3, 1.3, 1.2], 0.55, 0, 0.045, COL.green, 0.40),
+      makeLink([-2.3, 1.3, 1.2], [-0.6, 1.0, 1.0], 0.45, 0, 0.045, COL.green, 0.40),
+      makeLink([0.6, 1.0, 1.0], [2.3, 1.3, 1.2], 0.45, 0, 0.045, COL.green, 0.40),
+      makeLink([3.3, 1.3, 1.2], [5.1, 1.3, 0.3], 0.55, 0, 0.045, COL.green, 0.40),
+      makeLink([-5.6, 1.6, 0.0], [-1.2, 1.8, -2.4], 1.4, 0, 0.042, COL.amber, 0.30),
+      makeLink([5.6, 1.6, 0.0], [1.2, 1.8, -2.4], 1.4, 0, 0.042, COL.amber, 0.30),
+    ],
+    labels: [
+      { pos: [-4.2, 0, 1.9], dy: 22, title: "People", sub: "Each keeps their own key and voice", col: RGBA.green },
+      { pos: [0.0, 3.6, -2.6], dy: -16, title: "Communities", sub: "Owned by their members", col: RGBA.amber },
+      { pos: [0.0, 0, 1.95], dy: 26, title: "The AI they hold", sub: "Helps, answers to people, can stop", col: RGBA.green },
+      { pos: [4.2, 0, 1.9], dy: 22, title: "Acting together", sub: "No one of them owns the rest", col: RGBA.blue },
+    ],
+    obstacles: [ob(0.0, -2.6, 1.3, 3.4), ob(-5.6, 0.2, 0.7, 2.3), ob(-2.8, 1.2, 0.7, 2.3), ob(2.8, 1.2, 0.7, 2.3), ob(5.6, 0.2, 0.7, 2.3), ob(0.0, 1.0, 0.6, 1.8)],
+  },
+];
+
+// ── The floor: a patch, a quiet grid and a soft pool of light, dissolved by holon-draw's RING ──
+const floorPatch = new HolonBatch(KIND.PATCH, false, 4);
+const floorGrid  = new HolonBatch(KIND.LINE, false, 64);
+const floorPool  = new HolonBatch(KIND.DISC, false, 8);
+floorPatch.params[PARAM.TEX] = 0.25;
+floorPatch.params[PARAM.NOISE + 2] = 1.0;
+floorPatch.params[PARAM.NOISE + 3] = 1.0;
+floorPatch.add(0, 0, -0.02, 44, 44, 0, 0.2, 0, 0, 0, [12, 16, 24, 255], 0);
+for (let g = -16; g <= 16; g += 2) {
+  floorGrid.add(g, -14, 0, 0.018, 0, 0, g, 14, 0, 0, [40, 58, 84, 70], 0);
+  if (g >= -14 && g <= 14) floorGrid.add(-16, g, 0, 0.018, 0, 0, 16, g, 0, 0, [40, 58, 84, 70], 0);
+}
+floorPool.add(0, 0.6, 0.001, 8.5, 0, 0, 0, 0, 0, 0, [70, 90, 120, 18], 0);
+const floorBatches = [floorPatch, floorGrid, floorPool];
+for (const b of floorBatches) b.seal();
+
+// ── Chapter sets, double-buffered for the crossfade ──
+// Per set: main, dimmed (bypassed props), and the X marks. Plus one per-frame animated set.
+const SETS = [0, 1].map(() => ({ main: new SceneSet(), dim: new SceneSet(), step: -1 }));
+const dyn = new SceneSet();
+let curSet = 0, builtStep = -1, fadeStart = -1e9;
+const FADE_SECONDS = 0.5;
+
+function buildChapter(step) {
+  curSet = 1 - curSet;
+  const G = SETS[curSet];
+  G.main.clear(); G.dim.clear();
+  const C = CHAPTERS[step];
+  C.build(G.main.stream, G.dim.stream, G.main.stream);
+  for (const L of C.links) emitLinkTube(G.main.stream, L);
+  G.main.seal(); G.dim.seal();
+  G.step = step;
+  builtStep = step;
+  fadeStart = SETS[1 - curSet].step < 0 ? -1e9 : performance.now();
+}
+
+// ── Single-Pass `holon-draw` Render Loop ──
+// Light: a warm key from the upper left, toward the camera (holon frame, z up).
+const LIGHT_DIR = new Float32Array([-0.48, -0.52, 0.71]);
+const VPORT = [0, 0, 1, 1];
+const DRAW_OPTS = { light: LIGHT_DIR, ambient: 0.40, viewport: VPORT };
+const drawList = [];
+const PORTRAIT_YAW = 1.18, PORTRAIT_PITCH = 0.34, PORTRAIT_DIST = 22.5, PORTRAIT_SHIFT = -1.0;
 let lastTms = performance.now();
+const _c = [0, 0];
 
 function frame(tms) {
   const dt = Math.min(0.1, Math.max(0, (tms - lastTms) / 1000));
@@ -1244,52 +1361,77 @@ function frame(tms) {
 
   if (playing && !dragging) {
     stepTime += dt;
-    if (stepTime >= STEP_DURATION) {
-      goToStep(currentStep + 1, false);
-    }
+    if (stepTime >= STEP_DURATION) goToStep(currentStep + 1, false);
   }
+  if (builtStep !== currentStep) buildChapter(currentStep);
+  // Wall-clock fade, so a slow device does not drag the crossfade out.
+  const k = Math.min(1, Math.max(0, (performance.now() - fadeStart) / (FADE_SECONDS * 1000))), ease = k * k * (3 - 2 * k);
 
-  const W = canvas.width;
-  const H = canvas.height;
-  const Wcss = W / dpr;
-  const Hcss = H / dpr;
+  const W = canvas.width, H = canvas.height;
+  const Wcss = W / dpr, Hcss = H / dpr;
+  const aspect = Math.max(0.35, W / H);
 
-  // Camera in `holon-draw` Z-up world coordinates (`toHolon([x, y, z]) = [x, -z, y]`)
-  const yaw = userYaw + Math.sin(tSec * 0.28) * 0.08;
-  const pitch = 0.36 + userPitch;
-  const dist = 14.2;
+  // Landscape: the story runs left to right. Portrait: the camera swings round so the row
+  // runs diagonally into depth (the first object nearest), using the tall screen.
+  const portrait = Math.max(0, Math.min(1, (1.05 - aspect) / 0.5));
+  const yaw = userYaw - PORTRAIT_YAW * portrait + Math.sin(tSec * 0.28) * 0.06;
+  const pitch = 0.36 + PORTRAIT_PITCH * portrait + userPitch;
+  const landscapeDist = Math.max(14.2, 26.8 / aspect);
+  const dist = landscapeDist + (PORTRAIT_DIST - landscapeDist) * portrait;
+  const cy = 1.05 + 0.5 * portrait;
   const eyeScene = [
-    Math.sin(yaw) * Math.cos(pitch) * dist,
+    Math.sin(yaw) * Math.cos(pitch) * dist + PORTRAIT_SHIFT * portrait,
     Math.sin(pitch) * dist + 0.65,
     Math.cos(yaw) * Math.cos(pitch) * dist
   ];
   const eyeHolon = toHolon(eyeScene);
-  const centerHolon = toHolon([0, 1.05, 0.1]);
-  const proj = mat4Perspective(0.56, W / H, 0.2, 60.0);
+  const centerHolon = toHolon([PORTRAIT_SHIFT * portrait, cy, 0.1]);
+  const proj = mat4Perspective(0.56, aspect, 0.2, 95.0);
   const view = mat4LookAt(eyeHolon, centerHolon, [0, 0, 1]);
   const vp = mat4Mul(proj, view);
 
+  // Floor vignette: holon-draw RING about the stage's projected centre, in device pixels.
+  const rc = projectScene(vp, PORTRAIT_SHIFT * portrait, 0, 0, Wcss, Hcss, _c) || [Wcss / 2, Hcss / 2];
+  const ringR = Math.max(W, H) * (0.62 + 0.12 * portrait);
+  for (const b of floorBatches) {
+    b.params[PARAM.RING] = rc[0] * dpr; b.params[PARAM.RING + 1] = rc[1] * dpr; b.params[PARAM.RING + 2] = ringR;
+  }
+
+  // Animated parts and link pulses: the only geometry built per frame.
+  const C = CHAPTERS[currentStep];
+  dyn.clear();
+  if (C.anim) C.anim(dyn.stream, tSec);
+  for (const L of C.links) emitLinkPulses(dyn.stream, L, tSec);
+  dyn.seal();
+
+  const cur = SETS[curSet], prev = SETS[1 - curSet];
+  cur.main.look(ease, 1); cur.dim.look(ease, 0.55); dyn.look(ease, 1);
+  drawList.length = 0;
+  for (const b of floorBatches) drawList.push(b);
+  if (ease < 1 && prev.step >= 0) {
+    prev.main.look(1 - ease, 1); prev.dim.look(1 - ease, 0.55);
+    for (const b of prev.dim.batches) drawList.push(b);
+    for (const b of prev.main.batches) drawList.push(b);
+  }
+  for (const b of cur.dim.batches) drawList.push(b);
+  for (const b of cur.main.batches) drawList.push(b);
+  for (const b of dyn.batches) drawList.push(b);
+
+  // Labels: laid out per frame against the camera, in holon-draw screen batches.
   text.beginFrame();
-  let e0 = text.epoch;
-  buildScene3D(currentStep, tSec, vp, Wcss, Hcss);
-  if (text.epoch !== e0) buildScene3D(currentStep, tSec, vp, Wcss, Hcss);
+  const e0 = text.epoch;
+  for (let pass = 0; pass < 2; pass++) {
+    for (const b of screenBatches) b.clear();
+    emitPlaques(C.labels, C.obstacles, vp, Wcss, Hcss);
+    if (text.epoch === e0) break;
+  }
+  for (const b of screenBatches) { b.params[PARAM.FADE] = ease; b.seal(); drawList.push(b); }
 
   gl.viewport(0, 0, W, H);
-  gl.clearColor(0.038, 0.052, 0.082, 1.0);
+  gl.clearColor(0.043, 0.055, 0.082, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-  // 100% rendered by `holon-draw` (`docs/holon/draw.js`)!
-  drawer.draw(
-    allHolonBatches,
-    vp,
-    LIGHT_DIR,
-    {
-      eye: [eyeHolon[0], eyeHolon[1], eyeHolon[2], 1],
-      viewport: [0, 0, W, H],
-      depthTest: true,
-      shade: 0.45
-    }
-  );
+  VPORT[2] = W; VPORT[3] = H;
+  drawer.draw(drawList, vp, DRAW_OPTS);
 
   requestAnimationFrame(frame);
 }
