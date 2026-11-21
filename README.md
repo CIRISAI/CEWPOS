@@ -1,32 +1,44 @@
-# CEWPOS — CIRIS Epistemic Web Platform OS
+# CEWPOS — A foundation for a more trustworthy digital world
 
-> **End-to-end, the CIRIS stack forms a complete, running constitutional mesh for people and AI agents.**
->
-> Ordinary devices (phones, laptops, servers) form a peer-to-peer network with no platform owner in the
-> middle. Every consequential act is a signed, scoped, contestable row. Ethics and the wire format that
-> enforces them live in one versioned document. Named humans can pause the AIs that follow their root.
-> The whole thing is designed so that the rules cannot quietly drift from the code, and the code cannot
-> quietly drift from the formal models.
->
-> **CIRISServer** (`v0.5.245`) and **CIRISAgent** (app store) are the **shipping production software** —
-> the fabric node and the conscience-bearing AI agent. Their shipping multi-platform interface is
-> **[CIRISClient](https://github.com/CIRISAI/CIRISClient)** (Kotlin Multiplatform across Android, iOS,
-> desktop, and WASM browser, governed by **101 Client Surface Definitions** in **CSD/3 → CSD/4** and the
-> [Circles architecture](https://cirisai.github.io/CIRISClient/circles.html)). **CEWPOS is the native
-> OS & semantic-view architecture** over that same substrate: an **Attestation Calculus** evaluator,
-> **zero-import WASM view-forms**, and a **full-screen Bevy / `CIRISHolon` 3D renderer (`100vw × 100vh`)**
-> driven directly by the **12 closed UX primitives (`P1`–`P12`)** and the formal state and claim algebra of
-> **[CIRISConstitution](https://github.com/CIRISAI/CIRISConstitution)**
-> (`v1.0-rc8.1` / `rc9` formal closure). Continuously verified by
-> **[CIRISConformance](https://github.com/CIRISAI/CIRISConformance)** (17,000+ tests, 219 conformance
-> specs) · AGPL-3.0-or-later · part of the [CIRIS](https://ciris.ai) ecosystem.
+**The internet should belong to the people who use it.** CEWPOS is CIRIS's exploration of an operating-system foundation for a network where people and communities can meet, share, decide, and build together—without handing control of their lives to a platform in the middle.
 
-**New here?** Start with [`WHY.md`](WHY.md) — a 5-minute orientation (the inversion, the small kernel,
-the three layers, and why CEWPOS is *moderation-first*), [`AGENTS.md`](AGENTS.md) — the canonical
-engineering guide for **full-screen Bevy primitives-based rendering (`P1`–`P12`) and CEWPOS CEG
-projection**, and the plain-words
-[CIRIS Circles explainer](https://cirisai.github.io/CIRISClient/circles.html) (*"Starts close to you.
-Moves out only when you say so. Comes back if anyone in it asks."*).
+The idea is simple: **people keep their agency; every important action can be checked; and the systems acting on our behalf remain answerable to us.**
+
+CEWPOS builds on the wider CIRIS project. It explores how the same public rules can guide both what a system does and how it records what happened. Software may suggest an action, but it does not get the final say merely because it is powerful or intelligent. People retain the ability to set boundaries, challenge decisions, and stop the agents they entrust.
+
+## What this project is—and isn't
+
+CEWPOS is an **architecture and active engineering project**, not a claim that every part of this vision is already a finished product. CIRISServer, CIRISAgent, and CIRISClient are maintained as separate shipping components. This repository contains CEWPOS's design, experiments, implementation work, and the evidence available for each.
+
+The goal is not technology for its own sake. It is a digital commons: a place where trust is earned, power is limited, and people can participate without surrendering ownership of their identity, relationships, or choices.
+
+## Explore
+
+| Start with | Why |
+|---|---|
+| [Why CEWPOS exists](WHY.md) | The problem, the idea, and the path forward—in plain language |
+| [CIRIS Web4: the constitutional mesh](https://github.com/CIRISAI/CIRISConstitution/blob/main/web4/CIRIS_Web4.md) | The latest Web4 paper (Draft 0.5) |
+| [Web4 paper, PDF](https://github.com/CIRISAI/CIRISConstitution/blob/main/web4/CIRIS_Web4_Draft_0.5.pdf) | A portable reading copy |
+| [The CIRIS Constitution](https://github.com/CIRISAI/CIRISConstitution) | The shared rulebook: what the system owes people and how it must show its work |
+| [Deployment guide](DEPLOYMENT.md) | Build and run the current experiments |
+| [Engineering guide](AGENTS.md) | Conventions and guidance for contributors |
+| [Attestation Calculus](CEWPOS_ATTESTATION_CALCULUS.md) | The deeper design behind accountable, checkable actions |
+
+## CIRIS work submitted to the IETF
+
+These are **Internet-Drafts**, not approved Internet standards. Each title links to its current record on the IETF Datatracker; the draft identifier is included so it can be cited or searched.
+
+| Draft | What it describes |
+|---|---|
+| [draft-moore-scitt-ciris-ceg-03](https://datatracker.ietf.org/doc/draft-moore-scitt-ciris-ceg/03/) | Signed CIRIS statements and how they relate to SCITT |
+| [draft-moore-scitt-ciris-trace-00](https://datatracker.ietf.org/doc/draft-moore-scitt-ciris-trace/00/) | A signed account of an AI agent's work and decisions |
+| [draft-moore-scitt-ciris-trace-context-00](https://datatracker.ietf.org/doc/draft-moore-scitt-ciris-trace-context/00/) | A record of the information supplied to each model call |
+
+The [CIRIS Constitution's IETF draft directory](https://github.com/CIRISAI/CIRISConstitution/tree/main/ietf) tracks the source files and coordinated draft suite.
+
+## In one sentence
+
+CEWPOS is an effort to make a network worthy of the people who live in it—and to make powerful software a participant in that network, never its owner.
 
 ## The End-to-End CIRIS Stack
 
@@ -398,7 +410,7 @@ proves the fabric; it does not claim to have solved the human layer it deliberat
 ## Ecosystem & references
 
 - **CIRIS** — [ciris.ai](https://ciris.ai) · the **vision** ([/vision](https://ciris.ai/vision) — "honor the reaching instead of intercepting it") · **continuous verification** ([/verification](https://ciris.ai/verification/), 17k+ tests, 219 conformance specs) · **proof** ([/proof](https://ciris.ai/proof), 359+ established constitutional claims) · **compliance** ([/compliance](https://ciris.ai/compliance) — the policy layer cross-walked to EU HLEG / IEEE EAD / ASEAN / Magnifica Humanitas) · **comparison / "the other road"** ([/compare](https://ciris.ai/compare)) · **Circles explainer** ([cirisai.github.io/CIRISClient/circles.html](https://cirisai.github.io/CIRISClient/circles.html))
-- **[CIRISConstitution](https://github.com/CIRISAI/CIRISConstitution)** (`v1.0-rc8.1` · `rc9` formal-closure branch) — canonical source of the CIRIS Constitution (CC) and CEG wire grammar, with 14 TLA+/Lean 4/Python formal model suites (`formal/`), `STATE_TABLE.tsv` (157 states over 51 variables in 9 planes), `INVARIANTS.tsv` (152 checked properties), `namespace_registry.json` (169 claim families), `governance_policy.json` (10 governance decision shapes), `topology_vocabulary.json` (110 CSD/4 atoms), and `evidence_pins.tsv`.
+- **[CIRISConstitution](https://github.com/CIRISAI/CIRISConstitution)** — the current shared rulebook and evidence register. Read its [plain-language vision](https://github.com/CIRISAI/CIRISConstitution/blob/main/VISION.md), [latest Web4 paper](https://github.com/CIRISAI/CIRISConstitution/blob/main/web4/CIRIS_Web4.md), [current IETF drafts](https://github.com/CIRISAI/CIRISConstitution/tree/main/ietf), and [release history](https://github.com/CIRISAI/CIRISConstitution/blob/main/CHANGELOG.md) for up-to-date versions and status.
 - **[CIRISClient](https://github.com/CIRISAI/CIRISClient)** — unified KMP/Compose client (Android, iOS, Desktop, WASM browser), the CSD/3 & CSD/4 catalog (`FSD/CSD/`), 9 UI primitives (`ui/primitives/`), 29-language MQM localization pipeline, and 5-platform live-QA harness.
 - **[CIRISConformance](https://github.com/CIRISAI/CIRISConformance)** — the federation-cohabitation + cross-artifact conformance harness; the proof the separately-shipped components enforce the constitution as one system.
 - **[CIRISServer](https://github.com/CIRISAI/CIRISServer)** (`v0.5.232`) — the base fabric node (`ciris_server._native` cohabitation runtime folding `ciris-lens-core`, registry, and nodecore surfaces over the shared substrate, plus the `T0`–`T19` native topology harness).
