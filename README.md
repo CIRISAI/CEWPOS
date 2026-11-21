@@ -1,32 +1,33 @@
 # CEWPOS — CIRIS Epistemic Web Platform OS
 
-> **End-to-end, the CIRIS stack forms a complete, running constitutional mesh for people and AI agents.**
->
-> Ordinary devices (phones, laptops, servers) form a peer-to-peer network with no platform owner in the
-> middle. Every consequential act is a signed, scoped, contestable row. Ethics and the wire format that
-> enforces them live in one versioned document. Named humans can pause the AIs that follow their root.
-> The whole thing is designed so that the rules cannot quietly drift from the code, and the code cannot
-> quietly drift from the formal models.
->
-> **CIRISServer** (`v0.5.245`) and **CIRISAgent** (app store) are the **shipping production software** —
-> the fabric node and the conscience-bearing AI agent. Their shipping multi-platform interface is
-> **[CIRISClient](https://github.com/CIRISAI/CIRISClient)** (Kotlin Multiplatform across Android, iOS,
-> desktop, and WASM browser, governed by **101 Client Surface Definitions** in **CSD/3 → CSD/4** and the
-> [Circles architecture](https://cirisai.github.io/CIRISClient/circles.html)). **CEWPOS is the native
-> OS & semantic-view architecture** over that same substrate: an **Attestation Calculus** evaluator,
-> **zero-import WASM view-forms**, and a **full-screen Bevy / `CIRISHolon` 3D renderer (`100vw × 100vh`)**
-> driven directly by the **12 closed UX primitives (`P1`–`P12`)** and the formal state and claim algebra of
-> **[CIRISConstitution](https://github.com/CIRISAI/CIRISConstitution)**
-> (`v1.0-rc8.1` / `rc9` formal closure). Continuously verified by
-> **[CIRISConformance](https://github.com/CIRISAI/CIRISConformance)** (17,000+ tests, 219 conformance
-> specs) · AGPL-3.0-or-later · part of the [CIRIS](https://ciris.ai) ecosystem.
+CEWPOS explores a **native, semantic-view operating-system layer** for the CIRIS Epistemic Web (CEWP). It combines an immutable, content-addressed attestation model with a deterministic evaluator and constrained rendering: agents may propose signed claims, but the fabric's admission rules—not the agent—decide what becomes state.
 
-**New here?** Start with [`WHY.md`](WHY.md) — a 5-minute orientation (the inversion, the small kernel,
-the three layers, and why CEWPOS is *moderation-first*), [`AGENTS.md`](AGENTS.md) — the canonical
-engineering guide for **full-screen Bevy primitives-based rendering (`P1`–`P12`) and CEWPOS CEG
-projection**, and the plain-words
-[CIRIS Circles explainer](https://cirisai.github.io/CIRISClient/circles.html) (*"Starts close to you.
-Moves out only when you say so. Comes back if anyone in it asks."*).
+The central design boundary is **proposal versus authority**:
+
+- **CEG** is the signed, canonical, append-only object model.
+- The **Attestation Calculus** evaluates a closed set of structural operators; its only world-changing effect is a gate-checked emission.
+- **View-forms** map data to renderer-neutral scenes. The intended WASM boundary denies ambient authority; rendering does not grant control of the substrate.
+- **Governance and moderation** remain explicit, inspectable policy—not hidden inside an autonomous runtime.
+
+> **Project status:** CEWPOS is the native OS / semantic-view architecture and engineering workspace. CIRISServer, CIRISAgent, and CIRISClient are the separately maintained shipping components. This README describes the architecture and the evidence recorded in this repository; a spike, design, or conformance result is not by itself a released CEWPOS product or proof of end-to-end deployment.
+
+## Start here
+
+| If you want to… | Read |
+|---|---|
+| Understand the motivation and design inversion | [WHY.md](WHY.md) |
+| See the calculus and its constraints | [Attestation Calculus design memo](CEWPOS_ATTESTATION_CALCULUS.md) |
+| Understand engineering conventions and UI projection | [AGENTS.md](AGENTS.md) |
+| Review the UI/formal-model mapping | [UI_FORMAL_PLAN.md](UI_FORMAL_PLAN.md) |
+| Explore the object model and implementation gaps | [object-model/](object-model/) |
+| Build or operate a node / renderer | [DEPLOYMENT.md](DEPLOYMENT.md) |
+| Inspect the current maturity and test evidence | [Maturity — what ships vs. what's spike-proven](#maturity--what-ships-vs-whats-spike-proven) |
+
+## Quick orientation
+
+CEWPOS is **not** a replacement for the CIRIS production substrate. It builds on that substrate and investigates a host-authoritative native interface: immutable attestations are the source of truth, the evaluator is deliberately small, and the renderer presents data without acquiring authority over it.
+
+For the end-to-end system map and component boundaries, continue below. For first-time contributors, begin with [AGENTS.md](AGENTS.md) before changing code.
 
 ## The End-to-End CIRIS Stack
 
