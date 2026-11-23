@@ -1770,8 +1770,13 @@ const CH = CHAPTERS.map((C, i) => {
 const dyn = new SceneSet();
 
 // The town's links, shown in chapter 8: every place joined to the square, glowing.
-const TOWN_LINKS = SITES.slice(0, 7).map(([x, z], i) =>
-  makeLink([x, 1.6, z], [0, 1.6, -10], 3.2 + (i % 3) * 0.8, 0, 0.07, i < 3 ? COL.green : i < 5 ? COL.amber : COL.blue, 0.22));
+// Each arrives at the square's RIM, on the side facing its own place. (They first all met at one point over the middle:
+// seven spokes with dashes running inward, which from above read as a rotor turning.)
+const SQUARE = [0, -10], SQUARE_RIM = 9.2;
+const TOWN_LINKS = SITES.slice(0, 7).map(([x, z], i) => {
+  const dx = x - SQUARE[0], dz = z - SQUARE[1], d = Math.hypot(dx, dz);
+  return makeLink([x, 1.6, z], [SQUARE[0] + dx / d * SQUARE_RIM, 0.5, SQUARE[1] + dz / d * SQUARE_RIM], 2.6 + (i % 3) * 0.7, 0, 0.06, i < 3 ? COL.green : i < 5 ? COL.amber : COL.blue, 0.22);
+});
 const townWeb = new SceneSet();
 for (const L of TOWN_LINKS) emitLinkTube(townWeb.stream, L);
 townWeb.seal();
@@ -1938,7 +1943,7 @@ function frame(tms) {
       bez(TOWN_LINKS[i], e, _q);
       icon(P.glyphs, _q, 0.5, 1.5 * (1 + 0.2 * Math.sin(Math.PI * u)), col, Math.min(u, 1 - u) / 0.08, name);
     }
-    townWeb.tubes.params[PARAM_FLOW] = tSec * 0.3; townWeb.tubes.params[PARAM_FLOW_N] = 9;
+    townWeb.tubes.params[PARAM_FLOW] = tSec * 0.18; townWeb.tubes.params[PARAM_FLOW_N] = 4;
     P.seal();
     setLook(P, 1, townWebLight);
     for (const b of P.batches) drawList.push(b);
