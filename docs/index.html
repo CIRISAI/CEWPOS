@@ -47,11 +47,10 @@ body {
   position: relative;
   /* The sky at golden hour (early morning, or the last hour of the day): the canvas is transparent where the town
      dissolves into it. */
-  /* The low sun is part of this background, BEHIND the canvas, so the town hides it where the town is. (It was a
-     layer over the canvas, which showed as a band across the top of the scene.) */
+  /* No sun disc. The town dissolves into this sky along the top of the stage, so anything bright drawn here shows through
+     the fading rooftops as a glowing blob (it did, twice). The warmth is a wide, soft wash and nothing with an edge. */
   background:
-    radial-gradient(26px 26px at 20% 9%, rgba(255, 250, 232, 1) 0%, rgba(255, 244, 214, 0.95) 46%, rgba(255, 226, 170, 0.35) 60%, rgba(0,0,0,0) 78%),
-    radial-gradient(70% 34% at 22% 34%, rgba(255, 226, 170, 0.75) 0%, rgba(255, 200, 140, 0.30) 42%, rgba(0, 0, 0, 0) 76%),
+    radial-gradient(120% 60% at 30% 0%, rgba(255, 222, 170, 0.34) 0%, rgba(255, 210, 160, 0.14) 50%, rgba(0, 0, 0, 0) 85%),
     linear-gradient(180deg, #4f76ad 0%, #7499c6 8%, #a3bcd6 16%, #d3d2d2 23%, #f0d3b4 30%, #f8d6a4 36%, #fbdcae 42%, #fde3bd 100%);
 }
 
