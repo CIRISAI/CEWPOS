@@ -1,8 +1,11 @@
 // holon-draw, the browser backend: draws the core's packed instance batches with instancing.
 //
 // One ES module, no dependency. The Rust core (`../src/lib.rs`) packs a scene into batches
-// of fixed 52-byte records (`Instance::pack`); this file uploads each batch as it is and
-// draws it with one instanced call. Nothing is built per vertex or per record in script.
+// of fixed 52-byte records (`Instance::pack`); this file uploads each batch as it is (or
+// reads it from a buffer the host made resident, see RESIDENT BUFFERS) and draws it with one
+// instanced call. Nothing is built per vertex or per record in script.
+// `./draw-webgpu.js` is the WebGPU sibling: this header is the contract of both; that file's
+// header says only how it is hosted and what differs.
 //
 // THE RECORD (little-endian, 52 bytes):
 //   f32 pos[3] @0   f32 size[3] @12   f32 aux[3] @24   f32 angle @36
@@ -18,7 +21,9 @@
 //                     the horizontal across the chord (z x chord, unit). size[1] = size[2] = 0
 //                     is the chord, which is how an arc was drawn before it could bend. Drawn
 //                     on a 16-segment tube (or ribbon), so it is smooth at any width.
-//   4 disc, 10 glyph  flat 24-gon in the plane z = pos.z, radius size[0]
+//   4 disc            flat 24-gon in the plane z = pos.z, radius size[0]
+//   10 glyph          its SHAPE is the low four bits of `variant` (see GLYPHS): shape 0, DISC, is the
+//                     disc above; shapes 1..15 are a camera-facing square of half size size[0]
 //   5 box, 6 prism    base centre pos, size = (x, y, z extents), turned by angle about z (prism: flat top)
 //                     With bit 3 of `variant` set (0x08, VARIANT_ORIENT) the box is ORIENTED: aux is
 //                     its local z axis (any length; zero means world z), size.z runs along it from
@@ -38,7 +43,7 @@
 //   0x20 METAL   three times the specular, tighter (exponent 90), a stronger rim, darker diffuse
 //   0x30 GLOW    unlit: the colour as given, as a light source looks; it neither casts nor
 //                receives a shadow
-// Unlit kinds ignore these bits (a glyph's variant is its shape).
+// Unlit kinds ignore these bits (a glyph's low four bits are its shape; its bits 4..5 are unused).
 //
 // SHADOWS (`opts.shadow`, off without it): { center: [x, y, z], radius, size = 1024,
 // strength = 0.55, bias = 0.0006 }. The lookup is taken a texel and a half out along the
@@ -47,7 +52,11 @@
 // a line or arc (tube, not flat) is drawn from the light into a size x size shadow map, an
 // orthographic view along -light covering the sphere (center, radius). A batch with
 // `castShadow === false` casts none; a mark whose alpha (with FADE and RING) is under one
-// half casts none. In the world pass every world mark receives: a lit mark's direct light is
+// half casts none. The RING there is the CAMERA's, taken at the caster's own point on the
+// map's pixel (that point projected by the camera's vp; a point behind the camera's eye is
+// outside the ring), so what the picture fades out casts nothing (2026-11-22; before, the
+// shadow pass measured the ring in the shadow map's own pixels, which meant nothing). FLOW
+// does not thin a shadow: a flow line casts as a solid line. In the world pass every world mark receives: a lit mark's direct light is
 // scaled by the lit fraction (four taps on a rotated grid), an unlit mark's colour by
 // mix(1 - strength, 1, lit fraction). GLOW marks neither cast nor receive. The map is RGBA8
 // with depth packed in it (no extension, WebGL 1 and 2 alike). On a device with no high
@@ -59,17 +68,61 @@
 // top-left, y down; `offset` is the tile's origin in pixels; `vp` does not apply. They are
 // drawn AFTER every world batch, in the order given, with the depth test off. Kinds there:
 //   1 quad, 9 patch   rectangle size[0] by size[1] centred at pos, corner radius aux[0] px
-//   4 disc, 10 glyph  filled circle, radius size[0] px
-//   2 line, 3 arc     from pos to aux, width size[0] px, flat ends
+//   4 disc            filled circle, radius size[0] px
+//   10 glyph          shape 0 (DISC): that circle; shapes 1..15: GLYPHS, in a square of half size
+//                     size[0] px centred at pos, turned by angle
+//   2 line, 3 arc     from pos to aux, width size[0] px, flat ends (an arc is straight here);
+//                     FLOW as on a world line (VARIANT_FLOW, see FLOW)
 //   11 run            a text run from the text provider's atlas (`./text.js`): rectangle
 //                     size[0] by size[1] centred at pos, its top-left rounded to a whole pixel;
 //                     u0 = aux[0], v0 = aux[1], u1 = aux[2], v1 = angle; atlas page = variant
 //                     (byte 51, pages 0..3); colour = rgba.rgb, alpha = rgba.a * coverage.
+//   12 image          a rectangle of a HOST texture, laid out as a run: size[0] by size[1]
+//                     centred at pos, top-left on a whole pixel, u0 = aux[0], v0 = aux[1],
+//                     u1 = aux[2], v1 = angle; texture SLOT = variant (byte 51, 0..255), set
+//                     with setImage(); colour = texture.rgb * rgba.rgb, alpha = texture.a *
+//                     rgba.a. The core puts one slot in a batch, so the first record names it.
+//                     A batch whose slot holds no texture is skipped (stats().missingImages).
 // Shapes are cut by a signed distance in the fragment stage, with about 1 px of antialiasing.
-// Other kinds in a screen batch, a run in a world batch, and a run with no provider bound
-// are skipped. The viewport is `opts.viewport` ([x, y, w, h], as GL has it) or, without it,
+// Other kinds in a screen batch, a run or an image in a world batch, and a run with no provider
+// bound are skipped. The viewport is `opts.viewport` ([x, y, w, h], as GL has it) or, without it,
 // gl.getParameter(gl.VIEWPORT), which allocates: a host that draws screen batches every
 // frame passes `opts.viewport`.
+//
+// RESIDENT BUFFERS. A batch's records either arrive with it (`bytes`: uploaded on every
+// draw(), into this file's own per-kind buffers) or already live on the GPU:
+//   const h = drawer.resident(bytes)   one buffer, uploaded once (GL: STATIC_DRAW); h is a
+//                                      positive integer. bytes.byteLength is a multiple of 52.
+//   drawer.update(h, bytes)            new contents: written in place when they fit the
+//                                      buffer's allocation (a shrink keeps the allocation),
+//                                      else the buffer is reallocated; the handle stays h
+//   drawer.release(h)                  frees it; h may be handed out again by resident()
+//   batch = { kind, handle: h, first, count, offset, params, screen?, coarse?, shade?,
+//             castShadow?, slot? }     records first .. first + count - 1 of that buffer,
+//                                      drawn with NO upload. `first` defaults to 0.
+// Everything else about a resident batch is a `bytes` batch's: one handle may hold many
+// batches of any kinds (the batch's `kind` says how its range is drawn), a world one is drawn
+// into the shadow map like any other (and not with `castShadow === false`), it may be mixed
+// with `bytes` batches in one draw(), in any order. A draw() whose batches are all resident
+// uploads no record: stats().bytesUploaded is 0 (tile settings are uniforms, counted in
+// paramUploads as before). draw() throws, before it changes any state, on an unknown or
+// released handle and on a range past the records the buffer holds now (after update()).
+// A RESIDENT IMAGE BATCH (kind 12, screen) must carry `slot` (0..255): the texture slot that
+// a `bytes` image batch reads from its first record's byte 51, which for a resident batch is
+// on the GPU, not in hand. draw() throws on a resident image batch without an integer `slot`
+// in 0..255. On a `bytes` image batch `slot` is not read (byte 51 names it, as before).
+// stats() gains residentBuffers and residentBytes: what is resident now (bytes allocated, so
+// a shrinking update() does not lower it), not reset by draw().
+// WHAT A RESIDENT BATCH COSTS IN GL CALLS, after its first draw:
+//   with vertex array objects (WebGL 2, or WebGL 1 with OES_vertex_array_object):
+//     bind its vertex array (skipped when it is the one bound), the offset uniform, the draw.
+//     Each distinct (handle, slot's mesh, first) gets its own vertex array, made on first use
+//     (about 25 calls, once; the shadow pass and the picture share it) and deleted with the
+//     handle; at most 256 per handle, beyond which that batch is drawn the bare way below.
+//   bare WebGL 1: bind the buffer, 6 attribute pointers, the offset uniform, the draw.
+//   a `bytes` batch, for comparison: the same plus its upload.
+// As before, add the slot's uniforms when the slot changes from the batch before, and the
+// tile settings when they differ from the last uploaded.
 //
 // TILE SETTINGS (`batch.params`, 32 numbers = 8 groups of 4; absent means neutral). Slots:
 //   [0..2]   DIM     rgb multiplier on every colour of the tile, applied last (after lighting)
@@ -79,16 +132,30 @@
 //   [16..19] NOISE   x0, y0, sx, sy: field position = (x0, y0) + (sx, sy) * (the mark's local xy)
 //   [20]     TEX     the procedural field's strength, 0 off
 //   [21]     FLOOR_CASING  a CASING line's or arc's least HALF width, in pixels; 0 off
+//   [22]     FLOW    the FLOW phase, in dash cycles (a host adds time * speed; any real number,
+//                    only its fractional part is used): see FLOW. World and screen.
+//   [23]     FLOW_N  how many dashes run along each FLOW mark; 0 means 6. World and screen.
 //   [24]     FLOOR   any other world line's or arc's least HALF width, in pixels; 0 off
 //   [25]     A_GROUND  [26] A_CASING  [27] A_ROAD  [28] A_ROOF   alpha multiplier per surface
 //                    class (below), read as given: 1 neutral, 0 hides the class.
 //   [29..31] RING    centre x, centre y, radius, in device pixels from the viewport's top-left,
 //                    y down: alpha *= 1 - smoothstep(0.85 r, r, distance), on every WORLD mark
 //                    of the tile; radius 0 off. Screen batches do not read it. The distance
-//                    is taken PER PIXEL (the twin takes it per vertex, which is the same on
-//                    its short segments and wrong on a long street or a large patch, whose
-//                    ends can all lie outside the ring while its middle crosses it).
-//   [7] [11] [15] [22] [23] are not read.
+//                    is taken PER PIXEL, from the fragment's own window position
+//                    (gl_FragCoord, whose origin is the bottom-left: the vertex stage hands the
+//                    fragment stage the ring's centre in window pixels, from `opts.viewport`'s
+//                    origin, or 0, 0 without it). The twin takes it per vertex, which is the
+//                    same on its short segments and wrong on a long street or a large patch.
+//                    For the shadow pass see SHADOWS.
+//                    CORRECTION 2026-11-22: this said "per pixel" and was not. The vertex stage
+//                    projected each VERTEX to pixels and the fragment stage interpolated
+//                    (pixel - centre) / radius between them. Under a perspective vp that is
+//                    wrong on any large mark, and where a vertex lies behind the eye (w < 0)
+//                    its projection is garbage: a 150-unit ground patch under the ring
+//                    vanished entirely (found by the CEWPOS story page, which tiled its lawn
+//                    into 6-unit patches to get round it). Under an orthographic vp (w = 1, a
+//                    flat map) the old interpolation was exact up to rounding.
+//   [7] [11] [15] are not read.
 // They are uploaded per batch only when their values differ from the last ones uploaded to
 // that program (compared number by number; nothing is allocated).
 //
@@ -116,6 +183,8 @@
 // VARIANT_CASING) is the casing and bit 1 the round ends (below). A glyph's variant is its
 // shape: a glyph is in no class.
 //
+// On a line or arc bit 2 (0x04, VARIANT_FLOW) is FLOW (below), world and screen.
+//
 // LINE ENDS. A world line or arc ends FLUSH (cut square at pos and at aux) unless bit 1 of
 // its `variant` is set (0x02, VARIANT_ROUND, proposed here): then each end has a round cap
 // of the line's own half width (after FLOOR), so a polyline of such segments has round
@@ -126,6 +195,55 @@
 // the horizontal across it (half discs for round ends), which is what a map wants;
 // `flatLines` defaults to true when `opts.depthTest` is false, else false. A vertical line
 // has no horizontal across it that means anything: draw those as tubes.
+//
+// GLYPHS (kind 10). The low four bits of `variant` are the SHAPE, a closed list (GLYPH):
+//   0 DISC  1 ARROW  2 TICK  3 CROSS  4 RING  5 BAR  6 DOCUMENT  7 PHOTO  8 VIDEO  9 CHAT
+//   10 KEY  11 BALLOT  12 PERSON  13 HEART  14 STOP  15 LOCK
+// The top two bits are the colour mode, as for every kind; bits 4..5 are unused.
+// Shape 0 is the disc a glyph always was, world and screen, unchanged. Shapes 1..15:
+//   world   a CAMERA-FACING square of half size size[0] world units centred at pos, its axes
+//           the screen's right and up (taken from vp alone: right keeps clip y and w, up keeps
+//           clip x and w; for an orthographic vp, z for w), turned by `angle` radians,
+//           counter-clockwise as seen. Unlit (even under `flatLit`), receives no shadow, casts
+//           none (a glyph is not drawn into the shadow map). Depth-tested; a fragment whose
+//           coverage is under one half is DISCARDED, so it writes no depth and what is behind
+//           an icon's empty corners shows; the edge's antialiasing is therefore its inner half.
+//           The square is the disc mesh's 24-gon with its rim laid on the square's edge (its
+//           four corners are rim vertices): one mesh serves a batch of mixed shapes.
+//   screen  the same drawing in a square of half size size[0] px centred at pos (+ the tile's
+//           offset), turned by `angle`, counter-clockwise as seen (y is down on screen, so
+//           that is the negative angle in pixel coordinates). In RAMP mode a screen mark's t
+//           is its `angle` (COLOUR MODE): a screen glyph in RAMP mode is turned by its t.
+// Each shape is cut from signed distances in the fragment stage, antialiased over about one
+// pixel (the square's pixels per unit: in the world size[0] times the pixels per world unit
+// at its centre, from `pixelsPerUnit` or the clip w; on screen size[0]), crisp at any size,
+// with no texture. TWO TONES: the BODY is the mark's colour; the DETAIL is an ink derived from
+// it, rgb 0.08 when the body's luminance (0.2126 r + 0.7152 g + 0.0722 b, of the colour
+// after the colour mode, before DIM) is over 0.45, else 0.96; DIM then applies to both. The
+// details: DOCUMENT its folded corner and three lines of text; PHOTO its sun and two hills;
+// VIDEO its play triangle; CHAT its three dots; BALLOT its slot and the tick on its paper;
+// STOP its bar; LOCK its keyhole. ARROW, TICK, CROSS, RING, BAR, KEY, PERSON and HEART are
+// one tone. ARROW points along +x before `angle`. FADE, DIM and (world) RING apply as to any
+// flat mark. A glyph is in no surface class. The shapes are written once (GLYPH_GLSL below)
+// and draw-webgpu.js translates that source to WGSL, so the backends cannot drift apart.
+//
+// FLOW (VARIANT_FLOW, bit 2 of a line's or arc's `variant`, world and screen). Dashes move
+// from pos toward aux. Along the mark's length parameter u (0 at pos, 1 at aux; an ARC's u is
+// its length along the curve as drawn, so the dashes are evenly spaced on a bent arc; a round
+// end's cap takes the end's value), with N = FLOW_N (0: 6) and phase P = FLOW, the place in
+// the pattern is x = u N - P; each cycle of x is a dash on its first half and a gap on its
+// second. In a dash the mark's colour at its own full alpha, brightened toward white by 8 %
+// at its tail and 40 % at its leading edge (the larger-u edge), so the direction reads in a
+// still frame on any body that is not already white; between dashes the colour at 35 % of
+// its alpha. The leading edge is cut over about 1.5 pixels, the tail over about 0.1 cycle
+// more, so the dash edges are soft at any width (the pixels a cycle spans are estimated per
+// vertex from the mark's length). Raising P moves the dashes toward aux; P is a TILE
+// SETTING, so an animated link costs one setting upload per frame and no record upload, and
+// a link in a resident buffer stays resident. It works on a tube and a flat ribbon, with
+// VARIANT_ROUND or flush ends, on a bent arc, and on screen lines and arcs. A flow mark keeps
+// its other bits (casing, round ends) and its class. Lit lines under `flatLit` are lit as
+// before; the dashes change the colour before lighting. In the shadow pass a flow line casts
+// as a solid line.
 //
 // THE FIELD (the twin's FSD/twin/texture.md, as its tiling.js TLF has it), when TEX > 0:
 // band-limited value noise on the grid of the field position, each octave faded out between
@@ -151,7 +269,11 @@
 // program. World programs: the vertex stage owns u_vp, u_offset, u_eye, u_mode, u_pix,
 // u_wview, u_params (and, with HD_SHADOW, u_lvp and u_lno); the fragment stage owns u_light,
 // u_shade (and, with HD_SHADOW, u_shadow and u_shp). The shadow program is the world vertex
-// stage with a fragment stage that has no uniforms. Screen program: the vertex stage owns
+// stage compiled with HD_ZPASS (which adds u_cvp, the camera's vp, to the vertex stage) with a
+// fragment stage that has no uniforms. The world program with shadows uses EIGHT varying
+// vectors as GLSL ES packs them (v_ls, v_c, v_dim; v_n, v_v, v_fp, v_ring with v_mat in a
+// spare column; v_np and v_sp sharing one), which is WebGL 1's guaranteed minimum: there is no
+// room for another varying there without packing it into one of these. Screen program: the vertex stage owns
 // u_view, u_soffset, u_smode, u_sparams; the fragment stage owns u_fmode, u_t0..u_t3. So
 // there is no pair whose precision could disagree at link. The tile settings are read in
 // the VERTEX stage only; what the fragment stage needs of them arrives as varyings.
@@ -186,7 +308,8 @@
 //   - CULL_FACE (left enabled), cullFace(BACK), frontFace(CCW);
 //   - ARRAY_BUFFER binding (left null);
 //   - the vertex array object binding, where one exists (WebGL 2 or OES_vertex_array_object):
-//     left null, i.e. the default object, whose own attribute state is NOT touched;
+//     left null, i.e. the default object, whose own attribute state is NOT touched
+//     (resident batches are drawn through this drawer's own vertex arrays: the same rule);
 //   - where no vertex array object exists (bare WebGL 1): attribute slots 0..7 (all eight) (pointers,
 //     enabled flags, divisors) and the ELEMENT_ARRAY_BUFFER binding. On return slots 0..7 are
 //     disabled, their divisors are 0, and ELEMENT_ARRAY_BUFFER is null;
@@ -194,8 +317,23 @@
 //     BLEND is off while the shadow map is drawn (enabled again for the world pass);
 //   - only when a run batch is drawn: activeTexture (left TEXTURE0) and the TEXTURE_2D
 //     bindings of units 0..3 (left on the atlas pages that exist; a unit whose page does
-//     not exist is not touched).
+//     not exist is not touched);
+//   - only when an image batch is drawn: activeTexture (left TEXTURE0) and the TEXTURE_2D
+//     binding of unit 5 (left on the last image drawn).
+//
+// IMAGES. setImage(slot, source, { nearest }) puts a texture in a slot: `source` is anything
+// texImage2D takes (ImageBitmap, ImageData, a canvas, an image or a video element; a video's
+// frame is copied when called, so a host calls it again for each new frame). `nearest: true`
+// samples it nearest (a QR grid, whose modules must stay square); otherwise LINEAR. Always
+// clamped, never mipmapped, so any size works on WebGL 1. Not premultiplied: the blend is
+// SRC_ALPHA. setImage saves and puts back the TEXTURE_2D binding of the active unit,
+// UNPACK_FLIP_Y_WEBGL and UNPACK_PREMULTIPLY_ALPHA_WEBGL, and changes nothing else.
+// deleteImage(slot) frees one. The core never sees pixels: what a slot holds is the host's.
 // A draw() with nothing to draw changes no state.
+// resident() and update() bind ARRAY_BUFFER and put back the binding they found (read with
+// getParameter); they change nothing else. release() deletes the buffer and this drawer's
+// vertex arrays made for it, and binds nothing (a host never has either bound: it never sees
+// them). A draw() with resident batches leaves exactly the state listed above.
 //
 // Translucent records are blended in the order given and write depth; a host that needs
 // correct layering of translucent marks orders its batches back to front.
@@ -206,7 +344,7 @@
 export const INSTANCE_BYTES = 52;
 
 export const KIND = Object.freeze({
-  QUAD: 1, LINE: 2, ARC: 3, DISC: 4, BOX: 5, PRISM: 6, SPHERE: 7, ROD: 8, PATCH: 9, GLYPH: 10, RUN: 11,
+  QUAD: 1, LINE: 2, ARC: 3, DISC: 4, BOX: 5, PRISM: 6, SPHERE: 7, ROD: 8, PATCH: 9, GLYPH: 10, RUN: 11, IMAGE: 12,
 });
 
 // Attribute slots, bound before link. Slot 0 is a mesh attribute (never instanced), which
@@ -241,13 +379,22 @@ const PF_HEAD_F = `#ifdef GL_FRAGMENT_PRECISION_HIGH
 `;
 
 /** Where each setting is in a tile's 32 numbers (see TILE SETTINGS at the top). */
-export const PARAM = Object.freeze({ DIM: 0, FADE: 3, RAMP0: 4, RAMP1: 8, TINT: 12, NOISE: 16, TEX: 20, FLOOR_CASING: 21, FLOOR: 24, A_GROUND: 25, A_CASING: 26, A_ROAD: 27, A_ROOF: 28, RING: 29 });
+export const PARAM = Object.freeze({ DIM: 0, FADE: 3, RAMP0: 4, RAMP1: 8, TINT: 12, NOISE: 16, TEX: 20, FLOOR_CASING: 21, FLOW: 22, FLOW_N: 23, FLOOR: 24, A_GROUND: 25, A_CASING: 26, A_ROAD: 27, A_ROOF: 28, RING: 29 });
 /** Bit 0 of `variant` on a line or arc: a casing. */
 export const VARIANT_CASING = 0x01;
 /** On a disc: bit 0 the casing class (no field), bit 2 the canopy field. A tree is both (0x05). */
 export const DISC_CASING = 0x01, DISC_CANOPY_FIELD = 0x04;
 /** Bit 1 of `variant` on a line or arc: round ends (a cap of the line's half width at each). */
 export const VARIANT_ROUND = 0x02;
+/** Bit 2 of `variant` on a line or arc (world or screen): FLOW, dashes moving from pos to aux (see FLOW). On a disc the same bit is the canopy field; the kinds differ. */
+export const VARIANT_FLOW = 0x04;
+/** The low four bits of a glyph's `variant`: its SHAPE, one of GLYPH (see GLYPHS). */
+export const VARIANT_GLYPH_SHAPE = 0x0f;
+/** The glyph shapes, a closed list (see GLYPHS at the top). */
+export const GLYPH = Object.freeze({
+  DISC: 0, ARROW: 1, TICK: 2, CROSS: 3, RING: 4, BAR: 5, DOCUMENT: 6, PHOTO: 7, VIDEO: 8,
+  CHAT: 9, KEY: 10, BALLOT: 11, PERSON: 12, HEART: 13, STOP: 14, LOCK: 15,
+});
 /** Bit 3 of `variant` on a box or prism: oriented, aux is its local z axis (see KINDS). */
 export const VARIANT_ORIENT = 0x08;
 /** Bits 4..5 of `variant` on a lit mark: its material (see MATERIAL at the top). */
@@ -256,6 +403,145 @@ export const MATERIAL = Object.freeze({ KIND: 0x00, MATTE: 0x10, METAL: 0x20, GL
 /** Tile settings that leave every colour as its record gives it (the core's PARAMS_NEUTRAL). */
 export const PARAMS_NEUTRAL = Object.freeze([1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0]);
 export const COLOUR = Object.freeze({ LITERAL: 0x00, RAMP: 0x40, TINT: 0x80 });
+
+// THE GLYPH SHAPES and the FLOW dash, written once in a small subset of GLSL that
+// draw-webgpu.js translates to WGSL mechanically (wgslOf there): functions named hd_*, typed
+// float/vec2/vec3 parameters that are never assigned, locals declared with a value, braces on
+// every if, no ternary, no mod, float literals with a point. Distances are in the glyph's
+// square (-1..1, y up); 4.0 stands for "none" (far outside, and small enough for mediump).
+// Exported for draw-webgpu.js only; a host has no use for it.
+export const GLYPH_GLSL = `
+float hd_box(vec2 p, vec2 b) {
+  vec2 q = abs(p) - b;
+  return length(max(q, vec2(0.0))) + min(max(q.x, q.y), 0.0);
+}
+float hd_rbox(vec2 p, vec2 b, float r) {
+  return hd_box(p, b - vec2(r)) - r;
+}
+float hd_seg(vec2 p, vec2 a, vec2 b) {
+  vec2 pa = p - a;
+  vec2 ba = b - a;
+  float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
+  return length(pa - ba * h);
+}
+// The outside of the edge a -> b of a counter-clockwise polygon.
+float hd_edge(vec2 p, vec2 a, vec2 b) {
+  return dot(p - a, normalize(vec2(b.y - a.y, a.x - b.x)));
+}
+float hd_tri(vec2 p, vec2 a, vec2 b, vec2 c) {
+  return max(max(hd_edge(p, a, b), hd_edge(p, b, c)), hd_edge(p, c, a));
+}
+float hd_heart(vec2 p0) {
+  vec2 p = vec2(abs(p0.x), p0.y);
+  if (p.y + p.x > 1.0) {
+    return length(p - vec2(0.25, 0.75)) - 0.35355339;
+  }
+  vec2 a = p - vec2(0.0, 1.0);
+  vec2 b = p - vec2(0.5) * max(p.x + p.y, 0.0);
+  return sqrt(min(dot(a, a), dot(b, b))) * sign(p.x - p.y);
+}
+float hd_oct(vec2 p0, float r) {
+  vec2 k = vec2(-0.9238795325, 0.3826834323);
+  vec2 p = abs(p0);
+  p = p - 2.0 * min(dot(k, p), 0.0) * k;
+  p = p - 2.0 * min(dot(vec2(-k.x, k.y), p), 0.0) * vec2(-k.x, k.y);
+  p = p - vec2(clamp(p.x, -0.4142135623 * r, 0.4142135623 * r), r);
+  return length(p) * sign(p.y);
+}
+// (body, ink) signed distances of shape k (1..15) at p.
+vec2 hd_glyph(float k, vec2 p) {
+  float b = 4.0;
+  float i = 4.0;
+  if (k < 1.5) {
+    // ARROW along +x: a shaft and a head
+    b = min(hd_rbox(p - vec2(-0.38, 0.0), vec2(0.48, 0.19), 0.05),
+            hd_tri(p, vec2(0.9, 0.0), vec2(0.04, 0.64), vec2(0.04, -0.64)));
+  } else if (k < 2.5) {
+    // TICK
+    b = min(hd_seg(p, vec2(-0.62, 0.04), vec2(-0.2, -0.4)), hd_seg(p, vec2(-0.2, -0.4), vec2(0.66, 0.52))) - 0.17;
+  } else if (k < 3.5) {
+    // CROSS
+    b = min(hd_seg(p, vec2(-0.58, -0.58), vec2(0.58, 0.58)), hd_seg(p, vec2(-0.58, 0.58), vec2(0.58, -0.58))) - 0.17;
+  } else if (k < 4.5) {
+    // RING
+    b = abs(length(p) - 0.66) - 0.18;
+  } else if (k < 5.5) {
+    // BAR
+    b = hd_rbox(p, vec2(0.8, 0.2), 0.08);
+  } else if (k < 6.5) {
+    // DOCUMENT: a portrait page, its top-right corner folded; three lines of text
+    b = max(hd_rbox(p, vec2(0.64, 0.86), 0.07), (p.x + p.y - 1.04) * 0.70710678);
+    i = hd_tri(p, vec2(0.18, 0.4), vec2(0.62, 0.4), vec2(0.18, 0.84));
+    i = min(i, hd_rbox(p - vec2(-0.2, 0.2), vec2(0.24, 0.075), 0.03));
+    i = min(i, hd_rbox(p - vec2(0.0, -0.16), vec2(0.44, 0.075), 0.03));
+    i = min(i, hd_rbox(p - vec2(-0.08, -0.52), vec2(0.36, 0.075), 0.03));
+  } else if (k < 7.5) {
+    // PHOTO: a landscape frame; a sun and two hills inside it
+    b = hd_rbox(p, vec2(0.9, 0.68), 0.1);
+    float m = min(hd_tri(p, vec2(-0.78, -0.56), vec2(0.22, -0.56), vec2(-0.3, 0.16)),
+                  hd_tri(p, vec2(-0.02, -0.56), vec2(0.78, -0.56), vec2(0.4, -0.06)));
+    i = max(hd_rbox(p, vec2(0.76, 0.54), 0.04), min(m, length(p - vec2(0.38, 0.24)) - 0.15));
+  } else if (k < 8.5) {
+    // VIDEO: a rounded landscape screen and a play triangle
+    b = hd_rbox(p, vec2(0.9, 0.62), 0.22);
+    i = hd_tri(p, vec2(-0.2, -0.3), vec2(0.36, 0.0), vec2(-0.2, 0.3)) - 0.05;
+  } else if (k < 9.5) {
+    // CHAT: a speech bubble with a tail, and three dots
+    b = min(hd_rbox(p - vec2(0.0, 0.14), vec2(0.88, 0.6), 0.34),
+            hd_tri(p, vec2(-0.62, -0.25), vec2(-0.74, -0.86), vec2(-0.12, -0.3)));
+    i = min(min(length(p - vec2(-0.4, 0.14)), length(p - vec2(0.0, 0.14))), length(p - vec2(0.4, 0.14))) - 0.12;
+  } else if (k < 10.5) {
+    // KEY: a ring bow, a shaft and two teeth
+    b = abs(length(p - vec2(-0.5, 0.0)) - 0.29) - 0.15;
+    b = min(b, hd_box(p - vec2(0.38, 0.0), vec2(0.52, 0.12)));
+    b = min(b, hd_box(p - vec2(0.54, -0.24), vec2(0.08, 0.16)));
+    b = min(b, hd_box(p - vec2(0.8, -0.22), vec2(0.08, 0.13)));
+  } else if (k < 11.5) {
+    // BALLOT: a box with a slot, and a ticked paper going in
+    b = min(hd_rbox(p - vec2(0.0, -0.44), vec2(0.84, 0.42), 0.08), hd_rbox(p - vec2(0.0, 0.4), vec2(0.46, 0.5), 0.04));
+    i = hd_rbox(p - vec2(0.0, -0.06), vec2(0.62, 0.055), 0.03);
+    i = min(i, min(hd_seg(p, vec2(-0.22, 0.44), vec2(-0.06, 0.28)), hd_seg(p, vec2(-0.06, 0.28), vec2(0.24, 0.66))) - 0.075);
+  } else if (k < 12.5) {
+    // PERSON: a head and shoulders
+    b = min(length(p - vec2(0.0, 0.42)) - 0.32, max(hd_rbox(p - vec2(0.0, -0.66), vec2(0.72, 0.52), 0.5), -0.9 - p.y));
+  } else if (k < 13.5) {
+    // HEART
+    b = hd_heart((p - vec2(0.0, -0.86)) * 0.625) * 1.6;
+  } else if (k < 14.5) {
+    // STOP: an octagon with a horizontal bar
+    b = hd_oct(p, 0.88);
+    i = hd_rbox(p, vec2(0.56, 0.14), 0.04);
+  } else {
+    // LOCK: a body, a shackle and a keyhole
+    b = hd_rbox(p - vec2(0.0, -0.36), vec2(0.7, 0.5), 0.12);
+    b = min(b, max(abs(length(p - vec2(0.0, 0.3)) - 0.38) - 0.11, 0.3 - p.y));
+    b = min(b, hd_box(vec2(abs(p.x) - 0.38, p.y - 0.2), vec2(0.11, 0.11)));
+    i = min(length(p - vec2(0.0, -0.28)) - 0.13, hd_box(p - vec2(0.0, -0.5), vec2(0.05, 0.16)));
+  }
+  return vec2(b, i);
+}
+// (body, ink) coverage of shape k at p, px pixels to one unit of the square: about one pixel
+// of antialiasing at any size.
+vec2 hd_glyphCov(float k, vec2 p, float px) {
+  return clamp(vec2(0.5) - hd_glyph(k, p) * px, vec2(0.0), vec2(1.0));
+}
+// The detail's ink: near black on a light body, near white on a dark one.
+vec3 hd_ink(vec3 c) {
+  if (dot(c, vec3(0.2126, 0.7152, 0.0722)) > 0.45) {
+    return vec3(0.08);
+  }
+  return vec3(0.96);
+}
+// A FLOW mark at x cycles along (dashes on [0, 0.5) of each cycle, moving toward larger x),
+// edge softness w in cycles: (the gain toward white, the alpha multiplier). The leading edge
+// of a dash is brighter than its tail.
+vec2 hd_flow(float x, float w) {
+  float f = fract(x);
+  float g = smoothstep(0.0, 0.1 + w, f) * (1.0 - smoothstep(0.5 - w, 0.5, f));
+  float lead = clamp(f * 2.0, 0.0, 1.0);
+  return vec2(g * (0.08 + 0.32 * lead * lead), 0.35 + 0.65 * g);
+}
+`;
 
 const VS = `
 precision highp float;
@@ -272,9 +558,12 @@ uniform vec3 u_offset;
 uniform vec4 u_eye;        // homogeneous eye: xyz - p*w points from p to the viewer
 uniform vec2 u_mode;       // x: 0 sphere, 1 tube, 2 scaled-and-turned, 3 bent tube (arc); y: radius scale
 uniform vec3 u_pix;        // half the viewport's height; pixels per world unit if given, else 0; kind code
-                           // (0 other, 1 quad, 2 patch, 3 line or arc, 4 disc, 5 box or prism)
-uniform vec2 u_wview;      // the viewport's width and height in pixels
+                           // (0 other, 1 quad, 2 patch, 3 line or arc, 4 disc, 5 box or prism, 6 glyph)
+uniform vec4 u_wview;      // the CAMERA's viewport as GL has it: x, y (from the bottom), width, height, in pixels
 uniform vec4 u_params[8];  // the tile's settings
+#ifdef HD_ZPASS
+uniform mat4 u_cvp;        // the camera's view-projection (the shadow pass's u_vp is the light's)
+#endif
 #ifdef HD_SHADOW
 uniform mat4 u_lvp;        // the light's view-projection (shadows)
 uniform float u_lno;       // the normal offset for the shadow lookup, in world units
@@ -285,9 +574,16 @@ varying mediump vec3 v_n;
 varying mediump vec3 v_v;
 varying lowp vec4 v_c;
 varying mediump vec4 v_dim;     // rgb: DIM; a: the alpha multiplier (class times FADE)
-varying PF vec2 v_np;      // the field's position
+varying PF vec2 v_np;      // the field's position; a glyph's place in its square (-1..1, y up); a FLOW line's
+                           // dash coordinate and its lower clamp (see v_sp)
 varying PF vec3 v_fp;      // pixels per field unit; the field's amplitude (0 off); which field (0 ground, 1 canopy, 2 roof)
-varying PF vec2 v_ring;    // (pixel - ring centre) / ring radius; 0 when the ring is off
+                           // (a FLOW line, which has no field: x is pixels per dash cycle, y and z 0)
+varying PF vec2 v_sp;      // x: 0; a glyph's shape (1..15); 16 a FLOW line. y: the glyph's half size in pixels;
+                           // the flow's upper clamp
+varying PF vec3 v_ring;    // the RING. Picture: the ring's centre in WINDOW pixels (GL's, from the bottom) and
+                           // its radius, the same at every vertex; 0 when off. Shadow pass (HD_ZPASS): the
+                           // camera's (pixel - centre) / radius times the camera's clip w, and that w;
+                           // (0, 0, 1) when off. Both are taken per pixel in the fragment stage.
 // Pixels per world unit at clip w.
 float ppuAt(float w) {
   return u_pix.y > 0.0 ? u_pix.y
@@ -301,6 +597,13 @@ void main() {
   float bit2 = mod(floor(var / 4.0), 2.0);
   bool orient = kc > 4.5 && kc < 5.5 && mod(floor(var / 8.0), 2.0) > 0.5;
   bool liney = kc > 2.5 && kc < 3.5;
+  float shape = mod(var, 16.0);
+  bool bill = kc > 5.5 && shape > 0.5;   // a glyph of shape 1..15: a camera-facing square
+  bool flow = liney && bit2 > 0.5;       // a FLOW line or arc
+  vec2 gq = vec2(0.0);                   // a glyph's place in its square
+  float fU = 0.0;                        // a flow's place along the mark (0 at pos, 1 at aux; beyond on a round cap)
+  float fLen = 1.0;                      // the mark's length (an arc's along the curve)
+  vec3 fC = vec3(0.0);                   // the centre line's point here
   vec3 p;
   vec3 n;
   vec3 o = i_pos + u_offset;
@@ -322,6 +625,24 @@ void main() {
       float u = 1.0 - t;
       c0 = o + 2.0 * u * t * ctrl + t * t * d;
       dd = 2.0 * u * ctrl + 2.0 * t * (d - ctrl);
+      if (flow) {
+        // The length along the curve to t and to 1 (Simpson's rule, 8 intervals each), so the
+        // dashes are evenly spaced along the curve as drawn, not along its parameter.
+        float sT = 0.0;
+        float s1 = 0.0;
+        for (int k = 0; k <= 8; k++) {
+          float wk = k == 0 || k == 8 ? 1.0 : (mod(float(k), 2.0) > 0.5 ? 4.0 : 2.0);
+          float a1 = float(k) / 8.0;
+          float aT = a1 * t;
+          s1 += wk * length(2.0 * (1.0 - a1) * ctrl + 2.0 * a1 * (d - ctrl));
+          sT += wk * length(2.0 * (1.0 - aT) * ctrl + 2.0 * aT * (d - ctrl));
+        }
+        fU = s1 > 0.0 ? sT * t / s1 : t;
+        fLen = s1 / 24.0;
+      }
+    } else if (flow) {
+      fU = t;
+      fLen = length(d);
     }
     float len = length(dd);
     vec3 dn = len > 1e-20 ? dd / len : vec3(0.0, 0.0, 1.0);
@@ -337,6 +658,28 @@ void main() {
     }
     p = c0 + (bx * a_p.x + by * a_p.y) * r + dn * (e * r);
     n = bx * a_n.x + by * a_n.y + dn * a_n.z;
+    if (flow) {
+      fU += e * r / max(fLen, 1e-6);   // a round cap's reach, so u is affine along the mark
+      fC = c0;
+    }
+  } else if (bill) {
+    // The camera's right and up in world units, from vp alone: right keeps clip y and w
+    // (or, for an orthographic vp, y and z), up keeps clip x and w.
+    vec3 r0 = vec3(u_vp[0][0], u_vp[1][0], u_vp[2][0]);
+    vec3 r1 = vec3(u_vp[0][1], u_vp[1][1], u_vp[2][1]);
+    vec3 r3 = vec3(u_vp[0][3], u_vp[1][3], u_vp[2][3]);
+    vec3 rz = dot(r3, r3) > 1e-12 ? r3 : vec3(u_vp[0][2], u_vp[1][2], u_vp[2][2]);
+    vec3 R = normalize(cross(r1, rz));
+    if (dot(R, r0) < 0.0) R = -R;
+    vec3 U = normalize(cross(rz, r0));
+    if (dot(U, r1) < 0.0) U = -U;
+    // The disc mesh's rim laid on the square's edge (its corners are rim vertices); the centre stays.
+    gq = a_p.xy / max(max(abs(a_p.x), abs(a_p.y)), 1e-6);
+    float c = cos(i_angle);
+    float sn = sin(i_angle);
+    vec2 cr = vec2(c * gq.x - sn * gq.y, sn * gq.x + c * gq.y) * i_size.x;
+    p = o + R * cr.x + U * cr.y;
+    n = normalize(cross(R, U));
   } else {
     vec3 s = u_mode.y > 0.5 ? i_size.xxx : i_size;
     float c = cos(i_angle);
@@ -379,7 +722,7 @@ void main() {
   float fa = 1.0;
   if (kc > 1.5 && kc < 2.5 || kc > 0.5 && kc < 1.5 && ramp) {
     am = u_params[6].y; fk = 0.0; fa = 1.0 - 0.5 * dens;                 // ground
-  } else if (tint && (kc > 0.5 && kc < 1.5 || kc > 4.5)) {
+  } else if (tint && (kc > 0.5 && kc < 1.5 || kc > 4.5 && kc < 5.5)) {
     am = u_params[7].x; fk = 2.0;                                        // roof
   } else if (kc > 0.5 && kc < 1.5) {
     am = u_params[6].z;                                                  // a literal quad: a shadow
@@ -394,14 +737,21 @@ void main() {
   v_ls = u_lvp * vec4(p + n * u_lno, 1.0);
 #endif
   v_mat = mod(floor(var / 16.0), 4.0);
-  // The ring: the pixel's place relative to the centre, in radii, for the fragment stage.
+  // The ring, for the fragment stage to take per pixel (see v_ring).
   float ringR = u_params[7].w;
+#ifdef HD_ZPASS
   if (ringR > 0.0) {
-    vec2 px = vec2(0.5 + 0.5 * gl_Position.x / gl_Position.w, 0.5 - 0.5 * gl_Position.y / gl_Position.w) * u_wview;
-    v_ring = (px - u_params[7].yz) / ringR;
+    // (pixel - centre) / radius is affine in the camera's clip x, y, w over w: carry it
+    // projectively, so the fragment's own value is exact wherever its point is.
+    vec4 cc = u_cvp * vec4(p, 1.0);
+    v_ring = vec3((0.5 * u_wview.z * (cc.x + cc.w) - u_params[7].y * cc.w) / ringR,
+                  (0.5 * u_wview.w * (cc.w - cc.y) - u_params[7].z * cc.w) / ringR, cc.w);
   } else {
-    v_ring = vec2(0.0);
+    v_ring = vec3(0.0, 0.0, 1.0);
   }
+#else
+  v_ring = ringR > 0.0 ? vec3(u_wview.x + u_params[7].y, u_wview.y + u_wview.w - u_params[7].z, ringR) : vec3(0.0);
+#endif
   v_c = vec4(rgb, i_color.a);
   v_dim = vec4(u_params[0].rgb, am * u_params[0].w);
   float amp = fk < -0.5 ? 0.0 : u_params[5].x * fa;
@@ -412,6 +762,17 @@ void main() {
   } else {
     v_np = vec2(0.0);
     v_fp = vec3(0.0);
+  }
+  v_sp = vec2(0.0);
+  if (bill) {
+    v_np = gq;
+    v_sp = vec2(shape, i_size.x * ppuAt((u_vp * vec4(o, 1.0)).w));
+  } else if (flow) {
+    float fN = u_params[5].w > 0.0 ? u_params[5].w : 6.0;
+    float ph = fract(u_params[5].z);
+    v_np = vec2(fU * fN - ph, -ph);
+    v_sp = vec2(16.0, fN - ph);
+    v_fp = vec3(fLen * ppuAt((u_vp * vec4(fC, 1.0)).w) / fN, 0.0, 0.0);
   }
 }
 `;
@@ -432,7 +793,9 @@ varying lowp vec4 v_c;
 varying mediump vec4 v_dim;     // rgb: DIM; a: the alpha multiplier (class times FADE)
 varying PF vec2 v_np;
 varying PF vec3 v_fp;
-varying PF vec2 v_ring;
+varying PF vec2 v_sp;
+varying PF vec3 v_ring;
+HD_GLYPH_SOURCE
 // Value noise on a lattice that repeats every 4096 units. The hash is taken on
 // mod(i, m) / m, which lies in [0, 1): at PF's better precision it is then the twin's own
 // hash; at mediump, one whose intermediate values stay under a few hundred, inside range.
@@ -477,6 +840,21 @@ float litFraction(float ndl) {
 }
 #endif
 void main() {
+  // The ring, from this fragment's own window position (v_ring: the centre in window pixels).
+  float ring = 1.0;
+  if (v_ring.z > 0.0) {
+    // min() keeps the length inside mediump's range far outside the ring
+    ring = 1.0 - smoothstep(0.85, 1.0, length(min(abs(gl_FragCoord.xy - v_ring.xy) / v_ring.z, vec2(8.0))));
+  }
+  float gk = floor(v_sp.x + 0.5);
+  if (gk > 0.5 && gk < 15.5) {
+    // A glyph's shape: unlit, receives no shadow; where it covers under half, no depth.
+    vec2 g = hd_glyphCov(gk, v_np, v_sp.y);
+    float cov = max(g.x, g.y);
+    if (cov < 0.5) discard;
+    gl_FragColor = vec4(mix(v_c.rgb, hd_ink(v_c.rgb), g.y) * v_dim.rgb, v_c.a * v_dim.a * ring * cov);
+    return;
+  }
   vec3 n = normalize(v_n);
   if (!gl_FrontFacing) n = -n;
   vec3 v = normalize(v_v);
@@ -498,6 +876,13 @@ void main() {
   float sp = pow(max(dot(n, h), 0.0), shin) * spec * step(0.0001, ndl) * shf;
   float rim = pow(1.0 - max(dot(n, v), 0.0), 3.0) * rimk;
   vec3 base = v_c.rgb;
+  float flowA = 1.0;
+  if (gk > 15.5) {
+    // FLOW: dashes moving from pos to aux; their edges about 1.5 pixels soft
+    vec2 fl = hd_flow(clamp(v_np.x, v_np.y, v_sp.y), clamp(1.5 / max(v_fp.x, 0.001), 0.02, 0.25));
+    base = mix(base, vec3(1.0), fl.x);
+    flowA = fl.y;
+  }
   if (v_fp.y > 0.0) {
     PF float s;
     if (v_fp.z < 0.5) s = oct(v_np, 48.0, 0.10) + oct(v_np, 12.0, 0.07) + oct(v_np, 3.0, 0.05);
@@ -507,22 +892,23 @@ void main() {
   }
   vec3 shaded = glow > 0.5 ? base : base * (lit + rim) + vec3(sp);
   vec3 flatc = base * mix(1.0 - strength, 1.0, shf);
-  // min() keeps the length inside mediump's range far outside the ring
-  float ring = 1.0 - smoothstep(0.85, 1.0, length(min(abs(v_ring), vec2(8.0))));
-  gl_FragColor = vec4(mix(flatc, shaded, u_shade.x) * v_dim.rgb, v_c.a * v_dim.a * ring);
+  gl_FragColor = vec4(mix(flatc, shaded, u_shade.x) * v_dim.rgb, v_c.a * v_dim.a * ring * flowA);
 }
 `;
 
 // The shadow map's fragment stage: depth packed in RGBA8. No uniforms (so none can be shared
-// with the vertex stage). A mark under half alpha, or a GLOW mark, casts nothing.
+// with the vertex stage). A mark under half alpha, or a GLOW mark, casts nothing. The RING is
+// the camera's, taken at this fragment's own point (v_ring, HD_ZPASS); a point behind the
+// camera's eye is outside it. FLOW does not thin what a line casts.
 const ZFS = `
 precision mediump float;
 varying mediump float v_mat;
 varying lowp vec4 v_c;
 varying mediump vec4 v_dim;
-varying PF vec2 v_ring;
+varying PF vec3 v_ring;
 void main() {
-  float ring = 1.0 - smoothstep(0.85, 1.0, length(min(abs(v_ring), vec2(8.0))));
+  float ring = 0.0;
+  if (v_ring.z > 0.0) ring = 1.0 - smoothstep(0.85, 1.0, length(min(abs(v_ring.xy / v_ring.z), vec2(8.0))));
   if (v_c.a * v_dim.a * ring < 0.5 || v_mat > 2.5) discard;
   PF vec4 e = fract(gl_FragCoord.z * vec4(1.0, 255.0, 65025.0, 16581375.0));
   e -= e.yzww * vec4(1.0 / 255.0, 1.0 / 255.0, 1.0 / 255.0, 0.0);
@@ -542,16 +928,30 @@ attribute vec4 i_color;
 attribute vec4 i_meta;   // kind, detail, flags, variant as 0..255
 uniform vec2 u_view;     // viewport width and height in pixels
 uniform vec3 u_soffset;
-uniform float u_smode;   // 0 rectangle, 1 circle, 2 line, 3 run
+uniform float u_smode;   // 0 rectangle, 1 circle, 2 line, 3 run or image
 uniform vec4 u_sparams[8];
-varying PF vec2 v_a;     // max(v_a, v_b) = |local| - (half - radius): small near every edge
+varying PF vec2 v_a;     // max(v_a, v_b) = |local| - (half - radius): small near every edge; a glyph's own pixel
 varying PF vec2 v_b;
-varying PF vec2 v_uv;
-varying PF float v_r;
-varying mediump float v_page;
+varying PF vec2 v_uv;    // a run's or image's texture place; a FLOW line's dash coordinate and lower clamp
+varying PF float v_r;    // the corner radius; a glyph's half size
+varying mediump float v_page;   // a run's atlas page; for a shape: 0, a glyph's shape (1..15), 16 a FLOW line
 varying lowp vec4 v_c;
 varying mediump float v_fade;
+varying lowp vec3 v_k;   // a glyph's ink, or the white a FLOW line's dashes go toward (both times DIM)
+varying PF vec2 v_fl;    // a FLOW line: the upper clamp, pixels per dash cycle
+vec3 hd_ink(vec3 c) {
+  if (dot(c, vec3(0.2126, 0.7152, 0.0722)) > 0.45) {
+    return vec3(0.08);
+  }
+  return vec3(0.96);
+}
 void main() {
+  float var = floor(i_meta.w + 0.5);
+  float shape = mod(var, 16.0);
+  bool gly = u_smode > 0.5 && u_smode < 1.5 && i_meta.x > 9.5 && shape > 0.5;   // a glyph of shape 1..15
+  bool flow = u_smode > 1.5 && u_smode < 2.5 && mod(floor(var / 4.0), 2.0) > 0.5;
+  v_k = vec3(0.0);
+  v_fl = vec2(0.0);
   vec2 o = i_pos.xy + u_soffset.xy;
   vec2 px;
   if (u_smode > 2.5) {
@@ -574,6 +974,10 @@ void main() {
     } else if (u_smode < 1.5) {
       hs = vec2(abs(i_size.x));
       r = hs.x;
+      if (gly) {
+        r = 0.0;
+        ux = vec2(cos(i_angle), -sin(i_angle));   // turned counter-clockwise as seen (y is down)
+      }
     } else {
       vec2 d = i_aux.xy - i_pos.xy;
       float len = length(d);
@@ -590,6 +994,18 @@ void main() {
     v_r = r;
     v_uv = vec2(0.0);
     v_page = 0.0;
+    if (gly) {
+      v_a = l;
+      v_b = vec2(0.0);
+      v_r = hs.x;
+      v_page = shape;
+    } else if (flow) {
+      float fN = u_sparams[5].w > 0.0 ? u_sparams[5].w : 6.0;
+      float ph = fract(u_sparams[5].z);
+      v_uv = vec2((0.5 + l.x / max(2.0 * hs.x, 1e-6)) * fN - ph, -ph);
+      v_fl = vec2(fN - ph, 2.0 * hs.x / fN);
+      v_page = 16.0;
+    }
   }
   vec3 rgb = i_color.rgb;
   if (u_smode < 2.5) {
@@ -598,6 +1014,8 @@ void main() {
     else if (cm > 1.5 && cm < 2.5) rgb *= u_sparams[3].rgb;
   }
   v_c = vec4(rgb * u_sparams[0].rgb, i_color.a);
+  if (gly) v_k = hd_ink(rgb) * u_sparams[0].rgb;
+  else if (flow) v_k = u_sparams[0].rgb;
   v_fade = u_sparams[0].w;
   gl_Position = vec4(px.x / u_view.x * 2.0 - 1.0, 1.0 - px.y / u_view.y * 2.0, 0.0, 1.0);
 }
@@ -609,7 +1027,8 @@ uniform sampler2D u_t0;
 uniform sampler2D u_t1;
 uniform sampler2D u_t2;
 uniform sampler2D u_t3;
-uniform mediump float u_fmode;   // 0 shape, 1 run
+uniform sampler2D u_img;
+uniform mediump float u_fmode;   // 0 shape, 1 run, 2 image
 varying PF vec2 v_a;
 varying PF vec2 v_b;
 varying PF vec2 v_uv;
@@ -617,17 +1036,35 @@ varying PF float v_r;
 varying mediump float v_page;
 varying lowp vec4 v_c;
 varying mediump float v_fade;
+varying lowp vec3 v_k;
+varying PF vec2 v_fl;
+HD_GLYPH_SOURCE
 void main() {
   float cov;
+  if (u_fmode > 1.5) {
+    vec4 im = texture2D(u_img, v_uv);
+    gl_FragColor = vec4(im.rgb * v_c.rgb, im.a * v_c.a * v_fade);
+    return;
+  }
   if (u_fmode > 0.5) {
     if (v_page < 0.5) cov = texture2D(u_t0, v_uv).a;
     else if (v_page < 1.5) cov = texture2D(u_t1, v_uv).a;
     else if (v_page < 2.5) cov = texture2D(u_t2, v_uv).a;
     else cov = texture2D(u_t3, v_uv).a;
+  } else if (v_page > 0.5 && v_page < 15.5) {
+    // a glyph's shape, in its square of half size v_r pixels
+    vec2 g = hd_glyphCov(floor(v_page + 0.5), vec2(v_a.x, -v_a.y) / v_r, v_r);
+    gl_FragColor = vec4(mix(v_c.rgb, v_k, g.y), v_c.a * max(g.x, g.y) * v_fade);
+    return;
   } else {
     vec2 q = max(v_a, v_b);
     float d = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - v_r;
     cov = clamp(0.5 - d, 0.0, 1.0);
+    if (v_page > 15.5) {
+      vec2 fl = hd_flow(clamp(v_uv.x, v_uv.y, v_fl.x), clamp(1.5 / max(v_fl.y, 0.001), 0.02, 0.25));
+      gl_FragColor = vec4(mix(v_c.rgb, v_k, fl.x), v_c.a * cov * v_fade * fl.y);
+      return;
+    }
   }
   gl_FragColor = vec4(v_c.rgb, v_c.a * cov * v_fade);
 }
@@ -803,9 +1240,10 @@ function discMesh(sides) {
 
 // ---- slots: how a kind is drawn. Index = kind; 11 and 12 are the coarse sphere and rod. ----
 // mode: [vertex mode (0 sphere, 1 tube, 2 scaled-and-turned, 3 bent tube), radius scale or uniform-scale switch]; shade: [lit, specular, rim]; cull.
-// The vertex stage's kind code: 1 quad, 2 patch, 3 line or arc, 4 disc, 5 box or prism, 0 the rest.
-const KIND_CODE = [0, 1, 3, 3, 4, 5, 5, 0, 0, 2, 0, 0, 0, 3, 3];
+// The vertex stage's kind code: 1 quad, 2 patch, 3 line or arc, 4 disc, 5 box or prism, 6 glyph, 0 the rest.
+const KIND_CODE = [0, 1, 3, 3, 4, 5, 5, 0, 0, 2, 6, 0, 0, 3, 3];
 const SLOT_COARSE_SPHERE = 11, SLOT_COARSE_ROD = 12, SLOT_FLAT_LINE = 13, SLOT_FLAT_ARC = 14, N_SLOT = 15;
+const SCREEN_ID = 15;   // the id of every screen slot, for a resident batch's vertex arrays (after the world slots' 0..14)
 
 function compile(gl, type, src) {
   const s = gl.createShader(type);
@@ -871,7 +1309,7 @@ export function createDrawer(gl, options) {
   // cost from them) and with them (HD_SHADOW: the light-space varying and the four-tap lookup).
   function worldProgram(defs, fsrc) {
     const vs = compile(gl, gl.VERTEX_SHADER, defs + headV + VS);
-    const fs = compile(gl, gl.FRAGMENT_SHADER, defs + headF + fsrc);
+    const fs = compile(gl, gl.FRAGMENT_SHADER, defs + headF + fsrc.replace('HD_GLYPH_SOURCE', GLYPH_GLSL));
     const program = gl.createProgram();
     gl.attachShader(program, vs);
     gl.attachShader(program, fs);
@@ -896,7 +1334,7 @@ export function createDrawer(gl, options) {
       program, uVP: u('u_vp'), uOffset: u('u_offset'), uEye: u('u_eye'), uMode: u('u_mode'),
       uLight: u('u_light'), uShade: u('u_shade'), uPix: u('u_pix'), uWView: u('u_wview'),
       uParams: u('u_params[0]'), uLvp: u('u_lvp'), uLno: u('u_lno'), uShadow: u('u_shadow'),
-      uShp: u('u_shp'), samplerSet: false, last: new Float32Array(32).fill(NaN),
+      uShp: u('u_shp'), uCvp: u('u_cvp'), samplerSet: false, last: new Float32Array(32).fill(NaN),
     };
   }
   const WP = worldProgram('', FS);
@@ -907,14 +1345,14 @@ export function createDrawer(gl, options) {
   let WS = null, Z = null;
   function shadowPrograms() {
     if (!WS) WS = worldProgram('#define HD_SHADOW 1\n', FS);
-    if (!Z) Z = worldProgram('', ZFS);
+    if (!Z) Z = worldProgram('#define HD_ZPASS 1\n', ZFS);
   }
   // The shadow map, made on first use: an RGBA8 texture and a 16-bit depth buffer.
   let zTex = null, zDepth = null, zFbo = null, zSize = 0;
 
   // The screen program.
   const svs = compile(gl, gl.VERTEX_SHADER, headV + SVS);
-  const sfs = compile(gl, gl.FRAGMENT_SHADER, headF + SFS);
+  const sfs = compile(gl, gl.FRAGMENT_SHADER, headF + SFS.replace('HD_GLYPH_SOURCE', GLYPH_GLSL));
   const sprogram = gl.createProgram();
   gl.attachShader(sprogram, svs);
   gl.attachShader(sprogram, sfs);
@@ -940,6 +1378,7 @@ export function createDrawer(gl, options) {
   const uSParams = gl.getUniformLocation(sprogram, 'u_sparams[0]');
   const uFMode = gl.getUniformLocation(sprogram, 'u_fmode');
   const uTex = [0, 1, 2, 3].map((i) => gl.getUniformLocation(sprogram, 'u_t' + i));
+  const uImg = gl.getUniformLocation(sprogram, 'u_img');
   let samplersSet = false;
   const text = options.text || null;
 
@@ -973,7 +1412,7 @@ export function createDrawer(gl, options) {
   // slot -> { mesh, kind (whose instance buffer), mode x, mode y, lit, spec, rim, cull, vao }
   const slots = new Array(N_SLOT).fill(null);
   const slot = (i, kind, m, mx, my, lit, spec, rim, cull) => {
-    slots[i] = { mesh: m, kind, mx, my, lit, spec, rim, cull, vao: null, kc: KIND_CODE[i] };
+    slots[i] = { mesh: m, kind, mx, my, lit, spec, rim, cull, vao: null, kc: KIND_CODE[i], id: i };
   };
   slot(KIND.QUAD, KIND.QUAD, mQuad, 2, 0, 0, 0, 0, false);
   slot(KIND.PATCH, KIND.PATCH, mQuad, 2, 0, 0, 0, 0, false);
@@ -991,7 +1430,7 @@ export function createDrawer(gl, options) {
   slot(SLOT_FLAT_ARC, KIND.ARC, mArcRibbon, 3, 0.5, 0, 0, 0, false);
 
   // Screen slots, by kind: vertex mode (0 rectangle, 1 circle, 2 line, 3 run).
-  const sslots = new Array(12).fill(null);
+  const sslots = new Array(13).fill(null);
   sslots[KIND.QUAD] = { kind: KIND.QUAD, smode: 0 };
   sslots[KIND.PATCH] = { kind: KIND.PATCH, smode: 0 };
   sslots[KIND.DISC] = { kind: KIND.DISC, smode: 1 };
@@ -999,6 +1438,11 @@ export function createDrawer(gl, options) {
   sslots[KIND.LINE] = { kind: KIND.LINE, smode: 2 };
   sslots[KIND.ARC] = { kind: KIND.ARC, smode: 2 };
   if (text) sslots[KIND.RUN] = { kind: KIND.RUN, smode: 3 };
+  sslots[KIND.IMAGE] = { kind: KIND.IMAGE, smode: 3, image: true };
+  for (const s of sslots) if (s) { s.id = SCREEN_ID; s.mesh = mQuad; }   // every screen slot draws the quad mesh
+  // the host's textures, by slot (setImage)
+  const images = new Map();
+  const IMAGE_UNIT = 5;
   let screenVAO = null;
 
   function meshAttribs(m) {
@@ -1037,17 +1481,17 @@ export function createDrawer(gl, options) {
   // One instance buffer per kind, grown as needed and reused. Within one draw() every batch
   // of a kind is written at its own offset in that buffer, so a later batch never overwrites
   // bytes an earlier draw call of the same frame still reads.
-  const instBuf = new Array(12).fill(null);
-  const instCap = new Int32Array(12);
-  const need = new Int32Array(12);
-  const cursor = new Int32Array(12);
+  const instBuf = new Array(13).fill(null);
+  const instCap = new Int32Array(13);
+  const need = new Int32Array(13);
+  const cursor = new Int32Array(13);
 
   // Scratch, allocated once.
   const light = new Float32Array(3);
   const lvp = new Float32Array(16);
   let wAt = new Int32Array(64);   // per batch: where its records were uploaded this draw(), or -1
   const inv = new Float64Array(16);
-  const st = { drawCalls: 0, instances: 0, bytesUploaded: 0, paramUploads: 0 };
+  const st = { drawCalls: 0, instances: 0, bytesUploaded: 0, paramUploads: 0, missingImages: 0, residentBuffers: 0, residentBytes: 0 };
   let dead = false;
   let flat = false;   // lines as flat ribbons, for the draw() in progress
 
@@ -1081,7 +1525,7 @@ export function createDrawer(gl, options) {
   // The slot a batch is drawn with, or null if it is not drawn.
   function slotOf(b) {
     const k = b.kind | 0;
-    if (k < 1 || k > 11) return null;
+    if (k < 1 || k > 12) return null;
     if (b.screen === true) return sslots[k];
     if (k > 10) return null;
     if (flat) {
@@ -1110,7 +1554,7 @@ export function createDrawer(gl, options) {
     st.paramUploads++;
   }
 
-  // Upload one batch at its kind's cursor; its offset in that kind's buffer.
+  // Upload one `bytes` batch at its kind's cursor; its offset in that kind's buffer.
   function upload(b, k, len) {
     const at = cursor[k];
     cursor[k] = at + len;
@@ -1122,20 +1566,108 @@ export function createDrawer(gl, options) {
     st.bytesUploaded += len;
     return at;
   }
-  // Point the instanced attributes at records uploaded at `at` in kind k's buffer.
-  function point(k, at, count) {
-    gl.bindBuffer(gl.ARRAY_BUFFER, instBuf[k]);
+  // Point the instanced attributes at records `at` bytes into `buf`.
+  function pointers(buf, at) {
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
     gl.vertexAttribPointer(I_POS, 3, gl.FLOAT, false, INSTANCE_BYTES, at);
     gl.vertexAttribPointer(I_SIZE, 3, gl.FLOAT, false, INSTANCE_BYTES, at + 12);
     gl.vertexAttribPointer(I_AUX, 3, gl.FLOAT, false, INSTANCE_BYTES, at + 24);
     gl.vertexAttribPointer(I_ANGLE, 1, gl.FLOAT, false, INSTANCE_BYTES, at + 36);
     gl.vertexAttribPointer(I_COLOR, 4, gl.UNSIGNED_BYTE, true, INSTANCE_BYTES, at + 40);
     gl.vertexAttribPointer(I_META, 4, gl.UNSIGNED_BYTE, false, INSTANCE_BYTES, at + 48);
+  }
+
+  // ---- resident buffers (RESIDENT BUFFERS at the top) ----
+  // handles[h]: { buf, cap (bytes allocated), size (bytes of records now), vaos: Map(first * 32 + slot id -> vertex array) }
+  const handles = [null];
+  const freeHandles = [];
+  const VAO_CAP = 256;
+  function handleOf(h, what) {
+    const r = typeof h === 'number' ? handles[h] : undefined;
+    if (!r) throw new Error('holon-draw: ' + what + ': no resident buffer with handle ' + h);
+    return r;
+  }
+  function recordBytes(bytes, what) {
+    if (!bytes || typeof bytes.byteLength !== 'number' || bytes.byteLength % INSTANCE_BYTES !== 0) {
+      throw new Error('holon-draw: ' + what + ' takes whole 52-byte records (an ArrayBufferView whose byteLength is a multiple of 52)');
+    }
+  }
+  /** Upload records once; returns their handle (see RESIDENT BUFFERS at the top). */
+  function resident(bytes) {
+    if (dead) throw new Error('holon-draw: resident() after destroy()');
+    recordBytes(bytes, 'resident()');
+    const prev = gl.getParameter(gl.ARRAY_BUFFER_BINDING);
+    const r = { buf: gl.createBuffer(), cap: bytes.byteLength, size: bytes.byteLength, vaos: hasVAO ? new Map() : null };
+    gl.bindBuffer(gl.ARRAY_BUFFER, r.buf);
+    gl.bufferData(gl.ARRAY_BUFFER, bytes, gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, prev);
+    const h = freeHandles.length ? freeHandles.pop() : handles.length;
+    handles[h] = r;
+    st.residentBuffers++;
+    st.residentBytes += r.cap;
+    return h;
+  }
+  /** New records for a handle: in place when they fit, else reallocated; the handle stays. */
+  function update(h, bytes) {
+    if (dead) throw new Error('holon-draw: update() after destroy()');
+    const r = handleOf(h, 'update()');
+    recordBytes(bytes, 'update()');
+    const prev = gl.getParameter(gl.ARRAY_BUFFER_BINDING);
+    gl.bindBuffer(gl.ARRAY_BUFFER, r.buf);
+    if (bytes.byteLength <= r.cap) {
+      if (bytes.byteLength > 0) gl.bufferSubData(gl.ARRAY_BUFFER, 0, bytes);
+    } else {
+      // The same buffer object, so the vertex arrays that point into it stay good.
+      gl.bufferData(gl.ARRAY_BUFFER, bytes, gl.STATIC_DRAW);
+      st.residentBytes += bytes.byteLength - r.cap;
+      r.cap = bytes.byteLength;
+    }
+    r.size = bytes.byteLength;
+    gl.bindBuffer(gl.ARRAY_BUFFER, prev);
+  }
+  /** Free a handle's buffer (and its vertex arrays); the number may be handed out again. */
+  function release(h) {
+    const r = handleOf(h, 'release()');
+    if (r.vaos) { for (const v of r.vaos.values()) deleteVAO(v); r.vaos.clear(); }
+    gl.deleteBuffer(r.buf);
+    handles[h] = null;
+    freeHandles.push(h);
+    st.residentBuffers--;
+    st.residentBytes -= r.cap;
+  }
+
+  // Make batch b's records the instanced attributes' source for a draw with slot s: `at` is
+  // where a `bytes` batch was uploaded this draw() (pointed at through `vao`, the slot's own
+  // vertex array), or -2 for a resident batch (its own vertex array, or the bare pointers).
+  // `bound` is the vertex array this draw() last bound (null at its start).
+  let bound = null;
+  function attach(b, s, at, vao, count) {
     st.drawCalls++;
     st.instances += count;
-  }
-  function feed(b, k, len) {
-    point(k, upload(b, k, len), b.count | 0);
+    if (at >= 0) {
+      if (hasVAO && bound !== vao) { bindVAO(vao); bound = vao; }
+      pointers(instBuf[s.kind], at);
+      return;
+    }
+    const r = handles[b.handle], first = b.first | 0;
+    if (!hasVAO) { pointers(r.buf, first * INSTANCE_BYTES); return; }
+    const key = first * 32 + s.id;
+    let v = r.vaos.get(key);
+    if (v !== undefined) {
+      if (bound !== v) { bindVAO(v); bound = v; }
+      return;
+    }
+    if (r.vaos.size < VAO_CAP) {
+      v = createVAO();
+      r.vaos.set(key, v);
+      bindVAO(v);
+      bound = v;
+      meshAttribs(s.mesh);
+    } else if (bound !== vao) {
+      bindVAO(vao);
+      bound = vao;
+    }
+    pointers(r.buf, first * INSTANCE_BYTES);
   }
 
   // The light's orthographic view-projection over the sphere (c, r), into lvp.
@@ -1183,7 +1715,9 @@ export function createDrawer(gl, options) {
   }
 
   /**
-   * @param {Array<{kind:number, offset?:ArrayLike<number>, count:number, bytes:Uint8Array, screen?:boolean, coarse?:boolean, params?:ArrayLike<number>, shade?:ArrayLike<number>}>} batches
+   * @param {Array<{kind:number, offset?:ArrayLike<number>, count:number, bytes?:Uint8Array, handle?:number, first?:number, slot?:number, screen?:boolean, coarse?:boolean, params?:ArrayLike<number>, shade?:ArrayLike<number>}>} batches
+   *   each batch has `bytes` (uploaded now) or `handle` (a resident buffer, see RESIDENT
+   *   BUFFERS; `first` its first record, and `slot` on a resident image batch).
    *   `shade`, optional on a world batch of a lit kind: [specular, rim] for that batch in place
    *   of the kind's own (box and prism 0.05, 0; sphere 0.3, 0.18; rod 0.18, 0.08).
    * @param {Float32Array} vp column-major, 16 (world batches only)
@@ -1192,7 +1726,7 @@ export function createDrawer(gl, options) {
    */
   function draw(batches, vp, opts) {
     if (dead) throw new Error('holon-draw: draw() after destroy()');
-    st.drawCalls = 0; st.instances = 0; st.bytesUploaded = 0; st.paramUploads = 0;
+    st.drawCalls = 0; st.instances = 0; st.bytesUploaded = 0; st.paramUploads = 0; st.missingImages = 0;
     flat = !!opts && (opts.flatLines === true || (opts.flatLines !== false && opts.depthTest === false));
     if (opts && opts.shadow && opts.shadow.center && opts.shadow.radius > 0) shadowPrograms();
     const nb = batches.length;
@@ -1205,15 +1739,25 @@ export function createDrawer(gl, options) {
       if (c <= 0) continue;
       const s = slotOf(b);
       if (!s) continue;
-      if (b.bytes.byteLength < c * INSTANCE_BYTES) {
-        throw new Error('holon-draw: batch ' + i + ' (kind ' + b.kind + ') has ' + b.bytes.byteLength + ' bytes for ' + c + ' records of ' + INSTANCE_BYTES);
+      if (b.handle !== undefined) {
+        const r = handleOf(b.handle, 'batch ' + i), first = b.first === undefined ? 0 : b.first;
+        if (first !== (first | 0) || first < 0 || (first + c) * INSTANCE_BYTES > r.size) {
+          throw new Error('holon-draw: batch ' + i + ' (kind ' + b.kind + ') asks for records ' + first + '..' + (first + c - 1) + ' of a resident buffer that holds ' + r.size / INSTANCE_BYTES);
+        }
+        if (s.image && !(b.slot === (b.slot | 0) && b.slot >= 0 && b.slot <= 255)) {
+          throw new Error('holon-draw: batch ' + i + ' is a resident image batch: it needs `slot` (0..255), since its first record is not in hand');
+        }
+      } else {
+        if (b.bytes.byteLength < c * INSTANCE_BYTES) {
+          throw new Error('holon-draw: batch ' + i + ' (kind ' + b.kind + ') has ' + b.bytes.byteLength + ' bytes for ' + c + ' records of ' + INSTANCE_BYTES);
+        }
+        need[s.kind] += c * INSTANCE_BYTES;
       }
-      need[s.kind] += c * INSTANCE_BYTES;
       if (b.screen === true) nScreen++; else nWorld++;
     }
     if (nWorld + nScreen === 0) return;
 
-    for (let k = 1; k <= 11; k++) {
+    for (let k = 1; k <= 12; k++) {
       cursor[k] = 0;
       if (need[k] <= instCap[k]) continue;
       let cap = instCap[k] || 64 * INSTANCE_BYTES;
@@ -1225,6 +1769,7 @@ export function createDrawer(gl, options) {
     }
 
     // Frame state.
+    bound = null;
     gl.enable(gl.BLEND);
     gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     gl.enable(gl.DEPTH_TEST);
@@ -1235,13 +1780,14 @@ export function createDrawer(gl, options) {
     gl.enable(gl.CULL_FACE);
     let culling = true;
 
-    // Pass 2: the world batches, in the order given (uploaded once, read by the shadow pass too).
+    // Pass 2: the world batches, in the order given (uploaded once, read by the shadow pass
+    // too). wAt[i]: where batch i was uploaded; -2 resident (nothing to upload); -1 not drawn.
     if (nWorld > 0) {
       if (wAt.length < nb) wAt = new Int32Array(Math.max(nb, 2 * wAt.length));
       for (let i = 0; i < nb; i++) {
         const b = batches[i], c = b.count | 0;
         const s = c > 0 && b.screen !== true ? slotOf(b) : null;
-        wAt[i] = s ? upload(b, s.kind, c * INSTANCE_BYTES) : -1;
+        wAt[i] = !s ? -1 : b.handle !== undefined ? -2 : upload(b, s.kind, c * INSTANCE_BYTES);
       }
       let lx = 0.35, ly = -0.5, lz = 0.8;
       const L = opts && opts.light;
@@ -1254,6 +1800,7 @@ export function createDrawer(gl, options) {
       const flatLit = !!(opts && opts.flatLit);
       const V = opts && opts.viewport;
       const vw = V ? V[2] : gl.drawingBufferWidth, vh = V ? V[3] : gl.drawingBufferHeight;
+      const vx = V ? V[0] : 0, vy = V ? V[1] : 0;
       const halfH = 0.5 * vh;
       const ppu = opts && opts.pixelsPerUnit > 0 ? +opts.pixelsPerUnit : 0;
       eyeFrom(vp);
@@ -1279,18 +1826,19 @@ export function createDrawer(gl, options) {
         gl.useProgram(Z.program);
         gl.uniformMatrix4fv(Z.uVP, false, lvp);
         gl.uniform4f(Z.uEye, light[0], light[1], light[2], 0);
-        gl.uniform2f(Z.uWView, size, size);
+        gl.uniform4f(Z.uWView, vx, vy, vw, vh);   // the camera's: the ring is the camera's
+        gl.uniformMatrix4fv(Z.uCvp, false, vp);
         gl.cullFace(gl.FRONT);
         let zcur = null;
         for (let i = 0; i < nb; i++) {
-          if (wAt[i] < 0) continue;
+          if (wAt[i] === -1) continue;
           const b = batches[i];
           if (b.castShadow === false) continue;
           const s = slotOf(b);
           if (!(s.lit || ((s.kind === KIND.LINE || s.kind === KIND.ARC) && !flat))) continue;
           if (s !== zcur) {
             zcur = s;
-            if (hasVAO) bindVAO(s.vao); else meshAttribs(s.mesh);
+            if (!hasVAO) meshAttribs(s.mesh);
             gl.uniform2f(Z.uMode, s.mx, s.my);
             gl.uniform3f(Z.uPix, 0.5 * size, ppu, s.kc);
             if (s.cull !== culling) {
@@ -1298,7 +1846,7 @@ export function createDrawer(gl, options) {
               if (culling) gl.enable(gl.CULL_FACE); else gl.disable(gl.CULL_FACE);
             }
           }
-          point(s.kind, wAt[i], b.count | 0);
+          attach(b, s, wAt[i], s.vao, b.count | 0);
           settings(Z.uParams, Z.last, b.params);
           const o = b.offset;
           if (o) gl.uniform3f(Z.uOffset, o[0], o[1], o[2]); else gl.uniform3f(Z.uOffset, 0, 0, 0);
@@ -1321,7 +1869,7 @@ export function createDrawer(gl, options) {
       gl.uniformMatrix4fv(W.uVP, false, vp);
       gl.uniform4f(W.uEye, inv[0], inv[1], inv[2], inv[3]);
       gl.uniform3fv(W.uLight, light);
-      gl.uniform2f(W.uWView, vw, vh);
+      gl.uniform4f(W.uWView, vx, vy, vw, vh);
       if (shadowsOn) {
         gl.uniformMatrix4fv(W.uLvp, false, lvp);
         // look the shadow up a texel and a half out along the normal: no self-shadow banding
@@ -1336,7 +1884,7 @@ export function createDrawer(gl, options) {
 
       let cur = null, curSpec = -1, curRim = -1;
       for (let i = 0; i < nb; i++) {
-        if (wAt[i] < 0) continue;
+        if (wAt[i] === -1) continue;
         const b = batches[i], c = b.count | 0;
         const s = slotOf(b);
         const sh = b.shade;
@@ -1347,7 +1895,7 @@ export function createDrawer(gl, options) {
         }
         if (s !== cur) {
           cur = s;
-          if (hasVAO) bindVAO(s.vao); else meshAttribs(s.mesh);
+          if (!hasVAO) meshAttribs(s.mesh);
           gl.uniform2f(W.uMode, s.mx, s.my);
           gl.uniform3f(W.uPix, halfH, ppu, s.kc);
           if (s.cull !== culling) {
@@ -1355,7 +1903,7 @@ export function createDrawer(gl, options) {
             if (culling) gl.enable(gl.CULL_FACE); else gl.disable(gl.CULL_FACE);
           }
         }
-        point(s.kind, wAt[i], c);
+        attach(b, s, wAt[i], s.vao, c);
         settings(W.uParams, W.last, b.params);
         const o = b.offset;
         if (o) gl.uniform3f(W.uOffset, o[0], o[1], o[2]); else gl.uniform3f(W.uOffset, 0, 0, 0);
@@ -1370,23 +1918,31 @@ export function createDrawer(gl, options) {
       if (culling) { gl.disable(gl.CULL_FACE); culling = false; }
       const V = (opts && opts.viewport) || gl.getParameter(gl.VIEWPORT);
       gl.uniform2f(uView, V[2], V[3]);
-      if (hasVAO) {
-        bindVAO(screenVAO);
-      } else {
-        meshAttribs(mQuad);
-      }
-      let smode = -1, textured = false;
+      if (!hasVAO) meshAttribs(mQuad);
+      let smode = -1, fmode = -1, textured = false, imageUnitSet = false;
       for (let i = 0; i < nb; i++) {
         const b = batches[i], c = b.count | 0;
         if (c <= 0 || b.screen !== true) continue;
         const s = slotOf(b);
         if (!s) continue;
+        if (s.image) {
+          const img = images.get(b.handle !== undefined ? b.slot : b.bytes[51]);
+          if (!img) { st.missingImages++; continue; }
+          if (!imageUnitSet) { imageUnitSet = true; gl.uniform1i(uImg, IMAGE_UNIT); }
+          gl.activeTexture(gl.TEXTURE0 + IMAGE_UNIT);
+          gl.bindTexture(gl.TEXTURE_2D, img.tex);
+          gl.activeTexture(gl.TEXTURE0);
+        }
         if (s.smode !== smode) {
           smode = s.smode;
           gl.uniform1f(uSMode, smode);
-          gl.uniform1f(uFMode, smode === 3 ? 1 : 0);
         }
-        if (smode === 3 && !textured) {
+        const fm = s.image ? 2 : smode === 3 ? 1 : 0;
+        if (fm !== fmode) {
+          fmode = fm;
+          gl.uniform1f(uFMode, fm);
+        }
+        if (smode === 3 && !s.image && !textured) {
           // Once per draw(): the atlas pages on units 0..3. Pages are bound here, at draw
           // time, so a page the provider made or refilled this frame is the one sampled.
           textured = true;
@@ -1402,7 +1958,7 @@ export function createDrawer(gl, options) {
           }
           gl.activeTexture(gl.TEXTURE0);
         }
-        feed(b, s.kind, c * INSTANCE_BYTES);
+        attach(b, s, b.handle !== undefined ? -2 : upload(b, s.kind, c * INSTANCE_BYTES), screenVAO, c);
         settings(uSParams, lastS, b.params);
         const o = b.offset;
         if (o) gl.uniform3f(uSOffset, o[0], o[1], 0); else gl.uniform3f(uSOffset, 0, 0, 0);
@@ -1425,14 +1981,57 @@ export function createDrawer(gl, options) {
     if (!culling) gl.enable(gl.CULL_FACE);
   }
 
-  /** The counts of the last draw(). The SAME object every call (no allocation); copy it to keep it. */
+  /**
+   * drawCalls, instances, bytesUploaded, paramUploads and missingImages are the last draw()'s
+   * (bytesUploaded counts `bytes` batches only: 0 for a draw() of resident batches);
+   * residentBuffers and residentBytes are what is resident now. The SAME object every call
+   * (no allocation); copy it to keep it.
+   */
   function stats() {
     return st;
   }
 
+  /** Put a texture in an image slot (0..255); see IMAGES in the header. */
+  function setImage(slot, source, o) {
+    if (dead) throw new Error('holon-draw: setImage() after destroy()');
+    slot = slot | 0;
+    if (slot < 0 || slot > 255) throw new Error('holon-draw: an image slot is 0..255');
+    let img = images.get(slot);
+    if (!img) {
+      img = { tex: gl.createTexture() };
+      images.set(slot, img);
+    }
+    const nearest = !!(o && o.nearest);
+    const was = gl.getParameter(gl.TEXTURE_BINDING_2D);
+    const flip = gl.getParameter(gl.UNPACK_FLIP_Y_WEBGL), pre = gl.getParameter(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL);
+    gl.bindTexture(gl.TEXTURE_2D, img.tex);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
+    const f = nearest ? gl.NEAREST : gl.LINEAR;
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, f);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, f);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, flip);
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, pre);
+    gl.bindTexture(gl.TEXTURE_2D, was);
+  }
+
+  /** Free an image slot's texture. */
+  function deleteImage(slot) {
+    const img = images.get(slot | 0);
+    if (!img) return;
+    gl.deleteTexture(img.tex);
+    images.delete(slot | 0);
+  }
+
   function destroy() {
     if (dead) return;
+    for (let h = 1; h < handles.length; h++) if (handles[h]) release(h);
     dead = true;
+    for (const img of images.values()) gl.deleteTexture(img.tex);
+    images.clear();
     for (const m of meshes) {
       gl.deleteBuffer(m.vbo);
       gl.deleteBuffer(m.ibo);
@@ -1453,5 +2052,5 @@ export function createDrawer(gl, options) {
     if (zTex) { gl.deleteTexture(zTex); gl.deleteRenderbuffer(zDepth); gl.deleteFramebuffer(zFbo); }
   }
 
-  return { draw, stats, destroy, instancing: isGL2 ? 'webgl2' : 'ANGLE_instanced_arrays', vertexArrays: hasVAO, screenPrecision: PF };
+  return { draw, stats, destroy, setImage, deleteImage, resident, update, release, instancing: isGL2 ? 'webgl2' : 'ANGLE_instanced_arrays', vertexArrays: hasVAO, screenPrecision: PF };
 }

@@ -267,7 +267,7 @@ canvas#c:active {
 // Community/Town/Club Hall, Server Tower, Key, AI Helper, E-Stop Switch, and
 // Screen Plaque is packed into 52-byte `holon-draw` records.
 // ═══════════════════════════════════════════════════════════════════════════
-import { createDrawer, KIND, INSTANCE_BYTES, PARAM, PARAMS_NEUTRAL, VARIANT_ROUND, VARIANT_ORIENT, MATERIAL } from './holon/draw.js';
+import { createDrawer, KIND, INSTANCE_BYTES, PARAM, PARAMS_NEUTRAL, VARIANT_ROUND, VARIANT_ORIENT, VARIANT_FLOW, GLYPH, MATERIAL } from './holon/draw.js';
 import { createTextProvider } from './holon/text.js';
 
 // ── Practical, Human-Centered 7-Chapter Story ──
@@ -563,10 +563,12 @@ class SceneSet {
     this.spheres   = new HolonBatch(KIND.SPHERE);
     this.spheresC  = new HolonBatch(KIND.SPHERE, false, 512);
     this.tubes     = new HolonBatch(KIND.ARC);
+    this.glyphs    = new HolonBatch(KIND.GLYPH, false, 64);
+    this.glyphs.castShadow = false;
     this.rodsC.coarse = true;
     this.spheresC.coarse = true;
     this.boxes.shade = SHADE_METAL;
-    this.batches = [this.shadows, this.boxes, this.rods, this.rodsC, this.spheres, this.spheresC, this.tubes];
+    this.batches = [this.shadows, this.boxes, this.rods, this.rodsC, this.spheres, this.spheresC, this.tubes, this.glyphs];
     this.stream = new HolonSceneBuilder(this);
   }
   clear() { for (const b of this.batches) b.clear(); }
@@ -698,9 +700,9 @@ class HolonSceneBuilder {
   }
 }
 
-// A curved link between two scene points: the tube is static, the pulse beads are per frame.
-// A link is ONE holon-draw ARC record: from A to B (holon frame), bent by `up` (size[1]) and
-// `across` (size[2]) from the chord's midpoint. Pulses ride the same Bezier, evaluated here.
+// A curved link between two scene points. A link is ONE holon-draw ARC record: from A to B (holon frame), bent by
+// `up` (size[1]) and `across` (size[2]) from the chord's midpoint, with FLOW dashes running A to B. What travels a
+// link (emitFlow) rides the same Bezier, evaluated in script.
 function makeLink(a, b, liftY, liftZ, radius, col, speed) {
   const A = toHolon(a), B = toHolon(b);
   const C = toHolon([(a[0] + b[0]) * 0.5, Math.max(a[1], b[1]) + liftY, (a[2] + b[2]) * 0.5 + liftZ]);
@@ -714,19 +716,14 @@ function makeLink(a, b, liftY, liftZ, radius, col, speed) {
 function emitLinkTube(stream, L) {
   const rgba = stream.toRgba(L.col, MAT.anodized);
   rgba[3] = 220;
-  stream.S.tubes.add(L.A[0], L.A[1], L.A[2], L.radius * 2.0, L.up, L.across, L.B[0], L.B[1], L.B[2], 0, rgba, VARIANT_ROUND);
-}
-function emitLinkPulses(stream, L, t) {
-  const rgba = stream.toRgba(L.col, MAT.brightGlow);
-  const A = L.A, B = L.B, Cc = L.ctrl;
-  for (let k = 0; k < 2; k++) {
-    const u = (t * L.speed + k * 0.5) % 1.0, om = 1 - u;
-    stream.S.spheres.add(om*om*A[0] + 2*om*u*Cc[0] + u*u*B[0], om*om*A[1] + 2*om*u*Cc[1] + u*u*B[1], om*om*A[2] + 2*om*u*Cc[2] + u*u*B[2],
-      L.radius * 2.8, 0, 0, 0, 0, 0, 0, rgba, MATERIAL.GLOW);
-  }
+  stream.S.tubes.add(L.A[0], L.A[1], L.A[2], L.radius * 2.0, L.up, L.across, L.B[0], L.B[1], L.B[2], 0, rgba, VARIANT_ROUND | VARIANT_FLOW);
 }
 
 // [metalness, roughness, brightness boost, holon-draw MATERIAL]
+// holon-draw's FLOW (dashes moving from a link's start to its end) and its glyph shapes (GLYPH, a closed list) are the
+// engine's: imported above, with PARAM.FLOW (the phase) and PARAM.FLOW_N (dashes along a link).
+const ICON = GLYPH, PARAM_FLOW = PARAM.FLOW, PARAM_FLOW_N = PARAM.FLOW_N;
+
 const MAT = {
   titanium:   [0.85, 0.22, 0.0, MATERIAL.METAL],
   darkMetal:  [0.78, 0.28, 0.0, MATERIAL.METAL],
@@ -1500,10 +1497,11 @@ function region(x, z) {
 }
 
 // The ground: lawn with holon-draw's ground field, streets and kerbs, the square, a pond.
-// The lawn is TILED: draw.js takes the RING fade per vertex, so one huge patch whose corners
-// project behind the eye would fade wrongly. Tiles of TILE units, each a shade of a smooth
-// low-frequency field (so the lawn is mottled, not a quilt), with holon-draw's ground field
-// for the fine grain. Streets are cut into segments for the same reason.
+// The lawn is TILED, each tile a shade of a smooth low-frequency field (so the lawn is mottled, not flat), with
+// holon-draw's ground field for the fine grain. It was first tiled to work round an engine fault this page found: the
+// RING fade was taken per vertex, so one huge patch whose corners project behind the eye vanished. That is fixed in the
+// engine (CIRISHolon f2cca7c: the ring is per pixel). The tiles stay for the mottling, and because the ground FIELD's
+// scale is still per vertex on a patch that large.
 const TILE = 6;
 const ground = new HolonBatch(KIND.PATCH, false, 512);
 const flats = new HolonBatch(KIND.QUAD, false, 256);
@@ -1601,6 +1599,158 @@ for (const b of hills.batches) b.castShadow = false;
 const REGIONS = [...regions.values()];
 for (const g of REGIONS) { g.set.seal(); g.pools.seal(); }
 
+// Everything above never changes after it is built: it goes to the GPU ONCE (holon-draw's resident buffers), and a frame
+// only changes the 32 settings of each batch (its DIM, FADE, RING). Only the animated parts, the pulses and the labels are
+// uploaded per frame.
+function resident(b) { if (b.count > 0 && b.handle === undefined) { b.handle = drawer.resident(b.bytes); b.first = 0; } }
+for (const b of groundBatches) resident(b);
+for (const b of hills.batches) resident(b);
+for (const g of REGIONS) { for (const b of g.set.batches) resident(b); resident(g.pools); }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// WHAT MOVES. Each chapter has a short script, looped: named things (a photo, a
+// document, a video, a message, a key, a ballot, a yes, a stop) travel its links
+// in a stated order, and a SHELF above a device shows what that device now holds.
+// A slot on a shelf is a hollow ring until its thing has arrived: the device says
+// plainly what it is still waiting for. Things are holon-draw GLYPHS (camera-facing
+// icons from the engine's closed list); the links carry holon-draw's FLOW dashes,
+// which run from each link's start to its end.
+//
+// A move is [link, icon, colour, start s, seconds, options]: `link` an index into
+// the chapter's links or a path made with via(); options { back: true } runs it
+// end to start, { end: ICON } flashes that icon where it lands.
+// A shelf is { at: [x, y, z] (chapter coordinates), slots: [[icon, colour, from s]] };
+// from 0 means it was there all along.
+// ═══════════════════════════════════════════════════════════════════════════
+const TINT = {
+  paper: [244, 242, 234], photo: [122, 178, 236], video: [44, 52, 70], gold: [240, 196, 92],
+  green: [92, 214, 150], blue: [128, 166, 220], amber: [238, 182, 100], red: [238, 104, 90], violet: [160, 142, 222],
+};
+const via = (a, b, lift = 0.6) => makeLink(a, b, lift, 0, 0.05, COL.white, 0);
+const FLOWS = [
+  // 1. The phone shows its key to the laptop, the laptop says yes, and from then on files go straight across.
+  { loop: 9, moves: [
+      [1, 'KEY', TINT.gold, 0.4, 2.2],
+      [1, 'TICK', TINT.green, 2.9, 1.9, { back: true }],
+      [1, 'DOCUMENT', TINT.paper, 5.2, 2.0],
+      [1, 'PHOTO', TINT.photo, 6.4, 2.0],
+    ],
+    shelves: [
+      { at: [-3.4, 4.3, 0.6], slots: [['DOCUMENT', TINT.paper, 0], ['PHOTO', TINT.photo, 0]] },
+      { at: [4.8, 3.3, 0.5], slots: [['DOCUMENT', TINT.paper, 7.2], ['PHOTO', TINT.photo, 8.4]] },
+    ] },
+  // 2. Three files on the phone reach the laptop one by one; the laptop shows which it still waits for.
+  { loop: 10, moves: [
+      [1, 'PHOTO', TINT.photo, 0.4, 1.5], [2, 'PHOTO', TINT.photo, 1.9, 1.5],
+      [1, 'DOCUMENT', TINT.paper, 2.8, 1.5], [2, 'DOCUMENT', TINT.paper, 4.3, 1.5],
+      [1, 'VIDEO', TINT.video, 5.2, 1.5], [2, 'VIDEO', TINT.video, 6.7, 1.5],
+    ],
+    shelves: [
+      { at: [-3.3, 3.6, 0.4], slots: [['PHOTO', TINT.photo, 0], ['DOCUMENT', TINT.paper, 0], ['VIDEO', TINT.video, 0]] },
+      { at: [5.0, 3.2, 0.4], slots: [['PHOTO', TINT.photo, 3.4], ['DOCUMENT', TINT.paper, 5.8], ['VIDEO', TINT.video, 8.2]] },
+    ] },
+  // 3. You ask; they say yes; only then the video and the photos go.
+  { loop: 10, moves: [
+      [0, 'CHAT', TINT.green, 0.3, 1.1], [1, 'CHAT', TINT.green, 1.4, 1.1],
+      [1, 'TICK', TINT.blue, 3.0, 1.0, { back: true }], [0, 'TICK', TINT.blue, 4.0, 1.0, { back: true }],
+      [0, 'VIDEO', TINT.video, 5.3, 1.2], [1, 'VIDEO', TINT.video, 6.5, 1.2],
+      [0, 'PHOTO', TINT.photo, 6.3, 1.2], [1, 'PHOTO', TINT.photo, 7.5, 1.2],
+    ],
+    shelves: [
+      { at: [-3.6, 3.5, 0.4], slots: [['VIDEO', TINT.video, 0], ['PHOTO', TINT.photo, 0]] },
+      { at: [6.1, 2.6, 0.2], slots: [['VIDEO', TINT.video, 7.7], ['PHOTO', TINT.photo, 8.7]] },
+    ] },
+  // 4. You set the lens; what you asked for comes through it, and what you filtered out stops there.
+  { loop: 10, moves: [
+      [0, 'TICK', TINT.green, 0.2, 1.3],
+      [via([-4.4, 5.2, -3.2], [-2.0, 3.0, -0.2], 0.2), 'CHAT', TINT.red, 1.2, 1.5, { end: 'CROSS' }],
+      [1, 'CHAT', TINT.green, 2.2, 1.4], [2, 'CHAT', TINT.green, 3.6, 1.2],
+      [via([0.4, 5.2, -3.2], [-2.0, 3.0, -0.2], 0.2), 'CHAT', TINT.red, 4.2, 1.5, { end: 'CROSS' }],
+      [1, 'PHOTO', TINT.photo, 5.0, 1.4], [2, 'PHOTO', TINT.photo, 6.4, 1.2],
+      [1, 'CHAT', TINT.violet, 7.0, 1.4], [2, 'CHAT', TINT.violet, 8.4, 1.2],
+    ],
+    shelves: [
+      { at: [2.5, 2.9, 0.4], slots: [['CHAT', TINT.green, 3.6], ['PHOTO', TINT.photo, 6.4], ['CHAT', TINT.violet, 8.4]] },
+    ] },
+  // 5. Each member's ballot goes to the hall; the count comes out where every member can check it.
+  { loop: 10, moves: [
+      [0, 'BALLOT', TINT.paper, 0.4, 1.8],
+      [1, 'BALLOT', TINT.paper, 1.6, 1.8],
+      [2, 'DOCUMENT', TINT.amber, 4.0, 2.0],
+      [2, 'TICK', TINT.green, 6.6, 1.4, { back: true }],
+    ],
+    shelves: [
+      { at: [0.0, 5.6, -0.5], slots: [['BALLOT', TINT.paper, 2.2], ['BALLOT', TINT.paper, 3.4]] },
+      { at: [6.1, 3.2, 0.2], slots: [['DOCUMENT', TINT.amber, 6.0], ['TICK', TINT.green, 6.3]] },
+    ] },
+  // 6. No server: the group's files and messages pass between the members' own devices, and each holds a copy.
+  { loop: 9, moves: [
+      [1, 'DOCUMENT', TINT.paper, 0.3, 1.9],
+      [2, 'CHAT', TINT.green, 1.2, 1.5],
+      [1, 'CHAT', TINT.blue, 3.4, 1.9, { back: true }],
+      [2, 'DOCUMENT', TINT.paper, 4.4, 1.5, { back: true }],
+      [1, 'PHOTO', TINT.photo, 6.2, 1.9],
+    ],
+    shelves: [
+      { at: [0.8, 3.7, 0.6], slots: [['DOCUMENT', TINT.paper, 0], ['CHAT', TINT.green, 0], ['PHOTO', TINT.photo, 0]] },
+      { at: [5.8, 3.0, 0.4], slots: [['DOCUMENT', TINT.paper, 2.2], ['CHAT', TINT.blue, 0], ['PHOTO', TINT.photo, 8.1]] },
+    ] },
+  // 7. A named person's stop reaches the AI helper and it pauses; your own files keep moving the whole time.
+  { loop: 9, moves: [
+      [0, 'STOP', TINT.red, 0.5, 1.7, { end: 'STOP' }],
+      [1, 'DOCUMENT', TINT.paper, 0.9, 1.2],
+      [1, 'CHAT', TINT.green, 2.8, 1.2, { back: true }],
+      [1, 'PHOTO', TINT.photo, 4.6, 1.2],
+      [1, 'DOCUMENT', TINT.paper, 6.4, 1.2, { back: true }],
+    ],
+    shelves: [
+      { at: [-0.6, 3.4, -0.5], slots: [['STOP', TINT.red, 2.2]] },
+    ] },
+  // 8. Everyone at once: messages along the row of people, ballots and what was decided to and from the hall.
+  { loop: 9, moves: [
+      [0, 'CHAT', TINT.green, 0.2, 1.2], [1, 'CHAT', TINT.green, 1.4, 1.2], [2, 'CHAT', TINT.green, 2.6, 1.2], [3, 'CHAT', TINT.green, 3.8, 1.2],
+      [4, 'BALLOT', TINT.paper, 0.8, 2.2], [5, 'BALLOT', TINT.paper, 1.8, 2.2],
+      [4, 'DOCUMENT', TINT.amber, 5.0, 2.2, { back: true }], [5, 'DOCUMENT', TINT.amber, 5.6, 2.2, { back: true }],
+      [3, 'PHOTO', TINT.photo, 5.4, 1.2, { back: true }], [2, 'PHOTO', TINT.photo, 6.6, 1.2, { back: true }],
+    ],
+    shelves: [] },
+];
+// The town in chapter 8: something different arrives at the square from every place.
+const TOWN_ICONS = [['KEY', TINT.gold], ['DOCUMENT', TINT.paper], ['VIDEO', TINT.video], ['CHAT', TINT.violet], ['BALLOT', TINT.paper], ['PHOTO', TINT.photo], ['TICK', TINT.green]];
+
+const ICON_SIZE = 0.42, SHELF_STEP = 0.9;
+const bez = (L, u, out) => { const om = 1 - u, A = L.A, B = L.B, C = L.ctrl;
+  out[0] = om * om * A[0] + 2 * om * u * C[0] + u * u * B[0]; out[1] = om * om * A[1] + 2 * om * u * C[1] + u * u * B[1]; out[2] = om * om * A[2] + 2 * om * u * C[2] + u * u * B[2]; return out; };
+const _q = [0, 0, 0];
+function icon(G, p, lift, size, col, a, name) {
+  G.add(p[0], p[1], p[2] + lift, size, 0, 0, 0, 0, 0, 0, [col[0], col[1], col[2], Math.round(255 * Math.max(0, Math.min(1, a)))], ICON[name]);
+}
+// One chapter's moves and shelves at loop time t, into a scene set's glyph batch (chapter coordinates).
+function emitFlow(D, C, F, t, scale = 1) {
+  const G = D.S.glyphs;
+  for (const [ln, name, col, at, dur, opt] of F.moves) {
+    const L = typeof ln === 'number' ? C.links[ln] : ln, u = (t - at) / dur;
+    if (u >= 0 && u <= 1) {
+      const e = u * u * (3 - 2 * u);
+      bez(L, opt && opt.back ? 1 - e : e, _q);
+      icon(G, _q, 0.3, ICON_SIZE * scale * (1 + 0.22 * Math.sin(Math.PI * u)), col, Math.min(u, 1 - u) / 0.08, name);
+    } else if (opt && opt.end && u > 1 && t - at - dur < 0.8) {
+      const k = (t - at - dur) / 0.8;
+      bez(L, 1, _q);
+      icon(G, _q, 0.3 + 0.5 * k, ICON_SIZE * scale * (1.2 + 0.9 * k), opt.end === 'CROSS' ? TINT.red : col, 1 - k, opt.end);
+    }
+  }
+  for (const S of F.shelves) {
+    const n = S.slots.length;
+    for (let k = 0; k < n; k++) {
+      const [name, col, from] = S.slots[k];
+      const h = toHolon([S.at[0] + (k - (n - 1) / 2) * SHELF_STEP * scale, S.at[1], S.at[2]]);
+      if (t >= from) { const pop = Math.min(1, (t - from) / 0.35); icon(G, h, 0, ICON_SIZE * 0.86 * scale * (from > 0 ? 1 + 0.5 * (1 - pop) * pop * 4 : 1), col, 1, name); }
+      else icon(G, h, 0, ICON_SIZE * 0.7 * scale, [205, 214, 228], 0.5, 'RING');
+    }
+  }
+}
+
 // ── Every chapter is built once, at its site ──
 // Per chapter: main (its people and things), dim (what it shows bypassed). The batches'
 // offset sets them down at the site; per-frame parts (animations, pulses) go to `dyn`,
@@ -1613,6 +1763,8 @@ const CH = CHAPTERS.map((C, i) => {
   const off = toHolon(sceneOff(i));
   for (const b of main.batches) b.offset = off;
   for (const b of dim.batches) b.offset = off;
+  for (const b of main.batches) resident(b);
+  for (const b of dim.batches) resident(b);
   return { main, dim, off, light: i === 0 ? 1 : 0 };
 });
 const dyn = new SceneSet();
@@ -1623,6 +1775,7 @@ const TOWN_LINKS = SITES.slice(0, 7).map(([x, z], i) =>
 const townWeb = new SceneSet();
 for (const L of TOWN_LINKS) emitLinkTube(townWeb.stream, L);
 townWeb.seal();
+for (const b of townWeb.batches) resident(b);
 let townWebLight = 0;
 
 // ── The camera: a fitted shot per chapter, and a flight between them ──
@@ -1733,7 +1886,8 @@ function frame(tms) {
   // Only what the shadow map covers casts into it: the rest of the town is drawn once a frame, not twice.
   const casts = (x, z, r) => Math.hypot(x - cam.cx, z - cam.cz) < SHADOW.radius + r;
   // What is well outside the shot is not drawn at all: it is off screen or gone into the sky.
-  const shown = (x, z, r) => Math.hypot(x - cam.cx, z - cam.cz) < cam.dist * 1.9 + r;
+  // (a small screen draws a tighter circle: its frame shows less of the town and its GPU has less to spare)
+  const shown = (x, z, r) => Math.hypot(x - cam.cx, z - cam.cz) < cam.dist * (Wcss < 700 ? 1.45 : 1.9) + r;
   for (const g of REGIONS) {
     if (!shown(g.cx, g.cz, REGION * 0.71)) continue;
     const d = evening(g.cx, g.cz, reach), cast = casts(g.cx, g.cz, REGION * 0.71);
@@ -1761,11 +1915,15 @@ function frame(tms) {
     for (const b of townWeb.batches) { ring(b); drawList.push(b); }
   }
 
-  // Animated parts and pulses: the current chapter's, at its site; the town's in chapter 8.
-  const C = CHAPTERS[currentStep];
+  // Animated parts and what moves: the current chapter's, at its site; the town's in chapter 8. The chapter's script
+  // starts once the camera has nearly arrived, and loops. Every link's dashes run on one phase (a tile setting: the
+  // links themselves are resident and are never re-sent).
+  const C = CHAPTERS[currentStep], FL = FLOWS[currentStep];
+  const flowT = Math.max(0, (performance.now() - flight.t0) / 1000 - FLIGHT_SECONDS * 0.7) % FL.loop;
+  for (const G of CH) { G.main.tubes.params[PARAM_FLOW] = tSec * 0.55; G.main.tubes.params[PARAM_FLOW_N] = 5; }
   dyn.clear();
   if (C.anim) C.anim(dyn.stream, tSec);
-  for (const L of C.links) emitLinkPulses(dyn.stream, L, tSec);
+  emitFlow(dyn.stream, C, FL, flowT, 1 + 0.5 * portrait);
   dyn.seal();
   for (const b of dyn.batches) b.offset = CH[currentStep].off;
   setLook(dyn, 1, Math.min(1, CH[currentStep].light * 1.4));
@@ -1774,7 +1932,13 @@ function frame(tms) {
     townWeb.dynSet = townWeb.dynSet || new SceneSet();
     const P = townWeb.dynSet;
     P.clear();
-    for (const L of TOWN_LINKS) emitLinkPulses(P.stream, L, tSec);
+    // from every place to the square, its own kind of thing, one after another
+    for (let i = 0; i < TOWN_LINKS.length; i++) {
+      const u = (tSec * 0.16 + i / TOWN_LINKS.length) % 1, e = u * u * (3 - 2 * u), [name, col] = TOWN_ICONS[i];
+      bez(TOWN_LINKS[i], e, _q);
+      icon(P.glyphs, _q, 0.5, 1.5 * (1 + 0.2 * Math.sin(Math.PI * u)), col, Math.min(u, 1 - u) / 0.08, name);
+    }
+    townWeb.tubes.params[PARAM_FLOW] = tSec * 0.3; townWeb.tubes.params[PARAM_FLOW_N] = 9;
     P.seal();
     setLook(P, 1, townWebLight);
     for (const b of P.batches) drawList.push(b);
