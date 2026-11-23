@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0e16">
 <title>CIRIS Web4 — Your Devices, Your Friends, Your Community</title>
-<meta name="description" content="Connect your phone and laptop directly, share video, files, and chat with friends and family, control your own feed, and run your church, town, or club without Big Tech or a tech guy.">
+<meta name="description" content="Connect your phone and laptop directly, share video, files, and chat with friends and family, control your own feed, and run your community, town, or club without Big Tech or a tech guy.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%2214%22 fill=%22%230a0e16%22 stroke=%22%235ad38f%22 stroke-width=%222.5%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,8 +44,30 @@ body {
   flex: 1 1 auto;
   min-height: 0;
   width: 100%;
-  background: var(--bg);
   position: relative;
+  /* The evening sky over the town: the canvas is transparent where the town dissolves. */
+  background:
+    radial-gradient(90% 30% at 24% 30%, rgba(255, 190, 120, 0.35) 0%, rgba(255, 160, 110, 0.12) 45%, rgba(0, 0, 0, 0) 75%),
+    linear-gradient(180deg, #080c1c 0%, #121a38 7%, #2a2c52 14%, #5b4466 21%, #a3687a 28%, #d6917c 34%, #e8b48a 40%, #f0c79a 100%);
+}
+#stage-wrap::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 82% 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, rgba(255,255,255,0.85), transparent 60%),
+    radial-gradient(1px 1px at 27% 9%, rgba(255,255,255,0.6), transparent 60%),
+    radial-gradient(1.5px 1.5px at 41% 22%, rgba(255,255,255,0.8), transparent 60%),
+    radial-gradient(1px 1px at 58% 12%, rgba(255,255,255,0.55), transparent 60%),
+    radial-gradient(1px 1px at 66% 30%, rgba(255,255,255,0.5), transparent 60%),
+    radial-gradient(1.5px 1.5px at 79% 7%, rgba(255,255,255,0.9), transparent 60%),
+    radial-gradient(1px 1px at 88% 24%, rgba(255,255,255,0.6), transparent 60%),
+    radial-gradient(1px 1px at 94% 14%, rgba(255,255,255,0.5), transparent 60%),
+    radial-gradient(1px 1px at 6% 34%, rgba(255,255,255,0.45), transparent 60%),
+    radial-gradient(1px 1px at 35% 38%, rgba(255,255,255,0.35), transparent 60%),
+    radial-gradient(1px 1px at 72% 42%, rgba(255,255,255,0.3), transparent 60%),
+    radial-gradient(28px 28px at 84% 16%, rgba(255, 244, 222, 0.95) 0%, rgba(255, 240, 214, 0.9) 48%, rgba(255, 236, 200, 0.18) 56%, rgba(0,0,0,0) 72%);
 }
 canvas#c {
   width: 100%;
@@ -242,7 +264,7 @@ canvas#c:active {
 // ═══════════════════════════════════════════════════════════════════════════
 // 100% NATIVE `holon-draw` (`draw.js` + `text.js`) 3D WORLD & SCREEN RENDERER
 // Every 3D Person, Phone, Laptop, Media Console, Algorithm Equalizer,
-// Church/Town/Club Hall, Server Tower, Key, AI Helper, E-Stop Switch, and
+// Community/Town/Club Hall, Server Tower, Key, AI Helper, E-Stop Switch, and
 // Screen Plaque is packed into 52-byte `holon-draw` records.
 // ═══════════════════════════════════════════════════════════════════════════
 import { createDrawer, KIND, INSTANCE_BYTES, PARAM, PARAMS_NEUTRAL, VARIANT_ROUND, VARIANT_ORIENT, MATERIAL } from './holon/draw.js';
@@ -276,7 +298,7 @@ const STEPS = [
   },
   {
     short: "5. Community",
-    title: "Your church, town or club, deciding together fairly",
+    title: "Your community, town or club, deciding together fairly",
     status: "One person, one voice",
     text: `Propose, discuss and vote from the phone in your pocket. CIRIS is built so <strong>one person counts once</strong>, however many devices they own; no donor buys a louder voice, no outside company can ban your group, and every member can check the count.`
   },
@@ -343,7 +365,8 @@ const stageWrap = document.getElementById('stage-wrap');
 let dpr = Math.min(window.devicePixelRatio || 1, 2);
 
 // MSAA only below 2x density: on a 2x screen its cost is real and its gain hard to see.
-const GL_OPTS = { antialias: dpr < 1.75, alpha: false };
+// alpha: the sky is the page's own gradient behind the canvas; the far town dissolves into it.
+const GL_OPTS = { antialias: dpr < 1.75, alpha: true, premultipliedAlpha: true };
 const gl = canvas.getContext('webgl2', GL_OPTS) || canvas.getContext('webgl', GL_OPTS);
 
 // Label typography: IBM Plex Sans through holon-draw's host styles (numbered from 5).
@@ -940,10 +963,20 @@ function buildCommunityHall3D(stream, M) {
       stream.addBox(mat4Translate(M, 0, 1.51 + (ridgeY - 1.51) * (k / 4) + h * 0.125, zf), 1.86 * (1 - (k + 0.5) / 4), (ridgeY - 1.51) / 4, 0.05, COL.silver, MAT.titanium);
     }
   }
-  stream.addBox(mat4Translate(M, 0, ridgeY + 0.30, 0), 0.40, 0.46, 0.40, COL.white, MAT.titanium);
-  stream.addBox(mat4Translate(M, 0, ridgeY + 0.32, 0.21), 0.18, 0.24, 0.04, COL.amber, MAT.brightGlow);
-  stream.addCylinderY(mat4Translate(M, 0, ridgeY + 0.84, 0), 0.03, 0.20, 0.60, COL.gold, MAT.gold);
-  stream.addSphere(mat4Translate(M, 0, ridgeY + 1.17, 0), 0.08, COL.gold, MAT.brightGlow);
+  // A town-hall clock tower with a flag: a civic building, not a place of worship.
+  stream.addBox(mat4Translate(M, 0, ridgeY + 0.34, 0), 0.52, 0.62, 0.52, COL.white, MAT.titanium);
+  stream.addBox(mat4Translate(M, 0, ridgeY + 0.68, 0), 0.62, 0.07, 0.62, COL.darkChassis, MAT.darkMetal);
+  // the clock: a lit face, framed, with two hands at ten to two
+  const face = mat4Translate(M, 0, ridgeY + 0.36, 0.27);
+  const disc = (z0, z1, r, col, mat) => stream.rod(toHolon(stream.tp(face, [0, 0, z0])), toHolon(stream.tp(face, [0, 0, z1])), r, stream.toRgba(col, mat), matBits(mat));
+  const hand = (x, y, r) => stream.rod(toHolon(stream.tp(face, [0, 0, 0.04])), toHolon(stream.tp(face, [x, y, 0.04])), r, stream.toRgba(COL.obsidian, MAT.matte), MATERIAL.MATTE);
+  disc(-0.01, 0.012, 0.20, COL.darkChassis, MAT.darkMetal);
+  disc(0.012, 0.03, 0.17, COL.white, MAT.brightGlow);
+  hand(-0.09, 0.05, 0.014);
+  hand(0.06, 0.11, 0.012);
+  // the flag on its pole
+  stream.addCylinderY(mat4Translate(M, 0, ridgeY + 1.12, 0), 0.02, 0.025, 0.86, COL.silver, MAT.titanium);
+  stream.addBox(mat4Translate(M, 0.24, ridgeY + 1.30, 0), 0.44, 0.26, 0.03, COL.green, MAT.matte);
 }
 
 function animCryptoKey(stream, M, accentCol, t) {
@@ -1215,7 +1248,7 @@ const CHAPTERS = [
     ],
     obstacles: [ob(-6.0, 0.3, 0.7, 2.3), ob(-2.0, -0.2, 1.1, 2.5), ob(2.5, 0.4, 1.2, 1.8), ob(6.0, 0.2, 0.7, 2.5)],
   },
-  // 5. Church, town or club deciding together.
+  // 5. A community, town or club deciding together.
   {
     build(S) {
       buildPerson3D(S, at(-6.2, 0.4, 0.30), COL.green);
@@ -1231,7 +1264,7 @@ const CHAPTERS = [
     ],
     labels: [
       { pos: [-5.15, 0, 1.70], dy: 22, title: "Neighbours & members", sub: "Vote from your phone or laptop", col: RGBA.green },
-      { pos: [0.0, 3.6, -0.5], dy: -16, title: "Your church, town or club", sub: "One person, one voice · No outside ban", col: RGBA.amber },
+      { pos: [0.0, 3.6, -0.5], dy: -16, title: "Your community, town or club", sub: "One person, one voice · No outside ban", col: RGBA.amber },
       { pos: [6.1, 0, 1.4], dy: 22, title: "A count anyone can check", sub: "Every member can verify the result", col: RGBA.green },
     ],
     obstacles: [ob(-6.2, 0.4, 0.7, 2.3), ob(-4.1, 0.6, 0.7, 2.4), ob(0.0, -0.5, 1.3, 3.4), ob(3.6, 0.5, 0.7, 2.3), ob(6.1, 0.2, 0.8, 2.3)],
@@ -1306,53 +1339,331 @@ const CHAPTERS = [
   },
 ];
 
-// ── The floor: a patch and a quiet grid, dissolved by holon-draw's RING ──
-// The floor's tone is also the clear colour, so its far edge never shows as a horizon.
-const FLOOR_RGB = [17, 21, 31, 255];
-const floorPatch = new HolonBatch(KIND.PATCH, false, 4);
-const floorGrid  = new HolonBatch(KIND.LINE, false, 64);
-floorPatch.add(0, 0, -0.02, 60, 60, 0, 0.2, 0, 0, 0, FLOOR_RGB, 0);
-for (let g = -16; g <= 16; g += 2) {
-  floorGrid.add(g, -14, 0, 0.018, 0, 0, g, 14, 0, 0, [40, 58, 84, 70], 0);
-  if (g >= -14 && g <= 14) floorGrid.add(-16, g, 0, 0.018, 0, 0, 16, g, 0, 0, [40, 58, 84, 70], 0);
+// ═══════════════════════════════════════════════════════════════════════════
+// THE TOWN. The eight chapters are eight places in one small evening town: three
+// homes along the front street, the feed and the members' houses on the square's
+// street, the AI desk and the town hall at the back. Every chapter is built once,
+// at its site, so the town is always full of people and their things; the camera
+// flies from place to place, and the place it is at is lit while the rest of the
+// town settles into the evening. Everything is holon-draw records: the ground and
+// streets are patches and quads, houses are oriented boxes with glowing windows,
+// trees are rods and spheres, lamps are glow spheres over translucent pools.
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Scene coordinates (y up, the camera looks toward -z). A site is where a chapter's own
+// layout (x about -7..7, z about -3.5..3) is set down.
+const SITES = [
+  [-17, 14], [0, 14], [17, 14],      // 1 your devices, 2 files, 3 friends & family (the front street)
+  [17, -10], [17, -34],              // 4 your feed, 5 the town hall
+  [-17, -10], [-17, -34],            // 6 members own it, 7 the AI desk
+  [0, -10],                          // 8 together, on the square
+];
+// How each chapter is shot: a multiple of the fitted distance, extra pitch, a little yaw.
+const SHOTS = [
+  { dist: 1.00, pitch: 0.00, yaw: 0.00 },
+  { dist: 1.00, pitch: 0.00, yaw: 0.05 },
+  { dist: 1.00, pitch: 0.02, yaw: -0.05 },
+  { dist: 1.00, pitch: 0.02, yaw: -0.10 },
+  { dist: 1.04, pitch: 0.04, yaw: 0.06 },
+  { dist: 1.00, pitch: 0.02, yaw: 0.10 },
+  { dist: 1.00, pitch: 0.02, yaw: 0.00 },
+  { dist: 4.7, pitch: 0.30, yaw: 0.00, aerial: true },    // the whole town, from above the square
+];
+const FLIGHT_SECONDS = 2.6;
+const sceneOff = (i) => [SITES[i][0], 0, SITES[i][1]];
+
+// Labels and obstacles are in each chapter's own coordinates: set them down at their site.
+CHAPTERS.forEach((C, i) => {
+  const [sx, sz] = SITES[i];
+  for (const l of C.labels) { l.pos = [l.pos[0] + sx, l.pos[1], l.pos[2] + sz]; }
+  for (const o of C.obstacles) { o.x += sx; o.z += sz; }
+});
+
+// A seeded random source, so the town is the same town on every load.
+function rng(seed) {
+  let s = seed >>> 0;
+  return () => { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+const R = rng(20261122);
+const pick = (a) => a[Math.floor(R() * a.length)];
+const lerp = (a, b, t) => a + (b - a) * t;
+
+// Where nothing may be planted: each site's stage, the streets and the square.
+function onStage(x, z, pad = 0) {
+  for (const [sx, sz] of SITES) if (Math.abs(x - sx) < 8.4 + pad && z > sz - 4.6 - pad && z < sz + 4.0 + pad) return true;
+  return false;
+}
+const STREETS_Z = [19.5, -4.5, -28.5];          // in front of each row of sites
+const AVENUES_X = [-8.5, 8.5, -29, 29];          // between the sites, and the town's edges
+function onStreet(x, z, pad = 0) {
+  for (const sz of STREETS_Z) if (Math.abs(z - sz) < 1.7 + pad && Math.abs(x) < 31) return true;
+  for (const sx of AVENUES_X) if (Math.abs(x - sx) < 1.5 + pad && z > -46 && z < 21) return true;
+  return Math.hypot(x, z + 10) < 10.5 + pad;     // the square
 }
 
-const floorBatches = [floorPatch, floorGrid];
-for (const b of floorBatches) b.seal();
+// Palette for the town (the story's own COL stays for the chapter props).
+const TOWN = {
+  grass:  [22, 44, 38, 255],
+  grass2: [30, 58, 46, 255],
+  street: [58, 62, 72, 255],
+  kerb:   [86, 90, 98, 255],
+  square: [74, 70, 72, 255],
+  water:  [36, 74, 110, 220],
+  walls:  [[0.86, 0.80, 0.70, 1], [0.78, 0.72, 0.66, 1], [0.70, 0.74, 0.78, 1], [0.84, 0.70, 0.60, 1], [0.74, 0.78, 0.70, 1]],
+  roofs:  [[0.36, 0.22, 0.20, 1], [0.24, 0.26, 0.32, 1], [0.42, 0.30, 0.24, 1], [0.20, 0.30, 0.30, 1]],
+  window: [1.00, 0.78, 0.46, 1],
+  windowCool: [0.62, 0.80, 1.00, 1],
+  door:   [0.30, 0.22, 0.18, 1],
+  trunk:  [0.30, 0.22, 0.16, 1],
+  leaves: [[0.16, 0.36, 0.26, 1], [0.20, 0.42, 0.28, 1], [0.13, 0.30, 0.24, 1], [0.26, 0.44, 0.30, 1]],
+  lamp:   [1.00, 0.86, 0.58, 1],
+  pole:   [0.20, 0.22, 0.26, 1],
+  hill:   [0.10, 0.16, 0.20, 1],
+};
 
-// ── Chapter sets, double-buffered for the crossfade ──
-// Per set: main, dimmed (bypassed props), and the X marks. Plus one per-frame animated set.
-const SETS = [0, 1].map(() => ({ main: new SceneSet(), dim: new SceneSet(), step: -1 }));
+// A house: walls, a pitched roof of two slabs with stepped gables, a chimney, a door and
+// glowing windows front and back. Faces +z after `yaw`.
+function buildHouse(s, x, z, yaw, w, d, h, wall, roof, lit) {
+  const M = mat4RotateY(mat4Translate(I, x, 0, z), yaw);
+  s.addBox(mat4Translate(M, 0, h / 2, 0), w, h, d, wall, MAT.matte);
+  const pitch = 0.58, half = d / 2 + 0.12, rise = Math.tan(pitch) * half;
+  for (const side of [-1, 1]) {
+    const MR = mat4RotateX(mat4Translate(M, 0, h + rise * 0.5 + 0.05, side * half * 0.5), side * pitch);
+    s.addBox(MR, w + 0.36, 0.12, half / Math.cos(pitch) + 0.08, roof, MAT.matte);
+  }
+  for (const xf of [-w / 2 + 0.03, w / 2 - 0.03]) {
+    for (let k = 0; k < 3; k++) {
+      const hk = rise * (1 - k / 3);
+      s.addBox(mat4Translate(M, xf, h + rise * (k / 3) + hk * 0.17, 0), 0.06, rise / 3, d * (1 - (k + 0.5) / 3), wall, MAT.matte);
+    }
+  }
+  s.addBox(mat4Translate(M, w * 0.28, h + rise * 0.55, -d * 0.12), 0.34, rise + 0.5, 0.34, roof, MAT.matte);
+  s.addBox(mat4Translate(M, 0, 0.55, d / 2 + 0.02), 0.62, 1.1, 0.06, TOWN.door, MAT.matte);
+  const cols = Math.max(1, Math.round(w / 1.3)), rows = h > 3.2 ? 2 : 1;
+  for (const face of [1, -1]) {
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const wx = -w / 2 + (c + 0.5) * (w / cols);
+        if (face > 0 && r === 0 && Math.abs(wx) < 0.6) continue;     // the door
+        const on = lit && R() < 0.82;
+        const col = on ? (R() < 0.85 ? TOWN.window : TOWN.windowCool) : [0.14, 0.16, 0.20, 1];
+        s.addBox(mat4Translate(M, wx, 1.35 + r * 1.55, face * (d / 2 + 0.03)), 0.56, 0.72, 0.05, col, on ? MAT.glow : MAT.matte);
+      }
+    }
+  }
+}
+
+function buildTree(s, x, z, size) {
+  const hb = toHolon([x, 0, z]);
+  const trunkH = 1.1 * size;
+  s.rod([hb[0], hb[1], 0], [hb[0], hb[1], trunkH], 0.11 * size, s.toRgba(TOWN.trunk), MATERIAL.MATTE);
+  const leaf = pick(TOWN.leaves);
+  const n = 3 + Math.floor(R() * 3);
+  for (let k = 0; k < n; k++) {
+    const a = R() * Math.PI * 2, rr = 0.35 * size * R();
+    const r = (0.62 + 0.36 * R()) * size;
+    s.S.spheresC.add(hb[0] + Math.cos(a) * rr, hb[1] + Math.sin(a) * rr, trunkH + 0.5 * size + R() * 0.7 * size, r, 0, 0, 0, 0, 0, 0, s.toRgba(leaf), MATERIAL.MATTE);
+  }
+}
+
+function buildConifer(s, x, z, size) {
+  const hb = toHolon([x, 0, z]);
+  s.rod([hb[0], hb[1], 0], [hb[0], hb[1], 0.7 * size], 0.09 * size, s.toRgba(TOWN.trunk), MATERIAL.MATTE);
+  const leaf = TOWN.leaves[2];
+  for (let k = 0; k < 4; k++) {
+    s.S.spheresC.add(hb[0], hb[1], (0.9 + k * 0.62) * size, (0.78 - k * 0.16) * size, 0, 0, 0, 0, 0, 0, s.toRgba(leaf), MATERIAL.MATTE);
+  }
+}
+
+// A lamp: a pole, a glowing globe, and a warm pool of light on the ground (in `pools`).
+function buildLamp(s, pools, x, z) {
+  const hb = toHolon([x, 0, z]);
+  s.rod([hb[0], hb[1], 0], [hb[0], hb[1], 2.6], 0.05, s.toRgba(TOWN.pole), MATERIAL.METAL);
+  s.ball([hb[0], hb[1], 2.72], 0.17, s.toRgba(TOWN.lamp), true, MATERIAL.GLOW);
+  pools.add(hb[0], hb[1], 0.02, 1.7, 0, 0, 0, 0, 0, 0, [255, 196, 120, 22], 0);
+  pools.add(hb[0], hb[1], 0.025, 0.9, 0, 0, 0, 0, 0, 0, [255, 206, 140, 30], 0);
+}
+
+// The town is built in REGIONS (20 x 20 scene units) so the far ones can settle into the
+// evening (holon-draw's DIM per batch) while the place the camera is at stays bright.
+const REGION = 20;
+const regions = new Map();
+function region(x, z) {
+  const key = Math.floor(x / REGION) + ',' + Math.floor(z / REGION);
+  let g = regions.get(key);
+  if (!g) {
+    g = { set: new SceneSet(), pools: new HolonBatch(KIND.DISC, false, 64), cx: (Math.floor(x / REGION) + 0.5) * REGION, cz: (Math.floor(z / REGION) + 0.5) * REGION };
+    g.pools.castShadow = false;
+    regions.set(key, g);
+  }
+  return g;
+}
+
+// The ground: lawn with holon-draw's ground field, streets and kerbs, the square, a pond.
+// The lawn is TILED: draw.js takes the RING fade per vertex, so one huge patch whose corners
+// project behind the eye would fade wrongly. Tiles of TILE units, each a shade of a smooth
+// low-frequency field (so the lawn is mottled, not a quilt), with holon-draw's ground field
+// for the fine grain. Streets are cut into segments for the same reason.
+const TILE = 6;
+const ground = new HolonBatch(KIND.PATCH, false, 512);
+const flats = new HolonBatch(KIND.QUAD, false, 256);
+const flatDiscs = new HolonBatch(KIND.DISC, false, 16);
+const lawn = (x, z) => 0.5 + 0.25 * Math.sin(x * 0.11 + 1.3) * Math.cos(z * 0.09 - 0.4) + 0.25 * Math.sin((x + z) * 0.05 + 2.1);
+for (let x = -84; x < 84; x += TILE) {
+  for (let z = -108; z < 48; z += TILE) {
+    const m = lawn(x + TILE / 2, z + TILE / 2), hb = toHolon([x + TILE / 2, 0, z + TILE / 2]);
+    const c = [0, 1, 2].map((k) => Math.round(lerp(TOWN.grass[k], TOWN.grass2[k], m)));
+    ground.add(hb[0], hb[1], -0.03, TILE + 0.02, TILE + 0.02, 0, 0, 0, 0, 0, [c[0], c[1], c[2], 255], 0);
+  }
+}
+ground.params[PARAM.TEX] = 0.9;
+ground.params.set([0, 0, 1.6, 1.6], PARAM.NOISE);
+const SEG = 7.75;
+for (const sz of STREETS_Z) {
+  for (let x = -31 + SEG / 2; x < 31; x += SEG) {
+    const hb = toHolon([x, 0, sz]);
+    flats.add(hb[0], hb[1], 0.0, SEG + 0.02, 3.4, 0, 0, 0, 0, 0, TOWN.kerb, 0);
+    flats.add(hb[0], hb[1], 0.01, SEG + 0.02, 2.8, 0, 0, 0, 0, 0, TOWN.street, 0);
+  }
+}
+for (const sx of AVENUES_X) {
+  for (let z = -46 + SEG * 0.5; z < 21; z += SEG) {
+    const hb = toHolon([sx, 0, z]);
+    flats.add(hb[0], hb[1], 0.0, 3.0, SEG + 0.02, 0, 0, 0, 0, 0, TOWN.kerb, 0);
+    flats.add(hb[0], hb[1], 0.012, 2.4, SEG + 0.02, 0, 0, 0, 0, 0, TOWN.street, 0);
+  }
+}
+{
+  const sq = toHolon([0, 0, -10]);
+  flatDiscs.add(sq[0], sq[1], 0.012, 10.6, 0, 0, 0, 0, 0, 0, TOWN.kerb, 0);
+  flatDiscs.add(sq[0], sq[1], 0.016, 10.0, 0, 0, 0, 0, 0, 0, TOWN.square, 0);
+  const pond = toHolon([30, 0, 5]);
+  flatDiscs.add(pond[0], pond[1], 0.02, 5.0, 0, 0, 0, 0, 0, 0, TOWN.water, 0);
+}
+const groundBatches = [ground, flats, flatDiscs];
+for (const b of groundBatches) { b.seal(); b.castShadow = false; }
+
+// Houses along the streets, behind each row of sites and along the town's edges.
+for (const [rowZ, facing] of [[3.5, 0], [-21.5, 0], [-44, 0]]) {
+  for (let x = -27; x <= 27; x += 5.2 + R() * 1.6) {
+    const z = rowZ + (R() - 0.5) * 1.2;
+    if (onStage(x, z, 0.6) || onStreet(x, z, 1.0)) continue;
+    const w = 3.0 + R() * 1.6, d = 2.8 + R() * 1.0, h = R() < 0.35 ? 4.0 + R() * 0.8 : 2.6 + R() * 0.6;
+    buildHouse(region(x, z).set.stream, x, z, facing + (R() - 0.5) * 0.08, w, d, h, pick(TOWN.walls), pick(TOWN.roofs), true);
+  }
+}
+for (const sx of [-34, 34]) {
+  for (let z = -44; z <= 22; z += 6.5 + R() * 2) {
+    if (onStreet(sx, z, 1.0)) continue;
+    buildHouse(region(sx, z).set.stream, sx, z, (sx < 0 ? 1 : -1) * Math.PI / 2, 3.2 + R(), 3.0 + R() * 0.8, 2.6 + R() * 1.4, pick(TOWN.walls), pick(TOWN.roofs), true);
+  }
+}
+// Trees: scattered where nothing else is, thicker toward the town's edges.
+for (let n = 0; n < 230; n++) {
+  const x = (R() - 0.5) * 92, z = -56 + R() * 78;
+  if (onStage(x, z, 0.4) || onStreet(x, z, 0.8)) continue;
+  let nearHouse = false;
+  for (const rz of [3.5, -21.5, -44]) if (Math.abs(z - rz) < 2.6 && Math.abs(x) < 29) nearHouse = true;
+  if (z > 22) continue;                                            // the camera's side of the front street stays open
+  if (Math.abs(Math.abs(x) - 34) < 2.6 && z > -46 && z < 24) nearHouse = true;
+  if (nearHouse) continue;
+  const edge = Math.min(1, Math.max(0, (Math.hypot(x / 40, (z + 8) / 34) - 0.55) / 0.5));
+  if (R() > 0.35 + 0.65 * edge) continue;
+  const size = 0.75 + R() * 0.6 + edge * 0.5;
+  (R() < 0.3 ? buildConifer : buildTree)(region(x, z).set.stream, x, z, size);
+}
+// Lamps along the streets and round the square.
+for (const sz of STREETS_Z) {
+  for (let x = -26; x <= 26; x += 8.6) {
+    for (const side of [-1, 1]) {
+      const z = sz + side * 2.2;
+      if (onStage(x, z, -0.2)) continue;
+      const g = region(x, z);
+      buildLamp(g.set.stream, g.pools, x + side * 1.1, z);
+    }
+  }
+}
+for (let k = 0; k < 8; k++) {
+  const a = (k / 8) * Math.PI * 2 + 0.39, x = Math.cos(a) * 11.4, z = -10 + Math.sin(a) * 11.4;
+  if (onStage(x, z, -1.5)) continue;
+  const g = region(x, z);
+  buildLamp(g.set.stream, g.pools, x, z);
+}
+// Hills along the far horizon, in the evening's blue.
+const hills = new SceneSet();
+for (let k = 0; k < 14; k++) {
+  const x = -84 + k * 13 + (R() - 0.5) * 6, z = -88 - R() * 16, r = 14 + R() * 12;
+  const hb = toHolon([x, 0, z]);
+  hills.spheres.add(hb[0], hb[1], -r * 0.62, r, 0, 0, 0, 0, 0, 0, hills.stream.toRgba(TOWN.hill), MATERIAL.MATTE);
+}
+hills.seal();
+for (const b of hills.batches) b.castShadow = false;
+const REGIONS = [...regions.values()];
+for (const g of REGIONS) { g.set.seal(); g.pools.seal(); }
+
+// ── Every chapter is built once, at its site ──
+// Per chapter: main (its people and things), dim (what it shows bypassed). The batches'
+// offset sets them down at the site; per-frame parts (animations, pulses) go to `dyn`,
+// which moves to the current chapter's site.
+const CH = CHAPTERS.map((C, i) => {
+  const main = new SceneSet(), dim = new SceneSet();
+  C.build(main.stream, dim.stream, main.stream);
+  for (const L of C.links) emitLinkTube(main.stream, L);
+  main.seal(); dim.seal();
+  const off = toHolon(sceneOff(i));
+  for (const b of main.batches) b.offset = off;
+  for (const b of dim.batches) b.offset = off;
+  return { main, dim, off, light: i === 0 ? 1 : 0 };
+});
 const dyn = new SceneSet();
-let curSet = 0, builtStep = -1, fadeStart = -1e9;
-const FADE_SECONDS = 0.5;
 
-function buildChapter(step) {
-  curSet = 1 - curSet;
-  const G = SETS[curSet];
-  G.main.clear(); G.dim.clear();
-  const C = CHAPTERS[step];
-  C.build(G.main.stream, G.dim.stream, G.main.stream);
-  for (const L of C.links) emitLinkTube(G.main.stream, L);
-  G.main.seal(); G.dim.seal();
-  G.step = step;
-  builtStep = step;
-  fadeStart = SETS[1 - curSet].step < 0 ? -1e9 : performance.now();
+// The town's links, shown in chapter 8: every place joined to the square, glowing.
+const TOWN_LINKS = SITES.slice(0, 7).map(([x, z], i) =>
+  makeLink([x, 1.6, z], [0, 1.6, -10], 3.2 + (i % 3) * 0.8, 0, 0.07, i < 3 ? COL.green : i < 5 ? COL.amber : COL.blue, 0.22));
+const townWeb = new SceneSet();
+for (const L of TOWN_LINKS) emitLinkTube(townWeb.stream, L);
+townWeb.seal();
+let townWebLight = 0;
+
+// ── The camera: a fitted shot per chapter, and a flight between them ──
+const cam = { cx: 0, cz: 0, dist: 0, pitch: 0, yaw: 0 };
+const flight = { from: null, to: null, t0: -1e9, step: -1 };
+function shotFor(step, aspect, portrait) {
+  const S = SHOTS[step], [sx, sz] = SITES[step];
+  const landscapeDist = Math.max(14.2, 26.8 / aspect);
+  const base = landscapeDist + (PORTRAIT_DIST - landscapeDist) * portrait;
+  return {
+    cx: sx + PORTRAIT_SHIFT * portrait, cz: S.aerial ? sz + 5 : sz,
+    dist: base * S.dist * 1.04, pitch: 0.52 + PORTRAIT_PITCH * portrait * 0.7 + S.pitch,
+    yaw: S.yaw - PORTRAIT_YAW * portrait * (S.aerial ? 0.4 : 1),
+  };
 }
+const ease = (k) => k * k * k * (k * (k * 6 - 15) + 10);
 
-// ── Single-Pass `holon-draw` Render Loop ──
-// Light: a warm key from the upper left, toward the camera (holon frame, z up).
-const LIGHT_DIR = new Float32Array([-0.48, -0.52, 0.71]);
+// ── Render loop ──
+// Light: a low warm key from the west, as in the last of the evening, and a cool ambient.
+const LIGHT_DIR = new Float32Array([-0.62, -0.38, 0.58]);
 const VPORT = [0, 0, 1, 1];
-// Real shadows from holon-draw: one map over the stage (it spans about x -7..7, z -3..2).
-// 1024 texels on dense (phone) screens, 2048 elsewhere: about 9 mm of stage per texel either way on screen.
-const SHADOW = { center: [0, 0, 1.0], radius: 9.0, size: dpr >= 1.75 ? 1024 : 2048, strength: 0.62 };
+const SHADOW = { center: [0, 0, 1.0], radius: 10.5, size: dpr >= 1.75 ? 1024 : 2048, strength: 0.58 };
 const SHADOWS_ON = new URLSearchParams(location.search).get('shadow') !== '0';
-const DRAW_OPTS = { light: LIGHT_DIR, ambient: 0.40, viewport: VPORT, shadow: SHADOWS_ON ? SHADOW : undefined };
+const DRAW_OPTS = { light: LIGHT_DIR, ambient: 0.42, viewport: VPORT, shadow: SHADOWS_ON ? SHADOW : undefined };
 const drawList = [];
 const PORTRAIT_YAW = 1.18, PORTRAIT_PITCH = 0.34, PORTRAIT_DIST = 22.5, PORTRAIT_SHIFT = -1.0;
 let lastTms = performance.now();
-const _c = [0, 0];
+let started = false;
+
+function setLook(set, dim, fade = 1) {
+  for (const b of set.batches) {
+    b.params[PARAM.FADE] = fade;
+    b.params[PARAM.DIM] = dim; b.params[PARAM.DIM + 1] = dim; b.params[PARAM.DIM + 2] = dim * 1.04;
+  }
+}
+// How far a place is from the camera's centre, in units of the shot: near is lit, far is evening.
+function evening(x, z, reach) {
+  const d = Math.hypot(x - cam.cx, z - cam.cz) / reach;
+  const k = Math.min(1, Math.max(0, (d - 0.55) / 1.1));
+  return 1 - 0.55 * k * k * (3 - 2 * k);
+}
 
 function frame(tms) {
   const dt = Math.min(0.1, Math.max(0, (tms - lastTms) / 1000));
@@ -1363,61 +1674,113 @@ function frame(tms) {
     stepTime += dt;
     if (stepTime >= STEP_DURATION) goToStep(currentStep + 1, false);
   }
-  if (builtStep !== currentStep) buildChapter(currentStep);
-  // Wall-clock fade, so a slow device does not drag the crossfade out.
-  const k = Math.min(1, Math.max(0, (performance.now() - fadeStart) / (FADE_SECONDS * 1000))), ease = k * k * (3 - 2 * k);
 
   const W = canvas.width, H = canvas.height;
   const Wcss = W / dpr, Hcss = H / dpr;
   const aspect = Math.max(0.35, W / H);
-
-  // Landscape: the story runs left to right. Portrait: the camera swings round so the row
-  // runs diagonally into depth (the first object nearest), using the tall screen.
   const portrait = Math.max(0, Math.min(1, (1.05 - aspect) / 0.5));
-  const yaw = userYaw - PORTRAIT_YAW * portrait + Math.sin(tSec * 0.28) * 0.06;
-  const pitch = 0.36 + PORTRAIT_PITCH * portrait + userPitch;
-  const landscapeDist = Math.max(14.2, 26.8 / aspect);
-  const dist = landscapeDist + (PORTRAIT_DIST - landscapeDist) * portrait;
+
+  // A new chapter starts a flight from wherever the camera is now. The first frame opens
+  // on the whole town and flies down to chapter 1.
+  if (!started) {
+    Object.assign(cam, shotFor(7, aspect, portrait));
+    cam.dist *= 1.25; cam.pitch += 0.1;
+    started = true;
+  }
+  if (flight.step !== currentStep) {
+    flight.from = { ...cam };
+    flight.step = currentStep;
+    flight.t0 = performance.now();
+  }
+  const to = shotFor(currentStep, aspect, portrait);
+  const k = Math.min(1, (performance.now() - flight.t0) / (FLIGHT_SECONDS * 1000)), e = ease(k);
+  const F = flight.from;
+  const span = Math.hypot(to.cx - F.cx, to.cz - F.cz);
+  const lift = Math.sin(Math.PI * e) * Math.min(1, span / 30);
+  cam.cx = lerp(F.cx, to.cx, e); cam.cz = lerp(F.cz, to.cz, e);
+  cam.dist = lerp(F.dist, to.dist, e) * (1 + 0.45 * lift);
+  cam.pitch = lerp(F.pitch, to.pitch, e) + 0.16 * lift;
+  cam.yaw = lerp(F.yaw, to.yaw, e);
+
+  const yaw = cam.yaw + userYaw + Math.sin(tSec * 0.21) * 0.035;
+  const pitch = Math.max(0.08, Math.min(1.25, cam.pitch + userPitch));
   const cy = 1.05 + 0.5 * portrait;
   const eyeScene = [
-    Math.sin(yaw) * Math.cos(pitch) * dist + PORTRAIT_SHIFT * portrait,
-    Math.sin(pitch) * dist + 0.65,
-    Math.cos(yaw) * Math.cos(pitch) * dist
+    cam.cx + Math.sin(yaw) * Math.cos(pitch) * cam.dist,
+    Math.sin(pitch) * cam.dist + 0.65,
+    cam.cz + Math.cos(yaw) * Math.cos(pitch) * cam.dist,
   ];
-  const eyeHolon = toHolon(eyeScene);
-  const centerHolon = toHolon([PORTRAIT_SHIFT * portrait, cy, 0.1]);
-  const proj = mat4Perspective(0.56, aspect, 0.2, 95.0);
-  const view = mat4LookAt(eyeHolon, centerHolon, [0, 0, 1]);
+  const proj = mat4Perspective(0.56, aspect, 0.3, 240.0);
+  const view = mat4LookAt(toHolon(eyeScene), toHolon([cam.cx, cy, cam.cz + 0.1]), [0, 0, 1]);
   const vp = mat4Mul(proj, view);
 
-  // Floor vignette: holon-draw RING about the stage's projected centre, in device pixels.
-  const rc = projectScene(vp, PORTRAIT_SHIFT * portrait, 0, 0, Wcss, Hcss, _c) || [Wcss / 2, Hcss / 2];
-  const ringR = Math.max(W, H) * (0.62 + 0.12 * portrait);
-  for (const b of floorBatches) {
-    b.params[PARAM.RING] = rc[0] * dpr; b.params[PARAM.RING + 1] = rc[1] * dpr; b.params[PARAM.RING + 2] = ringR;
+  // Shadows follow the shot: one map over the place the camera is at.
+  const c = toHolon([cam.cx, 1.0, cam.cz]);
+  SHADOW.center[0] = c[0]; SHADOW.center[1] = c[1]; SHADOW.center[2] = 1.0;
+  // capped: from above, only the square's neighbourhood casts; the far town is small on screen anyway
+  SHADOW.radius = Math.min(16, Math.max(10.5, cam.dist * 0.55));
+
+  // The far town dissolves into the sky: holon-draw's RING about a point below the screen.
+  // The fade starts about a fifth of the way down and is complete at the top edge, so the far
+  // streets go into the evening sky behind them, and the top corners go a little sooner.
+  const ringX = W * 0.5, ringY = H * (1.62 + 0.3 * portrait) + Math.max(0, W - 2 * H) * 0.25, ringR = ringY + H * 0.02;
+  const ring = (b) => { b.params[PARAM.RING] = ringX; b.params[PARAM.RING + 1] = ringY; b.params[PARAM.RING + 2] = ringR; };
+
+  drawList.length = 0;
+  const reach = Math.max(16, cam.dist * 0.95);
+  for (const b of groundBatches) { ring(b); drawList.push(b); }
+  for (const b of hills.batches) { ring(b); drawList.push(b); }
+  // Only what the shadow map covers casts into it: the rest of the town is drawn once a frame, not twice.
+  const casts = (x, z, r) => Math.hypot(x - cam.cx, z - cam.cz) < SHADOW.radius + r;
+  // What is well outside the shot is not drawn at all: it is off screen or gone into the sky.
+  const shown = (x, z, r) => Math.hypot(x - cam.cx, z - cam.cz) < cam.dist * 1.9 + r;
+  for (const g of REGIONS) {
+    if (!shown(g.cx, g.cz, REGION * 0.71)) continue;
+    const d = evening(g.cx, g.cz, reach), cast = casts(g.cx, g.cz, REGION * 0.71);
+    setLook(g.set, d);
+    for (const b of g.set.batches) { ring(b); b.castShadow = cast; drawList.push(b); }
+  }
+  for (const g of REGIONS) if (shown(g.cx, g.cz, REGION * 0.71)) { ring(g.pools); drawList.push(g.pools); }
+
+  // Chapters: the current one lit, the others part of the evening town.
+  for (let i = 0; i < CH.length; i++) {
+    const G = CH[i], want = i === currentStep ? 1 : 0;
+    G.light += (want - G.light) * Math.min(1, dt * 2.4);
+    const [sx, sz] = SITES[i];
+    if (!shown(sx, sz, 9)) continue;
+    const d = evening(sx, sz, reach) * (0.62 + 0.38 * G.light);
+    setLook(G.main, d); setLook(G.dim, d * 0.55);
+    const cast = casts(sx, sz, 9);
+    for (const b of G.dim.batches) { ring(b); b.castShadow = cast; drawList.push(b); }
+    for (const b of G.main.batches) { ring(b); b.castShadow = cast; drawList.push(b); }
+  }
+  townWebLight += ((currentStep === 7 ? 1 : 0) - townWebLight) * Math.min(1, dt * 1.8);
+  if (townWebLight > 0.02) {
+    setLook(townWeb, 1, townWebLight);
+    for (const b of townWeb.batches) b.castShadow = false;
+    for (const b of townWeb.batches) { ring(b); drawList.push(b); }
   }
 
-  // Animated parts and link pulses: the only geometry built per frame.
+  // Animated parts and pulses: the current chapter's, at its site; the town's in chapter 8.
   const C = CHAPTERS[currentStep];
   dyn.clear();
   if (C.anim) C.anim(dyn.stream, tSec);
   for (const L of C.links) emitLinkPulses(dyn.stream, L, tSec);
   dyn.seal();
-
-  const cur = SETS[curSet], prev = SETS[1 - curSet];
-  cur.main.look(ease, 1); cur.dim.look(ease, 0.55); dyn.look(ease, 1);
-  drawList.length = 0;
-  for (const b of floorBatches) drawList.push(b);
-  if (ease < 1 && prev.step >= 0) {
-    prev.main.look(1 - ease, 1); prev.dim.look(1 - ease, 0.55);
-    for (const b of prev.dim.batches) drawList.push(b);
-    for (const b of prev.main.batches) drawList.push(b);
-  }
-  for (const b of cur.dim.batches) drawList.push(b);
-  for (const b of cur.main.batches) drawList.push(b);
+  for (const b of dyn.batches) b.offset = CH[currentStep].off;
+  setLook(dyn, 1, Math.min(1, CH[currentStep].light * 1.4));
   for (const b of dyn.batches) drawList.push(b);
+  if (townWebLight > 0.02) {
+    townWeb.dynSet = townWeb.dynSet || new SceneSet();
+    const P = townWeb.dynSet;
+    P.clear();
+    for (const L of TOWN_LINKS) emitLinkPulses(P.stream, L, tSec);
+    P.seal();
+    setLook(P, 1, townWebLight);
+    for (const b of P.batches) drawList.push(b);
+  }
 
-  // Labels: laid out per frame against the camera, in holon-draw screen batches.
+  // Labels: the current chapter's, once the camera has nearly arrived.
   text.beginFrame();
   const e0 = text.epoch;
   for (let pass = 0; pass < 2; pass++) {
@@ -1425,10 +1788,11 @@ function frame(tms) {
     emitPlaques(C.labels, C.obstacles, vp, Wcss, Hcss);
     if (text.epoch === e0) break;
   }
-  for (const b of screenBatches) { b.params[PARAM.FADE] = ease; b.seal(); drawList.push(b); }
+  const labelFade = Math.min(1, Math.max(0, (k - 0.72) / 0.28));
+  for (const b of screenBatches) { b.params[PARAM.FADE] = labelFade; b.seal(); drawList.push(b); }
 
   gl.viewport(0, 0, W, H);
-  gl.clearColor(FLOOR_RGB[0] / 255, FLOOR_RGB[1] / 255, FLOOR_RGB[2] / 255, 1.0);
+  gl.clearColor(0, 0, 0, 0);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   VPORT[2] = W; VPORT[3] = H;
   drawer.draw(drawList, vp, DRAW_OPTS);
