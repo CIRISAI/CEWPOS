@@ -695,10 +695,15 @@ class HolonSceneBuilder {
     const [sx, , sz] = this.scaleOf(M);
     const c = toHolon(this.tp(M, [0, 0, 0]));
     const r = radius * (sx + sz) * 0.5;
-    this.S.shadows.add(c[0], c[1], 0.006, r * 1.14, 0, 0, 0, 0, 0, 0, [0, 0, 0, 56], 0);
-    this.S.shadows.add(c[0], c[1], 0.008, r * 1.40, 0, 0, 0, 0, 0, 0, [0, 0, 0, 22], 0);
+    this.S.shadows.add(c[0], c[1], LAYER.contact, r * 1.14, 0, 0, 0, 0, 0, 0, [0, 0, 0, 56], 0);
+    this.S.shadows.add(c[0], c[1], LAYER.contact + 0.012, r * 1.40, 0, 0, 0, 0, 0, 0, [0, 0, 0, 22], 0);
   }
 }
+
+// The heights of everything FLAT on the ground, in one place, a clear step apart. They were 4 to 10 mm apart, with the
+// streets and the square's kerb at the same height: from the aerial shot a depth buffer cannot tell such layers apart,
+// and the square's two discs fought in wedges that turned as the camera swayed (it read as a rotor on a phone).
+const LAYER = { lawn: -0.03, kerb: 0.0, street: 0.03, squareKerb: 0.06, pond: 0.06, square: 0.09, contact: 0.10, pool: 0.13 };
 
 // A curved link between two scene points. A link is ONE holon-draw ARC record: from A to B (holon frame), bent by
 // `up` (size[1]) and `across` (size[2]) from the chord's midpoint, with FLOW dashes running A to B. What travels a
@@ -1477,8 +1482,8 @@ function buildLamp(s, pools, x, z) {
   const hb = toHolon([x, 0, z]);
   s.rod([hb[0], hb[1], 0], [hb[0], hb[1], 2.6], 0.05, s.toRgba(TOWN.pole), MATERIAL.METAL);
   s.ball([hb[0], hb[1], 2.72], 0.17, s.toRgba(TOWN.lamp), true, MATERIAL.GLOW);
-  pools.add(hb[0], hb[1], 0.02, 1.7, 0, 0, 0, 0, 0, 0, [255, 196, 120, 22], 0);
-  pools.add(hb[0], hb[1], 0.025, 0.9, 0, 0, 0, 0, 0, 0, [255, 206, 140, 30], 0);
+  pools.add(hb[0], hb[1], LAYER.pool, 1.7, 0, 0, 0, 0, 0, 0, [255, 196, 120, 22], 0);
+  pools.add(hb[0], hb[1], LAYER.pool + 0.015, 0.9, 0, 0, 0, 0, 0, 0, [255, 206, 140, 30], 0);
 }
 
 // The town is built in REGIONS (20 x 20 scene units) so the far ones can settle into the
@@ -1511,7 +1516,7 @@ for (let x = -84; x < 84; x += TILE) {
   for (let z = -108; z < 48; z += TILE) {
     const m = lawn(x + TILE / 2, z + TILE / 2), hb = toHolon([x + TILE / 2, 0, z + TILE / 2]);
     const c = [0, 1, 2].map((k) => Math.round(lerp(TOWN.grass[k], TOWN.grass2[k], m)));
-    ground.add(hb[0], hb[1], -0.03, TILE + 0.02, TILE + 0.02, 0, 0, 0, 0, 0, [c[0], c[1], c[2], 255], 0);
+    ground.add(hb[0], hb[1], LAYER.lawn, TILE + 0.02, TILE + 0.02, 0, 0, 0, 0, 0, [c[0], c[1], c[2], 255], 0);
   }
 }
 ground.params[PARAM.TEX] = 0.9;
@@ -1520,23 +1525,24 @@ const SEG = 7.75;
 for (const sz of STREETS_Z) {
   for (let x = -31 + SEG / 2; x < 31; x += SEG) {
     const hb = toHolon([x, 0, sz]);
-    flats.add(hb[0], hb[1], 0.0, SEG + 0.02, 3.4, 0, 0, 0, 0, 0, TOWN.kerb, 0);
-    flats.add(hb[0], hb[1], 0.01, SEG + 0.02, 2.8, 0, 0, 0, 0, 0, TOWN.street, 0);
+    flats.add(hb[0], hb[1], LAYER.kerb, SEG + 0.02, 3.4, 0, 0, 0, 0, 0, TOWN.kerb, 0);
+    flats.add(hb[0], hb[1], LAYER.street, SEG + 0.02, 2.8, 0, 0, 0, 0, 0, TOWN.street, 0);
   }
 }
 for (const sx of AVENUES_X) {
   for (let z = -46 + SEG * 0.5; z < 21; z += SEG) {
     const hb = toHolon([sx, 0, z]);
-    flats.add(hb[0], hb[1], 0.0, 3.0, SEG + 0.02, 0, 0, 0, 0, 0, TOWN.kerb, 0);
-    flats.add(hb[0], hb[1], 0.012, 2.4, SEG + 0.02, 0, 0, 0, 0, 0, TOWN.street, 0);
+    // the same heights as the streets they cross: the same colour at the same height cannot show a fight
+    flats.add(hb[0], hb[1], LAYER.kerb, 3.0, SEG + 0.02, 0, 0, 0, 0, 0, TOWN.kerb, 0);
+    flats.add(hb[0], hb[1], LAYER.street, 2.4, SEG + 0.02, 0, 0, 0, 0, 0, TOWN.street, 0);
   }
 }
 {
   const sq = toHolon([0, 0, -10]);
-  flatDiscs.add(sq[0], sq[1], 0.012, 10.6, 0, 0, 0, 0, 0, 0, TOWN.kerb, 0);
-  flatDiscs.add(sq[0], sq[1], 0.016, 10.0, 0, 0, 0, 0, 0, 0, TOWN.square, 0);
+  flatDiscs.add(sq[0], sq[1], LAYER.squareKerb, 10.6, 0, 0, 0, 0, 0, 0, TOWN.kerb, 0);
+  flatDiscs.add(sq[0], sq[1], LAYER.square, 10.0, 0, 0, 0, 0, 0, 0, TOWN.square, 0);
   const pond = toHolon([30, 0, 5]);
-  flatDiscs.add(pond[0], pond[1], 0.02, 5.0, 0, 0, 0, 0, 0, 0, TOWN.water, 0);
+  flatDiscs.add(pond[0], pond[1], LAYER.pond, 5.0, 0, 0, 0, 0, 0, 0, TOWN.water, 0);
 }
 const groundBatches = [ground, flats, flatDiscs];
 for (const b of groundBatches) { b.seal(); b.castShadow = false; }
@@ -1868,7 +1874,10 @@ function frame(tms) {
     Math.sin(pitch) * cam.dist + 0.65,
     cam.cz + Math.cos(yaw) * Math.cos(pitch) * cam.dist,
   ];
-  const proj = mat4Perspective(0.56, aspect, 0.3, 240.0);
+  // near and far fitted to the shot (they were 0.3 and 240 at every distance): what a depth buffer can separate goes
+  // as distance squared over the near plane, so a near plane a fifth of the way to the subject buys the aerial shot
+  // about fifty times the depth resolution, which a phone's coarser buffer needs
+  const proj = mat4Perspective(0.56, aspect, Math.max(0.3, cam.dist * 0.2), Math.max(240.0, cam.dist * 4.0));
   const view = mat4LookAt(toHolon(eyeScene), toHolon([cam.cx, cy, cam.cz + 0.1]), [0, 0, 1]);
   const vp = mat4Mul(proj, view);
 
