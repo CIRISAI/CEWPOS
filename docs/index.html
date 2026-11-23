@@ -47,20 +47,14 @@ body {
   position: relative;
   /* The sky at golden hour (early morning, or the last hour of the day): the canvas is transparent where the town
      dissolves into it. */
+  /* The low sun is part of this background, BEHIND the canvas, so the town hides it where the town is. (It was a
+     layer over the canvas, which showed as a band across the top of the scene.) */
   background:
+    radial-gradient(26px 26px at 20% 9%, rgba(255, 250, 232, 1) 0%, rgba(255, 244, 214, 0.95) 46%, rgba(255, 226, 170, 0.35) 60%, rgba(0,0,0,0) 78%),
     radial-gradient(70% 34% at 22% 34%, rgba(255, 226, 170, 0.75) 0%, rgba(255, 200, 140, 0.30) 42%, rgba(0, 0, 0, 0) 76%),
     linear-gradient(180deg, #4f76ad 0%, #7499c6 8%, #a3bcd6 16%, #d3d2d2 23%, #f0d3b4 30%, #f8d6a4 36%, #fbdcae 42%, #fde3bd 100%);
 }
-#stage-wrap::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 82% 0;
-  pointer-events: none;
-  /* the low sun, and its glow */
-  background-image:
-    radial-gradient(26px 26px at 20% 86%, rgba(255, 250, 232, 1) 0%, rgba(255, 244, 214, 0.95) 46%, rgba(255, 226, 170, 0.35) 60%, rgba(0,0,0,0) 78%),
-    radial-gradient(120px 90px at 20% 86%, rgba(255, 232, 180, 0.55) 0%, rgba(0,0,0,0) 72%);
-}
+
 canvas#c {
   width: 100%;
   height: 100%;
