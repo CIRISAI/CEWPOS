@@ -169,8 +169,8 @@ canvas#c:active {
   color: var(--muted);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 6px 9px;
-  font-size: 12px;
+  padding: 5px 8px;
+  font-size: 11.5px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -246,7 +246,7 @@ canvas#c:active {
     <div>
       <div class="story-top">
         <div class="story-title-group">
-          <span class="step-pill" id="step-pill">1 of 9</span>
+          <span class="step-pill" id="step-pill">1 of 11</span>
           <h1 class="story-heading" id="story-heading">Your devices connect directly — no cloud rent</h1>
         </div>
         <span class="story-status" id="story-status">Your key · Direct sync · No middleman</span>
@@ -330,10 +330,22 @@ const STEPS = [
     text: `Web1 linked pages. Web2 linked people through platforms. <strong>CIRIS is a live Web4 mesh — no server, no blockchain</strong> — where people, communities, and accountable AI work together without anyone owning the rest.`
   },
   {
-    short: "9. The World",
-    title: "Millions of towns like yours — connected across one Earth",
+    short: "9. Cities Connect",
+    title: "Cities connect — passing live video member to member",
+    status: "CEWP · Emergent ALM relays · Local rules stay local",
+    text: `Zoom out from your street across the continent. <strong>Local communities connect city to city on ordinary links</strong> — passing live video and encrypted files from member to member while local disagreements stay local.`
+  },
+  {
+    short: "10. Day & Night",
+    title: "Activity rises and falls with day and night around the Earth",
+    status: "CEWP · Traffic shaping · Calibrated to live mesh",
+    text: `As cities wake and sleep across the terminator, <strong>traffic on shaped links flows at a steady pace</strong> so private conversations blend into ordinary traffic — calibrated to real serve-seat measurements.`
+  },
+  {
+    short: "11. One Planet",
+    title: "A billion people — no single company in charge",
     status: "CEWP + CEWPOS · One holon-draw engine",
-    text: `Zoom out from your own street to the whole planet. <strong>Communities across every continent connect peer-to-peer</strong> on ordinary links, while local disagreements stay local — with no single company in charge.`
+    text: `Every family, club, and town runs itself on one open rulebook. <strong>Each person uses only a little data, with no central operator</strong> — click <em>CEWP Globe ↗</em> to explore the full live digital twin.`
   }
 ];
 
@@ -806,24 +818,39 @@ function buildPedestal3D(stream, M, radius, accentCol) {
 }
 
 function buildPerson3D(stream, M, jacketCol, skin = COL.skin) {
-  buildPedestal3D(stream, M, 0.95, jacketCol);
-  stream.addBox(mat4Translate(M, -0.18, 0.18, 0.05), 0.18, 0.10, 0.28, COL.obsidian, MAT.matte);
-  stream.addBox(mat4Translate(M,  0.18, 0.18, 0.05), 0.18, 0.10, 0.28, COL.obsidian, MAT.matte);
-  stream.addCylinderY(mat4Translate(M, -0.18, 0.54, 0), 0.10, 0.09, 0.68, COL.spaceGray, MAT.matte);
-  stream.addCylinderY(mat4Translate(M,  0.18, 0.54, 0), 0.10, 0.09, 0.68, COL.spaceGray, MAT.matte);
-  const MTorso = mat4Translate(M, 0, 1.24, 0);
-  stream.addRoundedSlabXY(MTorso, 0.68, 0.78, 0.36, 0.14, jacketCol, MAT.anodized);
-  stream.addBox(mat4Translate(MTorso, 0, 0.26, 0.17), 0.22, 0.18, 0.04, COL.white, MAT.matte);
-  stream.addRodBetween(M, [-0.38, 1.50, 0], [-0.48, 0.96, 0.22], 0.095, jacketCol, MAT.anodized);
-  stream.addRodBetween(M, [ 0.38, 1.50, 0], [ 0.48, 0.96, 0.22], 0.095, jacketCol, MAT.anodized);
-  stream.addSphere(mat4Translate(M, -0.48, 0.92, 0.24), 0.085, skin, MAT.matte);
-  stream.addSphere(mat4Translate(M,  0.48, 0.92, 0.24), 0.085, skin, MAT.matte);
-  stream.addCylinderY(mat4Translate(M, 0, 1.70, 0), 0.09, 0.10, 0.18, skin, MAT.matte);
-  const MHead = mat4Translate(M, 0, 1.98, 0.02);
-  stream.addSphere(MHead, 0.26, skin, MAT.matte, true);
-  stream.addSphere(mat4Translate(MHead, 0, 0.06, -0.04), 0.255, COL.hair, MAT.matte, true);
-  stream.addSphere(mat4Translate(MHead, -0.09, 0.02, 0.23), 0.028, COL.obsidian, MAT.glass);
-  stream.addSphere(mat4Translate(MHead,  0.09, 0.02, 0.23), 0.028, COL.obsidian, MAT.glass);
+  // Architectural human scale (~1.72m tall, 1:6.4 head-to-height ratio, tailored silhouette, subtle ground ring)
+  const MR = mat4RotateX(mat4Translate(M, 0, 0.03, 0), Math.PI * 0.5);
+  stream.addShadow(M, 0.52);
+  stream.addTorusXY(MR, 0.48, 0.018, jacketCol, MAT.glow, 28);
+  const pants = [0.22, 0.25, 0.30, 1];
+  const shoes = [0.12, 0.13, 0.16, 1];
+  // Shoes
+  stream.addBox(mat4Translate(M, -0.105, 0.05, 0.04), 0.10, 0.08, 0.22, shoes, MAT.matte);
+  stream.addBox(mat4Translate(M,  0.105, 0.05, 0.04), 0.10, 0.08, 0.22, shoes, MAT.matte);
+  // Legs (slender tapered trousers, 0.09m -> 0.84m)
+  stream.addCylinderY(mat4Translate(M, -0.105, 0.46, 0), 0.068, 0.056, 0.76, pants, MAT.matte);
+  stream.addCylinderY(mat4Translate(M,  0.105, 0.46, 0), 0.068, 0.056, 0.76, pants, MAT.matte);
+  // Pelvis / belt line
+  stream.addRoundedSlabXY(mat4Translate(M, 0, 0.85, 0), 0.34, 0.14, 0.20, 0.05, pants, MAT.matte);
+  // Tailored torso & jacket (0.90m -> 1.40m)
+  const MTorso = mat4Translate(M, 0, 1.15, 0);
+  stream.addRoundedSlabXY(MTorso, 0.42, 0.52, 0.22, 0.08, jacketCol, MAT.matte);
+  // Subtle shirt collar / lapel
+  stream.addBox(mat4Translate(MTorso, 0, 0.19, 0.105), 0.13, 0.14, 0.025, COL.white, MAT.matte);
+  // Shoulders + natural arms (upper arm + slight elbow bend)
+  stream.addSphere(mat4Translate(M, -0.23, 1.34, 0), 0.068, jacketCol, MAT.matte);
+  stream.addSphere(mat4Translate(M,  0.23, 1.34, 0), 0.068, jacketCol, MAT.matte);
+  stream.addRodBetween(M, [-0.24, 1.33, 0], [-0.28, 1.06, 0.03], 0.054, jacketCol, MAT.matte);
+  stream.addRodBetween(M, [ 0.24, 1.33, 0], [ 0.28, 1.06, 0.03], 0.054, jacketCol, MAT.matte);
+  stream.addRodBetween(M, [-0.28, 1.06, 0.03], [-0.25, 0.86, 0.12], 0.046, jacketCol, MAT.matte);
+  stream.addRodBetween(M, [ 0.28, 1.06, 0.03], [ 0.25, 0.86, 0.12], 0.046, jacketCol, MAT.matte);
+  stream.addSphere(mat4Translate(M, -0.25, 0.84, 0.13), 0.046, skin, MAT.matte);
+  stream.addSphere(mat4Translate(M,  0.25, 0.84, 0.13), 0.046, skin, MAT.matte);
+  // Neck & realistically proportioned head (center 1.58m, top ~1.72m)
+  stream.addCylinderY(mat4Translate(M, 0, 1.44, 0), 0.052, 0.058, 0.10, skin, MAT.matte);
+  const MHead = mat4Translate(M, 0, 1.58, 0.01);
+  stream.addSphere(MHead, 0.135, skin, MAT.matte, true);
+  stream.addSphere(mat4Translate(MHead, 0, 0.035, -0.025), 0.136, COL.hair, MAT.matte, true);
 }
 
 function buildSmartphone3D(stream, M, accentCol, screenVariant = "key") {
@@ -968,42 +995,46 @@ function animSliders(stream, M, t) {
 }
 
 function buildCommunityHall3D(stream, M) {
-  buildPedestal3D(stream, M, 1.65, COL.amber);
-  stream.addBox(mat4Translate(M, 0, 0.20, 0), 2.35, 0.16, 1.85, COL.spaceGray, MAT.darkMetal);
-  stream.addBox(mat4Translate(M, 0, 0.34, 0), 2.10, 0.12, 1.65, COL.titanium, MAT.titanium);
-  stream.addBox(mat4Translate(M, 0, 0.95, -0.05), 1.86, 1.12, 1.36, COL.silver, MAT.titanium);
+  // Civic Town Hall scaled realistically relative to 1.72m people (stone plinth, portico, pitched slate roof & clock tower)
+  const S = mat4Scale(M, 1.82, 1.72, 1.78);
+  stream.addShadow(M, 3.1);
+  stream.addBox(mat4Translate(S, 0, 0.12, 0.10), 2.55, 0.24, 2.05, [0.58, 0.56, 0.54, 1], MAT.matte);
+  stream.addBox(mat4Translate(S, 0, 0.28, 0.06), 2.28, 0.14, 1.82, [0.72, 0.70, 0.67, 1], MAT.matte);
+  stream.addBox(mat4Translate(S, 0, 0.96, -0.05), 1.96, 1.24, 1.44, [0.88, 0.84, 0.78, 1], MAT.matte);
+  // Portico columns
   for (let i = 0; i < 4; i++) {
-    stream.addCylinderY(mat4Translate(M, -0.69 + i * 0.46, 0.95, 0.70), 0.065, 0.075, 1.10, COL.white, MAT.titanium);
+    stream.addCylinderY(mat4Translate(S, -0.72 + i * 0.48, 0.96, 0.74), 0.062, 0.072, 1.22, COL.white, MAT.matte);
   }
-  stream.addBox(mat4Translate(M, 0, 0.76, 0.65), 0.36, 0.72, 0.05, COL.amber, MAT.brightGlow);
-  stream.addBox(mat4Translate(M, -0.58, 0.96, 0.65), 0.24, 0.38, 0.05, COL.amber, MAT.glow);
-  stream.addBox(mat4Translate(M,  0.58, 0.96, 0.65), 0.24, 0.38, 0.05, COL.amber, MAT.glow);
-  // A true pitched roof: two oriented slabs meeting at the ridge, with gable ends.
-  const pitch = 0.62, half = 1.12, ridgeY = 1.51 + Math.tan(pitch) * half;
+  // Tall civic entrance & glowing arched-style windows with stone sills
+  stream.addBox(mat4Translate(S, 0, 0.74, 0.68), 0.38, 0.78, 0.05, [0.96, 0.76, 0.44, 1], MAT.brightGlow);
+  stream.addBox(mat4Translate(S, -0.60, 0.98, 0.68), 0.26, 0.44, 0.05, [0.98, 0.80, 0.48, 1], MAT.glow);
+  stream.addBox(mat4Translate(S,  0.60, 0.98, 0.68), 0.26, 0.44, 0.05, [0.98, 0.80, 0.48, 1], MAT.glow);
+  // Cornice trim under eaves
+  stream.addBox(mat4Translate(S, 0, 1.56, 0.02), 2.16, 0.08, 1.66, [0.76, 0.74, 0.70, 1], MAT.matte);
+  // Pitched slate roof
+  const pitch = 0.58, half = 1.18, ridgeY = 1.58 + Math.tan(pitch) * half;
   for (const side of [-1, 1]) {
-    const MR = mat4RotateZ(mat4Translate(M, side * half * 0.5, 1.51 + Math.tan(pitch) * half * 0.5 + 0.04, 0), -side * pitch);
-    stream.addBox(mat4Translate(MR, 0, 0.05, 0), half / Math.cos(pitch) + 0.06, 0.10, 1.70, COL.darkChassis, MAT.darkMetal);
+    const MR = mat4RotateZ(mat4Translate(S, side * half * 0.5, 1.58 + Math.tan(pitch) * half * 0.5 + 0.04, 0), -side * pitch);
+    stream.addBox(mat4Translate(MR, 0, 0.05, 0), half / Math.cos(pitch) + 0.10, 0.10, 1.80, [0.22, 0.25, 0.30, 1], MAT.matte);
   }
-  for (const zf of [0.62, -0.72]) {
+  for (const zf of [0.66, -0.76]) {
     for (let k = 0; k < 4; k++) {
-      const h = (ridgeY - 1.51) * (1 - k / 4);
-      stream.addBox(mat4Translate(M, 0, 1.51 + (ridgeY - 1.51) * (k / 4) + h * 0.125, zf), 1.86 * (1 - (k + 0.5) / 4), (ridgeY - 1.51) / 4, 0.05, COL.silver, MAT.titanium);
+      const h = (ridgeY - 1.58) * (1 - k / 4);
+      stream.addBox(mat4Translate(S, 0, 1.58 + (ridgeY - 1.58) * (k / 4) + h * 0.125, zf), 1.96 * (1 - (k + 0.5) / 4), (ridgeY - 1.58) / 4, 0.05, [0.86, 0.82, 0.76, 1], MAT.matte);
     }
   }
-  // A town-hall clock tower with a flag: a civic building, not a place of worship.
-  stream.addBox(mat4Translate(M, 0, ridgeY + 0.34, 0), 0.52, 0.62, 0.52, COL.white, MAT.titanium);
-  stream.addBox(mat4Translate(M, 0, ridgeY + 0.68, 0), 0.62, 0.07, 0.62, COL.darkChassis, MAT.darkMetal);
-  // the clock: a lit face, framed, with two hands at ten to two
-  const face = mat4Translate(M, 0, ridgeY + 0.36, 0.27);
+  // Clock tower & civic flag
+  stream.addBox(mat4Translate(S, 0, ridgeY + 0.34, 0), 0.52, 0.64, 0.52, [0.90, 0.88, 0.84, 1], MAT.matte);
+  stream.addBox(mat4Translate(S, 0, ridgeY + 0.68, 0), 0.64, 0.08, 0.64, [0.22, 0.25, 0.30, 1], MAT.matte);
+  const face = mat4Translate(S, 0, ridgeY + 0.36, 0.27);
   const disc = (z0, z1, r, col, mat) => stream.rod(toHolon(stream.tp(face, [0, 0, z0])), toHolon(stream.tp(face, [0, 0, z1])), r, stream.toRgba(col, mat), matBits(mat));
   const hand = (x, y, r) => stream.rod(toHolon(stream.tp(face, [0, 0, 0.04])), toHolon(stream.tp(face, [x, y, 0.04])), r, stream.toRgba(COL.obsidian, MAT.matte), MATERIAL.MATTE);
   disc(-0.01, 0.012, 0.20, COL.darkChassis, MAT.darkMetal);
   disc(0.012, 0.03, 0.17, COL.white, MAT.brightGlow);
   hand(-0.09, 0.05, 0.014);
   hand(0.06, 0.11, 0.012);
-  // the flag on its pole
-  stream.addCylinderY(mat4Translate(M, 0, ridgeY + 1.12, 0), 0.02, 0.025, 0.86, COL.silver, MAT.titanium);
-  stream.addBox(mat4Translate(M, 0.24, ridgeY + 1.30, 0), 0.44, 0.26, 0.03, COL.green, MAT.matte);
+  stream.addCylinderY(mat4Translate(S, 0, ridgeY + 1.12, 0), 0.02, 0.025, 0.84, COL.silver, MAT.titanium);
+  stream.addBox(mat4Translate(S, 0.24, ridgeY + 1.30, 0), 0.44, 0.25, 0.03, COL.green, MAT.matte);
 }
 
 function animCryptoKey(stream, M, accentCol, t) {
@@ -1304,10 +1335,10 @@ const CHAPTERS = [
     ],
     labels: [
       { pos: [-4.8, 0, -0.2], dy: 22, title: "Members", sub: "Vote from phone or laptop", col: RGBA.green },
-      { pos: [0.0, 3.6, -4.8], dy: -16, title: "Your town, church or club", sub: "One person, one voice", col: RGBA.amber },
+      { pos: [0.0, 5.8, -4.8], dy: -16, title: "Your town, church or club", sub: "One person, one voice", col: RGBA.amber },
       { pos: [7.8, 0, -2.5], dy: 22, title: "Open count", sub: "Every member can verify", col: RGBA.green },
     ],
-    obstacles: [ob(-5.8, -1.6, 0.7, 2.3), ob(-3.8, -1.2, 0.7, 2.4), ob(0.0, -4.8, 1.3, 3.4), ob(4.8, -1.6, 0.7, 2.3), ob(7.8, -3.8, 0.8, 2.3)],
+    obstacles: [ob(-5.8, -1.6, 0.7, 2.0), ob(-3.8, -1.2, 0.7, 2.4), ob(0.0, -4.8, 2.4, 5.4), ob(4.8, -1.6, 0.7, 2.0), ob(7.8, -3.8, 0.8, 2.3)],
   },
   // 6. Member devices mesh together across the neighbourhood; the rented server is crossed out.
   {
@@ -1361,21 +1392,19 @@ const CHAPTERS = [
     ],
     obstacles: [ob(0.0, -4.8, 1.3, 3.4), ob(-1.5, 11.6, 0.7, 2.6), ob(8.4, 8.9, 1.1, 1.8), ob(-6.2, -9.4, 1.0, 2.9)],
   },
-  // 9. Across the World: The combined CEWP Earth Globe on the same holon-draw engine!
-  {
-    build() {},
-    links: [],
-    labels: [],
-    obstacles: [],
-    isGlobe: true,
-  },
+  // 9. Cities Connect (CEWP Globe Beat 1: zoom out from Your Town across North America & Transatlantic)
+  { build() {}, links: [], labels: [], obstacles: [], isGlobe: true },
+  // 10. Day & Night (CEWP Globe Beat 2: glide across the twilight terminator into golden night city lights)
+  { build() {}, links: [], labels: [], obstacles: [], isGlobe: true },
+  // 11. One Planet (CEWP Globe Beat 3: full planetary orbital view across all continents)
+  { build() {}, links: [], labels: [], obstacles: [], isGlobe: true },
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════
 // THE TOWN. One cohesive golden-hour neighbourhood: your front yard along the
 // south street, your family circle next door, and the Town Square right to the north.
 // As each chapter plays, its layer smoothly rises into the world while earlier
-// layers stay alive and connected. Chapter 9 zooms out to the CEWP Earth Globe!
+// layers stay alive and connected. Chapters 9–11 zoom out to the CEWP Earth Globe!
 // ═══════════════════════════════════════════════════════════════════════════
 
 // Camera target [cx, cz] and framing for each chapter (smooth pan/zoom around ONE neighbourhood)
@@ -1384,11 +1413,13 @@ const SHOTS = [
   { cx:  0.2, cz: 10.2, dist: 0.96, pitch: -0.01, yaw:  0.04 }, // 2. While Away (Home Box)
   { cx:  7.4, cz: 10.6, dist: 1.48, pitch:  0.05, yaw: -0.05 }, // 3. Family Circle (Direct Mesh)
   { cx: -3.2, cz: 10.6, dist: 1.18, pitch:  0.00, yaw:  0.08 }, // 4. Your Feed
-  { cx:  0.6, cz: -1.8, dist: 1.38, pitch:  0.05, yaw:  0.03 }, // 5. Community
+  { cx:  0.6, cz: -1.8, dist: 1.44, pitch:  0.05, yaw:  0.03 }, // 5. Community
   { cx: -1.2, cz:  2.2, dist: 1.72, pitch:  0.08, yaw:  0.06 }, // 6. No Tech Guy
   { cx: -5.2, cz: -5.8, dist: 1.28, pitch:  0.04, yaw: -0.08 }, // 7. AI You Can Stop
   { cx:  0.4, cz:  1.8, dist: 2.35, pitch:  0.22, yaw:  0.00, aerial: true }, // 8. Together (Whole Town)
-  { cx:  0.0, cz:  0.0, dist: 2.50, pitch:  0.25, yaw:  0.00, isGlobe: true }, // 9. The World (CEWP Earth Globe)
+  { cx:  0.0, cz:  0.0, dist: 2.50, pitch:  0.25, yaw:  0.00, isGlobe: true }, // 9. Cities Connect (CEWP Globe)
+  { cx:  0.0, cz:  0.0, dist: 2.50, pitch:  0.25, yaw:  0.00, isGlobe: true }, // 10. Day & Night (CEWP Globe)
+  { cx:  0.0, cz:  0.0, dist: 2.50, pitch:  0.25, yaw:  0.00, isGlobe: true }, // 11. One Planet (CEWP Globe)
 ];
 const FLIGHT_SECONDS = 1.65;
 
@@ -1435,33 +1466,57 @@ const TOWN = {
   hill:   [0.44, 0.52, 0.60, 1],
 };
 
-// A house: walls, a pitched roof of two slabs with stepped gables, a chimney, a door and
-// glowing windows front and back. Faces +z after `yaw`.
-function buildHouse(s, x, z, yaw, w, d, h, wall, roof, lit) {
+// Architectural building builder driven by CEWP-style model inputs:
+// { storeys, units, w, d, wall, roof, lit, hasPorch } (~2.95m per storey, human-scaled to 1.72m people)
+function buildHouse(s, x, z, yaw, spec) {
+  const { storeys, w, d, wall, roof, lit, hasPorch } = spec;
+  const plinth = 0.34;
+  const h = plinth + storeys * 2.85;
   const M = mat4RotateY(mat4Translate(I, x, 0, z), yaw);
-  s.addBox(mat4Translate(M, 0, h / 2, 0), w, h, d, wall, MAT.matte);
-  const pitch = 0.58, half = d / 2 + 0.12, rise = Math.tan(pitch) * half;
+  // Stone foundation plinth & main masonry/plaster mass
+  s.addBox(mat4Translate(M, 0, plinth * 0.5, 0), w + 0.14, plinth, d + 0.14, [0.46, 0.45, 0.44, 1], MAT.matte);
+  s.addBox(mat4Translate(M, 0, plinth + (h - plinth) * 0.5, 0), w, h - plinth, d, wall, MAT.matte);
+  // Subtle fascia / cornice trim beneath the eaves
+  s.addBox(mat4Translate(M, 0, h - 0.06, 0), w + 0.24, 0.14, d + 0.24, [0.78, 0.76, 0.72, 1], MAT.matte);
+  // Pitched roof with generous eaves & shaded/lit slopes (tiling.js roof grammar)
+  const pitch = 0.52, half = d / 2 + 0.30, rise = Math.tan(pitch) * half;
+  const roofLit  = [Math.min(1, roof[0] * 1.12), Math.min(1, roof[1] * 1.12), Math.min(1, roof[2] * 1.12), 1];
+  const roofDark = [roof[0] * 0.84, roof[1] * 0.84, roof[2] * 0.84, 1];
   for (const side of [-1, 1]) {
-    const MR = mat4RotateX(mat4Translate(M, 0, h + rise * 0.5 + 0.05, side * half * 0.5), side * pitch);
-    s.addBox(MR, w + 0.36, 0.12, half / Math.cos(pitch) + 0.08, roof, MAT.matte);
+    const MR = mat4RotateX(mat4Translate(M, 0, h + rise * 0.5 + 0.04, side * half * 0.5), side * pitch);
+    s.addBox(MR, w + 0.52, 0.14, half / Math.cos(pitch) + 0.12, side > 0 ? roofLit : roofDark, MAT.matte);
   }
-  for (const xf of [-w / 2 + 0.03, w / 2 - 0.03]) {
-    for (let k = 0; k < 3; k++) {
-      const hk = rise * (1 - k / 3);
-      s.addBox(mat4Translate(M, xf, h + rise * (k / 3) + hk * 0.17, 0), 0.06, rise / 3, d * (1 - (k + 0.5) / 3), wall, MAT.matte);
+  // Gable end walls
+  for (const xf of [-w / 2 + 0.04, w / 2 - 0.04]) {
+    for (let k = 0; k < 4; k++) {
+      const hk = rise * (1 - k / 4);
+      s.addBox(mat4Translate(M, xf, h + rise * (k / 4) + hk * 0.14, 0), 0.08, rise / 4, d * (1 - (k + 0.5) / 4), wall, MAT.matte);
     }
   }
-  s.addBox(mat4Translate(M, w * 0.28, h + rise * 0.55, -d * 0.12), 0.34, rise + 0.5, 0.34, roof, MAT.matte);
-  s.addBox(mat4Translate(M, 0, 0.55, d / 2 + 0.02), 0.62, 1.1, 0.06, TOWN.door, MAT.matte);
-  const cols = Math.max(1, Math.round(w / 1.3)), rows = h > 3.2 ? 2 : 1;
+  // Chimney with stone cap
+  s.addBox(mat4Translate(M, w * 0.28, h + rise * 0.58, -d * 0.14), 0.52, rise + 0.75, 0.52, [0.46, 0.32, 0.28, 1], MAT.matte);
+  s.addBox(mat4Translate(M, w * 0.28, h + rise * 0.58 + (rise + 0.75) * 0.5 + 0.05, -d * 0.14), 0.64, 0.10, 0.64, [0.58, 0.56, 0.54, 1], MAT.matte);
+  // Entry door (realistic 2.05m door height) + porch overhang & step
+  s.addBox(mat4Translate(M, 0, plinth + 1.02, d / 2 + 0.03), 0.96, 2.04, 0.08, TOWN.door, MAT.matte);
+  s.addBox(mat4Translate(M, 0, plinth + 2.12, d / 2 + 0.05), 1.12, 0.10, 0.12, [0.76, 0.74, 0.70, 1], MAT.matte);
+  if (hasPorch) {
+    s.addBox(mat4Translate(M, 0, 0.18, d / 2 + 0.42), 1.75, 0.32, 0.78, [0.56, 0.54, 0.52, 1], MAT.matte);
+    s.addBox(mat4Translate(M, 0, plinth + 2.28, d / 2 + 0.44), 1.85, 0.10, 0.84, roofDark, MAT.matte);
+    s.addCylinderY(mat4Translate(M, -0.78, plinth + 1.16, d / 2 + 0.74), 0.055, 0.055, 2.15, [0.84, 0.82, 0.78, 1], MAT.matte);
+    s.addCylinderY(mat4Translate(M,  0.78, plinth + 1.16, d / 2 + 0.74), 0.055, 0.055, 2.15, [0.84, 0.82, 0.78, 1], MAT.matte);
+  }
+  // Framed windows with stone sills on every storey
+  const cols = Math.max(2, Math.round(w / 1.85));
   for (const face of [1, -1]) {
-    for (let r = 0; r < rows; r++) {
+    for (let r = 0; r < storeys; r++) {
       for (let c = 0; c < cols; c++) {
         const wx = -w / 2 + (c + 0.5) * (w / cols);
-        if (face > 0 && r === 0 && Math.abs(wx) < 0.6) continue;     // the door
-        const on = lit && R() < 0.82;
-        const col = on ? (R() < 0.85 ? TOWN.window : TOWN.windowCool) : [0.14, 0.16, 0.20, 1];
-        s.addBox(mat4Translate(M, wx, 1.35 + r * 1.55, face * (d / 2 + 0.03)), 0.56, 0.72, 0.05, col, on ? MAT.glow : MAT.matte);
+        if (face > 0 && r === 0 && Math.abs(wx) < 0.95) continue; // front door bay
+        const wy = plinth + 1.48 + r * 2.82;
+        const on = lit && R() < 0.78;
+        const col = on ? (R() < 0.85 ? TOWN.window : TOWN.windowCool) : [0.15, 0.18, 0.22, 1];
+        s.addBox(mat4Translate(M, wx, wy, face * (d / 2 + 0.03)), 0.82, 1.12, 0.05, col, on ? MAT.glow : MAT.matte);
+        s.addBox(mat4Translate(M, wx, wy - 0.60, face * (d / 2 + 0.07)), 0.96, 0.09, 0.14, [0.76, 0.74, 0.70, 1], MAT.matte);
       }
     }
   }
@@ -1559,19 +1614,32 @@ for (const sx of AVENUES_X) {
 const groundBatches = [ground, flats, flatDiscs];
 for (const b of groundBatches) { b.seal(); b.castShadow = false; }
 
-// Houses along the streets, behind each row of sites and along the town's edges.
-for (const [rowZ, facing] of [[3.5, 0], [-21.5, 0], [-44, 0]]) {
-  for (let x = -27; x <= 27; x += 5.2 + R() * 1.6) {
-    const z = rowZ + (R() - 0.5) * 1.2;
-    if (onStage(x, z, 0.6) || onStreet(x, z, 1.0)) continue;
-    const w = 3.0 + R() * 1.6, d = 2.8 + R() * 1.0, h = R() < 0.35 ? 4.0 + R() * 0.8 : 2.6 + R() * 0.6;
-    buildHouse(region(x, z).set.stream, x, z, facing + (R() - 0.5) * 0.08, w, d, h, pick(TOWN.walls), pick(TOWN.roofs), true);
+// Houses along the streets, built from structured architectural model records (storeys, units, footprint, porch).
+const makeHouseSpec = () => {
+  const storeys = R() < 0.42 ? 2 : 1;
+  const units = storeys === 2 && R() < 0.45 ? 2 : 1;
+  return {
+    storeys,
+    units,
+    w: (units > 1 ? 6.8 : 4.8) + R() * 1.8,
+    d: 4.2 + R() * 1.2,
+    wall: pick(TOWN.walls),
+    roof: pick(TOWN.roofs),
+    lit: true,
+    hasPorch: R() < 0.72,
+  };
+};
+for (const [rowZ, facing] of [[3.0, 0], [-22.8, 0], [-45.5, 0]]) {
+  for (let x = -28; x <= 28; x += 7.8 + R() * 2.2) {
+    const z = rowZ + (R() - 0.5) * 1.0;
+    if (onStage(x, z, 1.8) || onStreet(x, z, 2.2)) continue;
+    buildHouse(region(x, z).set.stream, x, z, facing + (R() - 0.5) * 0.06, makeHouseSpec());
   }
 }
-for (const sx of [-34, 34]) {
-  for (let z = -44; z <= 22; z += 6.5 + R() * 2) {
-    if (onStreet(sx, z, 1.0)) continue;
-    buildHouse(region(sx, z).set.stream, sx, z, (sx < 0 ? 1 : -1) * Math.PI / 2, 3.2 + R(), 3.0 + R() * 0.8, 2.6 + R() * 1.4, pick(TOWN.walls), pick(TOWN.roofs), true);
+for (const sx of [-35.5, 35.5]) {
+  for (let z = -44; z <= 22; z += 8.6 + R() * 2.2) {
+    if (onStreet(sx, z, 2.0)) continue;
+    buildHouse(region(sx, z).set.stream, sx, z, (sx < 0 ? 1 : -1) * Math.PI / 2, makeHouseSpec());
   }
 }
 // Trees: scattered where nothing else is, thicker toward the town's edges.
@@ -1753,7 +1821,9 @@ const FLOWS = [
       [CHAPTERS[6].links[1], 'DOCUMENT', TINT.amber, 4.4, 2.0],
     ],
     shelves: [] },
-  // 9. Across the World (handled by CEWP_GLOBE's intercontinental 3-mesh arcs)
+  // 9–11. CEWP Globe Beats (handled by CEWP_GLOBE's intercontinental ALM & shaped-link arcs)
+  { loop: 10, moves: [], shelves: [] },
+  { loop: 10, moves: [], shelves: [] },
   { loop: 10, moves: [], shelves: [] },
 ];
 // The town in chapter 8: something different arrives at the square from every place.
@@ -1855,66 +1925,67 @@ const GLOBE_ARC_SPECS = [
 ];
 
 const CEWP_GLOBE = (() => {
-  const stars   = new HolonBatch(KIND.SPHERE, false, 256);
-  const ocean   = new HolonBatch(KIND.SPHERE, false, 4);
-  const land    = new HolonBatch(KIND.TRIANGLE, false, 24000);
-  const grid    = new HolonBatch(KIND.LINE, false, 512);
-  const borders = new HolonBatch(KIND.LINE, false, 4096);
-  const rivers  = new HolonBatch(KIND.LINE, false, 4096);
-  const coasts  = new HolonBatch(KIND.LINE, false, 16384);
-  const lights  = new HolonBatch(KIND.SPHERE, false, 256);
-  const hubs    = new HolonBatch(KIND.SPHERE, false, 64);
-  const arcs    = new HolonBatch(KIND.LINE, false, 1024);
-  const atmo1   = new HolonBatch(KIND.SPHERE, false, 4);
-  const atmo2   = new HolonBatch(KIND.SPHERE, false, 4);
-  const atmo3   = new HolonBatch(KIND.SPHERE, false, 4);
+  const stars    = new HolonBatch(KIND.SPHERE, false, 256);
+  const ocean    = new HolonBatch(KIND.SPHERE, false, 4);
+  const sunGlint = new HolonBatch(KIND.SPHERE, false, 8);
+  const land     = new HolonBatch(KIND.TRIANGLE, false, 24000);
+  const grid     = new HolonBatch(KIND.LINE, false, 512);
+  const borders  = new HolonBatch(KIND.LINE, false, 4096);
+  const rivers   = new HolonBatch(KIND.LINE, false, 4096);
+  const coasts   = new HolonBatch(KIND.LINE, false, 16384);
+  const lights   = new HolonBatch(KIND.SPHERE, false, 1024);
+  const hubs     = new HolonBatch(KIND.SPHERE, false, 64);
+  const arcs     = new HolonBatch(KIND.LINE, false, 1024);
+  const atmo1    = new HolonBatch(KIND.SPHERE, false, 4);
+  const atmo2    = new HolonBatch(KIND.SPHERE, false, 4);
+  const atmo3    = new HolonBatch(KIND.SPHERE, false, 4);
   const dynGlyphs = new HolonBatch(KIND.GLYPH, false, 64);
   const dynRing   = new HolonBatch(KIND.SPHERE, false, 8);
 
-  // Sun vector: illuminates the Americas & Atlantic in warm golden-hour sunlight with a dramatic twilight terminator
-  const GLOBE_SUN = [0.46, -0.78, 0.42];
-  const GLOBE_LIGHT_LAND  = { sun: GLOBE_SUN, day: [-0.14, 0.16], rgb: [0.30, 1.38], lambert: 0.62, limb: [0.0, 0.08] };
-  const GLOBE_LIGHT_OCEAN = { sun: GLOBE_SUN, day: [-0.14, 0.16], rgb: [0.28, 1.24], lambert: 0.55, limb: [0.0, 0.10] };
-  const GLOBE_LIGHT_LINE  = { sun: GLOBE_SUN, day: [-0.12, 0.14], rgb: [0.44, 1.08], alpha: [0.60, 1.0], limb: [-0.02, 0.12] };
+  // Sun vector: illuminates the Pacific & Americas in warm daylight while casting Europe/Africa into dramatic golden night lights!
+  const GLOBE_SUN = [-0.28, -0.92, 0.27];
+  const GLOBE_LIGHT_LAND  = { sun: GLOBE_SUN, day: [-0.12, 0.14], rgb: [0.22, 1.32], lambert: 0.58, limb: [0.0, 0.08] };
+  const GLOBE_LIGHT_OCEAN = { sun: GLOBE_SUN, day: [-0.14, 0.16], rgb: [0.18, 1.28], lambert: 0.55, limb: [0.0, 0.10] };
+  const GLOBE_LIGHT_LINE  = { sun: GLOBE_SUN, day: [-0.10, 0.12], rgb: [0.46, 1.05], alpha: [0.62, 1.0], limb: [-0.02, 0.12] };
 
-  // 1. Deep-Space Starfield (180 pinpoint stars on the celestial sphere)
+  // 1. Deep-Space Starfield
   const srng = rng(994411);
   for (let s = 0; s < 180; s++) {
     const u = srng() * 2 - 1, th = srng() * Math.PI * 2, sr = Math.sqrt(Math.max(0, 1 - u * u));
     const rr = 64 + srng() * 14;
     const tint = srng();
-    const sc = tint < 0.6 ? [224, 236, 255, 210] : tint < 0.85 ? [255, 238, 206, 200] : [168, 210, 255, 200];
-    stars.add(rr * sr * Math.cos(th), rr * sr * Math.sin(th), rr * u, 0.08 + srng() * 0.12, 0, 0, 0, 0, 0, 0, sc, MATERIAL.GLOW);
+    const sc = tint < 0.6 ? [224, 236, 255, 195] : tint < 0.85 ? [255, 238, 206, 185] : [168, 210, 255, 185];
+    stars.add(rr * sr * Math.cos(th), rr * sr * Math.sin(th), rr * u, 0.07 + srng() * 0.11, 0, 0, 0, 0, 0, 0, sc, MATERIAL.GLOW);
   }
 
-  // 2. Deep Maritime Sapphire Ocean Sphere + 3-Layer Atmospheric Fresnel Halo
-  ocean.add(0, 0, 0, GLOBE_R, 0, 0, 0, 0, 0, 0, [16, 40, 74, 255], MATERIAL.MATTE);
+  // 2. Deep Midnight Sapphire Ocean (matching CEWP's calm dark-slate ocean) + Atmospheric Fresnel Rim
+  ocean.add(0, 0, 0, GLOBE_R, 0, 0, 0, 0, 0, 0, [11, 28, 56, 255], MATERIAL.MATTE);
   ocean.globe = GLOBE_LIGHT_OCEAN;
 
-  atmo1.add(0, 0, 0, GLOBE_R * 1.018, 0, 0, 0, 0, 0, 0, [92, 182, 255, 24], MATERIAL.GLOW);
-  atmo2.add(0, 0, 0, GLOBE_R * 1.038, 0, 0, 0, 0, 0, 0, [64, 152, 255, 16], MATERIAL.GLOW);
-  atmo3.add(0, 0, 0, GLOBE_R * 1.064, 0, 0, 0, 0, 0, 0, [48, 126, 248, 10], MATERIAL.GLOW);
+  atmo1.add(0, 0, 0, GLOBE_R * 1.016, 0, 0, 0, 0, 0, 0, [96, 184, 255, 28], MATERIAL.GLOW);
+  atmo2.add(0, 0, 0, GLOBE_R * 1.036, 0, 0, 0, 0, 0, 0, [68, 152, 255, 18], MATERIAL.GLOW);
+  atmo3.add(0, 0, 0, GLOBE_R * 1.064, 0, 0, 0, 0, 0, 0, [48, 122, 245, 11], MATERIAL.GLOW);
 
   // 3. Subtle 30-degree latitude / longitude graticule
-  const gCol = [48, 92, 140, 52];
+  const gCol = [48, 86, 134, 34];
   for (let lat = -60; lat <= 60; lat += 30) {
     for (let lon = -180; lon < 180; lon += 10) {
       const a = llToGlobe(lat, lon, GLOBE_R * 1.002), b = llToGlobe(lat, lon + 10, GLOBE_R * 1.002);
-      grid.add(a[0], a[1], a[2], 0.018, 0, 0, b[0], b[1], b[2], 0, gCol, 0);
+      grid.add(a[0], a[1], a[2], 0.014, 0, 0, b[0], b[1], b[2], 0, gCol, 0);
     }
   }
   for (let lon = -180; lon < 180; lon += 30) {
     for (let lat = -80; lat < 80; lat += 10) {
       const a = llToGlobe(lat, lon, GLOBE_R * 1.002), b = llToGlobe(lat + 10, lon, GLOBE_R * 1.002);
-      grid.add(a[0], a[1], a[2], 0.018, 0, 0, b[0], b[1], b[2], 0, gCol, 0);
+      grid.add(a[0], a[1], a[2], 0.014, 0, 0, b[0], b[1], b[2], 0, gCol, 0);
     }
   }
 
-  // 4. Real Natural Earth 110m Filled Continents (`KIND.TRIANGLE` + Biome Shading + GLOBE Day/Night Sun!)
+  // 4. Real Natural Earth 110m Filled Continents (`KIND.TRIANGLE` + CEWP Muted Natural Land + GLOBE Day/Night Sun!)
+  let isLandFn = () => true;
   if (typeof NE110_B64 !== 'undefined') {
     const L = geoDecodeNE110(NE110_B64);
 
-    // Precompute bounding boxes for L[1] continent polygons for ultra-fast point-in-polygon fill
     const polys = L[1].map((pts) => {
       let minLa = 90, maxLa = -90, minLo = 180, maxLo = -180;
       for (const p of pts) {
@@ -1937,36 +2008,28 @@ const CEWP_GLOBE = (() => {
       }
       return inside;
     };
+    isLandFn = isLand;
 
-    // Smooth organic biome coloring (Gaussian desert/snow/forest blends — zero boxy edges!)
+    // Refined CEWP-inspired natural land palette (muted olive-slate earth so golden city lights & coasts pop cleanly!)
     const gBlob = (la, lo, cLa, cLo, rLa, rLo) => Math.exp(-(((la - cLa) / rLa) ** 2 + ((lo - cLo) / rLo) ** 2));
     const biomeColor = (lat, lon) => {
       const aLat = Math.abs(lat);
       const n = 0.5 + 0.28 * Math.sin(lat * 0.19 + lon * 0.13) + 0.22 * Math.cos(lat * 0.31 - lon * 0.23);
-      // Base forest green (richer tropical near equator, temperate olive further north/south)
       const trop = Math.exp(-((aLat / 22) ** 2));
-      let r = lerp(66, 46, trop) + n * 24;
-      let g = lerp(116, 108, trop) + n * 26;
-      let b = lerp(70, 58, trop) + n * 16;
-      // Smooth Gaussian desert & arid belts (Sahara, Arabia, US Southwest, Outback, Gobi)
+      let r = lerp(64, 52, trop) + n * 18;
+      let g = lerp(84, 86, trop) + n * 20;
+      let b = lerp(60, 54, trop) + n * 12;
       const arid = Math.min(1,
-        gBlob(lat, lon, 23, 12, 9, 24) +      // Sahara
-        gBlob(lat, lon, 24, 46, 8, 12) +      // Arabia
-        gBlob(lat, lon, 34, -110, 7, 10) +    // US Southwest / Sonora
-        gBlob(lat, lon, -25, 130, 7, 14) +    // Australian Outback
-        gBlob(lat, lon, 41, 78, 7, 18)        // Central Asia / Gobi
+        gBlob(lat, lon, 23, 12, 9, 24) + gBlob(lat, lon, 24, 46, 8, 12) +
+        gBlob(lat, lon, 34, -110, 7, 10) + gBlob(lat, lon, -25, 130, 7, 14) + gBlob(lat, lon, 41, 78, 7, 18)
       );
-      r = lerp(r, 158 + n * 28, arid * 0.85);
-      g = lerp(g, 142 + n * 22, arid * 0.85);
-      b = lerp(b, 98 + n * 16, arid * 0.85);
-      // Smooth polar / Greenland snow blend
-      const snow = Math.min(1,
-        Math.max(0, (aLat - 61) / 10) +
-        gBlob(lat, lon, 72, -40, 11, 16)
-      );
-      r = lerp(r, 214, snow * 0.92);
-      g = lerp(g, 224, snow * 0.92);
-      b = lerp(b, 236, snow * 0.92);
+      r = lerp(r, 118 + n * 20, arid * 0.72);
+      g = lerp(g, 108 + n * 16, arid * 0.72);
+      b = lerp(b, 80 + n * 12, arid * 0.72);
+      const snow = Math.min(1, Math.max(0, (aLat - 63) / 10) + gBlob(lat, lon, 72, -40, 11, 16));
+      r = lerp(r, 152, snow * 0.75);
+      g = lerp(g, 164, snow * 0.75);
+      b = lerp(b, 174, snow * 0.75);
       return [Math.round(r), Math.round(g), Math.round(b), 255];
     };
 
@@ -1987,29 +2050,29 @@ const CEWP_GLOBE = (() => {
     }
     land.globe = GLOBE_LIGHT_LAND;
 
-    // Real Coastlines (L[2]), Country Borders (L[3]), and Major Rivers (L[4])
-    const cCol = [118, 228, 178, 245];
-    const bCol = [104, 152, 196, 130];
-    const rCol = [78, 172, 232, 190];
+    // Crisp CEWP-style ice-blue coastlines (L[2]), subtle country borders (L[3]), and rivers (L[4])
+    const cCol = [104, 196, 236, 225];
+    const bCol = [94, 128, 164, 105];
+    const rCol = [74, 148, 206, 145];
     for (const pl of L[2]) {
       for (let j = 0; j + 1 < pl.length; j++) {
         const a = llToGlobe(pl[j][0], pl[j][1], GLOBE_R * 1.008);
         const b = llToGlobe(pl[j + 1][0], pl[j + 1][1], GLOBE_R * 1.008);
-        coasts.add(a[0], a[1], a[2], 0.058, 0, 0, b[0], b[1], b[2], 0, cCol, VARIANT_ROUND);
+        coasts.add(a[0], a[1], a[2], 0.048, 0, 0, b[0], b[1], b[2], 0, cCol, VARIANT_ROUND);
       }
     }
     for (const pl of L[3]) {
       for (let j = 0; j + 1 < pl.length; j++) {
         const a = llToGlobe(pl[j][0], pl[j][1], GLOBE_R * 1.006);
         const b = llToGlobe(pl[j + 1][0], pl[j + 1][1], GLOBE_R * 1.006);
-        borders.add(a[0], a[1], a[2], 0.028, 0, 0, b[0], b[1], b[2], 0, bCol, 0);
+        borders.add(a[0], a[1], a[2], 0.022, 0, 0, b[0], b[1], b[2], 0, bCol, 0);
       }
     }
     for (const pl of L[4]) {
       for (let j = 0; j + 1 < pl.length; j++) {
         const a = llToGlobe(pl[j][0], pl[j][1], GLOBE_R * 1.006);
         const b = llToGlobe(pl[j + 1][0], pl[j + 1][1], GLOBE_R * 1.006);
-        rivers.add(a[0], a[1], a[2], 0.026, 0, 0, b[0], b[1], b[2], 0, rCol, 0);
+        rivers.add(a[0], a[1], a[2], 0.020, 0, 0, b[0], b[1], b[2], 0, rCol, 0);
       }
     }
     coasts.globe = GLOBE_LIGHT_LINE;
@@ -2017,21 +2080,42 @@ const CEWP_GLOBE = (() => {
     rivers.globe = GLOBE_LIGHT_LINE;
   }
 
-  // 5. Glowing Golden City Light Clusters around real population centers
+  // 5. Dense Golden Population City-Light Clusters (380+ pinpoint warm lights across real land corridors, matching CEWP!)
+  const POP_CORRIDORS = [
+    [40.5, -77.0, 6.5, 11.0, 42], // US East / Midwest
+    [35.5, -118.0, 5.5, 5.0, 22], // US West Coast
+    [20.5, -99.5, 5.5, 7.5, 22],  // Mexico & Central America
+    [-22.5, -47.0, 8.0, 7.5, 26], // Brazil / South America East
+    [49.5, 6.0, 6.5, 13.5, 58],   // Western & Central Europe (glowing on the night side!)
+    [42.0, 14.5, 5.0, 9.0, 28],   // Mediterranean / Italy
+    [55.5, 37.5, 6.0, 12.0, 26],  // Eastern Europe
+    [30.5, 31.2, 3.5, 5.0, 18],   // Nile / Levant
+    [7.5, 3.5, 5.5, 10.0, 24],    // West Africa
+    [-1.5, 36.5, 6.5, 6.0, 18],   // East Africa
+    [22.5, 78.5, 9.5, 10.5, 44],  // India
+    [33.5, 114.5, 9.0, 10.5, 46], // East China
+    [35.7, 138.0, 4.5, 5.0, 22],  // Japan / Korea
+    [-33.5, 149.0, 5.0, 6.0, 14], // SE Australia
+  ];
   const crng = rng(20261124);
-  for (const h of GLOBE_HUBS) {
-    const p = llToGlobe(h.lat, h.lon, GLOBE_R * 1.015);
-    const col = h.home ? [96, 242, 164, 255] : [255, 206, 112, 255];
-    hubs.add(p[0], p[1], p[2], h.home ? 0.30 : 0.16, 0, 0, 0, 0, 0, 0, col, MATERIAL.GLOW);
-    // Warm surrounding metro town lights
-    for (let k = 0; k < 7; k++) {
-      const dLa = (crng() - 0.5) * 9.5, dLo = (crng() - 0.5) * 11.5;
-      const lp = llToGlobe(h.lat + dLa, h.lon + dLo, GLOBE_R * 1.011);
-      lights.add(lp[0], lp[1], lp[2], 0.055 + crng() * 0.045, 0, 0, 0, 0, 0, 0, [255, 214, 132, 210], MATERIAL.GLOW);
+  for (const [cLa, cLo, sLa, sLo, count] of POP_CORRIDORS) {
+    for (let k = 0; k < count; k++) {
+      const la = cLa + (crng() + crng() - 1) * sLa;
+      const lo = cLo + (crng() + crng() - 1) * sLo;
+      if (!isLandFn(la, lo)) continue;
+      const lp = llToGlobe(la, lo, GLOBE_R * 1.010);
+      const bright = 0.65 + crng() * 0.35;
+      lights.add(lp[0], lp[1], lp[2], 0.042 + crng() * 0.048, 0, 0, 0, 0, 0, 0,
+        [255, Math.round(188 + bright * 34), Math.round(92 + bright * 46), Math.round(190 + bright * 60)], MATERIAL.GLOW);
     }
   }
+  for (const h of GLOBE_HUBS) {
+    const p = llToGlobe(h.lat, h.lon, GLOBE_R * 1.015);
+    const col = h.home ? [96, 242, 164, 255] : [255, 214, 128, 255];
+    hubs.add(p[0], p[1], p[2], h.home ? 0.28 : 0.14, 0, 0, 0, 0, 0, 0, col, MATERIAL.GLOW);
+  }
 
-  // 6. Great-circle 3D intercontinental 3-mesh arcs soaring above the Earth
+  // 6. Great-circle 3D intercontinental ALM & shaped-link arcs soaring above the Earth
   const arcCurves = [];
   for (const [ia, ib, colF, iconName, iconTint] of GLOBE_ARC_SPECS) {
     const hA = GLOBE_HUBS[ia], hB = GLOBE_HUBS[ib];
@@ -2051,20 +2135,24 @@ const CEWP_GLOBE = (() => {
       const rr = GLOBE_R * 1.015 + Math.sin(Math.PI * u) * peakLift;
       pts.push([vx / vl * rr, vy / vl * rr, vz / vl * rr]);
     }
-    const rgba = [Math.round(colF[0] * 255), Math.round(colF[1] * 255), Math.round(colF[2] * 255), 235];
+    const rgba = [Math.round(colF[0] * 255), Math.round(colF[1] * 255), Math.round(colF[2] * 255), 225];
     for (let s = 0; s < segs; s++) {
       const a = pts[s], b = pts[s + 1];
-      arcs.add(a[0], a[1], a[2], 0.082, 0, 0, b[0], b[1], b[2], s / segs, rgba, VARIANT_ROUND | VARIANT_FLOW);
+      arcs.add(a[0], a[1], a[2], 0.072, 0, 0, b[0], b[1], b[2], s / segs, rgba, VARIANT_ROUND | VARIANT_FLOW);
     }
     arcCurves.push({ pts, iconName, iconTint });
   }
 
-  const staticBatches = [stars, ocean, land, grid, rivers, borders, coasts, lights, hubs, arcs, atmo1, atmo2, atmo3];
+  const staticBatches = [stars, ocean, sunGlint, land, grid, rivers, borders, coasts, lights, hubs, arcs, atmo1, atmo2, atmo3];
   for (const b of staticBatches) { b.seal(); b.castShadow = false; resident(b); }
   dynGlyphs.castShadow = false;
   dynRing.castShadow = false;
 
-  return { staticBatches, arcs, dynGlyphs, dynRing, arcCurves, orbitT: 0, target: 0, from: 0, t0: -1e9 };
+  return {
+    staticBatches, arcs, dynGlyphs, dynRing, arcCurves,
+    orbitT: 0, target: 0, from: 0, t0: -1e9,
+    camLat: 0.54, camLon: -1.18, camDist: 24.5,
+  };
 })();
 
 // ── Every cumulative story layer is built once, in ONE shared neighbourhood ──
@@ -2145,8 +2233,8 @@ function frame(tms) {
     return t * t * (3 - 2 * t);
   };
 
-  // Single continuous wall-clock `orbitT` in [0, 1] drives the organic 2.2s zoom-out from Your Town -> Orbit (and back down!)
-  const targetOrbit = currentStep === 8 ? 1 : 0;
+  // Single continuous wall-clock `orbitT` in [0, 1] drives the organic 2.2s zoom-out from Your Town -> CEWP Orbit (Chapters 9–11)
+  const targetOrbit = currentStep >= 8 ? 1 : 0;
   if (CEWP_GLOBE.target !== targetOrbit) {
     CEWP_GLOBE.from = CEWP_GLOBE.orbitT;
     CEWP_GLOBE.target = targetOrbit;
@@ -2280,15 +2368,28 @@ function frame(tms) {
     drawer.draw(drawList, vp, oEase < 0.25 ? DRAW_OPTS : { light: LIGHT_DIR, ambient: 0.60, viewport: VPORT });
   }
 
-  // ── PASS B: Sunlit Natural Earth `CEWP` Globe (starts zoomed right onto Your Town & organically pulls out to orbit!) ──
+  // ── PASS B: Sunlit Natural Earth `CEWP` Globe — 3 smooth orbital beats (9: Cities Connect, 10: Day & Night, 11: One Planet) ──
   if (globeAlpha > 0.01) {
     if (townAlpha > 0.01) gl.clear(gl.DEPTH_BUFFER_BIT);
     const orbitSettled = smoothstep(0.28, 1.0, oEase);
-    const targetDist = Math.max(33.5, 31.0 / aspect);
-    // Start zoomed closely onto Your Town (40N, 83W -> lat=0.698, lon=-1.449), then smoothly glide out to full orbit!
-    const gDist = lerp(12.2, targetDist, orbitSettled);
-    const gLat  = Math.max(-0.55, Math.min(0.78, lerp(0.68, 0.34, orbitSettled) + userPitch));
-    const gSpin = lerp(-1.45, -1.25, orbitSettled) + Math.max(0, orbitSettled - 0.5) * (tSec * 0.065) + userYaw;
+    const globeBeat = Math.max(0, Math.min(2, currentStep - 8));
+    const fullDist = Math.max(32.5, 30.0 / aspect);
+    // Beat 0: Regional Americas & Transatlantic (ALM relays); Beat 1: Europe/Africa night terminator (city lights & traffic shaping); Beat 2: Full planetary orbit
+    const beatTargets = [
+      { lat: 0.54, lon: -1.18, dist: Math.max(24.5, 22.5 / aspect), spinRate: 0.018 },
+      { lat: 0.42, lon:  0.14, dist: Math.max(27.5, 25.0 / aspect), spinRate: 0.024 },
+      { lat: 0.28, lon: -0.65, dist: fullDist,                      spinRate: 0.060 },
+    ];
+    const bt = beatTargets[globeBeat];
+    const smoothK = Math.min(1, dt * 2.4);
+    CEWP_GLOBE.camLat  = lerp(CEWP_GLOBE.camLat,  bt.lat,  smoothK);
+    CEWP_GLOBE.camLon  = lerp(CEWP_GLOBE.camLon,  bt.lon,  smoothK);
+    CEWP_GLOBE.camDist = lerp(CEWP_GLOBE.camDist, bt.dist, smoothK);
+
+    // Start zoomed closely onto Your Town (40N, 83W -> lat=0.698, lon=-1.449), then smoothly glide into the active CEWP beat!
+    const gDist = lerp(12.2, CEWP_GLOBE.camDist, orbitSettled);
+    const gLat  = Math.max(-0.55, Math.min(0.78, lerp(0.68, CEWP_GLOBE.camLat, orbitSettled) + userPitch));
+    const gSpin = lerp(-1.45, CEWP_GLOBE.camLon, orbitSettled) + Math.max(0, orbitSettled - 0.5) * (tSec * bt.spinRate) + userYaw;
     const gEye = [
       Math.cos(gLat) * Math.cos(gSpin) * gDist,
       Math.cos(gLat) * Math.sin(gSpin) * gDist,
@@ -2299,8 +2400,8 @@ function frame(tms) {
     const gVp = mat4Mul(gProj, gView);
 
     drawList.length = 0;
-    CEWP_GLOBE.arcs.params[PARAM_FLOW] = tSec * 0.42;
-    CEWP_GLOBE.arcs.params[PARAM_FLOW_N] = 5;
+    CEWP_GLOBE.arcs.params[PARAM_FLOW] = tSec * (globeBeat === 1 ? 0.30 : 0.44);
+    CEWP_GLOBE.arcs.params[PARAM_FLOW_N] = globeBeat === 1 ? 8 : 5; // Beat 1: steady-pace shaped link cadence
     for (const b of CEWP_GLOBE.staticBatches) {
       b.params[PARAM.FADE] = globeAlpha;
       drawList.push(b);
@@ -2310,13 +2411,13 @@ function frame(tms) {
     const homeP = llToGlobe(40.0, -83.0, GLOBE_R * 1.018);
     const pulse = (tSec * 0.7) % 1.0;
     CEWP_GLOBE.dynRing.clear();
-    CEWP_GLOBE.dynRing.add(homeP[0], homeP[1], homeP[2], 0.30 + pulse * 0.55, 0, 0, 0, 0, 0, 0, [96, 242, 164, Math.round((1 - pulse) * 165 * globeAlpha)], MATERIAL.GLOW);
+    CEWP_GLOBE.dynRing.add(homeP[0], homeP[1], homeP[2], 0.28 + pulse * 0.52, 0, 0, 0, 0, 0, 0, [96, 242, 164, Math.round((1 - pulse) * 165 * globeAlpha)], MATERIAL.GLOW);
     CEWP_GLOBE.dynRing.seal();
     drawList.push(CEWP_GLOBE.dynRing);
 
     // Moving protocol glyphs flying along the 3D intercontinental great-circle arcs
     CEWP_GLOBE.dynGlyphs.clear();
-    const gScale = 0.72 * (1 + 0.35 * portrait);
+    const gScale = 0.36 * (1 + 0.25 * portrait);
     for (let i = 0; i < CEWP_GLOBE.arcCurves.length; i++) {
       const ac = CEWP_GLOBE.arcCurves[i];
       const u = (tSec * 0.16 + i / CEWP_GLOBE.arcCurves.length) % 1.0;
@@ -2325,67 +2426,13 @@ function frame(tms) {
       const p0 = ac.pts[i0], p1 = ac.pts[i1];
       const gx = lerp(p0[0], p1[0], fr), gy = lerp(p0[1], p1[1], fr), gz = lerp(p0[2], p1[2], fr);
       const a = Math.min(u, 1 - u) / 0.12;
-      icon(CEWP_GLOBE.dynGlyphs, [gx, gy, gz], 0.15, gScale, ac.iconTint, Math.min(1, a) * globeAlpha, ac.iconName);
+      icon(CEWP_GLOBE.dynGlyphs, [gx, gy, gz], 0.14, gScale, ac.iconTint, Math.min(1, a) * globeAlpha, ac.iconName);
     }
     CEWP_GLOBE.dynGlyphs.seal();
     drawList.push(CEWP_GLOBE.dynGlyphs);
 
-    // Globe plaques fade in cleanly once the zoom-out settles
-    const gLabelFade = smoothstep(0.68, 0.96, oEase);
-    if (gLabelFade > 0.01) {
-      const homeFacing = (homeP[0]*gEye[0] + homeP[1]*gEye[1] + homeP[2]*gEye[2]) > 0;
-      const globeLabels = [
-        { hp: [0, 0, GLOBE_R * 1.18], dy: -16, title: "One Earth, one open rulebook", sub: "CEWP planet · CEWPOS home", col: RGBA.amber },
-        { hp: [0, 0, -GLOBE_R * 1.18], dy: 20, title: "Peer-to-peer across continents", sub: "No single company owns the world", col: RGBA.blue },
-      ];
-      if (homeFacing) {
-        globeLabels.push({ hp: homeP, dy: -28, title: "Your town", sub: "One of millions on the mesh", col: RGBA.green });
-      }
-      text.beginFrame();
-      const ge0 = text.epoch;
-      for (let pass = 0; pass < 2; pass++) {
-        for (const b of screenBatches) b.clear();
-        const compact = Wcss < 680;
-        const titleStyle = compact ? LSTYLE.TITLE_COMPACT : LSTYLE.TITLE;
-        const placed = [];
-        for (const glb of globeLabels) {
-          const sc = projectHolon(gVp, glb.hp[0], glb.hp[1], glb.hp[2], Wcss, Hcss, _pp);
-          if (!sc) continue;
-          const et = placeRun(glb.title, titleStyle);
-          const es = !compact && glb.sub ? placeRun(glb.sub, LSTYLE.SUB) : null;
-          const w = Math.max(compact ? 110 : 160, et.w / dpr + 34, es ? es.w / dpr + 28 : 0);
-          const h = es ? 54 : (compact ? 30 : 34);
-          const sx = Math.max(w / 2 + 8, Math.min(Wcss - w / 2 - 8, _pp[0]));
-          const sy = Math.max(h / 2 + 8, Math.min(Hcss - h / 2 - 8, _pp[1] + glb.dy));
-          placed.push({ sx, sy, w, h, et, es, col: glb.col });
-        }
-        for (let i = 0; i < placed.length; i++) {
-          for (let j = i + 1; j < placed.length; j++) {
-            const A = placed[i], B = placed[j];
-            const ox = (A.w + B.w) * 0.5 + 10 - Math.abs(A.sx - B.sx);
-            const oy = (A.h + B.h) * 0.5 + 8 - Math.abs(A.sy - B.sy);
-            if (ox > 0 && oy > 0) {
-              const dir = A.sy <= B.sy ? -1 : 1;
-              B.sy = Math.max(B.h / 2 + 8, Math.min(Hcss - B.h / 2 - 8, B.sy - dir * (oy + 4)));
-            }
-          }
-        }
-        for (const p of placed) {
-          const x = p.sx - p.w / 2, y = p.sy - p.h / 2;
-          const edge = [p.col[0], p.col[1], p.col[2], 195];
-          screenBg.add(p.sx * dpr, p.sy * dpr, 0, p.w * dpr, p.h * dpr, 0, 10 * dpr, 0, 0, 0, edge, 0);
-          screenFg.add(p.sx * dpr, p.sy * dpr, 0, (p.w - 3) * dpr, (p.h - 3) * dpr, 0, 8.5 * dpr, 0, 0, 0, RGBA.plaque, 0);
-          const ty = p.es ? y + 18 : y + p.h * 0.5;
-          screenDots.add((x + 13) * dpr, ty * dpr, 0, 4 * dpr, 0, 0, 0, 0, 0, 0, p.col, 0);
-          drawRun(p.et, p.sx + 6, ty, RGBA.white);
-          if (p.es) drawRun(p.es, p.sx, y + 38, RGBA.muted);
-        }
-        if (text.epoch === ge0) break;
-      }
-      for (const b of screenBatches) { b.params[PARAM.FADE] = gLabelFade; b.seal(); drawList.push(b); }
-    }
-
-    drawer.draw(drawList, gVp, { light: new Float32Array([0.46, -0.78, 0.42]), ambient: 0.48, viewport: VPORT });
+    // Clean, uncluttered CEWP orbital view — zero heavy plaques over the Earth!
+    drawer.draw(drawList, gVp, { light: new Float32Array([-0.28, -0.92, 0.27]), ambient: 0.44, viewport: VPORT });
   }
 
   requestAnimationFrame(frame);
