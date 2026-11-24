@@ -71,210 +71,14 @@ canvas#c {
 canvas#c:active {
   cursor: grabbing;
 }
-
-/* Bottom Story Box: Clear, large, simple English focused on practical human outcomes */
-#story-box {
-  flex: 0 0 auto;
-  width: 100%;
-  background: var(--card);
-  border-top: 1px solid var(--border);
-  padding: 16px 28px 18px;
-  z-index: 10;
-  position: relative;
-}
-#story-progress {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 2.5px;
-  width: 0%;
-  background: linear-gradient(90deg, var(--green), var(--blue));
-  transition: width 0.1s linear;
-  pointer-events: none;
-}
-.story-inner {
-  max-width: 1040px;
-  width: 100%;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.story-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.story-title-group {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.step-pill {
-  font-family: var(--mono);
-  font-size: 12.5px;
-  font-weight: 700;
-  color: var(--green);
-  background: rgba(78, 208, 139, 0.14);
-  border: 1px solid rgba(78, 208, 139, 0.45);
-  border-radius: 999px;
-  padding: 4px 11px;
-  white-space: nowrap;
-}
-.story-heading {
-  margin: 0;
-  font-size: 23px;
-  line-height: 1.24;
-  font-weight: 700;
-  color: #ffffff;
-  letter-spacing: -0.015em;
-}
-.story-status {
-  font-family: var(--mono);
-  font-size: 12.5px;
-  color: var(--blue);
-  white-space: nowrap;
-}
-.story-body {
-  margin: 4px 0 4px;
-  font-size: 17.5px;
-  line-height: 1.48;
-  color: #e2e9f4;
-  max-width: 960px;
-  min-height: 2.96em; /* two lines: the panel keeps its height between chapters */
-}
-.story-body strong {
-  color: #ffffff;
-  font-weight: 600;
-}
-
-.story-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.step-dots {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-.step-btn {
-  background: #1a2332;
-  color: var(--muted);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 5px 8px;
-  font-size: 11.5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  white-space: nowrap;
-}
-.step-btn:hover {
-  color: #fff;
-  border-color: var(--blue);
-}
-.step-btn.active {
-  background: rgba(78, 208, 139, 0.20);
-  color: #fff;
-  border-color: var(--green);
-}
-.nav-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.ctrl-btn {
-  background: #1b2434;
-  color: var(--ink);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 7px 13px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  white-space: nowrap;
-}
-.ctrl-btn:hover {
-  border-color: var(--blue);
-  color: #fff;
-}
-.ctrl-btn.primary {
-  background: var(--green);
-  color: #09130e;
-  border-color: var(--green);
-  font-weight: 700;
-}
-.ctrl-btn.primary:hover {
-  background: #64df9e;
-}
-
-@media (max-width: 820px) {
-  #story-box { padding: 13px 16px 15px; }
-  .story-inner { gap: 7px; }
-  .step-pill { font-size: 11.5px; padding: 3px 9px; }
-  .story-heading { font-size: 18px; line-height: 1.25; }
-  .story-status { display: none; }
-  .story-body { font-size: 15px; line-height: 1.44; margin: 2px 0; min-height: 4.32em; }
-  .step-btn { padding: 6px 9px; font-size: 12.5px; }
-  .step-btn span.lbl { display: none; }
-  .ctrl-btn { padding: 6px 10px; font-size: 12.5px; }
-}
 </style>
 </head>
 <body>
 
 <div id="stage-wrap">
   <div id="stage-orbit-sky"></div>
-  <canvas id="c" aria-label="CIRIS Web4 full-3D hardware and community scene rendered by holon-draw"></canvas>
+  <canvas id="c" aria-label="CIRIS Web4 full-3D interactive story and CEWP planet rendered by holon-draw"></canvas>
 </div>
-
-<section id="story-box" aria-label="CIRIS Web4 Story">
-  <div id="story-progress"></div>
-  <div class="story-inner">
-    <div>
-      <div class="story-top">
-        <div class="story-title-group">
-          <span class="step-pill" id="step-pill">1 of 11</span>
-          <h1 class="story-heading" id="story-heading">Your devices connect directly — no cloud rent</h1>
-        </div>
-        <span class="story-status" id="story-status">Your key · Direct sync · No middleman</span>
-      </div>
-      <p class="story-body" id="story-body"></p>
-    </div>
-
-    <div class="story-footer">
-      <div class="step-dots" id="step-dots"></div>
-      <div class="nav-controls">
-        <select class="ctrl-btn" id="region-select" aria-label="Choose region architecture">
-          <option value="us_midwest">Region: Ohio (Midwest)</option>
-          <option value="eu_alpine">Region: Zurich (Alpine)</option>
-          <option value="jp_east_asia">Region: Tokyo (East Asia)</option>
-          <option value="af_west_tropical">Region: Lagos (West Africa)</option>
-          <option value="us_southwest_arid">Region: Phoenix (Arid SW)</option>
-          <option value="sa_tropical">Region: São Paulo (Tropical)</option>
-        </select>
-        <button class="ctrl-btn" id="btn-prev" type="button">&larr; Back</button>
-        <button class="ctrl-btn" id="btn-play" type="button">Pause</button>
-        <button class="ctrl-btn" id="btn-next" type="button">Next &rarr;</button>
-        <a class="ctrl-btn" href="https://cirisai.github.io/CEWP/" target="_blank" rel="noopener">CEWP Globe &#8599;</a>
-        <a class="ctrl-btn" href="CIRIS_Web4_Draft_0.5.pdf" target="_blank" rel="noopener">White Paper (PDF)</a>
-        <a class="ctrl-btn primary" href="app.html?mode=setup">Try it &rarr;</a>
-      </div>
-    </div>
-  </div>
-</section>
 
 <script src="geo/ne110.js"></script>
 <script type="module">
@@ -288,124 +92,111 @@ import { createDrawer, KIND, INSTANCE_BYTES, PARAM, PARAMS_NEUTRAL, VARIANT_ROUN
 import { createTextProvider } from './holon/text.js';
 import { predictBuilding, REGIONAL_PRESETS } from './geo/regional_model.js';
 
-// ── Practical, Simple, Human-Centered 9-Chapter Story (Web4 Draft 0.5 + CEWP + CIRISKernel) ──
+// ── 11-Beat Story rendered natively inside `holon-draw` bubbles (zero HTML bottom bar!) ──
 const STEPS = [
   {
-    short: "1. Your Devices",
-    title: "Your devices connect directly — no cloud rent",
-    status: "Your key · Direct sync · No middleman",
-    text: `Today, Big Tech sits between your own devices. With CIRIS, <strong>your key lives on your phone and laptop</strong> — photos, notes, and files sync straight between them, with no monthly cloud bill.`
+    title: "1/11 · Your devices connect directly",
+    sub: "Your key lives on your phone and laptop — files sync straight across, no cloud rent.",
+    col: "green",
   },
   {
-    short: "2. While Away",
-    title: "Messages wait for you — even when your phone sleeps",
-    status: "Sealed envelopes · Always-on home box",
-    text: `Phones sleep in your pocket and laptops close. <strong>An always-on home box (or a trusted neighbour) holds sealed envelopes for you</strong> — unreadable to anyone else — and hands them over the moment you wake up.`
+    title: "2/11 · Messages wait while your phone sleeps",
+    sub: "An always-on home box holds sealed envelopes — only your keys can open them.",
+    col: "blue",
   },
   {
-    short: "3. Family Circle",
-    title: "Your family circle — direct, private, and in sync",
-    status: "No server · No blockchain · Same view on every device",
-    text: `Share family photos, videos, and group chat <strong>straight between family phones and laptops — no server and no blockchain</strong>. Messages can arrive late or out of order; every device checks the signatures and lands on the exact same view.`
+    title: "3/11 · Your family circle — no server, no blockchain",
+    sub: "Messages arrive in any order; every device checks signatures and reaches the same view.",
+    col: "blue",
   },
   {
-    short: "4. Your Feed",
-    title: "A social feed you control, not advertisers",
-    status: "Your sliders · Your rules",
-    text: `<strong>You choose whose voices you hear</strong> — family, neighbours, clubs, or the wider world — and filter out the noise. No hidden algorithm tuned to keep you scrolling or angry.`
+    title: "4/11 · A social feed you control",
+    sub: "Pick family, neighbours, clubs, or the world — no rage-bait algorithm in the middle.",
+    col: "green",
   },
   {
-    short: "5. Community",
-    title: "Fair voting for your town, church, or club",
-    status: "One person, one voice · Signed receipts",
-    text: `Propose ideas and vote right from your phone. <strong>One person counts once</strong> — no fees, no tokens, no company counting ballots — once enough members sign receipts, every phone verifies the result is final.`
+    title: "5/11 · Fair voting for your town, church or club",
+    sub: "One person counts once — no fees, no tokens — signed receipts settle the count locally.",
+    col: "amber",
   },
   {
-    short: "6. No Tech Guy",
-    title: "Carried by its members — no server or \"tech guy\"",
-    status: "Member backups · Ordinary links",
-    text: `No one rents a server, pays hosting bills, or holds a master password. <strong>Members keep encrypted backup copies for each other</strong> on ordinary internet links, so the group keeps running if anyone steps away.`
+    title: "6/11 · Carried by members — no server or tech guy",
+    sub: "Members keep encrypted backups for each other on ordinary links; it runs if anyone leaves.",
+    col: "blue",
   },
   {
-    short: "7. AI You Can Stop",
-    title: "Accountable AI — with a real human stop",
-    status: "Published principles · One signed stop",
-    text: `Want an AI helper to sort files or summarize notes? It follows <strong>published principles</strong>, asks a human when unsure, and pauses on one signed stop — while your files and chats never lock.`
+    title: "7/11 · Accountable AI — with a real human stop",
+    sub: "Follows published principles and pauses on one signed stop — your files never lock.",
+    col: "red",
   },
   {
-    short: "8. Together",
-    title: "Cooperation without surrender",
-    status: "Live Web4 Mesh · No server · No blockchain",
-    text: `Web1 linked pages. Web2 linked people through platforms. <strong>CIRIS is a live Web4 mesh — no server, no blockchain</strong> — where people, communities, and accountable AI work together without anyone owning the rest.`
+    title: "8/11 · Cooperation without surrender",
+    sub: "People, communities, and accountable AI working together — without anyone owning the rest.",
+    col: "green",
   },
   {
-    short: "9. Cities Connect",
-    title: "Cities connect — passing live video member to member",
-    status: "CEWP · Emergent ALM relays · Local rules stay local",
-    text: `Zoom out from your street across the continent. <strong>Local communities connect city to city on ordinary links</strong> — passing live video and encrypted files from member to member while local disagreements stay local.`
+    title: "9/11 · Cities connect member to member",
+    sub: "Communities pass live video and files on ordinary links while local rules stay local.",
+    col: "blue",
   },
   {
-    short: "10. Day & Night",
-    title: "Activity rises and falls with day and night around the Earth",
-    status: "CEWP · Traffic shaping · Calibrated to live mesh",
-    text: `As cities wake and sleep across the terminator, <strong>traffic on shaped links flows at a steady pace</strong> so private conversations blend into ordinary traffic — calibrated to real serve-seat measurements.`
+    title: "10/11 · Day & night around the Earth",
+    sub: "Traffic on shaped links flows at a steady pace so private talks blend into ordinary traffic.",
+    col: "amber",
   },
   {
-    short: "11. One Planet",
-    title: "A billion people — no single company in charge",
-    status: "CEWP + CEWPOS · One holon-draw engine",
-    text: `Every family, club, and town runs itself on one open rulebook. <strong>Each person uses only a little data, with no central operator</strong> — click <em>CEWP Globe ↗</em> to explore the full live digital twin.`
+    title: "11/11 · One planet — no company in charge",
+    sub: "A billion people on one open rulebook, each using only a little data.",
+    col: "green",
   }
 ];
 
-const dotsEl = document.getElementById('step-dots');
-STEPS.forEach((s, idx) => {
-  const b = document.createElement('button');
-  b.type = 'button';
-  b.className = 'step-btn' + (idx === 0 ? ' active' : '');
-  b.innerHTML = `<span class="num">${idx + 1}</span><span class="lbl">. ${s.short.split('. ')[1]}</span>`;
-  b.addEventListener('click', () => goToStep(idx, true));
-  dotsEl.appendChild(b);
-});
-
 let currentStep = 0;
 let playing = true;
+let exploreMode = false;
+let exploreInTown = false;
 let stepTime = 0;
-const STEP_DURATION = 10.5;
+const STEP_DURATION = 9.5;
+let userZoom = 1.0;
 
-const progressEl = document.getElementById('story-progress');
 function goToStep(idx, manual) {
-  currentStep = (idx + STEPS.length) % STEPS.length;
+  if (idx >= STEPS.length) {
+    // End of animation: leave it free-form to explore with an invitation!
+    currentStep = STEPS.length - 1;
+    playing = false;
+    exploreMode = true;
+    exploreInTown = false;
+    return;
+  }
+  currentStep = Math.max(0, idx);
   stepTime = 0;
-  if (progressEl) progressEl.style.width = '0%';
-  const s = STEPS[currentStep];
-  document.getElementById('step-pill').textContent = `${currentStep + 1} of ${STEPS.length}`;
-  document.getElementById('story-heading').textContent = s.title;
-  document.getElementById('story-status').textContent = s.status;
-  document.getElementById('story-body').innerHTML = s.text;
-  document.querySelectorAll('.step-btn').forEach((btn, i) => {
-    btn.classList.toggle('active', i === currentStep);
-  });
+  exploreMode = false;
+  exploreInTown = false;
+  if (manual) playing = false;
 }
 
-document.getElementById('btn-prev').addEventListener('click', () => goToStep(currentStep - 1, true));
-document.getElementById('btn-next').addEventListener('click', () => goToStep(currentStep + 1, true));
-const playBtn = document.getElementById('btn-play');
-playBtn.addEventListener('click', () => {
-  playing = !playing;
-  playBtn.textContent = playing ? 'Pause' : 'Play';
-});
 window.addEventListener('keydown', (e) => {
-  if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
   if (e.key === 'ArrowRight') goToStep(currentStep + 1, true);
-  else if (e.key === 'ArrowLeft') goToStep(currentStep - 1, true);
+  else if (e.key === 'ArrowLeft') goToStep(Math.max(0, currentStep - 1), true);
   else if (e.key === ' ') {
     e.preventDefault();
-    playing = !playing;
-    playBtn.textContent = playing ? 'Pause' : 'Play';
+    if (exploreMode) { goToStep(0, false); playing = true; }
+    else playing = !playing;
+  } else if (e.key === 'r' || e.key === 'R') {
+    userYaw = 0; userPitch = 0; userZoom = 1.0;
+    goToStep(0, false); playing = true;
+  } else if ((e.key === 'g' || e.key === 'G') && exploreMode) {
+    exploreInTown = false; userZoom = 1.0;
   }
 });
-goToStep(0, false);
+// Support URL ?step=N (1-indexed) or ?explore=1 for deep-linking & testing
+const urlParams = new URLSearchParams(location.search);
+if (urlParams.get('explore') === '1') {
+  currentStep = STEPS.length - 1; playing = false; exploreMode = true;
+} else if (urlParams.has('step')) {
+  const s = parseInt(urlParams.get('step'), 10);
+  if (!isNaN(s) && s >= 1 && s <= STEPS.length) { currentStep = s - 1; playing = false; }
+}
 
 // ── WebGL Context & `holon-draw` Initialization ──
 const canvas = document.getElementById('c');
@@ -447,21 +238,67 @@ if (typeof ResizeObserver !== 'undefined') new ResizeObserver(resize).observe(st
 let userYaw = 0;
 let userPitch = 0;
 let dragging = false;
+let dragMoved = 0;
 let lastMX = 0, lastMY = 0;
+let lastGlobeVp = null;
 canvas.addEventListener('pointerdown', (e) => {
   dragging = true;
+  dragMoved = 0;
   lastMX = e.clientX;
   lastMY = e.clientY;
   canvas.setPointerCapture(e.pointerId);
 });
 canvas.addEventListener('pointermove', (e) => {
   if (!dragging) return;
-  userYaw += (e.clientX - lastMX) * 0.0045;
-  userPitch = Math.max(-0.22, Math.min(0.28, userPitch + (e.clientY - lastMY) * 0.0035));
+  const dx = e.clientX - lastMX, dy = e.clientY - lastMY;
+  dragMoved += Math.hypot(dx, dy);
   lastMX = e.clientX;
   lastMY = e.clientY;
+  userYaw += dx * 0.0045;
+  userPitch = Math.max(-0.55, Math.min(0.65, userPitch + dy * 0.0038));
 });
-canvas.addEventListener('pointerup', () => { dragging = false; });
+canvas.addEventListener('pointerup', (e) => {
+  const wasTap = dragging && dragMoved < 7;
+  dragging = false;
+  if (!wasTap) return;
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  // In free-form explore mode on the globe, clicking any of the 6 glowing regional cities flies straight down into it!
+  if (exploreMode && !exploreInTown && lastGlobeVp) {
+    let bestKey = null, bestD = 48;
+    for (const [key, rc] of Object.entries(REGION_COORDS)) {
+      const hp = llToGlobe(rc.lat, rc.lon, GLOBE_R * 1.015);
+      if (projectHolon(lastGlobeVp, hp[0], hp[1], hp[2], rect.width, rect.height, _pp)) {
+        const d = Math.hypot(_pp[0] - mx, _pp[1] - my);
+        if (d < bestD) { bestD = d; bestKey = key; }
+      }
+    }
+    if (bestKey) {
+      rebuildTownForRegion(bestKey);
+      exploreInTown = true;
+      userYaw = 0; userPitch = 0; userZoom = 1.0;
+      return;
+    }
+  }
+  // Clicking the top story bubble advances to the next beat (or returns to globe if exploring a city)
+  if (my < 110) {
+    if (exploreMode && exploreInTown) { exploreInTown = false; userZoom = 1.0; }
+    else if (exploreMode) { goToStep(0, false); playing = true; userYaw = 0; userPitch = 0; userZoom = 1.0; }
+    else goToStep(currentStep + 1, false);
+  }
+});
+canvas.addEventListener('pointercancel', () => { dragging = false; });
+canvas.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  userZoom = Math.max(0.55, Math.min(1.85, userZoom * (1 + e.deltaY * 0.0009)));
+  if (exploreMode) {
+    if (!exploreInTown && userZoom < 0.68) {
+      exploreInTown = true; userZoom = 1.0;
+    } else if (exploreInTown && userZoom > 1.62) {
+      exploreInTown = false; userZoom = 1.0;
+    }
+  }
+}, { passive: false });
 
 // ── 52-Byte Packed `holon-draw` Batch Container ──
 // add() writes records; seal() publishes the byte view once, after a build (no per-record views).
@@ -1167,7 +1004,67 @@ function obstacleRects(obstacles, vp, Wcss, Hcss) {
   return rects;
 }
 
-function emitPlaques(labels, obstacles, vp, Wcss, Hcss) {
+// Native `holon-draw` top Story Bubble (replaces the old HTML bottom bar completely!)
+function wrapLines(str, maxChars) {
+  const words = str.split(' '), lines = [];
+  let cur = '';
+  for (const w of words) {
+    if (cur && (cur.length + 1 + w.length) > maxChars) { lines.push(cur); cur = w; }
+    else cur = cur ? cur + ' ' + w : w;
+  }
+  if (cur) lines.push(cur);
+  return lines;
+}
+
+function emitStoryBubble(Wcss, Hcss) {
+  const compact = Wcss < 680;
+  let title, sub, col;
+  if (exploreMode && exploreInTown) {
+    title = `Exploring ${ACTIVE_HOME.name} · Drag to look around`;
+    sub = 'Regional roofs, walls & trees from the model — scroll out or press G for orbit.';
+    col = RGBA.green;
+  } else if (exploreMode) {
+    title = 'Explore freely · Drag to orbit · Scroll to zoom';
+    sub = 'Click any glowing city to fly down into its local neighbourhood · Press R to replay.';
+    col = RGBA.green;
+  } else {
+    const s = STEPS[currentStep];
+    title = s.title;
+    sub = s.sub;
+    col = RGBA[s.col] || RGBA.green;
+  }
+  const titleStyle = compact ? LSTYLE.TITLE_COMPACT : LSTYLE.TITLE;
+  const maxTitleChars = compact ? Math.max(24, Math.floor((Wcss - 56) / 9.2)) : 68;
+  const maxSubChars   = compact ? Math.max(30, Math.floor((Wcss - 44) / 7.2)) : 98;
+  const titleLines = wrapLines(title, maxTitleChars).slice(0, 2);
+  const subLines   = wrapLines(sub, maxSubChars).slice(0, 2);
+  const etList = titleLines.map((ln) => placeRun(ln, titleStyle));
+  const esList = subLines.map((ln) => placeRun(ln, LSTYLE.SUB));
+  const maxTitleW = etList.reduce((m, e) => Math.max(m, e ? e.w / dpr : 0), 0);
+  const maxSubW   = esList.reduce((m, e) => Math.max(m, e ? e.w / dpr : 0), 0);
+  const w = Math.min(Wcss - 16, Math.max(compact ? 250 : 420, maxTitleW + 46, maxSubW + 40));
+  const tLineH = compact ? 18 : 20;
+  const sLineH = compact ? 18 : 20;
+  const h = 14 + etList.length * tLineH + esList.length * sLineH + 14;
+  const sx = Wcss * 0.5;
+  const sy = 14 + h * 0.5;
+  const x = sx - w * 0.5, y = sy - h * 0.5;
+  const edge = [col[0], col[1], col[2], 205];
+  screenBg.add(sx * dpr, sy * dpr, 0, w * dpr, h * dpr, 0, 12 * dpr, 0, 0, 0, edge, 0);
+  screenFg.add(sx * dpr, sy * dpr, 0, (w - 3) * dpr, (h - 3) * dpr, 0, 10.5 * dpr, 0, 0, 0, RGBA.plaque, 0);
+  const ty0 = y + 18;
+  screenDots.add((x + 15) * dpr, ty0 * dpr, 0, 4.0 * dpr, 0, 0, 0, 0, 0, 0, col, 0);
+  for (let i = 0; i < etList.length; i++) {
+    drawRun(etList[i], sx + (i === 0 ? 6 : 0), ty0 + i * tLineH, RGBA.white);
+  }
+  const sy0 = ty0 + etList.length * tLineH + 3;
+  for (let i = 0; i < esList.length; i++) {
+    drawRun(esList[i], sx, sy0 + i * sLineH, RGBA.muted);
+  }
+  return y + h;
+}
+
+function emitPlaques(labels, obstacles, vp, Wcss, Hcss, topReserve = 0) {
   const compact = Wcss < 680;
   const titleStyle = compact ? LSTYLE.TITLE_COMPACT : LSTYLE.TITLE;
   const items = [];
@@ -1181,9 +1078,10 @@ function emitPlaques(labels, obstacles, vp, Wcss, Hcss) {
     items.push({ sx: _pp[0], sy: _pp[1] + l.dy, w, h, et, es, col: l.col });
   }
   const rects = obstacleRects(obstacles, vp, Wcss, Hcss);
+  const minY = topReserve > 0 ? topReserve + 12 : 6;
   const clampItem = (p) => {
     p.sx = Math.max(p.w / 2 + 6, Math.min(Wcss - p.w / 2 - 6, p.sx));
-    p.sy = Math.max(p.h / 2 + 6, Math.min(Hcss - p.h / 2 - 6, p.sy));
+    p.sy = Math.max(p.h / 2 + minY, Math.min(Hcss - p.h / 2 - 8, p.sy));
   };
   for (let pass = 0; pass < 5; pass++) {
     for (const p of items) {
@@ -1779,11 +1677,6 @@ resident(flats);
 resident(flatDiscs);
 rebuildTownForRegion('us_midwest');
 
-const regionSelect = document.getElementById('region-select');
-if (regionSelect) {
-  regionSelect.addEventListener('change', (e) => rebuildTownForRegion(e.target.value));
-}
-
 // ═══════════════════════════════════════════════════════════════════════════
 // WHAT MOVES. Each chapter has a short script, looped: named things (a photo, a
 // document, a video, a message, a key, a ballot, a yes, a stop) travel its links
@@ -2307,9 +2200,8 @@ function frame(tms) {
   lastTms = tms;
   const tSec = tms / 1000;
 
-  if (playing && !dragging) {
+  if (playing && !dragging && !exploreMode) {
     stepTime += dt;
-    if (progressEl) progressEl.style.width = `${Math.min(100, (stepTime / STEP_DURATION) * 100)}%`;
     if (stepTime >= STEP_DURATION) goToStep(currentStep + 1, false);
   }
 
@@ -2324,8 +2216,8 @@ function frame(tms) {
     return t * t * (3 - 2 * t);
   };
 
-  // Single continuous wall-clock `orbitT` in [0, 1] drives the organic 2.2s zoom-out from Your Town -> CEWP Orbit (Chapters 9–11)
-  const targetOrbit = currentStep >= 8 ? 1 : 0;
+  // Single continuous wall-clock `orbitT` in [0, 1] drives the organic 2.2s zoom-out from Your Town -> CEWP Orbit (Chapters 9–11 & Explore)
+  const targetOrbit = (currentStep >= 8 && !exploreInTown) ? 1 : 0;
   if (CEWP_GLOBE.target !== targetOrbit) {
     CEWP_GLOBE.from = CEWP_GLOBE.orbitT;
     CEWP_GLOBE.target = targetOrbit;
@@ -2370,7 +2262,7 @@ function frame(tms) {
     cam.yaw = lerp(F.yaw, to.yaw, e);
 
     // Organic exponential pull-back into orbit during transition to Chapter 9
-    const zoomFactor = Math.pow(4.6, oEase);
+    const zoomFactor = Math.pow(4.6, oEase) * (exploreMode ? userZoom : 1.0);
     const effDist = cam.dist * zoomFactor;
     const yaw = cam.yaw + userYaw + Math.sin(tSec * 0.21) * 0.035;
     const pitch = Math.max(0.08, Math.min(1.28, cam.pitch + userPitch + oEase * 0.52));
@@ -2443,14 +2335,15 @@ function frame(tms) {
     for (const b of dyn.batches) { b.offset = [0, 0, 0]; drawList.push(b); }
     setLook(dyn, 1, townAlpha);
 
-    // Town plaques fade out smoothly as we lift off into orbit
-    const townLabelFade = Math.min(1, Math.max(0, (k - 0.45) / 0.45)) * (1 - smoothstep(0.0, 0.28, oEase));
+    // Top story bubble + contextual 3D plaques (fade out smoothly as we lift off into orbit)
+    const townLabelFade = Math.min(1, Math.max(0, (k - 0.30) / 0.45)) * (1 - smoothstep(0.0, 0.28, oEase));
     if (townLabelFade > 0.01) {
       text.beginFrame();
       const e0 = text.epoch;
       for (let pass = 0; pass < 2; pass++) {
         for (const b of screenBatches) b.clear();
-        emitPlaques(C.labels, C.obstacles, vp, Wcss, Hcss);
+        const storyBottom = emitStoryBubble(Wcss, Hcss);
+        if (!exploreMode) emitPlaques(C.labels, C.obstacles, vp, Wcss, Hcss, storyBottom);
         if (text.epoch === e0) break;
       }
       for (const b of screenBatches) { b.params[PARAM.FADE] = townLabelFade; b.seal(); drawList.push(b); }
@@ -2459,17 +2352,16 @@ function frame(tms) {
     drawer.draw(drawList, vp, oEase < 0.25 ? DRAW_OPTS : { light: LIGHT_DIR, ambient: 0.60, viewport: VPORT });
   }
 
-  // ── PASS B: Sunlit Natural Earth `CEWP` Globe — 3 smooth orbital beats (9: Cities Connect, 10: Day & Night, 11: One Planet) ──
+  // ── PASS B: Sunlit Natural Earth `CEWP` Globe — 3 smooth orbital beats + Free-Form Explore ──
   if (globeAlpha > 0.01) {
     if (townAlpha > 0.01) gl.clear(gl.DEPTH_BUFFER_BIT);
     const orbitSettled = smoothstep(0.28, 1.0, oEase);
     const globeBeat = Math.max(0, Math.min(2, currentStep - 8));
     const fullDist = Math.max(32.5, 30.0 / aspect);
-    // Beat 0: Regional Americas & Transatlantic (ALM relays); Beat 1: Europe/Africa night terminator (city lights & traffic shaping); Beat 2: Full planetary orbit
     const beatTargets = [
       { lat: 0.54, lon: -1.18, dist: Math.max(24.5, 22.5 / aspect), spinRate: 0.018 },
       { lat: 0.42, lon:  0.14, dist: Math.max(27.5, 25.0 / aspect), spinRate: 0.024 },
-      { lat: 0.28, lon: -0.65, dist: fullDist,                      spinRate: 0.060 },
+      { lat: 0.28, lon: -0.65, dist: fullDist,                      spinRate: exploreMode ? 0.012 : 0.055 },
     ];
     const bt = beatTargets[globeBeat];
     const smoothK = Math.min(1, dt * 2.4);
@@ -2477,11 +2369,10 @@ function frame(tms) {
     CEWP_GLOBE.camLon  = lerp(CEWP_GLOBE.camLon,  bt.lon,  smoothK);
     CEWP_GLOBE.camDist = lerp(CEWP_GLOBE.camDist, bt.dist, smoothK);
 
-    // Start zoomed closely onto the active region (`ACTIVE_HOME`), then smoothly glide into the active CEWP beat!
     const homeLatRad = ACTIVE_HOME.lat * Math.PI / 180;
     const homeLonRad = ACTIVE_HOME.lon * Math.PI / 180;
-    const gDist = lerp(12.2, CEWP_GLOBE.camDist, orbitSettled);
-    const gLat  = Math.max(-0.55, Math.min(0.78, lerp(homeLatRad, CEWP_GLOBE.camLat, orbitSettled) + userPitch));
+    const gDist = lerp(12.2, CEWP_GLOBE.camDist * (exploreMode ? userZoom : 1.0), orbitSettled);
+    const gLat  = Math.max(-0.65, Math.min(0.85, lerp(homeLatRad, CEWP_GLOBE.camLat, orbitSettled) + userPitch));
     const gSpin = lerp(homeLonRad, CEWP_GLOBE.camLon, orbitSettled) + Math.max(0, orbitSettled - 0.5) * (tSec * bt.spinRate) + userYaw;
     const gEye = [
       Math.cos(gLat) * Math.cos(gSpin) * gDist,
@@ -2491,10 +2382,11 @@ function frame(tms) {
     const gProj = mat4Perspective(0.56, aspect, Math.max(0.5, gDist - GLOBE_R * 2.5), gDist + 95.0);
     const gView = mat4LookAt(gEye, [0, 0, 0], [0, 0, 1]);
     const gVp = mat4Mul(gProj, gView);
+    lastGlobeVp = gVp;
 
     drawList.length = 0;
     CEWP_GLOBE.arcs.params[PARAM_FLOW] = tSec * (globeBeat === 1 ? 0.30 : 0.44);
-    CEWP_GLOBE.arcs.params[PARAM_FLOW_N] = globeBeat === 1 ? 8 : 5; // Beat 1: steady-pace shaped link cadence
+    CEWP_GLOBE.arcs.params[PARAM_FLOW_N] = globeBeat === 1 ? 8 : 5;
     for (const b of CEWP_GLOBE.staticBatches) {
       b.params[PARAM.FADE] = globeAlpha;
       drawList.push(b);
@@ -2524,7 +2416,19 @@ function frame(tms) {
     CEWP_GLOBE.dynGlyphs.seal();
     drawList.push(CEWP_GLOBE.dynGlyphs);
 
-    // Clean, uncluttered CEWP orbital view — zero heavy plaques over the Earth!
+    // Clean top story / explore invitation bubble over the globe (zero heavy plaques over the planet!)
+    const gBubbleFade = smoothstep(0.55, 0.92, oEase);
+    if (gBubbleFade > 0.01) {
+      text.beginFrame();
+      const ge0 = text.epoch;
+      for (let pass = 0; pass < 2; pass++) {
+        for (const b of screenBatches) b.clear();
+        emitStoryBubble(Wcss, Hcss);
+        if (text.epoch === ge0) break;
+      }
+      for (const b of screenBatches) { b.params[PARAM.FADE] = gBubbleFade; b.seal(); drawList.push(b); }
+    }
+
     drawer.draw(drawList, gVp, { light: new Float32Array([-0.28, -0.92, 0.27]), ambient: 0.44, viewport: VPORT });
   }
 
