@@ -257,6 +257,14 @@ canvas#c:active {
     <div class="story-footer">
       <div class="step-dots" id="step-dots"></div>
       <div class="nav-controls">
+        <select class="ctrl-btn" id="region-select" aria-label="Choose region architecture">
+          <option value="us_midwest">Region: Ohio (Midwest)</option>
+          <option value="eu_alpine">Region: Zurich (Alpine)</option>
+          <option value="jp_east_asia">Region: Tokyo (East Asia)</option>
+          <option value="af_west_tropical">Region: Lagos (West Africa)</option>
+          <option value="us_southwest_arid">Region: Phoenix (Arid SW)</option>
+          <option value="sa_tropical">Region: São Paulo (Tropical)</option>
+        </select>
         <button class="ctrl-btn" id="btn-prev" type="button">&larr; Back</button>
         <button class="ctrl-btn" id="btn-play" type="button">Pause</button>
         <button class="ctrl-btn" id="btn-next" type="button">Next &rarr;</button>
@@ -276,8 +284,9 @@ canvas#c:active {
 // Community/Town/Club Hall, Server Tower, Key, AI Helper, E-Stop Switch, and
 // Screen Plaque is packed into 52-byte `holon-draw` records.
 // ═══════════════════════════════════════════════════════════════════════════
-import { createDrawer, KIND, INSTANCE_BYTES, PARAM, PARAMS_NEUTRAL, VARIANT_ROUND, VARIANT_ORIENT, VARIANT_FLOW, GLYPH, MATERIAL } from './holon/draw.js';
+import { createDrawer, KIND, INSTANCE_BYTES, PARAM, PARAMS_NEUTRAL, VARIANT_ROUND, VARIANT_ORIENT, VARIANT_FLOW, GLYPH, MATERIAL, PRISM_FLAT, PRISM_GABLE_X, PRISM_GABLE_Y, PRISM_HIPPED, PRISM_SHED, PRISM_PYRAMID, PRISM_COURTYARD } from './holon/draw.js';
 import { createTextProvider } from './holon/text.js';
+import { predictBuilding, REGIONAL_PRESETS } from './geo/regional_model.js';
 
 // ── Practical, Simple, Human-Centered 9-Chapter Story (Web4 Draft 0.5 + CEWP + CIRISKernel) ──
 const STEPS = [
@@ -599,6 +608,7 @@ class SceneSet {
   constructor() {
     this.shadows   = new HolonBatch(KIND.DISC);
     this.boxes     = new HolonBatch(KIND.BOX, false, 1024);
+    this.prisms    = new HolonBatch(KIND.PRISM, false, 512);
     this.rods      = new HolonBatch(KIND.ROD);
     this.rodsC     = new HolonBatch(KIND.ROD, false, 1024);
     this.spheres   = new HolonBatch(KIND.SPHERE);
@@ -609,7 +619,7 @@ class SceneSet {
     this.rodsC.coarse = true;
     this.spheresC.coarse = true;
     this.boxes.shade = SHADE_METAL;
-    this.batches = [this.shadows, this.boxes, this.rods, this.rodsC, this.spheres, this.spheresC, this.tubes, this.glyphs];
+    this.batches = [this.shadows, this.boxes, this.prisms, this.rods, this.rodsC, this.spheres, this.spheresC, this.tubes, this.glyphs];
     this.stream = new HolonSceneBuilder(this);
   }
   clear() { for (const b of this.batches) b.clear(); }
@@ -668,6 +678,12 @@ class HolonSceneBuilder {
     const y0 = [ez[1]*x0[2] - ez[2]*x0[1], ez[2]*x0[0] - ez[0]*x0[2], ez[0]*x0[1] - ez[1]*x0[0]];
     const ang = Math.atan2(ex[0]*y0[0] + ex[1]*y0[1] + ex[2]*y0[2], ex[0]*x0[0] + ex[1]*x0[1] + ex[2]*x0[2]);
     this.S.boxes.add(hb[0], hb[1], hb[2], w * sx, d * sz, h * sy, ez[0], ez[1], ez[2], ang, rgba, VARIANT_ORIENT | mb);
+  }
+  addPrism(M, w, h, d, col, mat, prismTop = PRISM_GABLE_X) {
+    const rgba = this.toRgba(col, mat), mb = matBits(mat) | (prismTop & 0x07);
+    const [sx, sy, sz] = this.scaleOf(M);
+    const hb = toHolon(this.tp(M, [0, -h / 2, 0]));
+    this.S.prisms.add(hb[0], hb[1], hb[2], w * sx, d * sz, h * sy, 0, 0, 0, Math.atan2(-M[2], M[0]), rgba, mb);
   }
   rod(a, b, rad, rgba, mb = 0) {
     (rad < 0.07 ? this.S.rodsC : this.S.rods).add(a[0], a[1], a[2], rad, 0, 0, b[0], b[1], b[2], 0, rgba, mb);
@@ -1466,55 +1482,59 @@ const TOWN = {
   hill:   [0.44, 0.52, 0.60, 1],
 };
 
-// Architectural building builder driven by CEWP-style model inputs:
-// { storeys, units, w, d, wall, roof, lit, hasPorch } (~2.95m per storey, human-scaled to 1.72m people)
-function buildHouse(s, x, z, yaw, spec) {
-  const { storeys, w, d, wall, roof, lit, hasPorch } = spec;
+// Map `regional_model.js` roof_shape (0..6) -> native `holon-draw` KIND.PRISM variant (0..6)
+const SHAPE_TO_PRISM = [
+  PRISM_COURTYARD, // 0: flat -> clean parapet/courtyard rim
+  PRISM_GABLE_X,   // 1: gabled
+  PRISM_HIPPED,    // 2: hipped
+  PRISM_SHED,      // 3: skillion / shed
+  PRISM_HIPPED,    // 4: mansard -> steep hipped
+  PRISM_PYRAMID,   // 5: pyramidal
+  PRISM_HIPPED,    // 6: half-hipped
+];
+const rgb01 = (rgb) => [rgb[0] / 255, rgb[1] / 255, rgb[2] / 255, 1];
+
+// Architectural building builder powered by `regional_model.js` + native `holon-draw` KIND.PRISM roofs!
+// Every roof is a single closed 2-manifold 52-byte KIND.PRISM record (gable, hipped, shed, courtyard, pyramid).
+function buildHouse(s, x, z, yaw, spec, rFn) {
+  const { storeys, w, d, lit, pred } = spec;
   const plinth = 0.34;
   const h = plinth + storeys * 2.85;
   const M = mat4RotateY(mat4Translate(I, x, 0, z), yaw);
-  // Stone foundation plinth & main masonry/plaster mass
+  const wall = rgb01(pred.wall_rgb);
+  const roof = rgb01(pred.roof_rgb);
+  const prismTop = SHAPE_TO_PRISM[pred.roof_shape] ?? PRISM_GABLE_X;
+  const isFlat = pred.roof_shape === 0;
+  const eave = Math.max(0.06, (pred.eave_ratio || 0.1) * Math.min(w, d) * 0.45);
+  const rise = isFlat ? 0.52 : Math.min(2.6, Math.max(1.15, d * (pred.roof_shape === 4 ? 0.42 : 0.34)));
+
+  // 1. Stone foundation plinth + masonry/plaster/stucco walls
   s.addBox(mat4Translate(M, 0, plinth * 0.5, 0), w + 0.14, plinth, d + 0.14, [0.46, 0.45, 0.44, 1], MAT.matte);
   s.addBox(mat4Translate(M, 0, plinth + (h - plinth) * 0.5, 0), w, h - plinth, d, wall, MAT.matte);
-  // Subtle fascia / cornice trim beneath the eaves
-  s.addBox(mat4Translate(M, 0, h - 0.06, 0), w + 0.24, 0.14, d + 0.24, [0.78, 0.76, 0.72, 1], MAT.matte);
-  // Pitched roof with generous eaves & shaded/lit slopes (tiling.js roof grammar)
-  const pitch = 0.52, half = d / 2 + 0.30, rise = Math.tan(pitch) * half;
-  const roofLit  = [Math.min(1, roof[0] * 1.12), Math.min(1, roof[1] * 1.12), Math.min(1, roof[2] * 1.12), 1];
-  const roofDark = [roof[0] * 0.84, roof[1] * 0.84, roof[2] * 0.84, 1];
-  for (const side of [-1, 1]) {
-    const MR = mat4RotateX(mat4Translate(M, 0, h + rise * 0.5 + 0.04, side * half * 0.5), side * pitch);
-    s.addBox(MR, w + 0.52, 0.14, half / Math.cos(pitch) + 0.12, side > 0 ? roofLit : roofDark, MAT.matte);
+  // 2. Native `holon-draw` KIND.PRISM roof cap (1 record per roof with accurate sloped-face normals & shadows!)
+  s.addPrism(mat4Translate(M, 0, h + rise * 0.5, 0), w + eave * 2, rise, d + eave * 2, roof, MAT.matte, prismTop);
+  // 3. Chimney on temperate/alpine pitched roofs
+  if (!isFlat && pred.tree_biome <= 1) {
+    s.addBox(mat4Translate(M, w * 0.28, h + rise * 0.55, -d * 0.14), 0.48, rise + 0.65, 0.48, [0.46, 0.32, 0.28, 1], MAT.matte);
   }
-  // Gable end walls
-  for (const xf of [-w / 2 + 0.04, w / 2 - 0.04]) {
-    for (let k = 0; k < 4; k++) {
-      const hk = rise * (1 - k / 4);
-      s.addBox(mat4Translate(M, xf, h + rise * (k / 4) + hk * 0.14, 0), 0.08, rise / 4, d * (1 - (k + 0.5) / 4), wall, MAT.matte);
-    }
-  }
-  // Chimney with stone cap
-  s.addBox(mat4Translate(M, w * 0.28, h + rise * 0.58, -d * 0.14), 0.52, rise + 0.75, 0.52, [0.46, 0.32, 0.28, 1], MAT.matte);
-  s.addBox(mat4Translate(M, w * 0.28, h + rise * 0.58 + (rise + 0.75) * 0.5 + 0.05, -d * 0.14), 0.64, 0.10, 0.64, [0.58, 0.56, 0.54, 1], MAT.matte);
-  // Entry door (realistic 2.05m door height) + porch overhang & step
+  // 4. Entry door (2.04m) + regional porch
   s.addBox(mat4Translate(M, 0, plinth + 1.02, d / 2 + 0.03), 0.96, 2.04, 0.08, TOWN.door, MAT.matte);
-  s.addBox(mat4Translate(M, 0, plinth + 2.12, d / 2 + 0.05), 1.12, 0.10, 0.12, [0.76, 0.74, 0.70, 1], MAT.matte);
-  if (hasPorch) {
+  if (rFn() < pred.porch_prob) {
     s.addBox(mat4Translate(M, 0, 0.18, d / 2 + 0.42), 1.75, 0.32, 0.78, [0.56, 0.54, 0.52, 1], MAT.matte);
-    s.addBox(mat4Translate(M, 0, plinth + 2.28, d / 2 + 0.44), 1.85, 0.10, 0.84, roofDark, MAT.matte);
+    s.addBox(mat4Translate(M, 0, plinth + 2.26, d / 2 + 0.44), 1.85, 0.10, 0.84, roof, MAT.matte);
     s.addCylinderY(mat4Translate(M, -0.78, plinth + 1.16, d / 2 + 0.74), 0.055, 0.055, 2.15, [0.84, 0.82, 0.78, 1], MAT.matte);
     s.addCylinderY(mat4Translate(M,  0.78, plinth + 1.16, d / 2 + 0.74), 0.055, 0.055, 2.15, [0.84, 0.82, 0.78, 1], MAT.matte);
   }
-  // Framed windows with stone sills on every storey
+  // 5. Framed windows with stone sills on every storey
   const cols = Math.max(2, Math.round(w / 1.85));
   for (const face of [1, -1]) {
     for (let r = 0; r < storeys; r++) {
       for (let c = 0; c < cols; c++) {
         const wx = -w / 2 + (c + 0.5) * (w / cols);
-        if (face > 0 && r === 0 && Math.abs(wx) < 0.95) continue; // front door bay
+        if (face > 0 && r === 0 && Math.abs(wx) < 0.95) continue;
         const wy = plinth + 1.48 + r * 2.82;
-        const on = lit && R() < 0.78;
-        const col = on ? (R() < 0.85 ? TOWN.window : TOWN.windowCool) : [0.15, 0.18, 0.22, 1];
+        const on = lit && rFn() < 0.78;
+        const col = on ? (rFn() < 0.85 ? TOWN.window : TOWN.windowCool) : [0.15, 0.18, 0.22, 1];
         s.addBox(mat4Translate(M, wx, wy, face * (d / 2 + 0.03)), 0.82, 1.12, 0.05, col, on ? MAT.glow : MAT.matte);
         s.addBox(mat4Translate(M, wx, wy - 0.60, face * (d / 2 + 0.07)), 0.96, 0.09, 0.14, [0.76, 0.74, 0.70, 1], MAT.matte);
       }
@@ -1522,25 +1542,42 @@ function buildHouse(s, x, z, yaw, spec) {
   }
 }
 
-function buildTree(s, x, z, size) {
+function buildTree(s, x, z, size, leafCol, rFn) {
   const hb = toHolon([x, 0, z]);
   const trunkH = 1.1 * size;
   s.rod([hb[0], hb[1], 0], [hb[0], hb[1], trunkH], 0.11 * size, s.toRgba(TOWN.trunk), MATERIAL.MATTE);
-  const leaf = pick(TOWN.leaves);
-  const n = 3 + Math.floor(R() * 3);
+  const n = 3 + Math.floor(rFn() * 3);
   for (let k = 0; k < n; k++) {
-    const a = R() * Math.PI * 2, rr = 0.35 * size * R();
-    const r = (0.62 + 0.36 * R()) * size;
-    s.S.spheresC.add(hb[0] + Math.cos(a) * rr, hb[1] + Math.sin(a) * rr, trunkH + 0.5 * size + R() * 0.7 * size, r, 0, 0, 0, 0, 0, 0, s.toRgba(leaf), MATERIAL.MATTE);
+    const a = rFn() * Math.PI * 2, rr = 0.35 * size * rFn();
+    const r = (0.62 + 0.36 * rFn()) * size;
+    s.S.spheresC.add(hb[0] + Math.cos(a) * rr, hb[1] + Math.sin(a) * rr, trunkH + 0.5 * size + rFn() * 0.7 * size, r, 0, 0, 0, 0, 0, 0, s.toRgba(leafCol), MATERIAL.MATTE);
   }
 }
-
-function buildConifer(s, x, z, size) {
+function buildConifer(s, x, z, size, leafCol) {
   const hb = toHolon([x, 0, z]);
   s.rod([hb[0], hb[1], 0], [hb[0], hb[1], 0.7 * size], 0.09 * size, s.toRgba(TOWN.trunk), MATERIAL.MATTE);
-  const leaf = TOWN.leaves[2];
   for (let k = 0; k < 4; k++) {
-    s.S.spheresC.add(hb[0], hb[1], (0.9 + k * 0.62) * size, (0.78 - k * 0.16) * size, 0, 0, 0, 0, 0, 0, s.toRgba(leaf), MATERIAL.MATTE);
+    s.S.spheresC.add(hb[0], hb[1], (0.9 + k * 0.62) * size, (0.78 - k * 0.16) * size, 0, 0, 0, 0, 0, 0, s.toRgba(leafCol), MATERIAL.MATTE);
+  }
+}
+function buildPalm(s, x, z, size, leafCol, rFn) {
+  const hb = toHolon([x, 0, z]);
+  const h = 2.6 * size, lean = (rFn() - 0.5) * 0.45 * size;
+  s.rod([hb[0], hb[1], 0], [hb[0] + lean, hb[1] + lean * 0.5, h], 0.08 * size, s.toRgba([0.46, 0.36, 0.26, 1]), MATERIAL.MATTE);
+  for (let k = 0; k < 5; k++) {
+    const a = (k / 5) * Math.PI * 2 + rFn() * 0.4;
+    s.S.spheresC.add(hb[0] + lean + Math.cos(a) * 0.55 * size, hb[1] + lean * 0.5 + Math.sin(a) * 0.55 * size, h + 0.15 * size, 0.46 * size, 0, 0, 0, 0, 0, 0, s.toRgba(leafCol), MATERIAL.MATTE);
+  }
+}
+function buildDesertScrub(s, x, z, size, leafCol, rFn) {
+  const hb = toHolon([x, 0, z]);
+  if (rFn() < 0.45) {
+    // Tall Saguaro-style desert cactus
+    const h = 1.6 * size;
+    s.rod([hb[0], hb[1], 0], [hb[0], hb[1], h], 0.13 * size, s.toRgba(leafCol), MATERIAL.MATTE);
+    s.rod([hb[0] + 0.28 * size, hb[1], h * 0.45], [hb[0] + 0.28 * size, hb[1], h * 0.85], 0.09 * size, s.toRgba(leafCol), MATERIAL.MATTE);
+  } else {
+    s.S.spheresC.add(hb[0], hb[1], 0.32 * size, 0.44 * size, 0, 0, 0, 0, 0, 0, s.toRgba(leafCol), MATERIAL.MATTE);
   }
 }
 
@@ -1557,6 +1594,7 @@ function buildLamp(s, pools, x, z) {
 // evening (holon-draw's DIM per batch) while the place the camera is at stays bright.
 const REGION = 20;
 const regions = new Map();
+let REGIONS = [];
 function region(x, z) {
   const key = Math.floor(x / REGION) + ',' + Math.floor(z / REGION);
   let g = regions.get(key);
@@ -1568,24 +1606,22 @@ function region(x, z) {
   return g;
 }
 
-// The ground: lawn with holon-draw's ground field, streets and kerbs, the square, a pond.
-// The lawn is TILED, each tile a shade of a smooth low-frequency field (so the lawn is mottled, not flat), with
-// holon-draw's ground field for the fine grain. It was first tiled to work round an engine fault this page found: the
-// RING fade was taken per vertex, so one huge patch whose corners project behind the eye vanished. That is fixed in the
-// engine (CIRISHolon f2cca7c: the ring is per pixel). The tiles stay for the mottling, and because the ground FIELD's
-// scale is still per vertex on a patch that large.
+const REGION_COORDS = {
+  us_midwest:        { lat:  40.0, lon:  -83.0, name: "Ohio (Midwest)" },
+  eu_alpine:         { lat:  47.4, lon:    8.5, name: "Zurich (Alpine)" },
+  jp_east_asia:      { lat:  35.7, lon:  139.7, name: "Tokyo (East Asia)" },
+  af_west_tropical:  { lat:   6.5, lon:    3.4, name: "Lagos (West Africa)" },
+  us_southwest_arid: { lat:  33.4, lon: -112.1, name: "Phoenix (Arid SW)" },
+  sa_tropical:       { lat: -23.5, lon:  -46.6, name: "São Paulo (Tropical)" },
+};
+let ACTIVE_REGION = 'us_midwest';
+let ACTIVE_HOME = REGION_COORDS[ACTIVE_REGION];
+
 const TILE = 6;
 const ground = new HolonBatch(KIND.PATCH, false, 512);
 const flats = new HolonBatch(KIND.QUAD, false, 256);
 const flatDiscs = new HolonBatch(KIND.DISC, false, 16);
 const lawn = (x, z) => 0.5 + 0.25 * Math.sin(x * 0.11 + 1.3) * Math.cos(z * 0.09 - 0.4) + 0.25 * Math.sin((x + z) * 0.05 + 2.1);
-for (let x = -84; x < 84; x += TILE) {
-  for (let z = -108; z < 48; z += TILE) {
-    const m = lawn(x + TILE / 2, z + TILE / 2), hb = toHolon([x + TILE / 2, 0, z + TILE / 2]);
-    const c = [0, 1, 2].map((k) => Math.round(lerp(TOWN.grass[k], TOWN.grass2[k], m)));
-    ground.add(hb[0], hb[1], LAYER.lawn, TILE + 0.02, TILE + 0.02, 0, 0, 0, 0, 0, [c[0], c[1], c[2], 255], 0);
-  }
-}
 ground.params[PARAM.TEX] = 0.9;
 ground.params.set([0, 0, 1.6, 1.6], PARAM.NOISE);
 const SEG = 7.75;
@@ -1599,7 +1635,6 @@ for (const sz of STREETS_Z) {
 for (const sx of AVENUES_X) {
   for (let z = -46 + SEG * 0.5; z < 21; z += SEG) {
     const hb = toHolon([sx, 0, z]);
-    // the same heights as the streets they cross: the same colour at the same height cannot show a fight
     flats.add(hb[0], hb[1], LAYER.kerb, 3.0, SEG + 0.02, 0, 0, 0, 0, 0, TOWN.kerb, 0);
     flats.add(hb[0], hb[1], LAYER.street, 2.4, SEG + 0.02, 0, 0, 0, 0, 0, TOWN.street, 0);
   }
@@ -1611,68 +1646,126 @@ for (const sx of AVENUES_X) {
   const pond = toHolon([26, 0, 4]);
   flatDiscs.add(pond[0], pond[1], LAYER.pond, 5.0, 0, 0, 0, 0, 0, 0, TOWN.water, 0);
 }
+flats.seal(); flats.castShadow = false;
+flatDiscs.seal(); flatDiscs.castShadow = false;
 const groundBatches = [ground, flats, flatDiscs];
-for (const b of groundBatches) { b.seal(); b.castShadow = false; }
 
-// Houses along the streets, built from structured architectural model records (storeys, units, footprint, porch).
-const makeHouseSpec = () => {
-  const storeys = R() < 0.42 ? 2 : 1;
-  const units = storeys === 2 && R() < 0.45 ? 2 : 1;
-  return {
-    storeys,
-    units,
-    w: (units > 1 ? 6.8 : 4.8) + R() * 1.8,
-    d: 4.2 + R() * 1.2,
-    wall: pick(TOWN.walls),
-    roof: pick(TOWN.roofs),
-    lit: true,
-    hasPorch: R() < 0.72,
-  };
-};
-for (const [rowZ, facing] of [[3.0, 0], [-22.8, 0], [-45.5, 0]]) {
-  for (let x = -28; x <= 28; x += 7.8 + R() * 2.2) {
-    const z = rowZ + (R() - 0.5) * 1.0;
-    if (onStage(x, z, 1.8) || onStreet(x, z, 2.2)) continue;
-    buildHouse(region(x, z).set.stream, x, z, facing + (R() - 0.5) * 0.06, makeHouseSpec());
-  }
-}
-for (const sx of [-35.5, 35.5]) {
-  for (let z = -44; z <= 22; z += 8.6 + R() * 2.2) {
-    if (onStreet(sx, z, 2.0)) continue;
-    buildHouse(region(sx, z).set.stream, sx, z, (sx < 0 ? 1 : -1) * Math.PI / 2, makeHouseSpec());
-  }
-}
-// Trees: scattered where nothing else is, thicker toward the town's edges.
-for (let n = 0; n < 230; n++) {
-  const x = (R() - 0.5) * 92, z = -56 + R() * 78;
-  if (onStage(x, z, 0.4) || onStreet(x, z, 0.8)) continue;
-  let nearHouse = false;
-  for (const rz of [3.5, -21.5, -44]) if (Math.abs(z - rz) < 2.6 && Math.abs(x) < 29) nearHouse = true;
-  if (z > 22) continue;                                            // the camera's side of the front street stays open
-  if (Math.abs(Math.abs(x) - 34) < 2.6 && z > -46 && z < 24) nearHouse = true;
-  if (nearHouse) continue;
-  const edge = Math.min(1, Math.max(0, (Math.hypot(x / 40, (z + 8) / 34) - 0.55) / 0.5));
-  if (R() > 0.35 + 0.65 * edge) continue;
-  const size = 0.75 + R() * 0.6 + edge * 0.5;
-  (R() < 0.3 ? buildConifer : buildTree)(region(x, z).set.stream, x, z, size);
-}
-// Lamps along the streets and round the square.
-for (const sz of STREETS_Z) {
-  for (let x = -26; x <= 26; x += 8.6) {
-    for (const side of [-1, 1]) {
-      const z = sz + side * 2.2;
-      if (onStage(x, z, -0.2)) continue;
-      const g = region(x, z);
-      buildLamp(g.set.stream, g.pools, x + side * 1.1, z);
+function resident(b) { if (b.count > 0 && b.handle === undefined) { b.handle = drawer.resident(b.bytes); b.first = 0; } }
+function releaseBatch(b) { if (b.handle !== undefined) { drawer.release(b.handle); b.handle = undefined; } }
+
+// Dynamically builds/rebuilds the entire town's ground, buildings (via `regional_model.js` + KIND.PRISM), and biome trees!
+function rebuildTownForRegion(regionKey) {
+  ACTIVE_REGION = REGIONAL_PRESETS[regionKey] ? regionKey : 'us_midwest';
+  ACTIVE_HOME = REGION_COORDS[ACTIVE_REGION] || REGION_COORDS.us_midwest;
+  const preset = REGIONAL_PRESETS[ACTIVE_REGION];
+  const rSeed = Object.keys(REGIONAL_PRESETS).indexOf(ACTIVE_REGION) + 1;
+  const rFn = rng(20261122 + rSeed * 4099);
+
+  // 1. Rebuild ground with regional biome ground tint
+  releaseBatch(ground);
+  ground.clear();
+  const gBase = preset.ground_rgb || [82, 126, 74];
+  const gAlt  = [Math.min(255, gBase[0] + 22), Math.min(255, gBase[1] + 20), Math.min(255, gBase[2] + 10)];
+  for (let x = -84; x < 84; x += TILE) {
+    for (let z = -108; z < 48; z += TILE) {
+      const m = lawn(x + TILE / 2, z + TILE / 2), hb = toHolon([x + TILE / 2, 0, z + TILE / 2]);
+      const c = [0, 1, 2].map((k) => Math.round(lerp(gBase[k], gAlt[k], m)));
+      ground.add(hb[0], hb[1], LAYER.lawn, TILE + 0.02, TILE + 0.02, 0, 0, 0, 0, 0, [c[0], c[1], c[2], 255], 0);
     }
   }
+  ground.seal(); ground.castShadow = false;
+  resident(ground);
+
+  // 2. Release previous region GPU buffers
+  for (const g of REGIONS) {
+    for (const b of g.set.batches) releaseBatch(b);
+    releaseBatch(g.pools);
+  }
+  regions.clear();
+
+  // 3. Generate regionally distinct buildings using `predictBuilding` + native `KIND.PRISM`
+  let bIdx = 0;
+  const isDense = ACTIVE_REGION === 'jp_east_asia' || ACTIVE_REGION === 'sa_tropical';
+  const makeHouseSpec = () => {
+    const storeys = isDense ? (rFn() < 0.35 ? 3 : 2) : (rFn() < 0.45 ? 2 : 1);
+    const units = storeys >= 2 && rFn() < 0.5 ? storeys * 2 : 1;
+    const w = (units > 1 ? 6.4 : 4.8) + rFn() * 1.8;
+    const d = 4.2 + rFn() * 1.2;
+    const pred = predictBuilding(ACTIVE_REGION, preset.koppen_climate, preset.lcz_density, storeys, units, w, d, bIdx++);
+    return { storeys, units, w, d, lit: true, pred };
+  };
+  // 3a. Guaranteed hero neighbourhood homes framing the west & east edges of the square (showcasing KIND.PRISM roofs in every region!)
+  for (const [hx, hz, hyaw] of [
+    [-14.2,  3.6,  0.22],
+    [ 14.2,  3.6, -0.22],
+    [-14.8, -12.0,  0.52],
+    [ 14.8, -12.0, -0.52],
+  ]) {
+    buildHouse(region(hx, hz).set.stream, hx, hz, hyaw, makeHouseSpec(), rFn);
+  }
+  for (const [rowZ, facing] of [[3.0, 0], [-22.8, 0], [-45.5, 0]]) {
+    for (let x = -28; x <= 28; x += (isDense ? 6.8 : 7.8) + rFn() * 2.0) {
+      const z = rowZ + (rFn() - 0.5) * 1.0;
+      if (onStage(x, z, 1.8) || onStreet(x, z, 2.2)) continue;
+      buildHouse(region(x, z).set.stream, x, z, facing + (rFn() - 0.5) * 0.06, makeHouseSpec(), rFn);
+    }
+  }
+  for (const sx of [-35.5, 35.5]) {
+    for (let z = -44; z <= 22; z += (isDense ? 7.6 : 8.6) + rFn() * 2.0) {
+      if (onStreet(sx, z, 2.0)) continue;
+      buildHouse(region(sx, z).set.stream, sx, z, (sx < 0 ? 1 : -1) * Math.PI / 2, makeHouseSpec(), rFn);
+    }
+  }
+
+  // 4. Biome-aware vegetation driven by `preset.tree_biome`
+  const treeBase = rgb01(preset.tree_rgb || [58, 120, 62]);
+  const treeCount = preset.tree_biome === 3 ? 95 : 220; // sparser in arid desert
+  for (let n = 0; n < treeCount; n++) {
+    const x = (rFn() - 0.5) * 92, z = -56 + rFn() * 78;
+    if (onStage(x, z, 0.4) || onStreet(x, z, 0.8)) continue;
+    let nearHouse = false;
+    for (const rz of [3.0, -22.8, -45.5]) if (Math.abs(z - rz) < 3.4 && Math.abs(x) < 29) nearHouse = true;
+    if (z > 22) continue;
+    if (Math.abs(Math.abs(x) - 35.5) < 3.4 && z > -46 && z < 24) nearHouse = true;
+    if (nearHouse) continue;
+    const edge = Math.min(1, Math.max(0, (Math.hypot(x / 40, (z + 8) / 34) - 0.55) / 0.5));
+    if (rFn() > 0.38 + 0.62 * edge) continue;
+    const size = 0.78 + rFn() * 0.62 + edge * 0.48;
+    const s = region(x, z).set.stream;
+    const tint = 0.86 + rFn() * 0.28;
+    const leafCol = [Math.min(1, treeBase[0] * tint), Math.min(1, treeBase[1] * tint), Math.min(1, treeBase[2] * tint), 1];
+    if (preset.tree_biome === 1) (rFn() < 0.65 ? buildConifer : buildTree)(s, x, z, size, leafCol, rFn);
+    else if (preset.tree_biome === 2) (rFn() < 0.55 ? buildPalm : buildTree)(s, x, z, size, leafCol, rFn);
+    else if (preset.tree_biome === 3) buildDesertScrub(s, x, z, size, leafCol, rFn);
+    else buildTree(s, x, z, size, leafCol, rFn);
+  }
+
+  // 5. Lamps along streets & square
+  for (const sz of STREETS_Z) {
+    for (let x = -26; x <= 26; x += 8.6) {
+      for (const side of [-1, 1]) {
+        const z = sz + side * 2.2;
+        if (onStage(x, z, -0.2)) continue;
+        const g = region(x, z);
+        buildLamp(g.set.stream, g.pools, x + side * 1.1, z);
+      }
+    }
+  }
+  for (let k = 0; k < 8; k++) {
+    const a = (k / 8) * Math.PI * 2 + 0.39, x = Math.cos(a) * 12.8, z = -4.5 + Math.sin(a) * 12.8;
+    if (onStage(x, z, -1.5)) continue;
+    const g = region(x, z);
+    buildLamp(g.set.stream, g.pools, x, z);
+  }
+
+  REGIONS = [...regions.values()];
+  for (const g of REGIONS) {
+    g.set.seal(); g.pools.seal();
+    for (const b of g.set.batches) resident(b);
+    resident(g.pools);
+  }
 }
-for (let k = 0; k < 8; k++) {
-  const a = (k / 8) * Math.PI * 2 + 0.39, x = Math.cos(a) * 12.8, z = -4.5 + Math.sin(a) * 12.8;
-  if (onStage(x, z, -1.5)) continue;
-  const g = region(x, z);
-  buildLamp(g.set.stream, g.pools, x, z);
-}
+
 // Hills along the far horizon, in the haze's blue.
 const hills = new SceneSet();
 for (let k = 0; k < 14; k++) {
@@ -1681,17 +1774,15 @@ for (let k = 0; k < 14; k++) {
   hills.spheres.add(hb[0], hb[1], -r * 0.62, r, 0, 0, 0, 0, 0, 0, hills.stream.toRgba(TOWN.hill), MATERIAL.MATTE);
 }
 hills.seal();
-for (const b of hills.batches) b.castShadow = false;
-const REGIONS = [...regions.values()];
-for (const g of REGIONS) { g.set.seal(); g.pools.seal(); }
+for (const b of hills.batches) { b.castShadow = false; resident(b); }
+resident(flats);
+resident(flatDiscs);
+rebuildTownForRegion('us_midwest');
 
-// Everything above never changes after it is built: it goes to the GPU ONCE (holon-draw's resident buffers), and a frame
-// only changes the 32 settings of each batch (its DIM, FADE, RING). Only the animated parts, the pulses and the labels are
-// uploaded per frame.
-function resident(b) { if (b.count > 0 && b.handle === undefined) { b.handle = drawer.resident(b.bytes); b.first = 0; } }
-for (const b of groundBatches) resident(b);
-for (const b of hills.batches) resident(b);
-for (const g of REGIONS) { for (const b of g.set.batches) resident(b); resident(g.pools); }
+const regionSelect = document.getElementById('region-select');
+if (regionSelect) {
+  regionSelect.addEventListener('change', (e) => rebuildTownForRegion(e.target.value));
+}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // WHAT MOVES. Each chapter has a short script, looped: named things (a photo, a
@@ -2386,10 +2477,12 @@ function frame(tms) {
     CEWP_GLOBE.camLon  = lerp(CEWP_GLOBE.camLon,  bt.lon,  smoothK);
     CEWP_GLOBE.camDist = lerp(CEWP_GLOBE.camDist, bt.dist, smoothK);
 
-    // Start zoomed closely onto Your Town (40N, 83W -> lat=0.698, lon=-1.449), then smoothly glide into the active CEWP beat!
+    // Start zoomed closely onto the active region (`ACTIVE_HOME`), then smoothly glide into the active CEWP beat!
+    const homeLatRad = ACTIVE_HOME.lat * Math.PI / 180;
+    const homeLonRad = ACTIVE_HOME.lon * Math.PI / 180;
     const gDist = lerp(12.2, CEWP_GLOBE.camDist, orbitSettled);
-    const gLat  = Math.max(-0.55, Math.min(0.78, lerp(0.68, CEWP_GLOBE.camLat, orbitSettled) + userPitch));
-    const gSpin = lerp(-1.45, CEWP_GLOBE.camLon, orbitSettled) + Math.max(0, orbitSettled - 0.5) * (tSec * bt.spinRate) + userYaw;
+    const gLat  = Math.max(-0.55, Math.min(0.78, lerp(homeLatRad, CEWP_GLOBE.camLat, orbitSettled) + userPitch));
+    const gSpin = lerp(homeLonRad, CEWP_GLOBE.camLon, orbitSettled) + Math.max(0, orbitSettled - 0.5) * (tSec * bt.spinRate) + userYaw;
     const gEye = [
       Math.cos(gLat) * Math.cos(gSpin) * gDist,
       Math.cos(gLat) * Math.sin(gSpin) * gDist,
@@ -2407,8 +2500,8 @@ function frame(tms) {
       drawList.push(b);
     }
 
-    // Pulsing emerald beacon halo around Your Town on the Earth surface
-    const homeP = llToGlobe(40.0, -83.0, GLOBE_R * 1.018);
+    // Pulsing emerald beacon halo around the active region on the Earth surface
+    const homeP = llToGlobe(ACTIVE_HOME.lat, ACTIVE_HOME.lon, GLOBE_R * 1.018);
     const pulse = (tSec * 0.7) % 1.0;
     CEWP_GLOBE.dynRing.clear();
     CEWP_GLOBE.dynRing.add(homeP[0], homeP[1], homeP[2], 0.28 + pulse * 0.52, 0, 0, 0, 0, 0, 0, [96, 242, 164, Math.round((1 - pulse) * 165 * globeAlpha)], MATERIAL.GLOW);
