@@ -52,6 +52,11 @@ body {
   background:
     radial-gradient(120% 60% at 30% 0%, rgba(255, 222, 170, 0.34) 0%, rgba(255, 210, 160, 0.14) 50%, rgba(0, 0, 0, 0) 85%),
     linear-gradient(180deg, #4f76ad 0%, #7499c6 8%, #a3bcd6 16%, #d3d2d2 23%, #f0d3b4 30%, #f8d6a4 36%, #fbdcae 42%, #fde3bd 100%);
+  transition: background 1.1s ease;
+}
+#stage-wrap.orbit {
+  background:
+    radial-gradient(85% 65% at 50% 48%, rgba(46, 112, 198, 0.28) 0%, rgba(16, 36, 72, 0.45) 48%, rgba(7, 11, 20, 1) 100%);
 }
 
 canvas#c {
@@ -162,8 +167,8 @@ canvas#c:active {
   color: var(--muted);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 7px 11px;
-  font-size: 12.5px;
+  padding: 6px 9px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -252,6 +257,7 @@ canvas#c:active {
         <button class="ctrl-btn" id="btn-prev" type="button">&larr; Back</button>
         <button class="ctrl-btn" id="btn-play" type="button">Pause</button>
         <button class="ctrl-btn" id="btn-next" type="button">Next &rarr;</button>
+        <a class="ctrl-btn" href="https://cirisai.github.io/CEWP/" target="_blank" rel="noopener">CEWP Globe &#8599;</a>
         <a class="ctrl-btn" href="CIRIS_Web4_Draft_0.5.pdf" target="_blank" rel="noopener">White Paper (PDF)</a>
         <a class="ctrl-btn primary" href="app.html?mode=setup">Try it &rarr;</a>
       </div>
@@ -259,6 +265,7 @@ canvas#c:active {
   </div>
 </section>
 
+<script src="geo/ne110.js"></script>
 <script type="module">
 // ═══════════════════════════════════════════════════════════════════════════
 // 100% NATIVE `holon-draw` (`draw.js` + `text.js`) 3D WORLD & SCREEN RENDERER
@@ -318,6 +325,12 @@ const STEPS = [
     title: "Take part — without giving yourself away",
     status: "Open · Early · Honest",
     text: `Web1 linked pages. Web2 linked people through platforms. <strong>CIRIS lets people, communities, and the AI they hold work together</strong> — without anyone owning the rest.`
+  },
+  {
+    short: "9. The World",
+    title: "Millions of towns like yours — connected across one Earth",
+    status: "CEWP + CEWPOS · One holon-draw engine",
+    text: `Zoom out from your own street to the whole planet. <strong>Families, clubs, and towns across every continent connect peer-to-peer</strong> on one open rulebook — with no single company owning the world.`
   }
 ];
 
@@ -550,8 +563,7 @@ function mat4LookAt(eye, center, up) {
   ]);
 }
 // Scene point -> CSS pixels (y down), or null behind the eye.
-function projectScene(vp, x, y, z, Wcss, Hcss, out) {
-  const hx = x, hy = -z, hz = y;
+function projectHolon(vp, hx, hy, hz, Wcss, Hcss, out) {
   const cx = vp[0]*hx + vp[4]*hy + vp[8]*hz + vp[12];
   const cy = vp[1]*hx + vp[5]*hy + vp[9]*hz + vp[13];
   const w  = vp[3]*hx + vp[7]*hy + vp[11]*hz + vp[15];
@@ -559,6 +571,9 @@ function projectScene(vp, x, y, z, Wcss, Hcss, out) {
   out[0] = ((cx / w) * 0.5 + 0.5) * Wcss;
   out[1] = (0.5 - (cy / w) * 0.5) * Hcss;
   return out;
+}
+function projectScene(vp, x, y, z, Wcss, Hcss, out) {
+  return projectHolon(vp, x, -z, y, Wcss, Hcss, out);
 }
 
 // ── A Scene Set: one group of world batches that is built, faded and dimmed together ──
@@ -1325,25 +1340,34 @@ const CHAPTERS = [
     ],
     obstacles: [ob(0.0, -4.8, 1.3, 3.4), ob(-1.5, 11.6, 0.7, 2.6), ob(10.0, 11.2, 0.7, 2.3), ob(-6.2, -9.4, 1.0, 2.9)],
   },
+  // 9. Across the World: The combined CEWP Earth Globe on the same holon-draw engine!
+  {
+    build() {},
+    links: [],
+    labels: [],
+    obstacles: [],
+    isGlobe: true,
+  },
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════
 // THE TOWN. One cohesive golden-hour neighbourhood: your front yard along the
 // south street, your friends next door, and the Town Square right to the north.
 // As each chapter plays, its layer smoothly rises into the world while earlier
-// layers stay alive and connected.
+// layers stay alive and connected. Chapter 9 zooms out to the CEWP Earth Globe!
 // ═══════════════════════════════════════════════════════════════════════════
 
 // Camera target [cx, cz] and framing for each chapter (smooth pan/zoom around ONE neighbourhood)
 const SHOTS = [
-  { cx:  0.0, cz: 10.4, dist: 0.92, pitch: -0.04, yaw:  0.00 }, // 1. Your Devices (close-up on You, Phone, Laptop)
-  { cx:  0.4, cz: 10.4, dist: 0.96, pitch: -0.02, yaw:  0.05 }, // 2. Your Files (same spot, Big Tech gone, files syncing)
-  { cx:  4.6, cz: 10.5, dist: 1.32, pitch:  0.02, yaw: -0.05 }, // 3. Friends & Family (widen east to next door)
-  { cx: -3.2, cz: 10.6, dist: 1.18, pitch:  0.00, yaw:  0.08 }, // 4. Your Feed (pan west to your sliders)
-  { cx:  0.6, cz: -1.8, dist: 1.38, pitch:  0.05, yaw:  0.03 }, // 5. Community (rise & glide north to Town Square)
-  { cx: -1.2, cz:  2.2, dist: 1.72, pitch:  0.08, yaw:  0.06 }, // 6. No Tech Guy (widen to show full member mesh)
-  { cx: -5.2, cz: -5.8, dist: 1.28, pitch:  0.04, yaw: -0.08 }, // 7. AI You Can Stop (focus on AI Helper & Stop button)
-  { cx:  0.4, cz:  1.8, dist: 2.35, pitch:  0.22, yaw:  0.00, aerial: true }, // 8. Together (pull back over everything you built!)
+  { cx:  0.0, cz: 10.4, dist: 0.92, pitch: -0.04, yaw:  0.00 }, // 1. Your Devices
+  { cx:  0.4, cz: 10.4, dist: 0.96, pitch: -0.02, yaw:  0.05 }, // 2. Your Files
+  { cx:  4.6, cz: 10.5, dist: 1.32, pitch:  0.02, yaw: -0.05 }, // 3. Friends & Family
+  { cx: -3.2, cz: 10.6, dist: 1.18, pitch:  0.00, yaw:  0.08 }, // 4. Your Feed
+  { cx:  0.6, cz: -1.8, dist: 1.38, pitch:  0.05, yaw:  0.03 }, // 5. Community
+  { cx: -1.2, cz:  2.2, dist: 1.72, pitch:  0.08, yaw:  0.06 }, // 6. No Tech Guy
+  { cx: -5.2, cz: -5.8, dist: 1.28, pitch:  0.04, yaw: -0.08 }, // 7. AI You Can Stop
+  { cx:  0.4, cz:  1.8, dist: 2.35, pitch:  0.22, yaw:  0.00, aerial: true }, // 8. Together (Whole Town)
+  { cx:  0.0, cz:  0.0, dist: 2.50, pitch:  0.25, yaw:  0.00, isGlobe: true }, // 9. The World (CEWP Earth Globe)
 ];
 const FLIGHT_SECONDS = 1.65;
 
@@ -1690,6 +1714,8 @@ const FLOWS = [
       [CHAPTERS[6].links[1], 'DOCUMENT', TINT.amber, 4.4, 2.0],
     ],
     shelves: [] },
+  // 9. Across the World (handled by CEWP_GLOBE's intercontinental 3-mesh arcs)
+  { loop: 10, moves: [], shelves: [] },
 ];
 // The town in chapter 8: something different arrives at the square from every place.
 const TOWN_ICONS = [['KEY', TINT.gold], ['DOCUMENT', TINT.paper], ['VIDEO', TINT.video], ['CHAT', TINT.violet], ['BALLOT', TINT.paper], ['PHOTO', TINT.photo], ['TICK', TINT.green]];
@@ -1726,6 +1752,161 @@ function emitFlow(D, C, F, t, scale = 1) {
     }
   }
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// COMBINED `CEWP` PLANET ON THE EXACT SAME `holon-draw` ENGINE (Chapter 9)
+// Decodes `NE110_B64` (Natural Earth 110m coastlines & country borders from
+// CIRISAI/CEWP) into resident `holon-draw` batches + 12 real-world town hubs +
+// live 3-mesh great-circle intercontinental arcs with moving protocol glyphs!
+// ═══════════════════════════════════════════════════════════════════════════
+function geoDecodeNE110(b64) {
+  const bin = atob(b64), u8 = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+  if (u8[0] !== 67 || u8[1] !== 71 || u8[2] !== 49) return { 2: [], 3: [] };
+  const q = new DataView(u8.buffer, u8.byteOffset + 4, 4).getUint32(0, true);
+  let i = 8;
+  const vi = () => { let r = 0, s = 1, b; do { b = u8[i++]; r += (b & 0x7f) * s; s *= 128; } while (b & 0x80); return r; };
+  const zz = (n) => (n % 2 ? -(n + 1) / 2 : n / 2);
+  const L = { 1: [], 2: [], 3: [], 4: [], 5: [] };
+  while (i < u8.length) {
+    const k = u8[i++], n = vi();
+    for (let p = 0; p < n; p++) {
+      const m = vi(), pts = new Array(m);
+      let a = 0, o = 0;
+      for (let j = 0; j < m; j++) { a += zz(vi()); o += zz(vi()); pts[j] = [a / q, o / q]; }
+      if (L[k]) L[k].push(pts);
+    }
+  }
+  return L;
+}
+
+const GLOBE_R = 8.2;
+function llToGlobe(latDeg, lonDeg, r = GLOBE_R) {
+  const la = latDeg * Math.PI / 180, lo = lonDeg * Math.PI / 180;
+  return [r * Math.cos(la) * Math.cos(lo), r * Math.cos(la) * Math.sin(lo), r * Math.sin(la)];
+}
+
+const GLOBE_HUBS = [
+  { name: "Your town", lat: 40.0, lon: -83.0, home: true },
+  { name: "New York",  lat: 40.7, lon: -74.0 },
+  { name: "Mexico City", lat: 19.4, lon: -99.1 },
+  { name: "Sao Paulo", lat: -23.5, lon: -46.6 },
+  { name: "London",    lat: 51.5, lon: -0.1 },
+  { name: "Berlin",    lat: 52.5, lon: 13.4 },
+  { name: "Lagos",     lat: 6.5,  lon: 3.4 },
+  { name: "Nairobi",   lat: -1.3, lon: 36.8 },
+  { name: "Mumbai",    lat: 19.1, lon: 72.9 },
+  { name: "Tokyo",     lat: 35.7, lon: 139.7 },
+  { name: "Sydney",    lat: -33.9, lon: 151.2 },
+];
+
+const GLOBE_ARC_SPECS = [
+  [0, 1, COL.green,  'KEY',      TINT.gold],
+  [0, 2, COL.green,  'PHOTO',    TINT.photo],
+  [0, 4, COL.blue,   'DOCUMENT', TINT.paper],
+  [1, 3, COL.amber,  'VIDEO',    TINT.video],
+  [4, 5, COL.green,  'CHAT',     TINT.green],
+  [4, 6, COL.amber,  'BALLOT',   TINT.paper],
+  [5, 7, COL.blue,   'TICK',     TINT.green],
+  [6, 3, COL.blue,   'CHAT',     TINT.violet],
+  [7, 8, COL.green,  'PHOTO',    TINT.photo],
+  [8, 9, COL.amber,  'DOCUMENT', TINT.paper],
+  [9, 10, COL.blue,  'VIDEO',    TINT.video],
+  [9, 0, COL.green,  'CHAT',     TINT.green],
+];
+
+const CEWP_GLOBE = (() => {
+  const ocean   = new HolonBatch(KIND.SPHERE, false, 4);
+  const atmo    = new HolonBatch(KIND.SPHERE, false, 4);
+  const grid    = new HolonBatch(KIND.LINE, false, 512);
+  const borders = new HolonBatch(KIND.LINE, false, 4096);
+  const coasts  = new HolonBatch(KIND.LINE, false, 16384);
+  const hubs    = new HolonBatch(KIND.SPHERE, false, 64);
+  const arcs    = new HolonBatch(KIND.LINE, false, 1024);
+  const dynGlyphs = new HolonBatch(KIND.GLYPH, false, 64);
+
+  // Maritime sapphire ocean sphere + subtle atmospheric glow shell
+  ocean.add(0, 0, 0, GLOBE_R, 0, 0, 0, 0, 0, 0, [18, 42, 74, 255], MATERIAL.MATTE);
+  atmo.add(0, 0, 0, GLOBE_R * 1.032, 0, 0, 0, 0, 0, 0, [88, 168, 255, 28], MATERIAL.GLOW);
+
+  // Subtle 30-degree latitude / longitude graticule
+  const gCol = [48, 86, 128, 70];
+  for (let lat = -60; lat <= 60; lat += 30) {
+    for (let lon = -180; lon < 180; lon += 10) {
+      const a = llToGlobe(lat, lon, GLOBE_R * 1.003), b = llToGlobe(lat, lon + 10, GLOBE_R * 1.003);
+      grid.add(a[0], a[1], a[2], 0.02, 0, 0, b[0], b[1], b[2], 0, gCol, 0);
+    }
+  }
+  for (let lon = -180; lon < 180; lon += 30) {
+    for (let lat = -80; lat < 80; lat += 10) {
+      const a = llToGlobe(lat, lon, GLOBE_R * 1.003), b = llToGlobe(lat + 10, lon, GLOBE_R * 1.003);
+      grid.add(a[0], a[1], a[2], 0.02, 0, 0, b[0], b[1], b[2], 0, gCol, 0);
+    }
+  }
+
+  // Real Natural Earth 110m coastlines (L[2]) and borders (L[3]) from CEWP's ne110.js!
+  if (typeof NE110_B64 !== 'undefined') {
+    const L = geoDecodeNE110(NE110_B64);
+    const cCol = [104, 214, 162, 255];
+    const bCol = [86, 138, 184, 145];
+    for (const pl of L[2]) {
+      for (let j = 0; j + 1 < pl.length; j++) {
+        const a = llToGlobe(pl[j][0], pl[j][1], GLOBE_R * 1.007);
+        const b = llToGlobe(pl[j + 1][0], pl[j + 1][1], GLOBE_R * 1.007);
+        coasts.add(a[0], a[1], a[2], 0.068, 0, 0, b[0], b[1], b[2], 0, cCol, VARIANT_ROUND);
+      }
+    }
+    for (const pl of L[3]) {
+      for (let j = 0; j + 1 < pl.length; j++) {
+        const a = llToGlobe(pl[j][0], pl[j][1], GLOBE_R * 1.005);
+        const b = llToGlobe(pl[j + 1][0], pl[j + 1][1], GLOBE_R * 1.005);
+        borders.add(a[0], a[1], a[2], 0.032, 0, 0, b[0], b[1], b[2], 0, bCol, 0);
+      }
+    }
+  }
+
+  // 11 Real-world town / city hubs on the Earth surface
+  for (const h of GLOBE_HUBS) {
+    const p = llToGlobe(h.lat, h.lon, GLOBE_R * 1.015);
+    const col = h.home ? [96, 238, 162, 255] : [245, 198, 108, 255];
+    hubs.add(p[0], p[1], p[2], h.home ? 0.30 : 0.17, 0, 0, 0, 0, 0, 0, col, MATERIAL.GLOW);
+  }
+
+  // Great-circle 3D intercontinental 3-mesh arcs soaring above the Earth
+  const arcCurves = [];
+  for (const [ia, ib, colF, iconName, iconTint] of GLOBE_ARC_SPECS) {
+    const hA = GLOBE_HUBS[ia], hB = GLOBE_HUBS[ib];
+    const pA = llToGlobe(hA.lat, hA.lon, GLOBE_R * 1.015);
+    const pB = llToGlobe(hB.lat, hB.lon, GLOBE_R * 1.015);
+    const dot = Math.max(-1, Math.min(1, (pA[0]*pB[0] + pA[1]*pB[1] + pA[2]*pB[2]) / ((GLOBE_R*1.015)**2)));
+    const ang = Math.acos(dot);
+    const peakLift = 0.75 + Math.min(2.6, ang * 1.35);
+    const segs = 22;
+    const pts = [];
+    for (let s = 0; s <= segs; s++) {
+      const u = s / segs;
+      // Spherical linear interpolation + sinusoidal altitude arch
+      const sinA = Math.sin(ang) || 1e-4;
+      const w0 = Math.sin((1 - u) * ang) / sinA, w1 = Math.sin(u * ang) / sinA;
+      const vx = w0 * pA[0] + w1 * pB[0], vy = w0 * pA[1] + w1 * pB[1], vz = w0 * pA[2] + w1 * pB[2];
+      const vl = Math.hypot(vx, vy, vz) || 1;
+      const rr = GLOBE_R * 1.015 + Math.sin(Math.PI * u) * peakLift;
+      pts.push([vx / vl * rr, vy / vl * rr, vz / vl * rr]);
+    }
+    const rgba = [Math.round(colF[0] * 255), Math.round(colF[1] * 255), Math.round(colF[2] * 255), 220];
+    for (let s = 0; s < segs; s++) {
+      const a = pts[s], b = pts[s + 1];
+      arcs.add(a[0], a[1], a[2], 0.085, 0, 0, b[0], b[1], b[2], s / segs, rgba, VARIANT_ROUND | VARIANT_FLOW);
+    }
+    arcCurves.push({ pts, iconName, iconTint });
+  }
+
+  const staticBatches = [ocean, grid, borders, coasts, hubs, arcs, atmo];
+  for (const b of staticBatches) { b.seal(); b.castShadow = false; resident(b); }
+  dynGlyphs.castShadow = false;
+
+  return { staticBatches, arcs, dynGlyphs, arcCurves, vis: 0 };
+})();
 
 // ── Every cumulative story layer is built once, in ONE shared neighbourhood ──
 // `vis` rises smoothly from 0 -> 1 when `i <= currentStep` (building the town with the story!),
@@ -1798,6 +1979,111 @@ function frame(tms) {
   const Wcss = W / dpr, Hcss = H / dpr;
   const aspect = Math.max(0.35, W / H);
   const portrait = Math.max(0, Math.min(1, (1.05 - aspect) / 0.5));
+
+  const isGlobe = currentStep === 8;
+  stageWrap.classList.toggle('orbit', isGlobe);
+  CEWP_GLOBE.vis += ((isGlobe ? 1 : 0) - CEWP_GLOBE.vis) * Math.min(1, dt * 3.2);
+
+  // If on Chapter 9 (The Combined CEWP Planet), render the spinning 3D holon-draw Earth Globe!
+  if (CEWP_GLOBE.vis > 0.5) {
+    const gSpin = -1.35 + (tSec - (flight.t0 / 1000)) * 0.06 + userYaw;
+    const gLat = Math.max(-0.55, Math.min(0.75, 0.34 + userPitch));
+    const gDist = Math.max(33.5, 31.0 / aspect);
+    const gEye = [
+      Math.cos(gLat) * Math.cos(gSpin) * gDist,
+      Math.cos(gLat) * Math.sin(gSpin) * gDist,
+      Math.sin(gLat) * gDist
+    ];
+    const gProj = mat4Perspective(0.56, aspect, Math.max(1.0, gDist - GLOBE_R * 2.5), gDist + GLOBE_R * 4.0);
+    const gView = mat4LookAt(gEye, [0, 0, 0], [0, 0, 1]);
+    const gVp = mat4Mul(gProj, gView);
+    const gFade = Math.min(1, (CEWP_GLOBE.vis - 0.5) * 2.0);
+
+    drawList.length = 0;
+    CEWP_GLOBE.arcs.params[PARAM_FLOW] = tSec * 0.42;
+    CEWP_GLOBE.arcs.params[PARAM_FLOW_N] = 5;
+    for (const b of CEWP_GLOBE.staticBatches) {
+      b.params[PARAM.FADE] = gFade;
+      drawList.push(b);
+    }
+
+    // Moving protocol glyphs flying along the 3D intercontinental great-circle arcs
+    CEWP_GLOBE.dynGlyphs.clear();
+    const gScale = 0.72 * (1 + 0.35 * portrait);
+    for (let i = 0; i < CEWP_GLOBE.arcCurves.length; i++) {
+      const ac = CEWP_GLOBE.arcCurves[i];
+      const u = (tSec * 0.16 + i / CEWP_GLOBE.arcCurves.length) % 1.0;
+      const idxF = u * (ac.pts.length - 1);
+      const i0 = Math.floor(idxF), i1 = Math.min(ac.pts.length - 1, i0 + 1), fr = idxF - i0;
+      const p0 = ac.pts[i0], p1 = ac.pts[i1];
+      const gx = lerp(p0[0], p1[0], fr), gy = lerp(p0[1], p1[1], fr), gz = lerp(p0[2], p1[2], fr);
+      const a = Math.min(u, 1 - u) / 0.12;
+      icon(CEWP_GLOBE.dynGlyphs, [gx, gy, gz], 0.15, gScale, ac.iconTint, Math.min(1, a) * gFade, ac.iconName);
+    }
+    CEWP_GLOBE.dynGlyphs.seal();
+    drawList.push(CEWP_GLOBE.dynGlyphs);
+
+    // Crisp `holon-draw` plaques anchored to the 3D Earth Globe (with front-hemisphere check & zero overlap)
+    const homeP = llToGlobe(40.0, -83.0, GLOBE_R * 1.05);
+    const homeFacing = (homeP[0]*gEye[0] + homeP[1]*gEye[1] + homeP[2]*gEye[2]) > 0;
+    const globeLabels = [
+      { hp: [0, 0, GLOBE_R * 1.18], dy: -16, title: "One Earth, one open rulebook", sub: "CEWP planet · CEWPOS home", col: RGBA.amber },
+      { hp: [0, 0, -GLOBE_R * 1.18], dy: 20, title: "Peer-to-peer across continents", sub: "No single company owns the world", col: RGBA.blue },
+    ];
+    if (homeFacing) {
+      globeLabels.push({ hp: homeP, dy: -26, title: "Your town", sub: "One of millions on the mesh", col: RGBA.green });
+    }
+    text.beginFrame();
+    const ge0 = text.epoch;
+    for (let pass = 0; pass < 2; pass++) {
+      for (const b of screenBatches) b.clear();
+      const compact = Wcss < 680;
+      const titleStyle = compact ? LSTYLE.TITLE_COMPACT : LSTYLE.TITLE;
+      const placed = [];
+      for (const glb of globeLabels) {
+        const sc = projectHolon(gVp, glb.hp[0], glb.hp[1], glb.hp[2], Wcss, Hcss, _pp);
+        if (!sc) continue;
+        const et = placeRun(glb.title, titleStyle);
+        const es = !compact && glb.sub ? placeRun(glb.sub, LSTYLE.SUB) : null;
+        const w = Math.max(compact ? 110 : 160, et.w / dpr + 34, es ? es.w / dpr + 28 : 0);
+        const h = es ? 54 : (compact ? 30 : 34);
+        const sx = Math.max(w / 2 + 8, Math.min(Wcss - w / 2 - 8, _pp[0]));
+        const sy = Math.max(h / 2 + 8, Math.min(Hcss - h / 2 - 8, _pp[1] + glb.dy));
+        placed.push({ sx, sy, w, h, et, es, col: glb.col });
+      }
+      for (let i = 0; i < placed.length; i++) {
+        for (let j = i + 1; j < placed.length; j++) {
+          const A = placed[i], B = placed[j];
+          const ox = (A.w + B.w) * 0.5 + 10 - Math.abs(A.sx - B.sx);
+          const oy = (A.h + B.h) * 0.5 + 8 - Math.abs(A.sy - B.sy);
+          if (ox > 0 && oy > 0) {
+            const dir = A.sy <= B.sy ? -1 : 1;
+            B.sy = Math.max(B.h / 2 + 8, Math.min(Hcss - B.h / 2 - 8, B.sy - dir * (oy + 4)));
+          }
+        }
+      }
+      for (const p of placed) {
+        const x = p.sx - p.w / 2, y = p.sy - p.h / 2;
+        const edge = [p.col[0], p.col[1], p.col[2], 195];
+        screenBg.add(p.sx * dpr, p.sy * dpr, 0, p.w * dpr, p.h * dpr, 0, 10 * dpr, 0, 0, 0, edge, 0);
+        screenFg.add(p.sx * dpr, p.sy * dpr, 0, (p.w - 3) * dpr, (p.h - 3) * dpr, 0, 8.5 * dpr, 0, 0, 0, RGBA.plaque, 0);
+        const ty = p.es ? y + 18 : y + p.h * 0.5;
+        screenDots.add((x + 13) * dpr, ty * dpr, 0, 4 * dpr, 0, 0, 0, 0, 0, 0, p.col, 0);
+        drawRun(p.et, p.sx + 6, ty, RGBA.white);
+        if (p.es) drawRun(p.es, p.sx, y + 38, RGBA.muted);
+      }
+      if (text.epoch === ge0) break;
+    }
+    for (const b of screenBatches) { b.params[PARAM.FADE] = gFade; b.seal(); drawList.push(b); }
+
+    gl.viewport(0, 0, W, H);
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    VPORT[2] = W; VPORT[3] = H;
+    drawer.draw(drawList, gVp, { light: new Float32Array([0.45, -0.65, 0.61]), ambient: 0.52, viewport: VPORT });
+    requestAnimationFrame(frame);
+    return;
+  }
 
   // Open directly on Chapter 1 (your home yard) with a gentle settle-in.
   if (!started) {
