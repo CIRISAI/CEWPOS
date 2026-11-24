@@ -241,6 +241,7 @@ let dragging = false;
 let dragMoved = 0;
 let lastMX = 0, lastMY = 0;
 let lastGlobeVp = null;
+let lastViewLatDeg = 40.0, lastViewLonDeg = -83.0;
 canvas.addEventListener('pointerdown', (e) => {
   dragging = true;
   dragMoved = 0;
@@ -254,8 +255,9 @@ canvas.addEventListener('pointermove', (e) => {
   dragMoved += Math.hypot(dx, dy);
   lastMX = e.clientX;
   lastMY = e.clientY;
-  userYaw += dx * 0.0045;
-  userPitch = Math.max(-0.55, Math.min(0.65, userPitch + dy * 0.0038));
+  // Natural grab-and-drag: dragging right pulls the globe/scene right under your finger
+  userYaw -= dx * 0.0048;
+  userPitch = Math.max(-0.60, Math.min(0.70, userPitch + dy * 0.0040));
 });
 canvas.addEventListener('pointerup', (e) => {
   const wasTap = dragging && dragMoved < 7;
@@ -265,7 +267,7 @@ canvas.addEventListener('pointerup', (e) => {
   const mx = e.clientX - rect.left, my = e.clientY - rect.top;
   // In free-form explore mode on the globe, clicking any of the 6 glowing regional cities flies straight down into it!
   if (exploreMode && !exploreInTown && lastGlobeVp) {
-    let bestKey = null, bestD = 48;
+    let bestKey = null, bestD = 54;
     for (const [key, rc] of Object.entries(REGION_COORDS)) {
       const hp = llToGlobe(rc.lat, rc.lon, GLOBE_R * 1.015);
       if (projectHolon(lastGlobeVp, hp[0], hp[1], hp[2], rect.width, rect.height, _pp)) {
@@ -292,9 +294,13 @@ canvas.addEventListener('wheel', (e) => {
   e.preventDefault();
   userZoom = Math.max(0.55, Math.min(1.85, userZoom * (1 + e.deltaY * 0.0009)));
   if (exploreMode) {
-    if (!exploreInTown && userZoom < 0.68) {
-      exploreInTown = true; userZoom = 1.0;
-    } else if (exploreInTown && userZoom > 1.62) {
+    if (!exploreInTown && userZoom < 0.70) {
+      // Zoom into WHEREVER the user is currently looking on the globe!
+      const picked = selectRegionForLatLon(lastViewLatDeg, lastViewLonDeg);
+      rebuildTownForRegion(picked.key, { lat: lastViewLatDeg, lon: lastViewLonDeg, name: picked.label });
+      exploreInTown = true;
+      userYaw = 0; userPitch = 0; userZoom = 1.0;
+    } else if (exploreInTown && userZoom > 1.55) {
       exploreInTown = false; userZoom = 1.0;
     }
   }
@@ -1392,9 +1398,62 @@ const SHAPE_TO_PRISM = [
 ];
 const rgb01 = (rgb) => [rgb[0] / 255, rgb[1] / 255, rgb[2] / 255, 1];
 
-// Architectural building builder powered by `regional_model.js` + native `holon-draw` KIND.PRISM roofs!
-// Every roof is a single closed 2-manifold 52-byte KIND.PRISM record (gable, hipped, shed, courtyard, pyramid).
-function buildHouse(s, x, z, yaw, spec, rFn) {
+// Model-driven per-region architectural & environmental style parameters (same approach as roof_tone / wall_rgb)
+const REGION_VISUALS = {
+  us_midwest: {
+    arch: 'midwest_porch', lampStyle: 'lantern',
+    street: [116, 118, 124, 255], kerb: [164, 160, 154, 255], square: [176, 160, 140, 255],
+    plinth: [0.46, 0.45, 0.44, 1], trim: [0.84, 0.82, 0.78, 1], accent: [0.28, 0.34, 0.30, 1],
+    hill: [0.44, 0.52, 0.60, 1], lampGlow: [1.00, 0.86, 0.58, 1],
+  },
+  eu_alpine: {
+    arch: 'alpine_chalet', lampStyle: 'lantern',
+    street: [128, 126, 124, 255], kerb: [174, 170, 162, 255], square: [168, 162, 152, 255],
+    plinth: [0.52, 0.50, 0.48, 1], trim: [0.34, 0.24, 0.16, 1], accent: [0.20, 0.36, 0.26, 1],
+    hill: [0.48, 0.56, 0.68, 1], lampGlow: [1.00, 0.84, 0.52, 1],
+  },
+  jp_east_asia: {
+    arch: 'tokyo_machiya', lampStyle: 'bollard',
+    street: [86, 90, 98, 255], kerb: [152, 156, 164, 255], square: [182, 184, 188, 255],
+    plinth: [0.34, 0.36, 0.40, 1], trim: [0.28, 0.22, 0.18, 1], accent: [0.76, 0.62, 0.46, 1],
+    hill: [0.42, 0.48, 0.58, 1], lampGlow: [0.96, 0.94, 0.86, 1],
+  },
+  af_west_tropical: {
+    arch: 'west_africa_veranda', lampStyle: 'adobe',
+    street: [134, 118, 102, 255], kerb: [176, 154, 130, 255], square: [186, 152, 120, 255],
+    plinth: [0.54, 0.42, 0.34, 1], trim: [0.88, 0.64, 0.36, 1], accent: [0.72, 0.34, 0.22, 1],
+    hill: [0.38, 0.54, 0.44, 1], lampGlow: [1.00, 0.80, 0.46, 1],
+  },
+  us_southwest_arid: {
+    arch: 'southwest_adobe', lampStyle: 'adobe',
+    street: [152, 136, 118, 255], kerb: [188, 168, 144, 255], square: [198, 174, 142, 255],
+    plinth: [0.64, 0.52, 0.40, 1], trim: [0.36, 0.24, 0.16, 1], accent: [0.34, 0.56, 0.58, 1],
+    hill: [0.68, 0.50, 0.38, 1], lampGlow: [1.00, 0.78, 0.44, 1],
+  },
+  sa_tropical: {
+    arch: 'tropical_sobrado', lampStyle: 'lantern',
+    street: [112, 112, 116, 255], kerb: [168, 160, 148, 255], square: [184, 166, 144, 255],
+    plinth: [0.48, 0.44, 0.40, 1], trim: [0.92, 0.86, 0.76, 1], accent: [0.78, 0.42, 0.28, 1],
+    hill: [0.36, 0.54, 0.46, 1], lampGlow: [1.00, 0.84, 0.52, 1],
+  },
+};
+
+function selectRegionForLatLon(lat, lon) {
+  // Normalize lon into [-180, 180]
+  let lo = ((lon + 180) % 360 + 360) % 360 - 180;
+  // Geographic & climate band classifier -> matches any zoomed-in spot on Earth to its regional building model!
+  if (lo >= 95 && lo <= 165 && lat >= 18) return { key: 'jp_east_asia', label: `East Asia (${lat.toFixed(0)}°N, ${lo.toFixed(0)}°E)` };
+  if (lo >= -18 && lo <= 52 && lat >= -35 && lat <= 22) return { key: 'af_west_tropical', label: `Africa (${Math.abs(lat).toFixed(0)}°${lat>=0?'N':'S'}, ${Math.abs(lo).toFixed(0)}°${lo>=0?'E':'W'})` };
+  if ((lo >= -125 && lo <= -102 && lat >= 18 && lat <= 39) || (lo >= -16 && lo <= 62 && lat > 22 && lat <= 35)) {
+    return { key: 'us_southwest_arid', label: `Arid Belt (${lat.toFixed(0)}°N, ${Math.abs(lo).toFixed(0)}°${lo>=0?'E':'W'})` };
+  }
+  if (lo >= -12 && lo <= 45 && lat > 35) return { key: 'eu_alpine', label: `Europe (${lat.toFixed(0)}°N, ${Math.abs(lo).toFixed(0)}°${lo>=0?'E':'W'})` };
+  if (lo >= -85 && lo <= -32 && lat < 18) return { key: 'sa_tropical', label: `South America (${Math.abs(lat).toFixed(0)}°${lat>=0?'N':'S'}, ${Math.abs(lo).toFixed(0)}°W)` };
+  return { key: 'us_midwest', label: `North America (${lat.toFixed(0)}°N, ${Math.abs(lo).toFixed(0)}°W)` };
+}
+
+// Architectural building builder powered by `regional_model.js` + `REGION_VISUALS` + native `KIND.PRISM` roofs!
+function buildHouse(s, x, z, yaw, spec, rFn, rVis) {
   const { storeys, w, d, lit, pred } = spec;
   const plinth = 0.34;
   const h = plinth + storeys * 2.85;
@@ -1404,27 +1463,65 @@ function buildHouse(s, x, z, yaw, spec, rFn) {
   const prismTop = SHAPE_TO_PRISM[pred.roof_shape] ?? PRISM_GABLE_X;
   const isFlat = pred.roof_shape === 0;
   const eave = Math.max(0.06, (pred.eave_ratio || 0.1) * Math.min(w, d) * 0.45);
-  const rise = isFlat ? 0.52 : Math.min(2.6, Math.max(1.15, d * (pred.roof_shape === 4 ? 0.42 : 0.34)));
+  const rise = isFlat ? 0.56 : Math.min(2.6, Math.max(1.15, d * (pred.roof_shape === 4 ? 0.42 : 0.34)));
 
-  // 1. Stone foundation plinth + masonry/plaster/stucco walls
-  s.addBox(mat4Translate(M, 0, plinth * 0.5, 0), w + 0.14, plinth, d + 0.14, [0.46, 0.45, 0.44, 1], MAT.matte);
+  // 1. Stone/adobe foundation plinth + main wall mass
+  s.addBox(mat4Translate(M, 0, plinth * 0.5, 0), w + 0.14, plinth, d + 0.14, rVis.plinth, MAT.matte);
   s.addBox(mat4Translate(M, 0, plinth + (h - plinth) * 0.5, 0), w, h - plinth, d, wall, MAT.matte);
+
   // 2. Native `holon-draw` KIND.PRISM roof cap (1 record per roof with accurate sloped-face normals & shadows!)
   s.addPrism(mat4Translate(M, 0, h + rise * 0.5, 0), w + eave * 2, rise, d + eave * 2, roof, MAT.matte, prismTop);
-  // 3. Chimney on temperate/alpine pitched roofs
-  if (!isFlat && pred.tree_biome <= 1) {
+
+  // 3. Region-specific architectural details (driven by `rVis.arch`!)
+  if (rVis.arch === 'alpine_chalet') {
+    // Timber chalet balcony on upper storey + exposed wooden fascia + chimney
+    if (storeys >= 2) {
+      s.addBox(mat4Translate(M, 0, plinth + 2.75, d / 2 + 0.36), w * 0.72, 0.12, 0.72, rVis.trim, MAT.matte);
+      s.addBox(mat4Translate(M, 0, plinth + 3.16, d / 2 + 0.68), w * 0.72, 0.68, 0.08, rVis.trim, MAT.matte);
+    }
+    s.addBox(mat4Translate(M, w * 0.28, h + rise * 0.55, -d * 0.14), 0.48, rise + 0.65, 0.48, [0.46, 0.32, 0.28, 1], MAT.matte);
+  } else if (rVis.arch === 'southwest_adobe') {
+    // Exposed wooden Pueblo vigas (projecting roof beams) + low adobe front courtyard wall
+    const nVigas = Math.max(3, Math.round(w / 1.4));
+    for (let v = 0; v < nVigas; v++) {
+      const vx = -w * 0.42 + (v / Math.max(1, nVigas - 1)) * w * 0.84;
+      s.addCylinderY(mat4RotateX(mat4Translate(M, vx, h - 0.14, d / 2 + 0.16), Math.PI * 0.5), 0.065, 0.065, 0.44, rVis.trim, MAT.matte);
+    }
+    s.addBox(mat4Translate(M, -w * 0.32, 0.52, d / 2 + 0.95), w * 0.36, 1.04, 0.24, wall, MAT.matte);
+    s.addBox(mat4Translate(M,  w * 0.32, 0.52, d / 2 + 0.95), w * 0.36, 1.04, 0.24, wall, MAT.matte);
+  } else if (rVis.arch === 'tokyo_machiya') {
+    // Vertical timber `koushi` lattice slats + warm paper entry lantern + crisp dark fascia
+    s.addBox(mat4Translate(M, 0, h - 0.05, 0), w + 0.18, 0.12, d + 0.18, rVis.trim, MAT.matte);
+    for (let k = -2; k <= 2; k++) {
+      if (k === 0) continue;
+      s.addBox(mat4Translate(M, k * 0.62, plinth + 1.15, d / 2 + 0.06), 0.07, 2.0, 0.06, rVis.trim, MAT.matte);
+    }
+    s.addBox(mat4Translate(M, 0.72, plinth + 1.85, d / 2 + 0.14), 0.22, 0.34, 0.22, [1.0, 0.88, 0.62, 1], MAT.brightGlow);
+  } else if (rVis.arch === 'west_africa_veranda' || rVis.arch === 'tropical_sobrado') {
+    // Full-width breezy shaded veranda canopy + vibrant cultural trim band
+    s.addBox(mat4Translate(M, 0, plinth + 2.32, d / 2 + 0.52), w * 0.94, 0.12, 1.04, roof, MAT.matte);
+    s.addBox(mat4Translate(M, 0, plinth + 0.22, d / 2 + 0.05), w + 0.06, 0.34, 0.06, rVis.accent, MAT.matte);
+    for (const px of [-w * 0.42, 0, w * 0.42]) {
+      s.addCylinderY(mat4Translate(M, px, plinth + 1.16, d / 2 + 0.94), 0.06, 0.06, 2.24, rVis.trim, MAT.matte);
+    }
+  } else if (!isFlat) {
+    // Midwest chimney
     s.addBox(mat4Translate(M, w * 0.28, h + rise * 0.55, -d * 0.14), 0.48, rise + 0.65, 0.48, [0.46, 0.32, 0.28, 1], MAT.matte);
   }
-  // 4. Entry door (2.04m) + regional porch
-  s.addBox(mat4Translate(M, 0, plinth + 1.02, d / 2 + 0.03), 0.96, 2.04, 0.08, TOWN.door, MAT.matte);
-  if (rFn() < pred.porch_prob) {
+
+  // 4. Entry door (2.04m) + porch (for porch regions)
+  s.addBox(mat4Translate(M, 0, plinth + 1.02, d / 2 + 0.03), 0.96, 2.04, 0.08, rVis.arch === 'southwest_adobe' ? rVis.accent : TOWN.door, MAT.matte);
+  if (rVis.arch === 'midwest_porch' && rFn() < pred.porch_prob) {
     s.addBox(mat4Translate(M, 0, 0.18, d / 2 + 0.42), 1.75, 0.32, 0.78, [0.56, 0.54, 0.52, 1], MAT.matte);
     s.addBox(mat4Translate(M, 0, plinth + 2.26, d / 2 + 0.44), 1.85, 0.10, 0.84, roof, MAT.matte);
-    s.addCylinderY(mat4Translate(M, -0.78, plinth + 1.16, d / 2 + 0.74), 0.055, 0.055, 2.15, [0.84, 0.82, 0.78, 1], MAT.matte);
-    s.addCylinderY(mat4Translate(M,  0.78, plinth + 1.16, d / 2 + 0.74), 0.055, 0.055, 2.15, [0.84, 0.82, 0.78, 1], MAT.matte);
+    s.addCylinderY(mat4Translate(M, -0.78, plinth + 1.16, d / 2 + 0.74), 0.055, 0.055, 2.15, rVis.trim, MAT.matte);
+    s.addCylinderY(mat4Translate(M,  0.78, plinth + 1.16, d / 2 + 0.74), 0.055, 0.055, 2.15, rVis.trim, MAT.matte);
   }
-  // 5. Framed windows with stone sills on every storey
+
+  // 5. Regional windows (Alpine shutters, deep-set adobe, wide modern Tokyo panes, or classic sills)
   const cols = Math.max(2, Math.round(w / 1.85));
+  const winW = rVis.arch === 'southwest_adobe' ? 0.66 : rVis.arch === 'tokyo_machiya' ? 0.96 : 0.82;
+  const winH = rVis.arch === 'southwest_adobe' ? 0.88 : 1.12;
   for (const face of [1, -1]) {
     for (let r = 0; r < storeys; r++) {
       for (let c = 0; c < cols; c++) {
@@ -1433,8 +1530,13 @@ function buildHouse(s, x, z, yaw, spec, rFn) {
         const wy = plinth + 1.48 + r * 2.82;
         const on = lit && rFn() < 0.78;
         const col = on ? (rFn() < 0.85 ? TOWN.window : TOWN.windowCool) : [0.15, 0.18, 0.22, 1];
-        s.addBox(mat4Translate(M, wx, wy, face * (d / 2 + 0.03)), 0.82, 1.12, 0.05, col, on ? MAT.glow : MAT.matte);
-        s.addBox(mat4Translate(M, wx, wy - 0.60, face * (d / 2 + 0.07)), 0.96, 0.09, 0.14, [0.76, 0.74, 0.70, 1], MAT.matte);
+        s.addBox(mat4Translate(M, wx, wy, face * (d / 2 + 0.03)), winW, winH, 0.05, col, on ? MAT.glow : MAT.matte);
+        s.addBox(mat4Translate(M, wx, wy - winH * 0.54, face * (d / 2 + 0.07)), winW + 0.14, 0.09, 0.14, rVis.trim, MAT.matte);
+        if (rVis.arch === 'alpine_chalet' && face > 0) {
+          // Painted Alpine wooden shutters beside each window
+          s.addBox(mat4Translate(M, wx - winW * 0.62, wy, d / 2 + 0.04), 0.22, winH, 0.04, rVis.accent, MAT.matte);
+          s.addBox(mat4Translate(M, wx + winW * 0.62, wy, d / 2 + 0.04), 0.22, winH, 0.04, rVis.accent, MAT.matte);
+        }
       }
     }
   }
@@ -1479,11 +1581,22 @@ function buildDesertScrub(s, x, z, size, leafCol, rFn) {
   }
 }
 
-// A lamp: a pole, a glowing globe, and a warm pool of light on the ground (in `pools`).
-function buildLamp(s, pools, x, z) {
+// Region-styled street lamp (classic lantern, minimalist Tokyo LED bollard, or warm adobe lamp)
+function buildLamp(s, pools, x, z, rVis) {
   const hb = toHolon([x, 0, z]);
-  s.rod([hb[0], hb[1], 0], [hb[0], hb[1], 2.6], 0.05, s.toRgba(TOWN.pole), MATERIAL.METAL);
-  s.ball([hb[0], hb[1], 2.72], 0.17, s.toRgba(TOWN.lamp), true, MATERIAL.GLOW);
+  const lStyle = rVis ? rVis.lampStyle : 'lantern';
+  const glow = rVis ? rVis.lampGlow : TOWN.lamp;
+  if (lStyle === 'bollard') {
+    s.rod([hb[0], hb[1], 0], [hb[0], hb[1], 2.1], 0.065, s.toRgba([0.16, 0.18, 0.22, 1]), MATERIAL.METAL);
+    s.rod([hb[0], hb[1], 2.1], [hb[0], hb[1], 2.38], 0.07, s.toRgba(glow), MATERIAL.GLOW);
+  } else if (lStyle === 'adobe') {
+    s.rod([hb[0], hb[1], 0], [hb[0], hb[1], 0.65], 0.12, s.toRgba(rVis.plinth), MATERIAL.MATTE);
+    s.rod([hb[0], hb[1], 0.65], [hb[0], hb[1], 2.55], 0.045, s.toRgba(rVis.trim), MATERIAL.METAL);
+    s.ball([hb[0], hb[1], 2.66], 0.16, s.toRgba(glow), true, MATERIAL.GLOW);
+  } else {
+    s.rod([hb[0], hb[1], 0], [hb[0], hb[1], 2.6], 0.05, s.toRgba(TOWN.pole), MATERIAL.METAL);
+    s.ball([hb[0], hb[1], 2.72], 0.17, s.toRgba(glow), true, MATERIAL.GLOW);
+  }
   pools.add(hb[0], hb[1], LAYER.pool, 1.7, 0, 0, 0, 0, 0, 0, [255, 214, 150, 9], 0);
   pools.add(hb[0], hb[1], LAYER.pool + 0.015, 0.9, 0, 0, 0, 0, 0, 0, [255, 220, 160, 12], 0);
 }
@@ -1551,17 +1664,19 @@ const groundBatches = [ground, flats, flatDiscs];
 function resident(b) { if (b.count > 0 && b.handle === undefined) { b.handle = drawer.resident(b.bytes); b.first = 0; } }
 function releaseBatch(b) { if (b.handle !== undefined) { drawer.release(b.handle); b.handle = undefined; } }
 
-// Dynamically builds/rebuilds the entire town's ground, buildings (via `regional_model.js` + KIND.PRISM), and biome trees!
-function rebuildTownForRegion(regionKey) {
+const hills = new SceneSet();
+
+// Dynamically builds/rebuilds the entire town's ground, streets, plaza, horizon hills, regional buildings, and biome trees!
+function rebuildTownForRegion(regionKey, customCoord = null) {
   ACTIVE_REGION = REGIONAL_PRESETS[regionKey] ? regionKey : 'us_midwest';
-  ACTIVE_HOME = REGION_COORDS[ACTIVE_REGION] || REGION_COORDS.us_midwest;
+  ACTIVE_HOME = customCoord || REGION_COORDS[ACTIVE_REGION] || REGION_COORDS.us_midwest;
   const preset = REGIONAL_PRESETS[ACTIVE_REGION];
+  const rVis = REGION_VISUALS[ACTIVE_REGION] || REGION_VISUALS.us_midwest;
   const rSeed = Object.keys(REGIONAL_PRESETS).indexOf(ACTIVE_REGION) + 1;
   const rFn = rng(20261122 + rSeed * 4099);
 
-  // 1. Rebuild ground with regional biome ground tint
-  releaseBatch(ground);
-  ground.clear();
+  // 1. Rebuild ground, streets, kerbs & plaza paving with regional materials
+  releaseBatch(ground); ground.clear();
   const gBase = preset.ground_rgb || [82, 126, 74];
   const gAlt  = [Math.min(255, gBase[0] + 22), Math.min(255, gBase[1] + 20), Math.min(255, gBase[2] + 10)];
   for (let x = -84; x < 84; x += TILE) {
@@ -1571,8 +1686,45 @@ function rebuildTownForRegion(regionKey) {
       ground.add(hb[0], hb[1], LAYER.lawn, TILE + 0.02, TILE + 0.02, 0, 0, 0, 0, 0, [c[0], c[1], c[2], 255], 0);
     }
   }
-  ground.seal(); ground.castShadow = false;
-  resident(ground);
+  ground.seal(); ground.castShadow = false; resident(ground);
+
+  releaseBatch(flats); flats.clear();
+  for (const sz of STREETS_Z) {
+    for (let x = -31 + SEG / 2; x < 31; x += SEG) {
+      const hb = toHolon([x, 0, sz]);
+      flats.add(hb[0], hb[1], LAYER.kerb, SEG + 0.02, 3.4, 0, 0, 0, 0, 0, rVis.kerb, 0);
+      flats.add(hb[0], hb[1], LAYER.street, SEG + 0.02, 2.8, 0, 0, 0, 0, 0, rVis.street, 0);
+    }
+  }
+  for (const sx of AVENUES_X) {
+    for (let z = -46 + SEG * 0.5; z < 21; z += SEG) {
+      const hb = toHolon([sx, 0, z]);
+      flats.add(hb[0], hb[1], LAYER.kerb, 3.0, SEG + 0.02, 0, 0, 0, 0, 0, rVis.kerb, 0);
+      flats.add(hb[0], hb[1], LAYER.street, 2.4, SEG + 0.02, 0, 0, 0, 0, 0, rVis.street, 0);
+    }
+  }
+  flats.seal(); flats.castShadow = false; resident(flats);
+
+  releaseBatch(flatDiscs); flatDiscs.clear();
+  const sq = toHolon([0, 0, -4.5]);
+  flatDiscs.add(sq[0], sq[1], LAYER.squareKerb, 12.2, 0, 0, 0, 0, 0, 0, rVis.kerb, 0);
+  flatDiscs.add(sq[0], sq[1], LAYER.square, 11.5, 0, 0, 0, 0, 0, 0, rVis.square, 0);
+  if (ACTIVE_REGION !== 'us_southwest_arid') {
+    const pond = toHolon([26, 0, 4]);
+    flatDiscs.add(pond[0], pond[1], LAYER.pond, 5.0, 0, 0, 0, 0, 0, 0, TOWN.water, 0);
+  }
+  flatDiscs.seal(); flatDiscs.castShadow = false; resident(flatDiscs);
+
+  // Horizon hills / desert mesas tinted to region
+  for (const b of hills.batches) releaseBatch(b);
+  hills.clear();
+  for (let k = 0; k < 14; k++) {
+    const x = -84 + k * 13 + (rFn() - 0.5) * 6, z = -88 - rFn() * 16, r = 14 + rFn() * 12;
+    const hb = toHolon([x, 0, z]);
+    hills.spheres.add(hb[0], hb[1], -r * 0.62, r, 0, 0, 0, 0, 0, 0, hills.stream.toRgba(rVis.hill), MATERIAL.MATTE);
+  }
+  hills.seal();
+  for (const b of hills.batches) { b.castShadow = false; resident(b); }
 
   // 2. Release previous region GPU buffers
   for (const g of REGIONS) {
@@ -1581,43 +1733,42 @@ function rebuildTownForRegion(regionKey) {
   }
   regions.clear();
 
-  // 3. Generate regionally distinct buildings using `predictBuilding` + native `KIND.PRISM`
+  // 3. Generate regionally distinct buildings using `predictBuilding` + `REGION_VISUALS` + native `KIND.PRISM`
   let bIdx = 0;
   const isDense = ACTIVE_REGION === 'jp_east_asia' || ACTIVE_REGION === 'sa_tropical';
   const makeHouseSpec = () => {
-    const storeys = isDense ? (rFn() < 0.35 ? 3 : 2) : (rFn() < 0.45 ? 2 : 1);
+    const storeys = isDense ? (rFn() < 0.35 ? 3 : 2) : (ACTIVE_REGION === 'us_southwest_arid' ? (rFn() < 0.2 ? 2 : 1) : (rFn() < 0.45 ? 2 : 1));
     const units = storeys >= 2 && rFn() < 0.5 ? storeys * 2 : 1;
     const w = (units > 1 ? 6.4 : 4.8) + rFn() * 1.8;
     const d = 4.2 + rFn() * 1.2;
     const pred = predictBuilding(ACTIVE_REGION, preset.koppen_climate, preset.lcz_density, storeys, units, w, d, bIdx++);
     return { storeys, units, w, d, lit: true, pred };
   };
-  // 3a. Guaranteed hero neighbourhood homes framing the west & east edges of the square (showcasing KIND.PRISM roofs in every region!)
   for (const [hx, hz, hyaw] of [
     [-14.2,  3.6,  0.22],
     [ 14.2,  3.6, -0.22],
     [-14.8, -12.0,  0.52],
     [ 14.8, -12.0, -0.52],
   ]) {
-    buildHouse(region(hx, hz).set.stream, hx, hz, hyaw, makeHouseSpec(), rFn);
+    buildHouse(region(hx, hz).set.stream, hx, hz, hyaw, makeHouseSpec(), rFn, rVis);
   }
   for (const [rowZ, facing] of [[3.0, 0], [-22.8, 0], [-45.5, 0]]) {
     for (let x = -28; x <= 28; x += (isDense ? 6.8 : 7.8) + rFn() * 2.0) {
       const z = rowZ + (rFn() - 0.5) * 1.0;
       if (onStage(x, z, 1.8) || onStreet(x, z, 2.2)) continue;
-      buildHouse(region(x, z).set.stream, x, z, facing + (rFn() - 0.5) * 0.06, makeHouseSpec(), rFn);
+      buildHouse(region(x, z).set.stream, x, z, facing + (rFn() - 0.5) * 0.06, makeHouseSpec(), rFn, rVis);
     }
   }
   for (const sx of [-35.5, 35.5]) {
     for (let z = -44; z <= 22; z += (isDense ? 7.6 : 8.6) + rFn() * 2.0) {
       if (onStreet(sx, z, 2.0)) continue;
-      buildHouse(region(sx, z).set.stream, sx, z, (sx < 0 ? 1 : -1) * Math.PI / 2, makeHouseSpec(), rFn);
+      buildHouse(region(sx, z).set.stream, sx, z, (sx < 0 ? 1 : -1) * Math.PI / 2, makeHouseSpec(), rFn, rVis);
     }
   }
 
   // 4. Biome-aware vegetation driven by `preset.tree_biome`
   const treeBase = rgb01(preset.tree_rgb || [58, 120, 62]);
-  const treeCount = preset.tree_biome === 3 ? 95 : 220; // sparser in arid desert
+  const treeCount = preset.tree_biome === 3 ? 95 : 220;
   for (let n = 0; n < treeCount; n++) {
     const x = (rFn() - 0.5) * 92, z = -56 + rFn() * 78;
     if (onStage(x, z, 0.4) || onStreet(x, z, 0.8)) continue;
@@ -1638,14 +1789,14 @@ function rebuildTownForRegion(regionKey) {
     else buildTree(s, x, z, size, leafCol, rFn);
   }
 
-  // 5. Lamps along streets & square
+  // 5. Region-styled street lamps
   for (const sz of STREETS_Z) {
     for (let x = -26; x <= 26; x += 8.6) {
       for (const side of [-1, 1]) {
         const z = sz + side * 2.2;
         if (onStage(x, z, -0.2)) continue;
         const g = region(x, z);
-        buildLamp(g.set.stream, g.pools, x + side * 1.1, z);
+        buildLamp(g.set.stream, g.pools, x + side * 1.1, z, rVis);
       }
     }
   }
@@ -1653,7 +1804,7 @@ function rebuildTownForRegion(regionKey) {
     const a = (k / 8) * Math.PI * 2 + 0.39, x = Math.cos(a) * 12.8, z = -4.5 + Math.sin(a) * 12.8;
     if (onStage(x, z, -1.5)) continue;
     const g = region(x, z);
-    buildLamp(g.set.stream, g.pools, x, z);
+    buildLamp(g.set.stream, g.pools, x, z, rVis);
   }
 
   REGIONS = [...regions.values()];
@@ -1664,18 +1815,8 @@ function rebuildTownForRegion(regionKey) {
   }
 }
 
-// Hills along the far horizon, in the haze's blue.
-const hills = new SceneSet();
-for (let k = 0; k < 14; k++) {
-  const x = -84 + k * 13 + (R() - 0.5) * 6, z = -88 - R() * 16, r = 14 + R() * 12;
-  const hb = toHolon([x, 0, z]);
-  hills.spheres.add(hb[0], hb[1], -r * 0.62, r, 0, 0, 0, 0, 0, 0, hills.stream.toRgba(TOWN.hill), MATERIAL.MATTE);
-}
-hills.seal();
-for (const b of hills.batches) { b.castShadow = false; resident(b); }
-resident(flats);
-resident(flatDiscs);
-rebuildTownForRegion('us_midwest');
+const initReg = urlParams.get('region');
+rebuildTownForRegion(initReg && REGIONAL_PRESETS[initReg] ? initReg : 'us_midwest');
 
 // ═══════════════════════════════════════════════════════════════════════════
 // WHAT MOVES. Each chapter has a short script, looped: named things (a photo, a
@@ -2374,6 +2515,8 @@ function frame(tms) {
     const gDist = lerp(12.2, CEWP_GLOBE.camDist * (exploreMode ? userZoom : 1.0), orbitSettled);
     const gLat  = Math.max(-0.65, Math.min(0.85, lerp(homeLatRad, CEWP_GLOBE.camLat, orbitSettled) + userPitch));
     const gSpin = lerp(homeLonRad, CEWP_GLOBE.camLon, orbitSettled) + Math.max(0, orbitSettled - 0.5) * (tSec * bt.spinRate) + userYaw;
+    lastViewLatDeg = gLat * 180 / Math.PI;
+    lastViewLonDeg = gSpin * 180 / Math.PI;
     const gEye = [
       Math.cos(gLat) * Math.cos(gSpin) * gDist,
       Math.cos(gLat) * Math.sin(gSpin) * gDist,
