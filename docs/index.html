@@ -65,26 +65,37 @@ canvas#c:active {
   cursor: grabbing;
 }
 
-/* Bottom Story Box: Clear, simple English focused on practical human outcomes */
+/* Bottom Story Box: Clear, large, simple English focused on practical human outcomes */
 #story-box {
   flex: 0 0 auto;
   width: 100%;
   background: var(--card);
   border-top: 1px solid var(--border);
-  padding: 14px 24px 16px;
+  padding: 16px 28px 18px;
   z-index: 10;
+  position: relative;
+}
+#story-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 2.5px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--green), var(--blue));
+  transition: width 0.1s linear;
+  pointer-events: none;
 }
 .story-inner {
-  max-width: 1000px;
+  max-width: 1040px;
   width: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 .story-top {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
@@ -92,40 +103,41 @@ canvas#c:active {
 .story-title-group {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 .step-pill {
   font-family: var(--mono);
-  font-size: 11.5px;
+  font-size: 12.5px;
   font-weight: 700;
   color: var(--green);
   background: rgba(78, 208, 139, 0.14);
-  border: 1px solid rgba(78, 208, 139, 0.4);
+  border: 1px solid rgba(78, 208, 139, 0.45);
   border-radius: 999px;
-  padding: 3px 10px;
+  padding: 4px 11px;
   white-space: nowrap;
 }
 .story-heading {
   margin: 0;
-  font-size: 18.5px;
+  font-size: 23px;
+  line-height: 1.24;
   font-weight: 700;
   color: #ffffff;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
 }
 .story-status {
   font-family: var(--mono);
-  font-size: 11.5px;
+  font-size: 12.5px;
   color: var(--blue);
   white-space: nowrap;
 }
 .story-body {
   margin: 4px 0 4px;
-  font-size: 15px;
-  line-height: 1.5;
-  color: #d8e0ee;
+  font-size: 17.5px;
+  line-height: 1.48;
+  color: #e2e9f4;
   max-width: 960px;
-  min-height: 3em; /* two lines: the panel keeps its height between chapters */
+  min-height: 2.96em; /* two lines: the panel keeps its height between chapters */
 }
 .story-body strong {
   color: #ffffff;
@@ -142,7 +154,7 @@ canvas#c:active {
 .step-dots {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 .step-btn {
@@ -150,8 +162,8 @@ canvas#c:active {
   color: var(--muted);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 6px 10px;
-  font-size: 12px;
+  padding: 7px 11px;
+  font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -162,14 +174,14 @@ canvas#c:active {
   border-color: var(--blue);
 }
 .step-btn.active {
-  background: rgba(78, 208, 139, 0.18);
+  background: rgba(78, 208, 139, 0.20);
   color: #fff;
   border-color: var(--green);
 }
 .nav-controls {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 .ctrl-btn {
@@ -177,8 +189,8 @@ canvas#c:active {
   color: var(--ink);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 6px 12px;
-  font-size: 12.5px;
+  padding: 7px 13px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;
@@ -202,14 +214,15 @@ canvas#c:active {
 }
 
 @media (max-width: 820px) {
-  #story-box { padding: 11px 14px 13px; }
-  .story-inner { gap: 6px; }
-  .story-heading { font-size: 15.5px; }
+  #story-box { padding: 13px 16px 15px; }
+  .story-inner { gap: 7px; }
+  .step-pill { font-size: 11.5px; padding: 3px 9px; }
+  .story-heading { font-size: 18px; line-height: 1.25; }
   .story-status { display: none; }
-  .story-body { font-size: 13px; line-height: 1.42; margin: 2px 0; min-height: 5.68em; }
-  .step-btn { padding: 5px 8px; font-size: 11.5px; }
+  .story-body { font-size: 15px; line-height: 1.44; margin: 2px 0; min-height: 4.32em; }
+  .step-btn { padding: 6px 9px; font-size: 12.5px; }
   .step-btn span.lbl { display: none; }
-  .ctrl-btn { padding: 5px 9px; font-size: 11.5px; }
+  .ctrl-btn { padding: 6px 10px; font-size: 12.5px; }
 }
 </style>
 </head>
@@ -220,14 +233,15 @@ canvas#c:active {
 </div>
 
 <section id="story-box" aria-label="CIRIS Web4 Story">
+  <div id="story-progress"></div>
   <div class="story-inner">
     <div>
       <div class="story-top">
         <div class="story-title-group">
-          <span class="step-pill" id="step-pill">1 of 7</span>
-          <h1 class="story-heading" id="story-heading">Start with you, your phone, and your laptop</h1>
+          <span class="step-pill" id="step-pill">1 of 8</span>
+          <h1 class="story-heading" id="story-heading">Your phone and laptop, connected directly</h1>
         </div>
-        <span class="story-status" id="story-status">Direct peer-to-peer</span>
+        <span class="story-status" id="story-status">No middleman · Works anywhere</span>
       </div>
       <p class="story-body" id="story-body"></p>
     </div>
@@ -255,55 +269,55 @@ canvas#c:active {
 import { createDrawer, KIND, INSTANCE_BYTES, PARAM, PARAMS_NEUTRAL, VARIANT_ROUND, VARIANT_ORIENT, VARIANT_FLOW, GLYPH, MATERIAL } from './holon/draw.js';
 import { createTextProvider } from './holon/text.js';
 
-// ── Practical, Human-Centered 7-Chapter Story ──
+// ── Practical, Simple, Human-Centered 8-Chapter Story ──
 const STEPS = [
   {
     short: "1. Your Devices",
-    title: "Your phone and laptop, talking straight to each other",
-    status: "Your key · Your name",
-    text: `Today a company stands between your own devices, holding your login and your copies. With CIRIS <strong>your key lives on your devices</strong>, and they recognise each other directly, wherever you are. Nothing happens in your name without you.`
+    title: "Your phone and laptop, connected directly",
+    status: "No middleman · Works anywhere",
+    text: `Today, Big Tech sits between your own devices. With CIRIS, <strong>your key lives on your phone and laptop</strong> — they connect straight to each other, even when you travel.`
   },
   {
-    short: "2. Files",
-    title: "Your files follow you, not a company's cloud",
+    short: "2. Your Files",
+    title: "Your files on every device — no cloud rent",
     status: "Same files everywhere",
-    text: `Save a photo on your phone and find it on your laptop, <strong>without renting space from a company that can change the terms</strong>. When your devices reconnect they settle on the same files, and say plainly what they are still waiting for.`
+    text: `Take a photo on your phone and open it on your laptop. <strong>No monthly cloud bills, no company holding your copies</strong> — your devices sync automatically and show what's still arriving.`
   },
   {
     short: "3. Friends & Family",
-    title: "Share with the people you love, on your terms",
+    title: "Share video, photos, and chat privately",
     status: "Two yeses to connect",
-    text: `Send the birthday video to Grandma, the photos to the family chat. Everything starts as <strong>yours alone</strong>, and reaches others only when you share and they accept. No one scans it, and no one can pull you in without your yes.`
+    text: `Send family videos and group chats straight from your devices to theirs. Everything starts <strong>private to you</strong>, connects only when both sides say yes, and can be taken back in one step.`
   },
   {
     short: "4. Your Feed",
-    title: "A feed that serves you, not advertisers",
-    status: "Your lens · Your rules",
-    text: `<strong>You choose whose voices you hear</strong> — family, neighbours, your club, the wider world — and what you filter out. No hidden engine tuned to keep you angry. Two people can read the same network and each see it their own way.`
+    title: "A social feed you control, not advertisers",
+    status: "Your sliders · Your rules",
+    text: `<strong>You pick whose voices you hear</strong> — family, neighbours, clubs, or the wider world — and filter out the noise. No hidden algorithm tuned to make you angry.`
   },
   {
     short: "5. Community",
-    title: "Your community, town or club, deciding together fairly",
+    title: "Fair voting for your town, church, or club",
     status: "One person, one voice",
-    text: `Propose, discuss and vote from the phone in your pocket. CIRIS is built so <strong>one person counts once</strong>, however many devices they own; no donor buys a louder voice, no outside company can ban your group, and every member can check the count.`
+    text: `Propose ideas and vote right from your phone. <strong>One person counts once</strong> — no matter how many devices they own — no money buys a louder voice, and everyone can check the count.`
   },
   {
-    short: "6. Members Own It",
-    title: "Your community belongs to its members, not its host",
-    status: "No tech guy · No landlord",
-    text: `No one rents the server or holds the master password. <strong>The group lives on its members' own phones and laptops</strong>, under rules everyone can read — including the people who wrote them. If one member stops showing up, the group carries on.`
+    short: "6. No Tech Guy",
+    title: "Owned by its members — no server or \"tech guy\"",
+    status: "No hosting bills",
+    text: `No one has to rent a server, pay hosting bills, or hold a master password. <strong>The group lives on its members' own devices</strong>, so it keeps running even if someone steps away.`
   },
   {
-    short: "7. AI Can Stop",
-    title: "AI that helps, answers to a person, and can stop",
-    status: "A human can always say stop",
-    text: `Want help sorting files or summarising club notes? An optional AI helper <strong>works by published principles</strong>, shows its reasoning, and asks a human when unsure. Named people can pause it with one signed act — and your files and chats keep running.`
+    short: "7. AI You Can Stop",
+    title: "An AI helper that answers to you — and can stop",
+    status: "One-press human stop",
+    text: `Want AI to sort files or summarize notes? It follows <strong>published principles</strong>, asks when unsure, and pauses with one signed stop — while your files and chats keep running.`
   },
   {
     short: "8. Together",
-    title: "Taking part, without giving yourself away",
-    status: "Early · Open · Honest",
-    text: `The first web connected information. The next connected people through platforms. This one lets <strong>people, communities and the AI they hold act together without any one of them owning the rest</strong>. It's early, it's open, and it says plainly what isn't proven yet.`
+    title: "Take part — without giving yourself away",
+    status: "Open · Early · Honest",
+    text: `Web1 linked pages. Web2 linked people through platforms. <strong>CIRIS lets people, communities, and the AI they hold work together</strong> — without anyone owning the rest.`
   }
 ];
 
@@ -322,9 +336,11 @@ let playing = true;
 let stepTime = 0;
 const STEP_DURATION = 10.5;
 
+const progressEl = document.getElementById('story-progress');
 function goToStep(idx, manual) {
   currentStep = (idx + STEPS.length) % STEPS.length;
   stepTime = 0;
+  if (progressEl) progressEl.style.width = '0%';
   const s = STEPS[currentStep];
   document.getElementById('step-pill').textContent = `${currentStep + 1} of ${STEPS.length}`;
   document.getElementById('story-heading').textContent = s.title;
@@ -341,6 +357,16 @@ const playBtn = document.getElementById('btn-play');
 playBtn.addEventListener('click', () => {
   playing = !playing;
   playBtn.textContent = playing ? 'Pause' : 'Play';
+});
+window.addEventListener('keydown', (e) => {
+  if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+  if (e.key === 'ArrowRight') goToStep(currentStep + 1, true);
+  else if (e.key === 'ArrowLeft') goToStep(currentStep - 1, true);
+  else if (e.key === ' ') {
+    e.preventDefault();
+    playing = !playing;
+    playBtn.textContent = playing ? 'Pause' : 'Play';
+  }
 });
 goToStep(0, false);
 
@@ -360,9 +386,9 @@ const LSTYLE = { TITLE_COMPACT: 5, TITLE: 6, SUB: 7 };
 const text = createTextProvider(gl, {
   dpr,
   styles: [
-    { px: 11, weight: '600 ', family: PLEX, upper: true, spacing: 0.07 },
-    { px: 12.5, weight: '600 ', family: PLEX, upper: true, spacing: 0.07 },
-    { px: 12, weight: '', family: PLEX, upper: false, spacing: 0 },
+    { px: 13, weight: '700 ', family: PLEX, upper: true, spacing: 0.06 },
+    { px: 14.5, weight: '700 ', family: PLEX, upper: true, spacing: 0.06 },
+    { px: 13.5, weight: '500 ', family: PLEX, upper: false, spacing: 0 },
   ],
 });
 // Re-rasterise the labels once the webfont has arrived.
@@ -1044,12 +1070,12 @@ function animEmergencyStop(stream, M, t) {
 // ── Screen Plaques (holon-draw QUAD/DISC/RUN) kept clear of each other AND of the models ──
 const RGBA = {
   green:  [92, 214, 150, 255],
-  blue:   [128, 166, 220, 255],
-  amber:  [238, 182, 100, 255],
-  red:    [238, 104, 90, 255],
-  white:  [244, 244, 240, 255],
-  muted:  [168, 178, 194, 255],
-  plaque: [13, 17, 25, 232],
+  blue:   [128, 176, 232, 255],
+  amber:  [242, 186, 102, 255],
+  red:    [242, 108, 92, 255],
+  white:  [248, 250, 252, 255],
+  muted:  [208, 218, 232, 255],
+  plaque: [11, 15, 24, 244],
 };
 
 const screenBg   = new HolonBatch(KIND.QUAD, true, 32);
@@ -1088,9 +1114,9 @@ function emitPlaques(labels, obstacles, vp, Wcss, Hcss) {
     if (!projectScene(vp, l.pos[0], l.pos[1], l.pos[2], Wcss, Hcss, _pp)) continue;
     const et = placeRun(l.title, titleStyle);
     const es = !compact && l.sub ? placeRun(l.sub, LSTYLE.SUB) : null;
-    const wt = et.w / dpr + 30, ws = es ? es.w / dpr + 24 : 0;
-    const w = Math.max(compact ? 84 : 120, wt, ws);
-    const h = es ? 46 : (compact ? 25 : 30);
+    const wt = et.w / dpr + 34, ws = es ? es.w / dpr + 28 : 0;
+    const w = Math.max(compact ? 96 : 136, wt, ws);
+    const h = es ? 54 : (compact ? 30 : 34);
     items.push({ sx: _pp[0], sy: _pp[1] + l.dy, w, h, et, es, col: l.col });
   }
   const rects = obstacleRects(obstacles, vp, Wcss, Hcss);
@@ -1132,239 +1158,194 @@ function emitPlaques(labels, obstacles, vp, Wcss, Hcss) {
   for (const p of items) {
     clampItem(p);
     const x = p.sx - p.w / 2, y = p.sy - p.h / 2;
-    const edge = [p.col[0], p.col[1], p.col[2], 150];
-    screenBg.add(p.sx * dpr, p.sy * dpr, 0, p.w * dpr, p.h * dpr, 0, 9 * dpr, 0, 0, 0, edge, 0);
-    screenFg.add(p.sx * dpr, p.sy * dpr, 0, (p.w - 2) * dpr, (p.h - 2) * dpr, 0, 8 * dpr, 0, 0, 0, RGBA.plaque, 0);
-    const ty = p.es ? y + 16 : y + p.h * 0.5;
-    screenDots.add((x + 12) * dpr, ty * dpr, 0, 3.5 * dpr, 0, 0, 0, 0, 0, 0, p.col, 0);
-    drawRun(p.et, p.sx + 5, ty, RGBA.white);
-    if (p.es) drawRun(p.es, p.sx, y + 33, RGBA.muted);
+    const edge = [p.col[0], p.col[1], p.col[2], 185];
+    screenBg.add(p.sx * dpr, p.sy * dpr, 0, p.w * dpr, p.h * dpr, 0, 10 * dpr, 0, 0, 0, edge, 0);
+    screenFg.add(p.sx * dpr, p.sy * dpr, 0, (p.w - 3) * dpr, (p.h - 3) * dpr, 0, 8.5 * dpr, 0, 0, 0, RGBA.plaque, 0);
+    const ty = p.es ? y + 18 : y + p.h * 0.5;
+    screenDots.add((x + 13) * dpr, ty * dpr, 0, 4 * dpr, 0, 0, 0, 0, 0, 0, p.col, 0);
+    drawRun(p.et, p.sx + 6, ty, RGBA.white);
+    if (p.es) drawRun(p.es, p.sx, y + 38, RGBA.muted);
   }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// THE 8 CHAPTERS. Each: build (static, once per chapter), anim (per frame),
-// links (tube static, pulses per frame), labels, and obstacles for the labels.
+// ONE CONTINUOUS LIVING NEIGHBOURHOOD THAT BUILDS WITH THE STORY (Chapters 1–8)
+// Every chapter is a cumulative layer in the SAME neighbourhood: You, your phone,
+// and your laptop stay right where they are as your files sync, your friends &
+// family join next door, your feed sliders appear, the Town Hall & neighbours
+// rise on the square, member devices mesh together, and the AI helper joins.
+// Temporary "bypassed" props (Big Tech in Ch 1, Rented Server in Ch 6) fade out
+// once you move past them. Everything is resident `holon-draw` GPU batches.
 // ═══════════════════════════════════════════════════════════════════════════
 const I = mat4Identity();
 const at = (x, z, yaw = 0, s = 1) => mat4Scale(mat4RotateY(mat4Translate(I, x, 0, z), yaw), s, s, s);
 const ob = (x, z, r, h) => ({ x, z, r, h });
 
 const CHAPTERS = [
-  // 1. You -> your phone -> your laptop; the company in the middle is bypassed.
+  // 1. You -> your phone -> your laptop; Big Tech in the middle is bypassed.
   {
     build(S, Sdim, X) {
-      buildPerson3D(S, at(-6.2, 0.3, 0.35), COL.green);
-      buildSmartphone3D(S, at(-3.4, 0.6, 0.15, 0.9), COL.green, "key");
-      buildServerTower3D(Sdim, at(0.2, -2.2, 0, 0.85), COL.red, X);
-      buildLaptop3D(S, at(4.8, 0.5, -0.22), COL.green);
+      buildPerson3D(S, at(-3.8, 11.2, 0.28), COL.green);
+      buildSmartphone3D(S, at(-1.5, 11.6, 0.12, 0.90), COL.green, "key");
+      buildLaptop3D(S, at(3.2, 11.4, -0.22), COL.green);
+      // Temporary bypassed prop: visible only in Chapter 1, then fades away
+      buildServerTower3D(Sdim, at(0.8, 8.4, 0, 0.84), COL.red, X);
     },
-    anim(D, t) { animCryptoKey(D, mat4Translate(I, -3.4, 3.15, 0.6), COL.green, t); },
+    anim(D, t) { animCryptoKey(D, mat4Translate(I, -1.5, 3.15, 11.6), COL.green, t); },
     links: [
-      makeLink([-5.7, 1.3, 0.3], [-4.1, 1.3, 0.6], 0.45, 0, 0.045, COL.green, 0.5),
-      makeLink([-2.6, 1.4, 0.9], [3.6, 1.1, 0.8], 1.35, 0.7, 0.06, COL.green, 0.42),
+      makeLink([-0.7, 1.4, 11.7], [2.0, 1.1, 11.5], 1.25, 1.45, 0.06, COL.green, 0.42),
     ],
     labels: [
-      { pos: [-6.2, 0, 1.4], dy: 22, title: "1. You", sub: "Your own key, your own name", col: RGBA.green },
-      { pos: [-3.4, 0, 1.85], dy: 24, title: "2. Your phone", sub: "Recognises your laptop directly", col: RGBA.green },
-      { pos: [0.2, 3.0, -2.2], dy: -16, title: "No company in the middle", sub: "No corporate login holding your devices", col: RGBA.red },
-      { pos: [4.8, 0, 1.85], dy: 24, title: "3. Your laptop", sub: "Your own key, your own copy", col: RGBA.green },
+      { pos: [-3.8, 0, 12.3], dy: 22, title: "1. You", sub: "Your key, your name", col: RGBA.green },
+      { pos: [-1.5, 0, 12.8], dy: 24, title: "2. Your phone", sub: "Links straight to your laptop", col: RGBA.green },
+      { pos: [0.8, 3.0, 8.4], dy: -16, title: "No Big Tech in the middle", sub: "No corporate login or gatekeeper", col: RGBA.red },
+      { pos: [3.2, 0, 12.7], dy: 24, title: "3. Your laptop", sub: "Your own copy, anywhere", col: RGBA.green },
     ],
-    obstacles: [ob(-6.2, 0.3, 0.7, 2.3), ob(-3.4, 0.6, 0.7, 3.6), ob(0.2, -2.2, 0.9, 2.7), ob(4.8, 0.5, 1.3, 1.9)],
+    obstacles: [ob(-3.8, 11.2, 0.7, 2.3), ob(-1.5, 11.6, 0.7, 3.6), ob(0.8, 8.4, 0.9, 2.7), ob(3.2, 11.4, 1.3, 1.9)],
   },
-  // 2. Files on all your devices.
+  // 2. Same You, Phone & Laptop — Big Tech is gone, and your Files & Photos fly DIRECTLY across (zero middleman!).
+  {
+    build() {},
+    links: [],
+    labels: [
+      { pos: [-3.8, 0, 12.3], dy: 22, title: "You", sub: "No cloud rent", col: RGBA.green },
+      { pos: [-1.5, 0, 12.8], dy: 22, title: "Your phone", sub: "Photos & notes on the go", col: RGBA.green },
+      { pos: [0.8, 3.1, 11.6], dy: -18, title: "Direct file sync", sub: "Straight from phone to laptop", col: RGBA.blue },
+      { pos: [3.2, 0, 12.7], dy: 24, title: "Your laptop", sub: "Ready whenever you open it", col: RGBA.green },
+    ],
+    obstacles: [ob(-3.8, 11.2, 0.7, 2.3), ob(-1.5, 11.6, 0.7, 2.6), ob(3.2, 11.4, 1.3, 1.9)],
+  },
+  // 3. Friends & Family join right next door with Video, Photos & Group Chat.
   {
     build(S) {
-      buildPerson3D(S, at(-6.2, 0.3, 0.32), COL.green);
-      buildSmartphone3D(S, at(-3.3, 0.4, 0.16, 0.88), COL.green, "chat");
-      buildConsentTablet3D(S, at(0.6, -0.4, 0, 0.92), COL.blue);
-      buildLaptop3D(S, at(5.0, 0.4, -0.22), COL.green);
+      buildMediaHub3D(S, at(6.8, 10.2, -0.08, 0.92));
+      buildPerson3D(S, at(10.0, 11.2, -0.25), COL.blue, COL.skin2);
+      buildLaptop3D(S, at(12.4, 10.8, -0.32, 0.80), COL.blue);
     },
+    anim(D, t) { animMediaHub(D, at(6.8, 10.2, -0.08, 0.92), t); },
     links: [
-      makeLink([-5.7, 1.3, 0.3], [-4.0, 1.3, 0.4], 0.4, 0, 0.045, COL.green, 0.5),
-      makeLink([-2.6, 1.4, 0.4], [-0.2, 1.4, -0.4], 0.85, 0, 0.052, COL.blue, 0.45),
-      makeLink([1.4, 1.4, -0.4], [3.9, 1.1, 0.4], 0.95, 0, 0.052, COL.green, 0.45),
+      makeLink([4.2, 1.2, 11.2], [5.6, 1.4, 10.2], 0.75, 0, 0.052, COL.green, 0.42),
+      makeLink([8.0, 1.4, 10.2], [9.5, 1.3, 11.2], 0.75, 0, 0.052, COL.blue, 0.42),
     ],
     labels: [
-      { pos: [-6.2, 0, 1.4], dy: 22, title: "You", sub: "No cloud landlord", col: RGBA.green },
-      { pos: [-3.3, 0, 1.6], dy: 22, title: "Your phone", sub: "Photos and notes on the go", col: RGBA.green },
-      { pos: [0.6, 2.9, -0.4], dy: -16, title: "Your files & photos", sub: "Settle on the same files when reconnected", col: RGBA.blue },
-      { pos: [5.0, 0, 1.75], dy: 24, title: "Your laptop", sub: "Every file, ready", col: RGBA.green },
+      { pos: [-1.5, 0, 12.8], dy: 22, title: "You & your devices", sub: "Starts private to you", col: RGBA.green },
+      { pos: [6.8, 2.8, 10.2], dy: -16, title: "Video, photos & chat", sub: "Shared only when both say yes", col: RGBA.green },
+      { pos: [11.2, 0, 12.4], dy: 22, title: "Friends & family", sub: "Direct · No one scanning it", col: RGBA.blue },
     ],
-    obstacles: [ob(-6.2, 0.3, 0.7, 2.3), ob(-3.3, 0.4, 0.7, 2.6), ob(0.6, -0.4, 0.8, 2.4), ob(5.0, 0.4, 1.3, 1.9)],
+    obstacles: [ob(-1.5, 11.6, 0.7, 2.6), ob(3.2, 11.4, 1.3, 1.9), ob(6.8, 10.2, 1.3, 2.4), ob(10.0, 11.2, 0.7, 2.3), ob(12.4, 10.8, 1.0, 1.6)],
   },
-  // 3. Video, files and chat with friends and family.
+  // 4. Your Feed Sliders appear beside you on the west side of your yard.
   {
     build(S) {
-      buildPerson3D(S, at(-6.1, 0.4, 0.35), COL.green);
-      buildSmartphone3D(S, at(-3.6, 0.4, 0.18, 0.84), COL.green, "chat");
-      buildMediaHub3D(S, at(0.2, -0.4));
-      buildPerson3D(S, at(3.8, 0.4, -0.25), COL.blue, COL.skin2);
-      buildLaptop3D(S, at(6.1, 0.2, -0.28, 0.78), COL.blue);
+      buildAlgorithmSliders3D(S, at(-8.4, 10.4, 0.22));
     },
-    anim(D, t) { animMediaHub(D, at(0.2, -0.4), t); },
+    anim(D, t) { animSliders(D, at(-8.4, 10.4, 0.22), t); },
     links: [
-      makeLink([-2.9, 1.3, 0.4], [-1.0, 1.4, -0.4], 0.85, 0, 0.052, COL.green, 0.42),
-      makeLink([1.4, 1.4, -0.4], [3.3, 1.4, 0.4], 0.85, 0, 0.052, COL.blue, 0.42),
+      makeLink([-7.3, 1.4, 10.4], [-4.3, 1.3, 11.2], 0.65, 0, 0.05, COL.green, 0.45),
+      makeLink([-7.3, 1.6, 10.0], [-1.9, 1.5, 11.4], 0.95, 0, 0.048, COL.blue, 0.45),
     ],
     labels: [
-      { pos: [-4.85, 0, 1.65], dy: 22, title: "You & your phone", sub: "Everything starts as yours alone", col: RGBA.green },
-      { pos: [0.2, 2.9, -0.4], dy: -16, title: "Video, files & group chat", sub: "Shared only when you share and they accept", col: RGBA.green },
-      { pos: [4.95, 0, 1.65], dy: 22, title: "Friends & family", sub: "Two yeses to connect", col: RGBA.blue },
+      { pos: [-8.4, 2.9, 10.4], dy: -16, title: "Your feed sliders", sub: "Family, neighbours, clubs, world", col: RGBA.green },
+      { pos: [-3.8, 0, 12.3], dy: 22, title: "You choose", sub: "No rage-bait algorithm", col: RGBA.green },
+      { pos: [1.0, 0, 12.7], dy: 24, title: "Your feed", sub: "Clean & calm on every device", col: RGBA.blue },
     ],
-    obstacles: [ob(-6.1, 0.4, 0.7, 2.3), ob(-3.6, 0.4, 0.7, 2.5), ob(0.2, -0.4, 1.3, 2.4), ob(3.8, 0.4, 0.7, 2.3), ob(6.1, 0.2, 1.0, 1.5)],
+    obstacles: [ob(-8.4, 10.4, 1.1, 2.5), ob(-3.8, 11.2, 0.7, 2.3), ob(-1.5, 11.6, 0.7, 2.6), ob(3.2, 11.4, 1.3, 1.9)],
   },
-  // 4. A feed that serves you.
+  // 5. The Town Hall & Neighbours rise on the Town Square right north of your street.
   {
     build(S) {
-      buildPerson3D(S, at(-6.0, 0.3, 0.30), COL.green);
-      buildAlgorithmSliders3D(S, at(-2.0, -0.2));
-      buildLaptop3D(S, at(2.5, 0.4, -0.15, 0.9), COL.green);
-      buildSmartphone3D(S, at(6.0, 0.2, -0.25, 0.84), COL.blue, "chat");
-    },
-    anim(D, t) { animSliders(D, at(-2.0, -0.2), t); },
-    links: [
-      makeLink([-5.5, 1.3, 0.3], [-3.0, 1.3, -0.2], 0.65, 0, 0.048, COL.green, 0.45),
-      makeLink([-1.0, 1.4, -0.2], [1.4, 1.1, 0.4], 0.85, 0, 0.052, COL.green, 0.45),
-      makeLink([3.6, 1.1, 0.4], [5.3, 1.3, 0.2], 0.75, 0, 0.048, COL.blue, 0.45),
-    ],
-    labels: [
-      { pos: [-6.0, 0, 1.4], dy: 22, title: "You choose", sub: "No hidden engine tuned for anger", col: RGBA.green },
-      { pos: [-2.0, 2.9, -0.2], dy: -16, title: "Your lens", sub: "Family, neighbours, clubs, the wider world", col: RGBA.green },
-      { pos: [2.5, 0, 1.75], dy: 24, title: "Your feed", sub: "What matters to you, on every device", col: RGBA.blue },
-    ],
-    obstacles: [ob(-6.0, 0.3, 0.7, 2.3), ob(-2.0, -0.2, 1.1, 2.5), ob(2.5, 0.4, 1.2, 1.8), ob(6.0, 0.2, 0.7, 2.5)],
-  },
-  // 5. A community, town or club deciding together.
-  {
-    build(S) {
-      buildPerson3D(S, at(-6.2, 0.4, 0.30), COL.green);
-      buildSmartphone3D(S, at(-4.1, 0.6, 0.18, 0.80), COL.green, "chat");
-      buildCommunityHall3D(S, at(0.0, -0.5));
-      buildPerson3D(S, at(3.6, 0.5, -0.20), COL.blue, COL.skin2);
-      buildConsentTablet3D(S, at(6.1, 0.2, -0.25, 0.88), COL.green);
+      buildCommunityHall3D(S, at(0.0, -4.8));
+      buildPerson3D(S, at(-5.8, -1.6, 0.30), COL.green);
+      buildSmartphone3D(S, at(-3.8, -1.2, 0.18, 0.80), COL.green, "chat");
+      buildPerson3D(S, at(4.8, -1.6, -0.22), COL.blue, COL.skin2);
+      buildConsentTablet3D(S, at(7.8, -3.8, -0.26, 0.86), COL.green);
     },
     links: [
-      makeLink([-3.5, 1.2, 0.6], [-1.1, 1.3, -0.1], 0.85, 0, 0.05, COL.green, 0.42),
-      makeLink([3.1, 1.3, 0.5], [1.1, 1.3, -0.1], 0.85, 0, 0.05, COL.blue, 0.42),
-      makeLink([1.1, 1.5, -0.5], [5.3, 1.3, 0.2], 1.15, 0, 0.052, COL.amber, 0.45),
+      makeLink([-3.2, 1.2, -1.2], [-1.1, 1.3, -4.4], 0.85, 0, 0.05, COL.green, 0.42),
+      makeLink([4.3, 1.3, -1.6], [1.1, 1.3, -4.4], 0.85, 0, 0.05, COL.blue, 0.42),
+      makeLink([1.2, 1.5, -4.8], [7.0, 1.3, -3.8], 1.15, 0, 0.052, COL.amber, 0.45),
+      makeLink([-1.5, 1.4, 11.2], [-0.4, 1.4, -3.4], 2.2, 0, 0.048, COL.green, 0.32),
     ],
     labels: [
-      { pos: [-5.15, 0, 1.70], dy: 22, title: "Neighbours & members", sub: "Vote from your phone or laptop", col: RGBA.green },
-      { pos: [0.0, 3.6, -0.5], dy: -16, title: "Your community, town or club", sub: "One person, one voice · No outside ban", col: RGBA.amber },
-      { pos: [6.1, 0, 1.4], dy: 22, title: "A count anyone can check", sub: "Every member can verify the result", col: RGBA.green },
+      { pos: [-4.8, 0, -0.2], dy: 22, title: "Members", sub: "Vote from phone or laptop", col: RGBA.green },
+      { pos: [0.0, 3.6, -4.8], dy: -16, title: "Your town, church or club", sub: "One person, one voice", col: RGBA.amber },
+      { pos: [7.8, 0, -2.5], dy: 22, title: "Open count", sub: "Every member can verify", col: RGBA.green },
     ],
-    obstacles: [ob(-6.2, 0.4, 0.7, 2.3), ob(-4.1, 0.6, 0.7, 2.4), ob(0.0, -0.5, 1.3, 3.4), ob(3.6, 0.5, 0.7, 2.3), ob(6.1, 0.2, 0.8, 2.3)],
+    obstacles: [ob(-5.8, -1.6, 0.7, 2.3), ob(-3.8, -1.2, 0.7, 2.4), ob(0.0, -4.8, 1.3, 3.4), ob(4.8, -1.6, 0.7, 2.3), ob(7.8, -3.8, 0.8, 2.3)],
   },
-  // 6. Owned by members, not a host.
+  // 6. Member devices mesh together across the neighbourhood; the rented server is crossed out.
   {
     build(S, Sdim, X) {
-      buildServerTower3D(Sdim, at(-5.6, -0.3, 0, 0.88), COL.red, X);
-      buildPerson3D(S, at(-1.4, 0.5, 0.25), COL.green);
-      buildSmartphone3D(S, at(0.8, 0.6, 0.12, 0.84), COL.green, "key");
-      buildPerson3D(S, at(3.4, -0.7, -0.15), COL.blue, COL.skin2);
-      buildLaptop3D(S, at(5.8, 0.4, -0.25, 0.84), COL.blue);
+      buildServerTower3D(Sdim, at(-11.4, -3.2, 0.12, 0.88), COL.red, X);
     },
     links: [
-      makeLink([-0.9, 1.3, 0.5], [0.2, 1.3, 0.6], 0.45, 0, 0.045, COL.green, 0.45),
-      makeLink([1.5, 1.4, 0.6], [4.8, 1.1, 0.4], 1.1, 0.4, 0.055, COL.green, 0.42),
-      makeLink([1.3, 1.2, 0.4], [2.9, 1.3, -0.7], 0.75, 0, 0.048, COL.blue, 0.42),
+      makeLink([-3.8, 1.3, -1.2], [4.8, 1.3, -1.6], 1.25, 0, 0.05, COL.blue, 0.38),
+      makeLink([4.8, 1.3, -1.6], [10.0, 1.3, 11.2], 2.1, 0, 0.048, COL.blue, 0.34),
+      makeLink([-3.8, 1.3, -1.2], [-1.5, 1.3, 11.6], 2.0, 0, 0.048, COL.green, 0.36),
     ],
     labels: [
-      { pos: [-5.6, 0, 1.05], dy: 24, title: "No landlord server", sub: "No master password, no hosting bill", col: RGBA.red },
-      { pos: [-0.3, 0, 1.75], dy: 22, title: "Member phones", sub: "Carry the community together", col: RGBA.green },
-      { pos: [4.6, 0, 1.65], dy: 22, title: "Member laptops", sub: "The group carries on if one leaves", col: RGBA.blue },
+      { pos: [-11.4, 3.0, -3.2], dy: -16, title: "No rented server", sub: "No hosting bill or single admin", col: RGBA.red },
+      { pos: [-3.8, 0, 0.2], dy: 22, title: "Member phones", sub: "Carry the group together", col: RGBA.green },
+      { pos: [5.0, 0, 0.0], dy: 22, title: "Member laptops", sub: "Keeps going if one leaves", col: RGBA.blue },
     ],
-    obstacles: [ob(-5.6, -0.3, 0.9, 2.9), ob(-1.4, 0.5, 0.7, 2.3), ob(0.8, 0.6, 0.7, 2.5), ob(3.4, -0.7, 0.7, 2.3), ob(5.8, 0.4, 1.1, 1.7)],
+    obstacles: [ob(-11.4, -3.2, 0.9, 2.9), ob(-3.8, -1.2, 0.7, 2.4), ob(4.8, -1.6, 0.7, 2.3), ob(0.0, -4.8, 1.3, 3.4)],
   },
-  // 7. AI that helps, answers to a person, and can stop.
-  {
-    build(S, Sdim) {
-      buildEmergencyStop3D(S, at(-6.1, -0.3, 0, 0.88));
-      buildAiSteward3D(S, at(-2.3, -0.5, 0, 0.88), 0, true);
-      buildPerson3D(S, at(1.2, 0.5, 0.20), COL.green);
-      buildLaptop3D(S, at(3.7, 0.5, 0.08, 0.78), COL.green);
-      buildSmartphone3D(S, at(6.3, 0.3, -0.22, 0.78), COL.green, "key");
-    },
-    anim(D, t) { animEmergencyStop(D, at(-6.1, -0.3, 0, 0.88), t); },
-    links: [
-      makeLink([-5.2, 1.1, -0.3], [-3.25, 1.3, -0.5], 0.85, 0, 0.058, COL.red, 0.65),
-      makeLink([4.6, 0.95, 0.5], [5.6, 1.15, 0.3], 0.75, 0.2, 0.052, COL.green, 0.48),
-    ],
-    labels: [
-      { pos: [-6.1, 0, 0.95], dy: 22, title: "Human stop", sub: "Named people pause it with one signed act", col: RGBA.red },
-      { pos: [-2.3, 3.0, -0.5], dy: -16, title: "AI helper, paused", sub: "Published principles · Asks when unsure", col: RGBA.red },
-      { pos: [3.8, 0, 1.70], dy: 22, title: "Your files & chats keep running", sub: "Pausing AI never locks your life", col: RGBA.green },
-    ],
-    obstacles: [ob(-6.1, -0.3, 0.9, 1.9), ob(-2.3, -0.5, 1.0, 2.9), ob(1.2, 0.5, 0.7, 2.3), ob(3.7, 0.5, 1.1, 1.6), ob(6.3, 0.3, 0.7, 2.3)],
-  },
-  // 8. Together: people, their community, and the AI they hold, none owning the rest.
+  // 7. An optional AI helper joins beside the square with a real Human Stop button.
   {
     build(S) {
-      buildCommunityHall3D(S, at(0.0, -2.6, 0, 0.95));
-      buildPerson3D(S, at(-5.6, 0.2, 0.45), COL.green);
-      buildPerson3D(S, at(-2.8, 1.2, 0.20), COL.blue, COL.skin2);
-      buildPerson3D(S, at(2.8, 1.2, -0.20), COL.green, COL.skin2);
-      buildPerson3D(S, at(5.6, 0.2, -0.45), COL.blue);
+      buildEmergencyStop3D(S, at(-10.2, -9.2, 0.15, 0.88));
     },
-    anim(D, t) { buildAiSteward3D(D, at(0.0, 1.0, 0, 0.62), t, false); },
+    anim(D, t) {
+      animEmergencyStop(D, at(-10.2, -9.2, 0.15, 0.88), t);
+      buildAiSteward3D(D, at(-6.2, -9.4, 0.25, 0.88), t, currentStep === 6);
+    },
     links: [
-      makeLink([-5.1, 1.3, 0.3], [-3.3, 1.3, 1.2], 0.55, 0, 0.045, COL.green, 0.40),
-      makeLink([-2.3, 1.3, 1.2], [-0.6, 1.0, 1.0], 0.45, 0, 0.045, COL.green, 0.40),
-      makeLink([0.6, 1.0, 1.0], [2.3, 1.3, 1.2], 0.45, 0, 0.045, COL.green, 0.40),
-      makeLink([3.3, 1.3, 1.2], [5.1, 1.3, 0.3], 0.55, 0, 0.045, COL.green, 0.40),
-      makeLink([-5.6, 1.6, 0.0], [-1.2, 1.8, -2.4], 1.4, 0, 0.042, COL.amber, 0.30),
-      makeLink([5.6, 1.6, 0.0], [1.2, 1.8, -2.4], 1.4, 0, 0.042, COL.amber, 0.30),
+      makeLink([-9.3, 1.1, -9.2], [-7.2, 1.3, -9.4], 0.85, 0, 0.058, COL.red, 0.65),
+      makeLink([-5.2, 1.3, -9.4], [-1.2, 1.4, -4.8], 1.1, 0, 0.048, COL.green, 0.38),
     ],
     labels: [
-      { pos: [-4.2, 0, 1.9], dy: 22, title: "People", sub: "Each keeps their own key and voice", col: RGBA.green },
-      { pos: [0.0, 3.6, -2.6], dy: -16, title: "Communities", sub: "Owned by their members", col: RGBA.amber },
-      { pos: [0.0, 0, 1.95], dy: 26, title: "The AI they hold", sub: "Helps, answers to people, can stop", col: RGBA.green },
-      { pos: [4.2, 0, 1.9], dy: 22, title: "Acting together", sub: "No one of them owns the rest", col: RGBA.blue },
+      { pos: [-10.2, 0, -7.9], dy: 22, title: "Human stop", sub: "One signed act pauses AI", col: RGBA.red },
+      { pos: [-6.2, 3.0, -9.4], dy: -16, title: "AI helper, paused", sub: "Answers to named humans", col: RGBA.red },
+      { pos: [0.0, 0, -1.5], dy: 22, title: "Your life keeps running", sub: "Files & chats never lock", col: RGBA.green },
     ],
-    obstacles: [ob(0.0, -2.6, 1.3, 3.4), ob(-5.6, 0.2, 0.7, 2.3), ob(-2.8, 1.2, 0.7, 2.3), ob(2.8, 1.2, 0.7, 2.3), ob(5.6, 0.2, 0.7, 2.3), ob(0.0, 1.0, 0.6, 1.8)],
+    obstacles: [ob(-10.2, -9.2, 0.9, 1.9), ob(-6.2, -9.4, 1.0, 2.9), ob(-5.8, -1.6, 0.7, 2.3), ob(0.0, -4.8, 1.3, 3.4)],
+  },
+  // 8. Together: the entire neighbourhood you just built, all alive at once!
+  {
+    build() {},
+    links: [
+      makeLink([-8.4, 1.6, 10.4], [-1.2, 1.8, -4.8], 2.5, 0, 0.045, COL.amber, 0.28),
+      makeLink([12.4, 1.4, 10.8], [1.2, 1.8, -4.8], 2.6, 0, 0.045, COL.amber, 0.28),
+    ],
+    labels: [
+      { pos: [-1.5, 0, 12.8], dy: 22, title: "People", sub: "Keep your own key & voice", col: RGBA.green },
+      { pos: [0.0, 3.6, -4.8], dy: -16, title: "Communities", sub: "Owned by their members", col: RGBA.amber },
+      { pos: [-6.2, 3.0, -9.4], dy: -16, title: "AI helpers", sub: "Accountable & pausable", col: RGBA.green },
+      { pos: [10.0, 0, 12.4], dy: 22, title: "Working together", sub: "No one owns the rest", col: RGBA.blue },
+    ],
+    obstacles: [ob(0.0, -4.8, 1.3, 3.4), ob(-1.5, 11.6, 0.7, 2.6), ob(10.0, 11.2, 0.7, 2.3), ob(-6.2, -9.4, 1.0, 2.9)],
   },
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════
-// THE TOWN. The eight chapters are eight places in one small evening town: three
-// homes along the front street, the feed and the members' houses on the square's
-// street, the AI desk and the town hall at the back. Every chapter is built once,
-// at its site, so the town is always full of people and their things; the camera
-// flies from place to place, and the place it is at is lit while the rest of the
-// town settles into the evening. Everything is holon-draw records: the ground and
-// streets are patches and quads, houses are oriented boxes with glowing windows,
-// trees are rods and spheres, lamps are glow spheres over translucent pools.
+// THE TOWN. One cohesive golden-hour neighbourhood: your front yard along the
+// south street, your friends next door, and the Town Square right to the north.
+// As each chapter plays, its layer smoothly rises into the world while earlier
+// layers stay alive and connected.
 // ═══════════════════════════════════════════════════════════════════════════
 
-// Scene coordinates (y up, the camera looks toward -z). A site is where a chapter's own
-// layout (x about -7..7, z about -3.5..3) is set down.
-const SITES = [
-  [-17, 14], [0, 14], [17, 14],      // 1 your devices, 2 files, 3 friends & family (the front street)
-  [17, -10], [17, -34],              // 4 your feed, 5 the town hall
-  [-17, -10], [-17, -34],            // 6 members own it, 7 the AI desk
-  [0, -10],                          // 8 together, on the square
-];
-// How each chapter is shot: a multiple of the fitted distance, extra pitch, a little yaw.
+// Camera target [cx, cz] and framing for each chapter (smooth pan/zoom around ONE neighbourhood)
 const SHOTS = [
-  { dist: 1.00, pitch: 0.00, yaw: 0.00 },
-  { dist: 1.00, pitch: 0.00, yaw: 0.05 },
-  { dist: 1.00, pitch: 0.02, yaw: -0.05 },
-  { dist: 1.00, pitch: 0.02, yaw: -0.10 },
-  { dist: 1.04, pitch: 0.04, yaw: 0.06 },
-  { dist: 1.00, pitch: 0.02, yaw: 0.10 },
-  { dist: 1.00, pitch: 0.02, yaw: 0.00 },
-  { dist: 4.7, pitch: 0.30, yaw: 0.00, aerial: true },    // the whole town, from above the square
+  { cx:  0.0, cz: 10.4, dist: 0.92, pitch: -0.04, yaw:  0.00 }, // 1. Your Devices (close-up on You, Phone, Laptop)
+  { cx:  0.4, cz: 10.4, dist: 0.96, pitch: -0.02, yaw:  0.05 }, // 2. Your Files (same spot, Big Tech gone, files syncing)
+  { cx:  4.6, cz: 10.5, dist: 1.32, pitch:  0.02, yaw: -0.05 }, // 3. Friends & Family (widen east to next door)
+  { cx: -3.2, cz: 10.6, dist: 1.18, pitch:  0.00, yaw:  0.08 }, // 4. Your Feed (pan west to your sliders)
+  { cx:  0.6, cz: -1.8, dist: 1.38, pitch:  0.05, yaw:  0.03 }, // 5. Community (rise & glide north to Town Square)
+  { cx: -1.2, cz:  2.2, dist: 1.72, pitch:  0.08, yaw:  0.06 }, // 6. No Tech Guy (widen to show full member mesh)
+  { cx: -5.2, cz: -5.8, dist: 1.28, pitch:  0.04, yaw: -0.08 }, // 7. AI You Can Stop (focus on AI Helper & Stop button)
+  { cx:  0.4, cz:  1.8, dist: 2.35, pitch:  0.22, yaw:  0.00, aerial: true }, // 8. Together (pull back over everything you built!)
 ];
-const FLIGHT_SECONDS = 2.6;
-const sceneOff = (i) => [SITES[i][0], 0, SITES[i][1]];
-
-// Labels and obstacles are in each chapter's own coordinates: set them down at their site.
-CHAPTERS.forEach((C, i) => {
-  const [sx, sz] = SITES[i];
-  for (const l of C.labels) { l.pos = [l.pos[0] + sx, l.pos[1], l.pos[2] + sz]; }
-  for (const o of C.obstacles) { o.x += sx; o.z += sz; }
-});
+const FLIGHT_SECONDS = 1.65;
 
 // A seeded random source, so the town is the same town on every load.
 function rng(seed) {
@@ -1375,17 +1356,18 @@ const R = rng(20261122);
 const pick = (a) => a[Math.floor(R() * a.length)];
 const lerp = (a, b, t) => a + (b - a) * t;
 
-// Where nothing may be planted: each site's stage, the streets and the square.
+// Protect our unified story neighbourhood (front lawn + Town Square) from random houses/trees.
 function onStage(x, z, pad = 0) {
-  for (const [sx, sz] of SITES) if (Math.abs(x - sx) < 8.4 + pad && z > sz - 4.6 - pad && z < sz + 4.0 + pad) return true;
+  if (x > -12.5 - pad && x < 15.2 + pad && z > 6.0 - pad && z < 15.2 + pad) return true;
+  if (Math.hypot(x, z + 4.5) < 13.8 + pad) return true;
   return false;
 }
-const STREETS_Z = [19.5, -4.5, -28.5];          // in front of each row of sites
-const AVENUES_X = [-8.5, 8.5, -29, 29];          // between the sites, and the town's edges
+const STREETS_Z = [16.8, -19.0];                  // front street south of your yard, back street north of square
+const AVENUES_X = [-18.5, 18.5, -31, 31];         // west and east avenues framing the neighbourhood
 function onStreet(x, z, pad = 0) {
-  for (const sz of STREETS_Z) if (Math.abs(z - sz) < 1.7 + pad && Math.abs(x) < 31) return true;
+  for (const sz of STREETS_Z) if (Math.abs(z - sz) < 1.7 + pad && Math.abs(x) < 33) return true;
   for (const sx of AVENUES_X) if (Math.abs(x - sx) < 1.5 + pad && z > -46 && z < 21) return true;
-  return Math.hypot(x, z + 10) < 10.5 + pad;     // the square
+  return Math.hypot(x, z + 4.5) < 12.0 + pad;     // the paved Town Square
 }
 
 // Palette for the town (the story's own COL stays for the chapter props).
@@ -1523,10 +1505,10 @@ for (const sx of AVENUES_X) {
   }
 }
 {
-  const sq = toHolon([0, 0, -10]);
-  flatDiscs.add(sq[0], sq[1], LAYER.squareKerb, 10.6, 0, 0, 0, 0, 0, 0, TOWN.kerb, 0);
-  flatDiscs.add(sq[0], sq[1], LAYER.square, 10.0, 0, 0, 0, 0, 0, 0, TOWN.square, 0);
-  const pond = toHolon([30, 0, 5]);
+  const sq = toHolon([0, 0, -4.5]);
+  flatDiscs.add(sq[0], sq[1], LAYER.squareKerb, 12.2, 0, 0, 0, 0, 0, 0, TOWN.kerb, 0);
+  flatDiscs.add(sq[0], sq[1], LAYER.square, 11.5, 0, 0, 0, 0, 0, 0, TOWN.square, 0);
+  const pond = toHolon([26, 0, 4]);
   flatDiscs.add(pond[0], pond[1], LAYER.pond, 5.0, 0, 0, 0, 0, 0, 0, TOWN.water, 0);
 }
 const groundBatches = [ground, flats, flatDiscs];
@@ -1573,7 +1555,7 @@ for (const sz of STREETS_Z) {
   }
 }
 for (let k = 0; k < 8; k++) {
-  const a = (k / 8) * Math.PI * 2 + 0.39, x = Math.cos(a) * 11.4, z = -10 + Math.sin(a) * 11.4;
+  const a = (k / 8) * Math.PI * 2 + 0.39, x = Math.cos(a) * 12.8, z = -4.5 + Math.sin(a) * 12.8;
   if (onStage(x, z, -1.5)) continue;
   const g = region(x, z);
   buildLamp(g.set.stream, g.pools, x, z);
@@ -1619,28 +1601,28 @@ const TINT = {
 };
 const via = (a, b, lift = 0.6) => makeLink(a, b, lift, 0, 0.05, COL.white, 0);
 const FLOWS = [
-  // 1. The phone shows its key to the laptop, the laptop says yes, and from then on files go straight across.
+  // 1. Your phone shows its key to your laptop, your laptop says yes, and files go straight across.
   { loop: 9, moves: [
-      [1, 'KEY', TINT.gold, 0.4, 2.2],
-      [1, 'TICK', TINT.green, 2.9, 1.9, { back: true }],
-      [1, 'DOCUMENT', TINT.paper, 5.2, 2.0],
-      [1, 'PHOTO', TINT.photo, 6.4, 2.0],
+      [0, 'KEY', TINT.gold, 0.4, 2.2],
+      [0, 'TICK', TINT.green, 2.9, 1.9, { back: true }],
+      [0, 'DOCUMENT', TINT.paper, 5.2, 2.0],
+      [0, 'PHOTO', TINT.photo, 6.4, 2.0],
     ],
     shelves: [
-      { at: [-3.4, 4.3, 0.6], slots: [['DOCUMENT', TINT.paper, 0], ['PHOTO', TINT.photo, 0]] },
-      { at: [4.8, 3.3, 0.5], slots: [['DOCUMENT', TINT.paper, 7.2], ['PHOTO', TINT.photo, 8.4]] },
+      { at: [-1.5, 4.3, 11.6], slots: [['DOCUMENT', TINT.paper, 0], ['PHOTO', TINT.photo, 0]] },
+      { at: [3.2, 3.3, 11.4], slots: [['DOCUMENT', TINT.paper, 7.2], ['PHOTO', TINT.photo, 8.4]] },
     ] },
-  // 2. Three files on the phone reach the laptop one by one; the laptop shows which it still waits for.
+  // 2. Three files fly DIRECTLY from your phone to your laptop (no middleman!); laptop shows what's still arriving.
   { loop: 10, moves: [
-      [1, 'PHOTO', TINT.photo, 0.4, 1.5], [2, 'PHOTO', TINT.photo, 1.9, 1.5],
-      [1, 'DOCUMENT', TINT.paper, 2.8, 1.5], [2, 'DOCUMENT', TINT.paper, 4.3, 1.5],
-      [1, 'VIDEO', TINT.video, 5.2, 1.5], [2, 'VIDEO', TINT.video, 6.7, 1.5],
+      [CHAPTERS[0].links[0], 'PHOTO', TINT.photo, 0.4, 2.2],
+      [CHAPTERS[0].links[0], 'DOCUMENT', TINT.paper, 3.0, 2.2],
+      [CHAPTERS[0].links[0], 'VIDEO', TINT.video, 5.6, 2.2],
     ],
     shelves: [
-      { at: [-3.3, 3.6, 0.4], slots: [['PHOTO', TINT.photo, 0], ['DOCUMENT', TINT.paper, 0], ['VIDEO', TINT.video, 0]] },
-      { at: [5.0, 3.2, 0.4], slots: [['PHOTO', TINT.photo, 3.4], ['DOCUMENT', TINT.paper, 5.8], ['VIDEO', TINT.video, 8.2]] },
+      { at: [-1.5, 3.8, 11.6], slots: [['PHOTO', TINT.photo, 0], ['DOCUMENT', TINT.paper, 0], ['VIDEO', TINT.video, 0]] },
+      { at: [3.2, 3.2, 11.4], slots: [['PHOTO', TINT.photo, 2.6], ['DOCUMENT', TINT.paper, 5.2], ['VIDEO', TINT.video, 7.8]] },
     ] },
-  // 3. You ask; they say yes; only then the video and the photos go.
+  // 3. You invite; friends & family say yes; only then the video and photos go.
   { loop: 10, moves: [
       [0, 'CHAT', TINT.green, 0.3, 1.1], [1, 'CHAT', TINT.green, 1.4, 1.1],
       [1, 'TICK', TINT.blue, 3.0, 1.0, { back: true }], [0, 'TICK', TINT.blue, 4.0, 1.0, { back: true }],
@@ -1648,61 +1630,64 @@ const FLOWS = [
       [0, 'PHOTO', TINT.photo, 6.3, 1.2], [1, 'PHOTO', TINT.photo, 7.5, 1.2],
     ],
     shelves: [
-      { at: [-3.6, 3.5, 0.4], slots: [['VIDEO', TINT.video, 0], ['PHOTO', TINT.photo, 0]] },
-      { at: [6.1, 2.6, 0.2], slots: [['VIDEO', TINT.video, 7.7], ['PHOTO', TINT.photo, 8.7]] },
+      { at: [3.2, 3.2, 11.4], slots: [['VIDEO', TINT.video, 0], ['PHOTO', TINT.photo, 0]] },
+      { at: [12.4, 2.8, 10.8], slots: [['VIDEO', TINT.video, 7.7], ['PHOTO', TINT.photo, 8.7]] },
     ] },
-  // 4. You set the lens; what you asked for comes through it, and what you filtered out stops there.
+  // 4. You set your feed sliders; rage-bait stops there, calm family & club posts pass through.
   { loop: 10, moves: [
       [0, 'TICK', TINT.green, 0.2, 1.3],
-      [via([-4.4, 5.2, -3.2], [-2.0, 3.0, -0.2], 0.2), 'CHAT', TINT.red, 1.2, 1.5, { end: 'CROSS' }],
-      [1, 'CHAT', TINT.green, 2.2, 1.4], [2, 'CHAT', TINT.green, 3.6, 1.2],
-      [via([0.4, 5.2, -3.2], [-2.0, 3.0, -0.2], 0.2), 'CHAT', TINT.red, 4.2, 1.5, { end: 'CROSS' }],
-      [1, 'PHOTO', TINT.photo, 5.0, 1.4], [2, 'PHOTO', TINT.photo, 6.4, 1.2],
-      [1, 'CHAT', TINT.violet, 7.0, 1.4], [2, 'CHAT', TINT.violet, 8.4, 1.2],
+      [via([-13.0, 4.8, 7.2], [-8.4, 2.8, 10.4], 0.2), 'CHAT', TINT.red, 1.2, 1.5, { end: 'CROSS' }],
+      [1, 'CHAT', TINT.green, 2.2, 1.6],
+      [via([-11.0, 4.8, 6.0], [-8.4, 2.8, 10.4], 0.2), 'CHAT', TINT.red, 4.2, 1.5, { end: 'CROSS' }],
+      [1, 'PHOTO', TINT.photo, 5.0, 1.6],
+      [1, 'CHAT', TINT.violet, 7.0, 1.6],
     ],
     shelves: [
-      { at: [2.5, 2.9, 0.4], slots: [['CHAT', TINT.green, 3.6], ['PHOTO', TINT.photo, 6.4], ['CHAT', TINT.violet, 8.4]] },
+      { at: [-1.5, 3.9, 11.6], slots: [['CHAT', TINT.green, 3.8], ['PHOTO', TINT.photo, 6.6], ['CHAT', TINT.violet, 8.6]] },
     ] },
-  // 5. Each member's ballot goes to the hall; the count comes out where every member can check it.
+  // 5. Each member's ballot goes to the Town Hall; the open count comes out for all to check.
   { loop: 10, moves: [
       [0, 'BALLOT', TINT.paper, 0.4, 1.8],
-      [1, 'BALLOT', TINT.paper, 1.6, 1.8],
+      [1, 'BALLOT', TINT.paper, 1.4, 1.8],
+      [3, 'BALLOT', TINT.paper, 0.8, 2.2],
       [2, 'DOCUMENT', TINT.amber, 4.0, 2.0],
       [2, 'TICK', TINT.green, 6.6, 1.4, { back: true }],
     ],
     shelves: [
-      { at: [0.0, 5.6, -0.5], slots: [['BALLOT', TINT.paper, 2.2], ['BALLOT', TINT.paper, 3.4]] },
-      { at: [6.1, 3.2, 0.2], slots: [['DOCUMENT', TINT.amber, 6.0], ['TICK', TINT.green, 6.3]] },
+      { at: [0.0, 5.4, -4.8], slots: [['BALLOT', TINT.paper, 2.2], ['BALLOT', TINT.paper, 3.2]] },
+      { at: [7.8, 3.2, -3.8], slots: [['DOCUMENT', TINT.amber, 6.0], ['TICK', TINT.green, 6.3]] },
     ] },
-  // 6. No server: the group's files and messages pass between the members' own devices, and each holds a copy.
+  // 6. No rented server: files & messages pass directly across the members' own phones and laptops.
   { loop: 9, moves: [
-      [1, 'DOCUMENT', TINT.paper, 0.3, 1.9],
-      [2, 'CHAT', TINT.green, 1.2, 1.5],
-      [1, 'CHAT', TINT.blue, 3.4, 1.9, { back: true }],
-      [2, 'DOCUMENT', TINT.paper, 4.4, 1.5, { back: true }],
-      [1, 'PHOTO', TINT.photo, 6.2, 1.9],
+      [0, 'DOCUMENT', TINT.paper, 0.3, 1.9],
+      [1, 'CHAT', TINT.green, 1.2, 1.9],
+      [0, 'CHAT', TINT.blue, 3.4, 1.9, { back: true }],
+      [2, 'DOCUMENT', TINT.paper, 4.4, 1.9, { back: true }],
+      [2, 'PHOTO', TINT.photo, 6.2, 1.9],
     ],
     shelves: [
-      { at: [0.8, 3.7, 0.6], slots: [['DOCUMENT', TINT.paper, 0], ['CHAT', TINT.green, 0], ['PHOTO', TINT.photo, 0]] },
-      { at: [5.8, 3.0, 0.4], slots: [['DOCUMENT', TINT.paper, 2.2], ['CHAT', TINT.blue, 0], ['PHOTO', TINT.photo, 8.1]] },
+      { at: [-3.8, 3.5, -1.2], slots: [['DOCUMENT', TINT.paper, 0], ['CHAT', TINT.green, 0], ['PHOTO', TINT.photo, 0]] },
+      { at: [4.8, 3.4, -1.6], slots: [['DOCUMENT', TINT.paper, 2.2], ['CHAT', TINT.blue, 0], ['PHOTO', TINT.photo, 8.1]] },
     ] },
-  // 7. A named person's stop reaches the AI helper and it pauses; your own files keep moving the whole time.
+  // 7. One human stop pauses the AI helper; your own files and chats keep running the whole time.
   { loop: 9, moves: [
       [0, 'STOP', TINT.red, 0.5, 1.7, { end: 'STOP' }],
-      [1, 'DOCUMENT', TINT.paper, 0.9, 1.2],
-      [1, 'CHAT', TINT.green, 2.8, 1.2, { back: true }],
-      [1, 'PHOTO', TINT.photo, 4.6, 1.2],
-      [1, 'DOCUMENT', TINT.paper, 6.4, 1.2, { back: true }],
+      [CHAPTERS[0].links[0], 'DOCUMENT', TINT.paper, 0.9, 1.6],
+      [CHAPTERS[0].links[0], 'CHAT', TINT.green, 3.0, 1.6, { back: true }],
+      [CHAPTERS[4].links[3], 'PHOTO', TINT.photo, 5.0, 1.8],
     ],
     shelves: [
-      { at: [-0.6, 3.4, -0.5], slots: [['STOP', TINT.red, 2.2]] },
+      { at: [-6.2, 3.5, -9.4], slots: [['STOP', TINT.red, 2.2]] },
     ] },
-  // 8. Everyone at once: messages along the row of people, ballots and what was decided to and from the hall.
+  // 8. Everything you built working together in one golden-hour neighbourhood!
   { loop: 9, moves: [
-      [0, 'CHAT', TINT.green, 0.2, 1.2], [1, 'CHAT', TINT.green, 1.4, 1.2], [2, 'CHAT', TINT.green, 2.6, 1.2], [3, 'CHAT', TINT.green, 3.8, 1.2],
-      [4, 'BALLOT', TINT.paper, 0.8, 2.2], [5, 'BALLOT', TINT.paper, 1.8, 2.2],
-      [4, 'DOCUMENT', TINT.amber, 5.0, 2.2, { back: true }], [5, 'DOCUMENT', TINT.amber, 5.6, 2.2, { back: true }],
-      [3, 'PHOTO', TINT.photo, 5.4, 1.2, { back: true }], [2, 'PHOTO', TINT.photo, 6.6, 1.2, { back: true }],
+      [0, 'CHAT', TINT.green, 0.3, 2.2],
+      [1, 'VIDEO', TINT.video, 1.0, 2.2],
+      [CHAPTERS[0].links[0], 'KEY', TINT.gold, 0.8, 2.0],
+      [CHAPTERS[2].links[0], 'PHOTO', TINT.photo, 2.4, 1.8],
+      [CHAPTERS[4].links[0], 'BALLOT', TINT.paper, 3.6, 1.8],
+      [CHAPTERS[4].links[2], 'TICK', TINT.green, 5.6, 1.8],
+      [CHAPTERS[6].links[1], 'DOCUMENT', TINT.amber, 4.4, 2.0],
     ],
     shelves: [] },
 ];
@@ -1742,49 +1727,33 @@ function emitFlow(D, C, F, t, scale = 1) {
   }
 }
 
-// ── Every chapter is built once, at its site ──
-// Per chapter: main (its people and things), dim (what it shows bypassed). The batches'
-// offset sets them down at the site; per-frame parts (animations, pulses) go to `dyn`,
-// which moves to the current chapter's site.
+// ── Every cumulative story layer is built once, in ONE shared neighbourhood ──
+// `vis` rises smoothly from 0 -> 1 when `i <= currentStep` (building the town with the story!),
+// and `dimVis` shows temporary bypassed props (Big Tech in Ch 1, Rented Server in Ch 6) only on their chapter.
 const CH = CHAPTERS.map((C, i) => {
   const main = new SceneSet(), dim = new SceneSet();
-  C.build(main.stream, dim.stream, main.stream);
+  C.build(main.stream, dim.stream, dim.stream);
   for (const L of C.links) emitLinkTube(main.stream, L);
   main.seal(); dim.seal();
-  const off = toHolon(sceneOff(i));
-  for (const b of main.batches) b.offset = off;
-  for (const b of dim.batches) b.offset = off;
   for (const b of main.batches) resident(b);
   for (const b of dim.batches) resident(b);
-  return { main, dim, off, light: i === 0 ? 1 : 0 };
+  return { main, dim, vis: i === 0 ? 1 : 0, dimVis: i === 0 ? 1 : 0 };
 });
 const dyn = new SceneSet();
 
-// The town's links, shown in chapter 8: every place joined to the square, glowing.
-// Each arrives at the square's RIM, on the side facing its own place. (They first all met at one point over the middle:
-// seven spokes with dashes running inward, which from above read as a rotor turning.)
-const SQUARE = [0, -10], SQUARE_RIM = 9.2;
-const TOWN_LINKS = SITES.slice(0, 7).map(([x, z], i) => {
-  const dx = x - SQUARE[0], dz = z - SQUARE[1], d = Math.hypot(dx, dz);
-  return makeLink([x, 1.6, z], [SQUARE[0] + dx / d * SQUARE_RIM, 0.5, SQUARE[1] + dz / d * SQUARE_RIM], 2.6 + (i % 3) * 0.7, 0, 0.06, i < 3 ? COL.green : i < 5 ? COL.amber : COL.blue, 0.22);
-});
-const townWeb = new SceneSet();
-for (const L of TOWN_LINKS) emitLinkTube(townWeb.stream, L);
-townWeb.seal();
-for (const b of townWeb.batches) resident(b);
-let townWebLight = 0;
-
-// ── The camera: a fitted shot per chapter, and a flight between them ──
-const cam = { cx: 0, cz: 0, dist: 0, pitch: 0, yaw: 0 };
+// ── The camera: smooth continuous pan/zoom around ONE neighbourhood ──
+const cam = { cx: 0, cz: 10.4, dist: 0, pitch: 0, yaw: 0 };
 const flight = { from: null, to: null, t0: -1e9, step: -1 };
 function shotFor(step, aspect, portrait) {
-  const S = SHOTS[step], [sx, sz] = SITES[step];
-  const landscapeDist = Math.max(14.2, 26.8 / aspect);
+  const S = SHOTS[step];
+  const landscapeDist = Math.max(14.2, 25.5 / aspect);
   const base = landscapeDist + (PORTRAIT_DIST - landscapeDist) * portrait;
   return {
-    cx: sx + PORTRAIT_SHIFT * portrait, cz: S.aerial ? sz + 5 : sz,
-    dist: base * S.dist * 1.04, pitch: 0.52 + PORTRAIT_PITCH * portrait * 0.7 + S.pitch,
-    yaw: S.yaw - PORTRAIT_YAW * portrait * (S.aerial ? 0.4 : 1),
+    cx: S.cx + PORTRAIT_SHIFT * portrait * 0.4,
+    cz: S.cz,
+    dist: base * S.dist,
+    pitch: 0.48 + PORTRAIT_PITCH * portrait * 0.6 + S.pitch,
+    yaw: S.yaw - PORTRAIT_YAW * portrait * (S.aerial ? 0.25 : 0.65),
   };
 }
 const ease = (k) => k * k * k * (k * (k * 6 - 15) + 10);
@@ -1821,6 +1790,7 @@ function frame(tms) {
 
   if (playing && !dragging) {
     stepTime += dt;
+    if (progressEl) progressEl.style.width = `${Math.min(100, (stepTime / STEP_DURATION) * 100)}%`;
     if (stepTime >= STEP_DURATION) goToStep(currentStep + 1, false);
   }
 
@@ -1829,11 +1799,10 @@ function frame(tms) {
   const aspect = Math.max(0.35, W / H);
   const portrait = Math.max(0, Math.min(1, (1.05 - aspect) / 0.5));
 
-  // A new chapter starts a flight from wherever the camera is now. The first frame opens
-  // on the whole town and flies down to chapter 1.
+  // Open directly on Chapter 1 (your home yard) with a gentle settle-in.
   if (!started) {
-    Object.assign(cam, shotFor(7, aspect, portrait));
-    cam.dist *= 1.25; cam.pitch += 0.1;
+    Object.assign(cam, shotFor(0, aspect, portrait));
+    cam.dist *= 1.14;
     started = true;
   }
   if (flight.step !== currentStep) {
@@ -1845,10 +1814,10 @@ function frame(tms) {
   const k = Math.min(1, (performance.now() - flight.t0) / (FLIGHT_SECONDS * 1000)), e = ease(k);
   const F = flight.from;
   const span = Math.hypot(to.cx - F.cx, to.cz - F.cz);
-  const lift = Math.sin(Math.PI * e) * Math.min(1, span / 30);
+  const lift = Math.sin(Math.PI * e) * Math.min(0.45, span / 34);
   cam.cx = lerp(F.cx, to.cx, e); cam.cz = lerp(F.cz, to.cz, e);
-  cam.dist = lerp(F.dist, to.dist, e) * (1 + 0.45 * lift);
-  cam.pitch = lerp(F.pitch, to.pitch, e) + 0.16 * lift;
+  cam.dist = lerp(F.dist, to.dist, e) * (1 + 0.18 * lift);
+  cam.pitch = lerp(F.pitch, to.pitch, e) + 0.08 * lift;
   cam.yaw = lerp(F.yaw, to.yaw, e);
 
   const yaw = cam.yaw + userYaw + Math.sin(tSec * 0.21) * 0.035;
@@ -1895,55 +1864,49 @@ function frame(tms) {
   }
   for (const g of REGIONS) if (shown(g.cx, g.cz, REGION * 0.71)) { ring(g.pools); drawList.push(g.pools); }
 
-  // Chapters: the current one lit, the others part of the evening town.
+  // Cumulative story layers: every layer `i <= currentStep` stays alive and smoothly rises into place!
+  // Temporary bypassed props (`dim`, like Big Tech in Ch 1 or Rented Server in Ch 6) show only on their own chapter.
   for (let i = 0; i < CH.length; i++) {
-    const G = CH[i], want = i === currentStep ? 1 : 0;
-    G.light += (want - G.light) * Math.min(1, dt * 2.4);
-    const [sx, sz] = SITES[i];
-    if (!shown(sx, sz, 9)) continue;
-    const d = evening(sx, sz, reach) * (0.62 + 0.38 * G.light);
-    setLook(G.main, d); setLook(G.dim, d * 0.55);
-    const cast = casts(sx, sz, 9);
-    for (const b of G.dim.batches) { ring(b); b.castShadow = cast; drawList.push(b); }
-    for (const b of G.main.batches) { ring(b); b.castShadow = cast; drawList.push(b); }
-  }
-  townWebLight += ((currentStep === 7 ? 1 : 0) - townWebLight) * Math.min(1, dt * 1.8);
-  if (townWebLight > 0.02) {
-    setLook(townWeb, 1, townWebLight);
-    for (const b of townWeb.batches) b.castShadow = false;
-    for (const b of townWeb.batches) { ring(b); drawList.push(b); }
-  }
+    const G = CH[i];
+    const wantVis = i <= currentStep ? 1 : 0;
+    const wantDim = i === currentStep ? 1 : 0;
+    G.vis += (wantVis - G.vis) * Math.min(1, dt * 3.6);
+    G.dimVis += (wantDim - G.dimVis) * Math.min(1, dt * 4.2);
 
-  // Animated parts and what moves: the current chapter's, at its site; the town's in chapter 8. The chapter's script
-  // starts once the camera has nearly arrived, and loops. Every link's dashes run on one phase (a tile setting: the
-  // links themselves are resident and are never re-sent).
-  const C = CHAPTERS[currentStep], FL = FLOWS[currentStep];
-  const flowT = Math.max(0, (performance.now() - flight.t0) / 1000 - FLIGHT_SECONDS * 0.7) % FL.loop;
-  for (const G of CH) { G.main.tubes.params[PARAM_FLOW] = tSec * 0.55; G.main.tubes.params[PARAM_FLOW_N] = 5; }
-  dyn.clear();
-  if (C.anim) C.anim(dyn.stream, tSec);
-  emitFlow(dyn.stream, C, FL, flowT, 1 + 0.5 * portrait);
-  dyn.seal();
-  for (const b of dyn.batches) b.offset = CH[currentStep].off;
-  setLook(dyn, 1, Math.min(1, CH[currentStep].light * 1.4));
-  for (const b of dyn.batches) drawList.push(b);
-  if (townWebLight > 0.02) {
-    townWeb.dynSet = townWeb.dynSet || new SceneSet();
-    const P = townWeb.dynSet;
-    P.clear();
-    // from every place to the square, its own kind of thing, one after another
-    for (let i = 0; i < TOWN_LINKS.length; i++) {
-      const u = (tSec * 0.16 + i / TOWN_LINKS.length) % 1, e = u * u * (3 - 2 * u), [name, col] = TOWN_ICONS[i];
-      bez(TOWN_LINKS[i], e, _q);
-      icon(P.glyphs, _q, 0.5, 1.5 * (1 + 0.2 * Math.sin(Math.PI * u)), col, Math.min(u, 1 - u) / 0.08, name);
+    if (G.dimVis > 0.02) {
+      const zDrop = -(1 - G.dimVis) * 1.1;
+      setLook(G.dim, 0.72, G.dimVis);
+      for (const b of G.dim.batches) {
+        b.offset = [0, 0, zDrop];
+        ring(b); b.castShadow = G.dimVis > 0.5; drawList.push(b);
+      }
     }
-    townWeb.tubes.params[PARAM_FLOW] = tSec * 0.18; townWeb.tubes.params[PARAM_FLOW_N] = 4;
-    P.seal();
-    setLook(P, 1, townWebLight);
-    for (const b of P.batches) drawList.push(b);
+    if (G.vis > 0.02) {
+      const zRise = -(1 - G.vis) * 1.25;
+      const highlight = i === currentStep || currentStep === 7 ? 1.0 : 0.88;
+      setLook(G.main, highlight, G.vis);
+      for (const b of G.main.batches) {
+        b.offset = [0, 0, zRise];
+        ring(b); b.castShadow = G.vis > 0.5 && b !== G.main.tubes; drawList.push(b);
+      }
+    }
   }
 
-  // Labels: the current chapter's, once the camera has nearly arrived.
+  // Animated parts for ALL currently built layers (rotating key, video scrubber, sliders, AI helper, stop button)
+  // plus moving glyphs (files, photos, videos, chats, ballots, stop) for the active chapter.
+  const C = CHAPTERS[currentStep], FL = FLOWS[currentStep];
+  const flowT = Math.max(0, (performance.now() - flight.t0) / 1000 - FLIGHT_SECONDS * 0.35) % FL.loop;
+  for (const G of CH) { G.main.tubes.params[PARAM_FLOW] = tSec * 0.52; G.main.tubes.params[PARAM_FLOW_N] = 5; }
+  dyn.clear();
+  for (let i = 0; i <= currentStep; i++) {
+    if (CHAPTERS[i].anim && CH[i].vis > 0.25) CHAPTERS[i].anim(dyn.stream, tSec);
+  }
+  emitFlow(dyn.stream, C, FL, flowT, 1 + 0.45 * portrait);
+  dyn.seal();
+  for (const b of dyn.batches) { b.offset = [0, 0, 0]; drawList.push(b); }
+  setLook(dyn, 1, 1);
+
+  // Labels: the current chapter's, smoothly fading in as the camera settles.
   text.beginFrame();
   const e0 = text.epoch;
   for (let pass = 0; pass < 2; pass++) {
@@ -1951,7 +1914,7 @@ function frame(tms) {
     emitPlaques(C.labels, C.obstacles, vp, Wcss, Hcss);
     if (text.epoch === e0) break;
   }
-  const labelFade = Math.min(1, Math.max(0, (k - 0.72) / 0.28));
+  const labelFade = Math.min(1, Math.max(0, (k - 0.45) / 0.45));
   for (const b of screenBatches) { b.params[PARAM.FADE] = labelFade; b.seal(); drawList.push(b); }
 
   gl.viewport(0, 0, W, H);
